@@ -1,0 +1,15 @@
+{
+    "words": {
+        "hi": ["hey", "whats up", "hello"],
+        "hello": ["hey", "whats up", "hello", "hi"],
+        "hey": ["hey", "whats up", "hello", "hi there", "hiiii"],
+        "howareyou": ["im doing alright :smile:", "im good, how about you?"],
+        "howareyou?": ["im doing alright :smile:", "im good, how about you?"],
+        "whatareyou": ["im a real girl", "im a girl :<"],
+        "whatareyou?": ["im a real girl", "im a girl :<"],
+        "iloveyou": [":heart:", "I luv u 2 uwu"],
+        "<3 ": [":heart:"],
+        "howbigisyourpenis": ["Its 12 inches bitch"],
+        "howbigisyourpenis?": ["Its 12 inches bitch"]
+    }
+}
