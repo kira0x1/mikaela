@@ -24,7 +24,7 @@ module.exports = {
                     return
                 }
 
-                message.reply('I sent you a DM with a list of commands :)')
+                message.reply('I sent you a DM with a list of commands :smile:')
 
             }).catch(error => {
                 console.error(`Failed to send help DM to ${message.author.tag}.\n`, error)

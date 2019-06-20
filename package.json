@@ -1,16 +1,20 @@
 {
-  "name": "MikaelaBot",
+  "name": "Rei",
   "version": "1.0.0",
-  "description": "",
+  "description": "Discord bot",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "lint": "eslint"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "chalk": "^2.4.2",
+    "common-tags": "^1.8.0",
+    "google-images": "^2.1.0"
   }
 }
