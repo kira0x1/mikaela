@@ -1,0 +1,28 @@
+{
+    "prefix": ".",
+
+    "token": "[bot token]",
+
+    "google": {
+        "api": "[api key]",
+        "cse": "[cse key]"
+    },
+
+    "todo": [{
+            "command": "postpic",
+            "issue": "Check if image is undefined before trying to get url"
+        },
+        {
+            "command": "postpic",
+            "issue": "Return random image from the first 2 pages of the search"
+        }
+    ],
+
+    "people": {
+        "kira": "[id goes here]"
+    },
+    "channels": {
+        "logs": "[channel id]",
+        "nsfw": "[channel id]"
+    }
+}
