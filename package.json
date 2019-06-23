@@ -1,6 +1,6 @@
 {
-  "name": "Rei",
-  "version": "1.0.0",
+  "name": "mikaela",
+  "version": "2.0.0",
   "description": "Discord bot",
   "main": "app.js",
   "scripts": {
@@ -9,12 +9,13 @@
     "lint": "eslint"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kira",
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.2",
     "common-tags": "^1.8.0",
     "discord.js": "^11.5.1",
+    "ffmpeg-binaries": "^4.0.0",
     "google-images": "^2.1.0"
   }
 }

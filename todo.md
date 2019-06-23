@@ -1,0 +1,3 @@
+- [ ] Post video command
+- [ ] Subcommands / flags
+- [ ] Postpic in specific domains

@@ -1,10 +1,14 @@
 const fs = require('fs')
 const Discord = require('discord.js')
 const config = require('./config.json')
-const { prefix, token } = config
-
+const token = config.keys.token
+const prefix = config.prefix
 const client = new Discord.Client()
 
+const permsUtil = require('./util/role.js')
+
+//False = admins are not effected by cooldowns
+const adminCD = false
 
 //get commands
 client.commands = new Discord.Collection()
@@ -18,8 +22,6 @@ for (const file of commandFiles) {
 //Command Cooldown
 const cooldowns = new Discord.Collection()
 
-
-
 client.once('ready', () => {
     console.log('ready!')
 })
@@ -31,14 +33,18 @@ client.on('message', message => {
     const args = message.content.slice(prefix.length).split(/ +/)
     const commandName = args.shift().toLowerCase()
 
+    if (commandName.startsWith(prefix)) {
+        console.log('command name starts with prefix\n' + commandName)
+        return
+    }
+
     //Get command
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName))
 
     if (!command) {
-        message.reply('Could not find command: ' + commandName)
+        console.log('could not find command ' + commandName)
         return;
     }
-
 
     //Check if command needs arguments
     if (command.args && !args.length) {
@@ -57,9 +63,18 @@ client.on('message', message => {
         return
     }
 
-    //Check if admin only
-    if (command.adminOnly) {
-        message.reply('This command is admin only')
+    const perms = command.perms
+    let hasPerm = false
+
+    if (perms) {
+        hasPerm = permsUtil.execute(perms, message.author.id)
+    }
+    else if (!perms) {
+        hasPerm = true
+    }   
+
+    if (!hasPerm) {
+        console.log('You dont have permission to use this command')
         return
     }
 
@@ -76,19 +91,20 @@ client.on('message', message => {
     //get cooldown amount, if none set it to 3 seconds by default
     const cooldownAmount = (command.cooldown || 3) * 1000
 
-    if (timestamps.has(message.author.id)) {
+    const noCD = (message.author.id === config.users.kira && !adminCD)
+
+    if (timestamps.has(message.author.id) && !noCD) {
         const expirationTime = timestamps.get(message.author.id) + cooldownAmount
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000
             return message.reply(`Command on cooldown. Cooldown: ${timeLeft.toFixed(1)} second(s)`)
-        }
+        }       
     }
-    else {
+    else if (!noCD) {
         timestamps.set(message.author.id, now)
         setTimeout(() => timestamps.delete(message.author.id), cooldownAmount)
     }
-
 
     //Try to execute command
     try {
@@ -99,7 +115,6 @@ client.on('message', message => {
         message.reply('error trying to call command')
     }
 })
-
 
 
 //bot login

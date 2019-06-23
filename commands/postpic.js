@@ -2,20 +2,18 @@ const log = require('./logger.js')
 const google = require('google-images')
 
 const config = require('../config.json')
-const { cse, api } = config.google
+const { cse, api } = config.keys
 const { nsfw } = config.channels
 
 const gm = new google(cse, api)
 
-
-
 module.exports = {
     name: 'postpic',
-    description: 'Gets a picture from google',
+    description: 'Searches for an image',
     aliases: ['p', 'pic', 'img', 'post'],
     usage: '[search]',
     guildOnly: true,
-    cooldown: 3,
+    cooldown: 3.6,
     args: true,
 
     async execute(message, args) {
@@ -34,14 +32,12 @@ module.exports = {
                 if (!images.length)
                     return message.reply('No images found...')
 
-                //images.map(img => img.url)
-
                 const randIndex = Math.floor(Math.random() * images.length)
-                // console.log(`Picked: ${randIndex} out of ${images.length}`)
                 const imageResult = images[randIndex]
+
+                //Send image
                 message.reply(imageResult.url)
 
-                // loadingMsg.delete().catch(error => { logMsg(error) })
             }).catch(error => {
                 logMsg(error)
             })

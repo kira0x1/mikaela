@@ -1,14 +1,13 @@
 const ct = require('common-tags')
 const chalk = require('chalk')
 const logchannel = require('../config.json').channels.logs
-const kira = require('../config.json').people.kira
+const kira = require('../config.json').users.kira
 const discord = require('discord.js')
 
-
 let replyLog = true
-let dmLog = false
+let dmLog = true
 
-const logLevels = [
+const level = [
     log = {
         name: 'log',
         aliases: ['l'],
@@ -29,60 +28,62 @@ const logLevels = [
     }
 ]
 
+const subcommands = [
+    dm = {
+        name: 'dm',
+        description: 'Set dm to user',
+        usage: '<true|false>'
+    }
+]
+
+const flagPrefix = '-'
+
 module.exports = {
-    name: 'log',
+    name: 'logger',
     description: ct.stripIndents`
     Handles logging to the console,
     and dming logs to the admin.
     `,
-    aliases: ['l'],
     guildOnly: false,
-    adminOnly: true,
     args: true,
-    cooldown: 1,
+    cooldown: 0.1,
+    hidden: true,
     usage: ct.stripIndents`
-    [Message] <Log-Level> ${logLevels.map(lvl => '\n\n' + lvl.name + '\nAliases [' + lvl.aliases + ']') + '\n'}`,
+    [Message] <Log-Level> ${level.map(lvl => '\n\n' + lvl.name + '\nAliases [' + lvl.aliases + ']') + '\n'}`,
+    perms: ['admin','friend'],
+
 
     execute(message, args) {
-        let logInput = 'error'
 
+        const user = message.author
+        const colorName = args.shift(' ')
+        let description = args.join(' ')
+        
+        //Check if it matches any of the logLevels, if not then set it to 'warn' by default
+        let color = level.find(lvl => lvl.name === colorName || lvl.aliases && lvl.aliases.includes(colorName))
 
-        if (args.length > 1)
-            logInput = args.shift()
-
-        try {
-            var loglevel = logLevels.find(lvl => lvl.name === logInput) || logLevels.find(lvl => lvl.aliases && lvl.aliases.includes(logInput))
-            var msg = args.join(' ')
-
-            console.log(':<');
-            console.log(loglevel.chalkcolor(msg))
-        }
-        catch (error) {
-            if (loglevel === undefined) {
-                message.reply
-                    (
-                        ct.commaListsOr`
-                        Invalid log - level: '${logInput}'
-                        Use: ${ logLevels.map(lvl => lvl.name)}
-
-                        For a list of aliases use the help command
-                        `
-                    )
-                loglevel = logLevels.error;
-            }
+        if (color === undefined) {
+            color = level.find(lvl => lvl.name === 'error')
+            description = colorName + ' ' + description
         }
 
+        console.log(color.chalkcolor(description))
+
+        if (!replyLog || !dmLog) return
+
+        //Create embed
         const embedlog = new discord.RichEmbed()
-            .setTitle(loglevel.name)
-            .setColor(loglevel.color)
-            .setDescription(`${msg}`)
+            .setTitle(color.name)
+            .setColor(color.color)
+            .setDescription(`${description}`)
             .setTimestamp()
 
-
+        //Reply to the author
         if (replyLog) {
             message.channel.send(embedlog)
         }
 
+        //dm the admin
         if (dmLog) {
             message.client.fetchUser(kira).then(user => {
                 user.send(embedlog)
@@ -91,6 +92,7 @@ module.exports = {
             })
         }
 
-        message.client.channels.get(logchannel).send(embedlog)
+        //Send to Debug-Logs channel
+        message.client.channels.get(logchannel).send(embedlog, { reply: kira })
     }
 }
