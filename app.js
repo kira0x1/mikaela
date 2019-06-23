@@ -40,7 +40,6 @@ client.on('message', message => {
 
     //Get command
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName))
-
     if (!command) {
         console.log('could not find command ' + commandName)
         return;
@@ -71,7 +70,7 @@ client.on('message', message => {
     }
     else if (!perms) {
         hasPerm = true
-    }   
+    }
 
     if (!hasPerm) {
         console.log('You dont have permission to use this command')
@@ -99,7 +98,7 @@ client.on('message', message => {
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000
             return message.reply(`Command on cooldown. Cooldown: ${timeLeft.toFixed(1)} second(s)`)
-        }       
+        }
     }
     else if (!noCD) {
         timestamps.set(message.author.id, now)

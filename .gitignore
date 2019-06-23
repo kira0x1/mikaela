@@ -78,3 +78,4 @@ typings/
 # FuseBox cache
 .fusebox/
 config.json
+ecosystem.config.js
