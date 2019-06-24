@@ -2,3 +2,5 @@
 - [x] Subcommands / flags
 - [ ] Postpic in specific domains
 - [ ] Song queue
+- [ ] Now Playing Command - Show Current Time, Plus info
+- [ ] Remove Song Command - Remove song from queue
