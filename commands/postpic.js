@@ -10,7 +10,7 @@ const gm = new google(cse, api)
 module.exports = {
     name: 'postpic',
     description: 'Searches for an image',
-    aliases: ['p', 'pic', 'img', 'post'],
+    aliases: ['i', 'pic', 'img', 'post', 'nsf', 'nsfw'],
     usage: '[search]',
     guildOnly: true,
     cooldown: 3.6,
@@ -21,10 +21,19 @@ module.exports = {
             const searchQuery = args.join(' ');
             const loadingMsg = await message.channel.send(`Searching for \'${searchQuery}\'...`)
 
-            let searchSafety = 'high'
+            let searchSafety = 'medium'
+            let nsfw = false
 
-            if (message.channel.id === nsfw) {
+            if (message.content.startsWith('.nsfw') && message.channel.id === nsfw) {
+                nsfw = true
+            }
+
+            if (nsfw) {
                 searchSafety = 'off'
+                console.log('nsfw')
+            }
+            else {
+                console.log('not nsfw')
             }
 
             gm.search(searchQuery, { safe: searchSafety }).then(images => {
