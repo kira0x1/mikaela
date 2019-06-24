@@ -1,3 +1,4 @@
-- [ ] Post video command
-- [ ] Subcommands / flags
+- [x] Post video command
+- [x] Subcommands / flags
 - [ ] Postpic in specific domains
+- [ ] Song queue
