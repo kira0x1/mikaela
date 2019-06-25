@@ -4,6 +4,7 @@ const config = require('./config.json')
 const token = config.keys.token
 const prefix = config.prefix
 const client = new Discord.Client()
+const chalk = require('chalk')
 
 const permsUtil = require('./util/role.js')
 
@@ -23,7 +24,7 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
-    console.log('ready!')
+    console.log(chalk.green('\nOnline'))
 })
 
 client.on('message', message => {

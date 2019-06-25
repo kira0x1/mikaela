@@ -2,16 +2,18 @@ const log = require('./logger.js')
 const google = require('google-images')
 
 const config = require('../config.json')
+
 const { cse, api } = config.keys
-const { nsfw } = config.channels
 
 const gm = new google(cse, api)
+
+const nsfwAliases = ['.nsfw', '.nsf', '.n']
 
 module.exports = {
     name: 'postpic',
     description: 'Searches for an image',
-    aliases: ['i', 'pic', 'img', 'post', 'nsf', 'nsfw'],
-    usage: '[search]',
+    aliases: ['i', 'pic', 'img', 'post', 'nsf', 'nsfw', 'n'],
+    usage: '[search]    ',
     guildOnly: true,
     cooldown: 3.6,
     args: true,
@@ -24,20 +26,23 @@ module.exports = {
             let searchSafety = 'medium'
             let nsfw = false
 
-            if (message.content.startsWith('.nsfw') && message.channel.id === nsfw) {
-                nsfw = true
+            //Check if the channel is nsfw
+            let nsfwChannel = message.channel.nsfw
+
+            //Check if the channel is an nsfw channel and if the nsfw alias was used
+            if (nsfwChannel) {
+                nsfwAliases.map(al => {
+                    if (message.content.startsWith(al)) {
+                        nsfw = true
+                    }
+                })
             }
 
             if (nsfw) {
                 searchSafety = 'off'
-                console.log('nsfw')
-            }
-            else {
-                console.log('not nsfw')
             }
 
             gm.search(searchQuery, { safe: searchSafety }).then(images => {
-
                 if (!images.length)
                     return message.reply('No images found...')
 
@@ -45,7 +50,7 @@ module.exports = {
                 const imageResult = images[randIndex]
 
                 //Send image
-                message.reply(imageResult.url)
+                message.channel.send(imageResult.url)
 
             }).catch(error => {
                 logMsg(error)
@@ -59,7 +64,6 @@ module.exports = {
             if (level) {
                 error.put(level)
             }
-
             log.execute(message, [error])
         }
     }
