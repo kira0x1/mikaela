@@ -7,7 +7,7 @@ const client = new Discord.Client()
 const chalk = require('chalk')
 
 const permsUtil = require('./util/role.js')
-
+const helper = require('./util/helper')
 //False = admins are not effected by cooldowns
 const adminCD = false
 
@@ -48,13 +48,7 @@ client.on('message', message => {
 
     //Check if command needs arguments
     if (command.args && !args.length) {
-        let reply = `Arguments missing for command: ${command.name}`
-
-        if (command.usage) {
-            reply += `\nUsage: \`${prefix}${command.name} ${command.usage}\``
-        }
-
-        return message.reply(reply)
+        return message.reply(helper.args(command))
     }
 
     //Check if guild only
@@ -74,7 +68,7 @@ client.on('message', message => {
     }
 
     if (!hasPerm) {
-        console.log('You dont have permission to use this command')
+        message.channel.send('You dont have permission to use this command')
         return
     }
 

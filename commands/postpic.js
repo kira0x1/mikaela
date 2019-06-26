@@ -12,8 +12,8 @@ const nsfwAliases = ['.nsfw', '.nsf', '.n']
 module.exports = {
     name: 'postpic',
     description: 'Searches for an image',
-    aliases: ['i', 'pic', 'img', 'post', 'nsf', 'nsfw', 'n'],
-    usage: '[search]    ',
+    aliases: ['pic', 'post', 'nsf', 'nsfw', 'n'],
+    usage: '[search]',
     guildOnly: true,
     cooldown: 3.6,
     args: true,

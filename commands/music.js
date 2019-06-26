@@ -8,17 +8,15 @@ const searchOptions = {
 };
 
 const streamOptions = {
-    volume: 1,
+    volume: 0.6 ,
     passes: 0
 }
 
 const ytdl = require('ytdl-core')
 var conn
 var currentSong
-let status = ''
 
 const { prefix } = require('../config.json');
-
 
 const flags = [
     pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] },
@@ -37,7 +35,6 @@ class songInfo {
         this.title = title
     }
 }
-
 
 module.exports = {
     name: 'music',
@@ -123,7 +120,6 @@ module.exports = {
             //     .setDescription(`Link: ${song.link}`)
             //     .setImage(song.thumbnails.default.url)
             // message.channel.send('', { embed: embed })
-
 
             await vc.join().then(async connection => {
                 const stream = await ytdl(url, { filter: 'audioonly' })
