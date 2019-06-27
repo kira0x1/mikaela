@@ -1,5 +1,4 @@
 const ct = require('common-tags')
-const log = require('./log.js')
 
 module.exports = {
     name: 'test',

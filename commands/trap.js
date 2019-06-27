@@ -1,5 +1,5 @@
 const agent = require('superagent')
-const helper = require('../util/helper')
+const util = require('../util/util')
 const goboblin = 'https://tinyurl.com/goboblin'
 
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
             let victim = message.mentions.users.first()
 
             if (!victim)
-                return message.reply(helper.args(this))
+                return message.reply(util.args(this))
 
             trap = {
                 name: victim.username, //victim

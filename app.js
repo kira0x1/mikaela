@@ -6,8 +6,8 @@ const prefix = config.prefix
 const client = new Discord.Client()
 const chalk = require('chalk')
 
-const permsUtil = require('./util/role.js')
-const helper = require('./util/helper')
+const util = require('./util/util')
+
 //False = admins are not effected by cooldowns
 const adminCD = false
 
@@ -49,7 +49,7 @@ client.on('message', message => {
 
     //Check if command needs arguments
     if (command.args && !args.length) {
-        return message.reply(helper.args(command))
+        return message.reply(util.args(command))
     }
 
     //Check if guild only
@@ -62,7 +62,7 @@ client.on('message', message => {
     let hasPerm = false
 
     if (perms) {
-        hasPerm = permsUtil.execute(perms, message.author.id)
+        hasPerm = util.execute(perms, message.author.id)
     }
     else if (!perms) {
         hasPerm = true

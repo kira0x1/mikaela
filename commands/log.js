@@ -1,5 +1,4 @@
 const chalk = require('chalk')
-const logchannel = require('../config.json').channels.logs
 
 const level = [
     log = {

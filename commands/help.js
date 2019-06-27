@@ -1,7 +1,7 @@
 const discord = require('discord.js')
 const { prefix } = require('../config.json')
 const sendDM = false
-const roleUtil = require('../util/role.js')
+const util = require('../util/util')
 
 module.exports = {
     name: 'help',
@@ -29,7 +29,7 @@ module.exports = {
                 .setFooter(data[2])
 
             commands.map(command => {
-                if (roleUtil.execute(command.perms, message.author.id) && command !== undefined) {
+                if (util.execute(command.perms, message.author.id) && command !== undefined) {
                     embed.addField(command.name, command.description)
                 }
             })
