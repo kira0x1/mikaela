@@ -29,7 +29,7 @@ module.exports = {
                 .setFooter(data[2])
 
             commands.map(command => {
-                if (util.execute(command.perms, message.author.id) && command !== undefined) {
+                if (util.perms(command.perms, message.author.id) && command !== undefined) {
                     embed.addField(command.name, command.description)
                 }
             })

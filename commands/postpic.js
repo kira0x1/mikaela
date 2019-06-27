@@ -1,10 +1,6 @@
-const log = require('./logger.js')
-const google = require('google-images')
-
 const config = require('../config.json')
-
+const google = require('google-images')
 const { cse, api } = config.keys
-
 const gm = new google(cse, api)
 
 const nsfwAliases = ['.nsfw', '.nsf', '.n']
@@ -12,7 +8,7 @@ const nsfwAliases = ['.nsfw', '.nsf', '.n']
 module.exports = {
     name: 'postpic',
     description: 'Searches for an image',
-    aliases: ['pic', 'post', 'nsf', 'nsfw', 'n'],
+    aliases: ['p', 'pic', 'post', 'nsf', 'nsfw', 'n'],
     usage: '[search]',
     guildOnly: true,
     cooldown: 3.6,
@@ -21,7 +17,6 @@ module.exports = {
     async execute(message, args) {
         try {
             const searchQuery = args.join(' ');
-            const loadingMsg = await message.channel.send(`Searching for \'${searchQuery}\'...`)
 
             let searchSafety = 'medium'
             let nsfw = false
