@@ -6,7 +6,7 @@ const roleUtil = require('../util/role.js')
 module.exports = {
     name: 'help',
     description: 'lists all commands',
-    aliases: ['h', 'commands'],
+    aliases: ['h', 'commands', 'mikaela', 'cmd'],
     guildOnly: false,
     usage: '[command name]',
     cooldown: 15,
@@ -32,8 +32,7 @@ module.exports = {
                 if (roleUtil.execute(command.perms, message.author.id) && command !== undefined) {
                     embed.addField(command.name, command.description)
                 }
-            }
-            )
+            })
 
 
             if (sendDM) {

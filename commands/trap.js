@@ -1,8 +1,6 @@
 const agent = require('superagent')
-const chalk = require('chalk')
 const helper = require('../util/helper')
 const goboblin = 'https://tinyurl.com/goboblin'
-
 
 module.exports = {
     name: 'trap',

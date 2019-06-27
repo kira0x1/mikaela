@@ -24,7 +24,8 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
-    console.log(chalk.green('\nOnline'))
+    let msg = chalk.bgWhiteBright.red(`${client.user.username}  Online!`)
+    console.log(msg)
 })
 
 client.on('message', message => {
