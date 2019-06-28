@@ -58,17 +58,10 @@ client.on('message', message => {
     }
 
     const perms = command.perms
-    let hasPerm = false
-
-    if (perms) {
-        hasPerm = util.perms(perms, message.author.id)
-    }
-    else if (!perms) {
-        hasPerm = true
-    }
+    let hasPerm = util.perms(perms, message.author.id)
 
     if (!hasPerm) {
-        message.channel.send('You dont have permission to use this command')
+        // message.channel.send('You dont have permission to use this command')
         return
     }
 

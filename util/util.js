@@ -45,19 +45,33 @@ module.exports = {
 
     //Check if user has perms 
     perms(roles, id) {
-        if (roles === undefined)
-            return true
+
+        let banned = false
+        //check if banned
+        const bannedUsers = perms['banned']
+        bannedUsers.forEach(user => {
+            const userID = users[user]
+            if (id === userID) {
+                this.log(`banned user[ ${user} ] tried to use command!`)
+                return banned = true
+            }
+        })
+
+        if (banned) return false
+        if (!roles) return true
 
         for (let i = 0; i < roles.length; i++) {
             const permUsers = perms[roles[i]]
             const user = permUsers.map(uname => users[uname])
 
             if (user) {
+                //if user is in banned then return
                 if (user.includes(id)) {
                     return true
                 }
             }
         }
+
 
         return false
     },
@@ -72,7 +86,7 @@ module.exports = {
             })
             .catch(error => {
                 console.log(error)
-                message.channel.send(`${error}`)
+                // message.channel.send(`${error}`)
             })
     }
 }

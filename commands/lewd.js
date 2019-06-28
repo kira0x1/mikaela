@@ -6,27 +6,26 @@ module.exports = {
     description: 'Posts nsfw content uwu',
     aliases:
         ['nsfw', 'pn', 'hass', 'hmidriff', 'pgif', '4k', 'hentai', 'holo',
-            'hneko', 'neko', 'hkitsune', 'kemonomimi', 'anal',
-            'gonewild', 'kanna', 'ass', 'pussy', 'thigh', 'hthigh'],
+            'hneko', 'hkitsune', 'anal',
+            'gonewild', 'ass', 'pussy', 'thigh', 'hthigh'],
     cooldown: 2,
     flags: ['n'],
 
 
     execute(message, args) {
-        const al = this.aliases.find(a => message.content.startsWith('.' + a))
-
         let amount = 1
         let search = 'hentai'
 
+        const al = this.aliases.find(a => message.content.startsWith('.' + a))
         const flag = util.checkForFlags(this.flags, args)
 
         if (flag) {
             if (flag === 'n') {
-                if (amount < 1 || amount > 4) {
-                    return message.reply('Amount must be between 1 - 4')
-                }
 
                 amount = args
+                if (amount < 1 || amount > 10) {
+                    return message.reply('Amount must be between 1 - 10')
+                }
             }
         }
 

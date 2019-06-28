@@ -10,7 +10,7 @@ const searchOptions = {
 };
 
 const streamOptions = {
-    volume: 0.8,
+    volume: 0.6,
     passes: 3
 }
 
@@ -141,7 +141,7 @@ module.exports = {
         }
 
         function playNext() {
-            let song = queue.pop()
+            let song = queue.shift()
 
             if (queue.length === 0 || !song) {
                 stop()
