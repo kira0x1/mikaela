@@ -1,12 +1,12 @@
 const fs = require('fs')
 const Discord = require('discord.js')
+const util = require('./util/util')
+
 const config = require('./config.json')
 const token = config.keys.token
 const prefix = config.prefix
-const client = new Discord.Client()
-const chalk = require('chalk')
 
-const util = require('./util/util')
+const client = new Discord.Client()
 
 //False = admins are not effected by cooldowns
 const adminCD = false
@@ -24,8 +24,7 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
-    let msg = chalk.bgWhiteBright.red(`${client.user.username}  Online!`)
-    console.log(msg)
+    util.log(`${client.user.username} Online!`)
 })
 
 client.on('message', message => {
@@ -49,7 +48,7 @@ client.on('message', message => {
 
     //Check if command needs arguments
     if (command.args && !args.length) {
-        return message.reply(util.args(command))
+        return message.reply(util.usage(command))
     }
 
     //Check if guild only
@@ -62,7 +61,7 @@ client.on('message', message => {
     let hasPerm = false
 
     if (perms) {
-        hasPerm = util.execute(perms, message.author.id)
+        hasPerm = util.perms(perms, message.author.id)
     }
     else if (!perms) {
         hasPerm = true

@@ -3,63 +3,31 @@ const google = require('google-images')
 const { cse, api } = config.keys
 const gm = new google(cse, api)
 
-const nsfwAliases = ['.nsfw', '.nsf', '.n']
-
 module.exports = {
     name: 'postpic',
     description: 'Searches for an image',
-    aliases: ['p', 'pic', 'post', 'nsf', 'nsfw', 'n'],
+    aliases: ['img', 'pic', 'post'],
     usage: '[search]',
     guildOnly: true,
     cooldown: 3.6,
     args: true,
 
-    async execute(message, args) {
-        try {
-            const searchQuery = args.join(' ');
+    execute(message, args) {
+        const searchQuery = args.join(' ');
+        let searchSafety = 'medium'
 
-            let searchSafety = 'medium'
-            let nsfw = false
+        gm.search(searchQuery, { safe: searchSafety }).then(images => {
+            if (!images.length)
+                return message.reply('No images found...')
 
-            //Check if the channel is nsfw
-            let nsfwChannel = message.channel.nsfw
+            const randIndex = Math.floor(Math.random() * images.length)
+            const imageResult = images[randIndex]
 
-            //Check if the channel is an nsfw channel and if the nsfw alias was used
-            if (nsfwChannel) {
-                nsfwAliases.map(al => {
-                    if (message.content.startsWith(al)) {
-                        nsfw = true
-                    }
-                })
-            }
+            //Send image
+            message.channel.send(imageResult.url)
 
-            if (nsfw) {
-                searchSafety = 'off'
-            }
-
-            gm.search(searchQuery, { safe: searchSafety }).then(images => {
-                if (!images.length)
-                    return message.reply('No images found...')
-
-                const randIndex = Math.floor(Math.random() * images.length)
-                const imageResult = images[randIndex]
-
-                //Send image
-                message.channel.send(imageResult.url)
-
-            }).catch(error => {
-                logMsg(error)
-            })
-        }
-        catch (error) {
-            logMsg(error)
-        }
-
-        function logMsg(error, level) {
-            if (level) {
-                error.put(level)
-            }
-            log.execute(message, [error])
-        }
+        }).catch(error => {
+            console.error(error)
+        })
     }
 }

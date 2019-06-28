@@ -1,9 +1,0 @@
-- [x] Post video command
-- [x] Subcommands / flags
-- [x] Postpic in specific domains
-- [x] Song queue
-- [x] Now Playing Command 
-- [ ] Now playing - Show Current Time, Plus info
-- [ ] Remove Song Command - Remove song from queue
-- [ ] Get more results
-- [ ] Pick image via Reactions

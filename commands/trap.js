@@ -1,18 +1,15 @@
-const agent = require('superagent')
-const util = require('../util/util')
+const { neko, usage } = require('../util/util')
 const goboblin = 'https://tinyurl.com/goboblin'
 
 module.exports = {
     name: 'trap',
-    description: 'Trap someone!',
+    description: 'Trap card someone!',
     aliases: ['tr'],
     guildOnly: true,
     usage: '<user>',
     args: true,
 
-    async execute(message, args) {
-        //Get user from args
-
+    execute(message, args) {
         let isGoboblin = false
 
         let trap = {
@@ -26,10 +23,11 @@ module.exports = {
         }
 
         if (!isGoboblin) {
+            //Get user from args
             let victim = message.mentions.users.first()
 
             if (!victim)
-                return message.reply(util.args(this))
+                return message.reply(usage(this))
 
             trap = {
                 name: victim.username, //victim
@@ -38,13 +36,6 @@ module.exports = {
             }
         }
 
-        await agent.get('https://nekobot.xyz/api/imagegen?type=trap')
-            .query(trap)
-            .then(response => {
-                message.channel.send({ file: response.body.message })
-            })
-            .catch(error => {
-                message.channel.send(`${error}`)
-            })
+        neko('trap', trap, message);
     }
 }
