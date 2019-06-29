@@ -27,7 +27,7 @@ client.once('ready', () => {
     util.log(`${client.user.username} Online!`)
 })
 
-client.on('message', message => {
+client.on('message', async message => {
     if (!message.content.startsWith(prefix) || message.author.bot)
         return
 
@@ -95,7 +95,7 @@ client.on('message', message => {
 
     //Try to execute command
     try {
-        command.execute(message, args)
+        await command.execute(message, args)
     }
     catch (error) {
         console.error(error)

@@ -24,11 +24,6 @@ module.exports = {
         }
     },
 
-    //Sends a message to the channel
-    channelSend(message, content) {
-        message.channel.send(content)
-    },
-
     //Logs to console with chalk
     log(content, color = chalk.magenta) {
         console.log(color(content))

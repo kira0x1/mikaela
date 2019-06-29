@@ -21,12 +21,14 @@ var currentSong
 const { prefix } = require('../config.json');
 
 const flags = [
+    play = { name: 'play', aliases: ['play', 'p'] },
     pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] },
-    exit = { name: 'exit', aliases: ['stop', 'quit', 'lv', 'leave'] },
+    exit = { name: 'exit', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] },
     resume = { name: 'resume', aliases: ['resume', 'rs',] },
-    skip = { name: 'skip', aliases: ['sk', 'fs'] },
-    queueFlag = { name: 'queue', aliases: ['q', 'list'] },
-    current = { name: 'current', aliases: ['np'] }
+    skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] },
+    queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] },
+    current = { name: 'current', aliases: ['current', 'np'] },
+    remove = { name: 'remove', aliases: ['remove', 'r'] }
 ]
 
 let queue = []
@@ -40,59 +42,57 @@ class songInfo {
 
 module.exports = {
     name: 'music',
-    aliases: ['p', 'play', 'start', 'leave', 'lv', 'stop', 'quit', 'pause', 'exit', 'search', 'hold',
-        'resume', 'r', 'fs', 'skip', 'sk', 'np', 'playing', 'q', 'queue', 'list'
-    ],
+    aliases: [] + flags.map(f => f.aliases),
     guildOnly: true,
     usage: `[link | search] or [flag]`,
     cooldown: 3,
     description: `Plays music via links or youtube searches`,
 
-    execute(message, args) {
-
-        //For now hard coding channel id
-        // arg = args.shift()
+    async execute(message, args) {
         query = args.join(' ')
         arg = message.content.slice(prefix.length).split(/ +/).shift()
 
-        const vc = message.member.voiceChannel
+        const vc = await message.member.voiceChannel
 
         let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
         status = 'play'
 
-        if (flag) {
+        if (flag && flag.name !== 'play') {
             if (flag.name === 'exit') {
                 status = 'end'
-                stop()
+                await stop()
             }
             else if (flag.name === 'pause') {
-                pause()
+                await pause()
             }
             else if (flag.name === 'resume') {
-                resume()
+                await resume()
             }
             else if (flag.name === 'skip') {
                 status = 'skip'
-                playNext()
+                await playNext()
             }
             else if (flag.name === 'queue') {
-                showQueue()
+                await showQueue()
             }
             else if (flag.name === 'current') {
-                nowPlaying()
+                await nowPlaying()
+            }
+            else if (flag.name === 'remove') {
+                removeSong()
             }
             return
         }
 
-        if (!flag && !query)
-            return reply(usage(this))
+        if (!query)
+            return await reply(usage(this))
 
         if (!vc)
-            return reply('You\'re not in a vc')
+            return await reply('You\'re not in a vc')
 
 
         //Check if its a link
-        ytdl.getBasicInfo(query)
+        await ytdl.getBasicInfo(query)
             .then(song => addSong(song.video_url, song.title, song.length_seconds / 60))
             .catch(err => {
                 //If not link then search
@@ -100,61 +100,61 @@ module.exports = {
             })
 
         //Search Function
-        function findVideo(query) {
-            search(query, searchOptions).then(data => {
+        async function findVideo(query) {
+            await search(query, searchOptions).then(async data => {
                 song = data.results[0]
-                addSong(song.link, song.title)
-            }).catch( () => {
+                await addSong(song.link, song.title)
+            }).catch(() => {
                 reply(`**Couldnt find video:** *${query}*`)
             })
         }
 
         //Play Function
-        function play() {
+        async function play() {
             currentSong = queue[0]
             let url = currentSong.link
 
-            vc.join().then(connection => {
-                const stream = ytdl(url, { filter: 'audioonly' })
-                const dispatcher = connection.playStream(stream, streamOptions)
+            await vc.join().then(async connection => {
+                const stream = await ytdl(url, { filter: 'audioonly' })
+                const dispatcher = await connection.playStream(stream, streamOptions)
 
                 conn = dispatcher
-                dispatcher.on('end', reason => onSongFinished(reason))
+                await dispatcher.on('end', reason => onSongFinished(reason))
             })
         }
 
-        function resume() {
+        async function resume() {
             if (conn && currentSong) {
                 if (!conn.paused) return reply('Song is currently not paused')
 
                 reply('resuming!')
-                conn.resume()
+                await conn.resume()
             } else {
                 reply('No song to resume')
             }
         }
 
-        function onSongFinished(reason) {
+        async function onSongFinished(reason) {
             if (reason !== 'user' && reason !== undefined) {
-                playNext()
+                await playNext()
             }
         }
 
-        function playNext() {
-            let song = queue.shift()
+        async function playNext() {
+            let song = await queue.shift()
 
             if (queue.length === 0 || !song) {
                 stop()
                 return
             }
 
-            play()
+            await play()
         }
 
-        function addSong(link, title) {
-            queue.push(new songInfo(link, title))
+        async function addSong(link, title) {
+            await queue.push(new songInfo(link, title))
             reply(`Added song: **${title}** to queue`)
-            if (currentSong === undefined) play()
+            if (currentSong === undefined) await play()
         }
 
         function pause() {
@@ -173,35 +173,73 @@ module.exports = {
             vc.leave()
         }
 
-        function nowPlaying() {
+        async function removeSong() {
+            let songID = args[0]
+            if (songID === undefined || isNaN(songID)) {
+
+                let hasQ = await showQueue()
+                if (hasQ === false) return;
+                await reply('`Enter songs position: `');
+
+                const filter = m => isNaN(m.content) === false;
+                const collector = message.channel.createMessageCollector(filter, { time: 10000 });
+
+                await collector.on('collect', async  m => {
+                    collector.stop()
+
+                    if (m < 1 || m > queue.length)
+                        return reply('No song in that position!')
+
+                    if (m === 1) {
+                        return await playNext()
+                    }
+                    else {
+                        m--
+                        await queue.splice(m, 1)
+                    }
+                })
+            }
+        }
+
+        async function nowPlaying() {
             if (currentSong) {
                 embed = new discord.RichEmbed()
                     .setTitle('Currently Playing')
                     .addField(currentSong.title, currentSong.link)
 
-                reply('', { embed: embed })
+                await reply('', { embed: embed })
             } else {
-                reply(`No song is playing right now...`)
+                await reply(`No song is playing right now...`)
             }
         }
 
-        function showQueue() {
-            if (currentSong === undefined && (queue.length === 0 || queue === undefined)) {
-                return reply(`Queue empty...`)
+        async function showQueue() {
+            if (!hasQueue()) {
+                await send(`Queue empty...`)
+                return false
             }
 
             embed = new discord.RichEmbed()
                 .setTitle('Queue\nCurrently Playing: ' + currentSong.title)
 
             for (let i = 0; i < queue.length; i++) {
-                embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
+                await embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
             }
 
-            reply('', { embed: embed })
+            await send(embed)
+            return true
         }
 
-        function reply(content, options) {
-            message.reply(content, options)
+        function hasQueue() {
+            return !(queue.length === 0 || queue === undefined)
+        }
+
+        async function reply(content) {
+            await message.reply(content)
+        }
+
+        async function send(content) {
+            await message.channel.send(content)
         }
     }
 }
