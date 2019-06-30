@@ -24,10 +24,10 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
-    util.log(`${client.user.username} Online!`)
+    console.log(`${client.user.username} Online!`)
 })
 
-client.on('message', async message => {
+client.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot)
         return
 
@@ -95,7 +95,7 @@ client.on('message', async message => {
 
     //Try to execute command
     try {
-        await command.execute(message, args)
+        command.execute(message, args)
     }
     catch (error) {
         console.error(error)

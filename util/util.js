@@ -1,6 +1,5 @@
 const { prefix, flagPrefix, perms, users } = require('../config.json')
 const agent = require('superagent')
-const chalk = require('chalk')
 
 class flagConstruct {
     constructor(name, args) {
@@ -24,10 +23,6 @@ module.exports = {
         }
     },
 
-    //Logs to console with chalk
-    log(content, color = chalk.magenta) {
-        console.log(color(content))
-    },
 
     //Reply user with command usage
     usage(command) {
@@ -47,7 +42,7 @@ module.exports = {
         bannedUsers.forEach(user => {
             const userID = users[user]
             if (id === userID) {
-                this.log(`banned user[ ${user} ] tried to use command!`)
+                console.log(`banned user[ ${user} ] tried to use command!`)
                 return banned = true
             }
         })
@@ -69,19 +64,5 @@ module.exports = {
 
 
         return false
-    },
-
-    neko(type, params, message) {
-        let url = 'https://nekobot.xyz/api/imagegen?type=' + type
-
-        agent.get(url)
-            .query(params)
-            .then(response => {
-                message.channel.send({ file: response.body.message })
-            })
-            .catch(error => {
-                console.log(error)
-                // message.channel.send(`${error}`)
-            })
     }
 }

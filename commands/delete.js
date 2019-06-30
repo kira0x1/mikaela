@@ -28,16 +28,16 @@ module.exports = {
             return message.reply('`amount must be between 1 - 50`')
         }
 
-        amount ++
+        amount++
 
         message.channel.fetchMessages({ limit: amount })
             .then(messages => {
                 let result = messages.filter(m => m.author.id === message.client.user.id)
-                util.log(`Messages found: ${result.size}`)
-                 message.channel.bulkDelete(result).then(dlt => {
+                console.log(`Messages found: ${result.size}`)
+                message.channel.bulkDelete(result).then(dlt => {
                     console.log(`Deleted ${dlt.size}`)
                 }).catch(err => {
-                console.error(`Error: ${err}`)
+                    console.error(`Error: ${err}`)
                 })
             }).catch(err => {
                 console.error(`Error: ${err}`)
