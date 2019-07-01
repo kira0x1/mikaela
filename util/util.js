@@ -1,5 +1,4 @@
 const { prefix, flagPrefix, perms, users } = require('../config.json')
-const agent = require('superagent')
 
 class flagConstruct {
     constructor(name, args) {
@@ -23,9 +22,9 @@ module.exports = {
         }
     },
 
-
     //Reply user with command usage
     usage(command) {
+        console.log(`usage called for: ${command.name}`)
         let reply = `Arguments missing for command: ${command.name}`
         if (command.usage) {
             reply += `\nUsage: \`${prefix}${command.name} ${command.usage}\``
@@ -35,7 +34,6 @@ module.exports = {
 
     //Check if user has perms 
     perms(roles, id) {
-
         let banned = false
         //check if banned
         const bannedUsers = perms['banned']
@@ -61,8 +59,6 @@ module.exports = {
                 }
             }
         }
-
-
         return false
     }
 }

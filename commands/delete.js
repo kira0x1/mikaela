@@ -6,7 +6,7 @@ module.exports = {
     guildOnly: true,
     perms: ['admin'],
 
-    async execute(message, args) {
+    execute(message, args) {
         let amount = args.shift()
 
         if (amount === undefined) {
@@ -14,7 +14,7 @@ module.exports = {
 
             if (lastMessage) {
                 console.log(`found last message ${lastMessage}`)
-                await lastMessage.delete()
+                lastMessage.delete()
             }
             else console.log(`couldnt find message`)
             return

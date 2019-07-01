@@ -19,7 +19,8 @@ class nekoFunc {
 
     callAPI(message, args) { }
 
-    static neko(type, params, message) {
+    neko(type, params, message) {
+        console.log('calling api for: ' + type)
         let url = 'https://nekobot.xyz/api/imagegen?type=' + type
 
         agent.get(url)
@@ -41,14 +42,14 @@ const nekoCommands = [
     trash = new nekoFunc('trash', 'Trash waifu', '<mention-user or image-url>', true, true),
     magik = new nekoFunc('magik', 'Magikfy stuff :<', ['magic', 'm'], '<image> <intensity>', true, true),
     kanna = new nekoFunc('kanna', 'kannafy a message :3', ['kn'], '<text>', true, true),
-    kanna = new nekoFunc('lolify', 'lolify someone uwu', ['loli'], '<user>', true, true)
+    lolify = new nekoFunc('lolify', 'lolify someone uwu', ['loli'], '<user>', true, true)
 ]
 
 
 const nekoFunctions = [
     trump = function (message, args) {
         const params = { text: args.join(' ') }
-        nekoFunc.neko('trumptweet', params, message)
+        this.neko('trumptweet', params, message)
     },
     win = function (message, args) {
         const mentions = message.mentions.users
@@ -58,12 +59,13 @@ const nekoFunctions = [
                 user1: mentions.first().avatarURL,
                 user2: mentions.last().avatarURL
             }
-            return nekoFunc.neko('whowouldwin', params, message)
+            return this.neko('whowouldwin', params, message)
         }
         return message.reply(usage(this))
     },
     trap = function (message, args) {
         let isGoboblin = false
+        const goboblin = 'https://tinyurl.com/goboblin'
 
         let trap = {
             name: 'xxxIRANbOYxxx',
@@ -84,7 +86,7 @@ const nekoFunctions = [
                 image: victim.avatarURL //Victims Avatar URL
             }
         }
-        nekoFunc.neko('trap', trap, message);
+        this.neko('trap', trap, message);
     },
     trash = function (message, args) {
         let waifuImage = args[0]
@@ -94,7 +96,7 @@ const nekoFunctions = [
         let query = {
             url: waifuImage
         }
-        nekoFunc.neko('trash', query, message);
+        this.neko('trash', query, message);
     },
     magik = function (message, args) {
         let img = args[0]
@@ -113,13 +115,13 @@ const nekoFunctions = [
             img = user1.avatarURL
         }
         let params = { image: img, intensity: intensity }
-        nekoFunc.neko('magik', params, message)
+        this.neko('magik', params, message)
     },
     kanna = function (message, args) {
         const query = {
             text: args.join(' ')
         }
-        nekoFunc.neko('kannagen', query, message);
+        this.neko('kannagen', query, message);
     },
     lolify = function (message, args) {
         let img = args[0]
@@ -128,7 +130,7 @@ const nekoFunctions = [
             img = user1.avatarURL
         }
         let params = { url: img }
-        nekoFunc.neko('lolice', params, message)
+        this.neko('lolice', params, message)
     }
 ]
 
@@ -139,7 +141,7 @@ nekoCommands.forEach(cmd => {
 
 module.exports = {
     name: 'neko',
-    description: 'commands from the nekoFunc.neko api',
+    description: 'commands from the neko api',
     aliases: nekoCommands.map(cmd => cmd.name),
     usage: `usage: ${nekoCommands.map(fnc => '\n'.concat('\n', fnc.name, ': ', fnc.usage))}`,
     guildOnly: true,
@@ -150,7 +152,8 @@ module.exports = {
 
         nekoCommands.find(cmd => {
             if (cmd.name === input) {
-                return cmd.callAPI(message, args);
+                cmd.callAPI(message, args);
+                return
             }
         })
     }

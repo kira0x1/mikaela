@@ -94,10 +94,8 @@ module.exports = {
         //Check if its a link
         ytdl.getBasicInfo(query)
             .then(song => addSong(song.video_url, song.title, song.length_seconds / 60))
-            .catch(err => {
-                //If not link then search
-                findVideo(query)
-            })
+            .catch(() => findVideo(query)) //If not link then search
+
 
         //Search Function
         function findVideo(query) {
@@ -144,17 +142,17 @@ module.exports = {
             let song = queue.shift()
 
             if (queue.length === 0 || !song) {
-                stop()
-                return
+                return stop()
             }
-
             play()
         }
 
         function addSong(link, title) {
             queue.push(new songInfo(link, title))
             reply(`Added song: **${title}** to queue`)
-            if (currentSong === undefined) play()
+
+            if (currentSong === undefined)
+                play()
         }
 
         function pause() {
