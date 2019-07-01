@@ -9,22 +9,41 @@ class flagConstruct {
 
 module.exports = {
 
-    checkForFlags(flags, args) {
+    getFlags(flags, args) {
         if (flags) {
-            const flag = args.shift()
-            if (!flag) return
-            if (flag.startsWith(flagPrefix))
-                return flags.find(f => {
-                    if (f === flag.slice(flagPrefix.length)) {
-                        return new flagConstruct(f, args)
-                    }
+            const flagsFound = [];
+
+            for (let i = 0; i < args.length; i++) {
+                const ag = args[i];
+
+                const flagged = []
+                if (ag.startsWith(flagPrefix)) {
+                    flagged.push(ag);
+                }
+
+                flagged.map(f => {
+                    flags.map(fg => {
+                        let flagGiven = f.slice(flagPrefix.length)
+                        if (fg.name === flagGiven)
+                            return flagsFound.push(new flagConstruct(fg.name, args[i + 1]));
+                        else {
+                            fg.aliases.map(als => {
+                                if (als === flagGiven) {
+                                    let arg = args[i + 1]
+                                    flagsFound.push(new flagConstruct(fg.name, arg));
+                                    return
+                                }
+                            })
+                        }
+                    })
                 })
+            }
+            return flagsFound;
         }
     },
 
     //Reply user with command usage
     usage(command) {
-        console.log(`usage called for: ${command.name}`)
         let reply = `Arguments missing for command: ${command.name}`
         if (command.usage) {
             reply += `\nUsage: \`${prefix}${command.name} ${command.usage}\``

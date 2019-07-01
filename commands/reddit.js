@@ -1,65 +1,63 @@
-const randomPuppy = require('random-puppy');
-const util = require('../util/util')
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const snekfetch = require("snekfetch");
+const { getFlags } = require('../util/util')
+const ct = require('common-tags')
 
-const subreddits = [
-    yaoi = { name: "yaoi", sub: "yaoi", aliases: [] },
-    rule34 = { name: "rule34", sub: "rule34", aliases: ['r34'] },
-    furry = { name: "furry", sub: "yiffgif", aliases: ['furry', 'yiff'] },
+const flags = [
+    name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] },
+    time = { name: 'time', aliases: ['year', 'month', 'week', 'day', 'all'] },
+    amount = { name: 'amount', aliases: ['n'] }
 ]
 
 module.exports = {
     name: 'reddit',
-    usage: '<subreddit>',
-    aliases: [] + subreddits.map(rd => rd.name) + subreddits.map(rd => rd.aliases),
-    description: 'post pictures from a subreddit',
-    flags: ['n'],
+    description: 'Posts from subreddits',
+    aliases: ['rd'],
+    flags: flags,
+    usage: `\`<subreddit> -sort -time -amount\`\n\n**Flags:** ${flags.map(f => `\n\t\t**` + f.name + '**: ' + f.aliases)}\n`,
     guildOnly: true,
-    args: false,
+    args: true,
 
-    execute(message, args) {
-        if (!message.channel.nsfw) return message.channel.send("This isn't channel isnt NSFW!");
-        let amount = 1
-        var sub = subreddits.find(f => f.name === args[0]) || subreddits.find(f => f.aliases && f.aliases.includes(args[0]))
+    async execute(message, args) {
+        try {
+            const subreddit = args[0];
+            let flagsFound = getFlags(flags, args);
 
-        if (sub) {
-            console.log(`has args: ${args[0]}`)
-            sub = sub.name
-        }
-        else {
-            arg = message.content.slice(1).split(/ +/).shift()
-            sub = subreddits.find(f => f.name === arg) || subreddits.find(f => f.aliases && f.aliases.includes(arg))
+            let sort = flagsFound.find(fg => fg.name === 'sort')
+            let time = flagsFound.find(fg => fg.name === 'time');
+            let amount = flagsFound.find(fg => fg.name === 'amount')
 
-            if (sub)
-                sub = sub.name
-            else
-                sub = subreddits[Math.round(Math.random() * (subreddits.length - 1))];
-        }
+            sort = sort === undefined ? 'top' : sort.args
+            time = time === undefined ? 'all' : time.args
+            amount = amount === undefined ? 1 : amount.args
 
-        const flag = util.checkForFlags(this.flags, args)
-
-        if (flag) {
-            if (flag === 'n') {
-                amount = args
-                if (amount < 1 || amount > 10) {
-                    return message.reply('Amount must be between 1 - 10')
-                }
+            if (amount < 1 || amount > 5) {
+                return message.reply('\`amount must be between 1-5\`')
             }
-        }
 
-        return getSub(sub);
-
-
-        function getSub(sub) {
+            const { body } = await snekfetch
+                .get(`https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`)
+                .query({ limit: 800 });
+            const allowed = message.channel.nsfw
+                ? body.data.children
+                : body.data.children.filter(post => !post.data.over_18);
+            if (!allowed.length)
+                return message.channel.send(
+                    "Cannot post NSFW content in an NSFW channel"
+                );
             for (let i = 0; i < amount; i++) {
-                randomPuppy(sub)
-                    .then(url => {
-                        const embed = new Discord.RichEmbed()
-                            .setColor(0xd60b4f)
-                            .setImage(url)
-                        message.channel.send({ embed });
-                    })
+                const randomnumber = Math.floor(Math.random() * allowed.length);
+                const embed = new Discord.RichEmbed()
+                    .setColor(0x00a2e8)
+                    .setTitle(allowed[randomnumber].data.title)
+                    .setImage(allowed[randomnumber].data.url)
+                    .addField('\nSort:'
+                        , `${sort} / ${time}`)
+                    .setFooter(`From r/${subreddit}`);
+                message.channel.send(embed);
             }
+        } catch (err) {
+            return console.log(err);
         }
     }
 }
