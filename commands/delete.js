@@ -1,46 +1,62 @@
-const util = require('../util/util')
+const { usage, getFlags } = require('../util/util')
+
+const flags = [
+    me = {
+        name: 'me',
+        aliases: ['m']
+    },
+    force = {
+        name: 'force',
+        aliases: ['f']
+    }
+]
 
 module.exports = {
     name: 'delete',
     description: 'Delete Mikaelas last message(s)',
     guildOnly: true,
     perms: ['admin'],
+    flags: flags,
 
     execute(message, args) {
-        let amount = args.shift()
+        let flagsFound = getFlags(this.flags, args);
+
+        let me = flagsFound.find(fg => fg.name === 'me');
+        let force = flagsFound.find(fg => fg.name === 'force')
+
+        let amount = me === undefined ? args.shift() : me.args;
 
         if (amount === undefined) {
-            const lastMessage = message.client.user.lastMessage
+            const lastMessage = message.client.user.lastMessage;
 
             if (lastMessage) {
-                console.log(`found last message ${lastMessage}`)
-                lastMessage.delete()
+                console.log(`found last message ${lastMessage}`);
+                lastMessage.delete();
             }
-            else console.log(`couldnt find message`)
-            return
         }
 
-        if (isNaN(amount)) {
-            return message.reply(util.usage(this))
+        if (isNaN(amount)) return;
+
+        if (!force) {
+            if (amount < 1 || amount > 25) {
+                return message.reply('`amount must be between 1 - 25`');
+            }
         }
 
-        if (amount < 1 || amount > 50) {
-            return message.reply('`amount must be between 1 - 50`')
-        }
-
-        amount++
+        amount++;
 
         message.channel.fetchMessages({ limit: amount })
             .then(messages => {
-                let result = messages.filter(m => m.author.id === message.client.user.id)
-                console.log(`Messages found: ${result.size}`)
+                let id = me === undefined ? message.client.user.id : message.author.id;
+                let result = messages.filter(m => m.author.id === id)
+                console.log(`Messages found: ${result.size}`);
                 message.channel.bulkDelete(result).then(dlt => {
-                    console.log(`Deleted ${dlt.size}`)
+                    console.log(`Deleted ${dlt.size}`);
                 }).catch(err => {
-                    console.error(`Error: ${err}`)
+                    console.error(`Error: ${err}`);
                 })
             }).catch(err => {
-                console.error(`Error: ${err}`)
+                console.error(`Error: ${err}`);
             })
 
     }

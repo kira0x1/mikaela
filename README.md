@@ -3,9 +3,9 @@
 <br>
 
 # Misc
-- [ ] Add flag `me` to `delete.js`, to delete my own messages
 - [ ] Pick image via Reactions
-- [ ] Set bot activity
+- [x] Set bot activity
+- [x] Add flag `me` to `delete.js`, to delete my own messages
 - [x] Post video command
 - [x] Subcommands / flags
 - [x] Postpic in specific domains
@@ -16,7 +16,6 @@
 
 # Music.js
   
-- [ ] Migrate to ytdl-core-discord from ytdl-core
 - [ ] Rewind command
 - [ ] Now playing - Show Current Time, Plus info
 - [x] Remove Song Command - Remove song from queue
