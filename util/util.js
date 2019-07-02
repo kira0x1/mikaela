@@ -49,10 +49,10 @@ module.exports = {
 
     //Reply user with command usage
     usage(command) {
-        let reply = `Arguments missing for command: ${command.name}`
         if (command.usage) {
             reply += `\nUsage: \`${prefix}${command.name}\`${command.usage}`
         }
+        reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
         return reply
     },
 

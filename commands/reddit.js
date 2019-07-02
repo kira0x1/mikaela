@@ -2,6 +2,9 @@ const Discord = require("discord.js");
 const snekfetch = require("snekfetch");
 const { getFlags } = require('../util/util')
 
+const maxpost = 7
+const limit = 50
+
 const flags = [
     name = {
         name: 'sort',
@@ -22,8 +25,7 @@ module.exports = {
     description: 'Posts from subreddits',
     aliases: ['rd'],
     flags: flags,
-    usage: ` \`<subreddit>\` \`-sort\` \`-time\` \`-amount\`
-**Flags:** ${flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`,
+    usage: ` \`<subreddit>\` \`-sort\` \`-time\` \`-amount\``,
     guildOnly: true,
     args: true,
 
@@ -40,8 +42,8 @@ module.exports = {
             time = time === undefined ? 'all' : time.args
             amount = amount === undefined ? 1 : amount.args
 
-            if (amount < 1 || amount > 5) {
-                return message.reply('\`amount must be between 1-5\`')
+            if (amount < 1 || amount > maxpost) {
+                return message.reply(`\`amount must be between 1-${maxpost}\``)
             }
 
             const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`
@@ -51,7 +53,7 @@ module.exports = {
             } = await snekfetch
                 .get(url)
                 .query({
-                    limit: 800
+                    limit: limit
                 });
             const allowed = message.channel.nsfw ?
                 body.data.children : body.data.children.filter(post => !post.data.over_18);
