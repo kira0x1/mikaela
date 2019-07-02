@@ -1,4 +1,9 @@
-const { prefix, flagPrefix, perms, users } = require('../config.json')
+const {
+    prefix,
+    flagPrefix,
+    perms,
+    users
+} = require('../config.json')
 
 class flagConstruct {
     constructor(name, args) {
@@ -46,7 +51,7 @@ module.exports = {
     usage(command) {
         let reply = `Arguments missing for command: ${command.name}`
         if (command.usage) {
-            reply += `\nUsage: \`${prefix}${command.name} ${command.usage}\``
+            reply += `\nUsage: \`${prefix}${command.name}\`${command.usage}`
         }
         return reply
     },

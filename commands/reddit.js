@@ -1,12 +1,23 @@
 const Discord = require("discord.js");
 const snekfetch = require("snekfetch");
-const { getFlags } = require('../util/util')
+const {
+    getFlags
+} = require('../util/util')
 const ct = require('common-tags')
 
 const flags = [
-    name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] },
-    time = { name: 'time', aliases: ['year', 'month', 'week', 'day', 'all'] },
-    amount = { name: 'amount', aliases: ['n'] }
+    name = {
+        name: 'sort',
+        aliases: ['top', 'hot', 'new', 'controversial', 'rising']
+    },
+    time = {
+        name: 'time',
+        aliases: ['year', 'month', 'week', 'day', 'all']
+    },
+    amount = {
+        name: 'amount',
+        aliases: ['n']
+    }
 ]
 
 module.exports = {
@@ -14,7 +25,8 @@ module.exports = {
     description: 'Posts from subreddits',
     aliases: ['rd'],
     flags: flags,
-    usage: `\`<subreddit> -sort -time -amount\`\n\n**Flags:** ${flags.map(f => `\n\t\t**` + f.name + '**: ' + f.aliases)}\n`,
+    usage: ` \`<subreddit>\` \`-sort\` \`-time\` \`-amount\`
+**Flags:** ${flags.map(f => '\n**'.concat('\t',f.name,':** ', f.aliases.map(fa => '`'.concat(fa,'`'))))}`,
     guildOnly: true,
     args: true,
 
@@ -35,12 +47,16 @@ module.exports = {
                 return message.reply('\`amount must be between 1-5\`')
             }
 
-            const { body } = await snekfetch
-                .get(`https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`)
-                .query({ limit: 800 });
-            const allowed = message.channel.nsfw
-                ? body.data.children
-                : body.data.children.filter(post => !post.data.over_18);
+            const {
+                body
+            } = await snekfetch
+                .get(`
+    https: //www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`)
+                .query({
+                    limit: 800
+                });
+            const allowed = message.channel.nsfw ?
+                body.data.children : body.data.children.filter(post => !post.data.over_18);
             if (!allowed.length)
                 return message.channel.send(
                     "Cannot post NSFW content in an NSFW channel"
@@ -51,8 +67,7 @@ module.exports = {
                     .setColor(0x00a2e8)
                     .setTitle(allowed[randomnumber].data.title)
                     .setImage(allowed[randomnumber].data.url)
-                    .addField('\nSort:'
-                        , `${sort} / ${time}`)
+                    .addField('\nSort:', `${sort} / ${time}`)
                     .setFooter(`From r/${subreddit}`);
                 message.channel.send(embed);
             }

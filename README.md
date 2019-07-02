@@ -31,7 +31,7 @@
 <br>
 
 # Reddit.js
-- [ ] Reddit usage needs to be fixed
+- [x] Reddit usage needs to be fixed
 - [x] `Reddit <subreddit>` command
 - [x] updte usage
 - [x] fix aliases
