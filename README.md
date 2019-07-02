@@ -15,8 +15,9 @@
 
 # Music.js
   
-- [ ] Now playing - Show Current Time, Plus info
+- [ ] Migrate to ytdl-core-discord from ytdl-core
 - [ ] Rewind command
+- [ ] Now playing - Show Current Time, Plus info
 - [x] Remove Song Command - Remove song from queue
 - [x] Now playing - Embed message instead of normal text
 - [x] Force Skip will stop instead of playing the next song
@@ -30,7 +31,7 @@
 <br>
 
 # Reddit.js
-
+- [ ] Reddit usage needs to be fixed
 - [x] `Reddit <subreddit>` command
 - [x] updte usage
 - [x] fix aliases

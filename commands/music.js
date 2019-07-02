@@ -1,34 +1,33 @@
-const discord = require("discord.js");
-const search = require("youtube-search");
-const { usage } = require("../util/util");
+const discord = require('discord.js');
+const search = require('youtube-search');
+const ytdl = require('ytdl-core');
+const { usage } = require('../util/util');
+const { prefix } = require('../config.json');
 
 const searchOptions = {
-  part: ["snippet", "contentDetails"],
-  chart: "mostPopular",
+  part: ['snippet', 'contentDetails'],
+  chart: 'mostPopular',
   maxResults: 1,
-  key: "AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo"
+  key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo'
 };
 
 const streamOptions = {
   volume: 0.3,
-  passes: 3
+  passes: 2
 };
 
-const ytdl = require("ytdl-core");
 var conn;
 var currentSong;
 
-const { prefix } = require("../config.json");
-
 const flags = [
-  (play = { name: "play", aliases: ["play", "p"] }),
-  (pause = { name: "pause", aliases: ["pause", "hold", "ps"] }),
-  (exit = { name: "exit", aliases: ["stop", "exit", "quit", "lv", "leave"] }),
-  (resume = { name: "resume", aliases: ["resume", "rs"] }),
-  (skip = { name: "skip", aliases: ["skip", "sk", "fs"] }),
-  (queueFlag = { name: "queue", aliases: ["queue", "q", "list"] }),
-  (current = { name: "current", aliases: ["current", "np"] }),
-  (remove = { name: "remove", aliases: ["remove", "r"] })
+  (play = { name: 'play', aliases: ['play', 'p'] }),
+  (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
+  (exit = { name: 'exit', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
+  (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
+  (skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] }),
+  (queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
+  (current = { name: 'current', aliases: ['current', 'np'] }),
+  (remove = { name: 'remove', aliases: ['remove', 'r'] })
 ];
 
 let queue = [];
@@ -41,7 +40,7 @@ class songInfo {
 }
 
 module.exports = {
-  name: "music",
+  name: 'music',
   aliases: [] + flags.map(f => f.aliases),
   guildOnly: true,
   usage: `[link | search] or [flag]`,
@@ -49,8 +48,8 @@ module.exports = {
   description: `Plays music via links or youtube searches`,
 
   execute(message, args) {
-    query = args.join(" ");
-    arg = message.content
+    const query = args.join(' ');
+    const arg = message.content
       .slice(prefix.length)
       .split(/ +/)
       .shift();
@@ -60,36 +59,34 @@ module.exports = {
     let flag =
       flags.find(f => f.name === arg) ||
       flags.find(f => f.aliases && f.aliases.includes(arg));
-    status = "play";
+    status = 'play';
 
-    if (flag && flag.name !== "play") {
-      if (flag.name === "exit") {
-        status = "end";
+    if (flag && flag.name !== 'play') {
+      if (flag.name === 'exit') {
+        status = 'end';
         stop();
-      } else if (flag.name === "pause") {
+      } else if (flag.name === 'pause') {
         pause();
-      } else if (flag.name === "resume") {
+      } else if (flag.name === 'resume') {
         resume();
-      } else if (flag.name === "skip") {
-        status = "skip";
+      } else if (flag.name === 'skip') {
+        status = 'skip';
         playNext();
-      } else if (flag.name === "queue") {
+      } else if (flag.name === 'queue') {
         showQueue();
-      } else if (flag.name === "current") {
+      } else if (flag.name === 'current') {
         nowPlaying();
-      } else if (flag.name === "remove") {
+      } else if (flag.name === 'remove') {
         removeSong();
       }
       return;
     }
 
     if (!query) return reply(usage(this));
-
-    if (!vc) return reply("You're not in a vc");
+    if (!vc) return reply('You\'re not in a vc');
 
     //Check if its a link
-    ytdl
-      .getBasicInfo(query)
+    ytdl.getBasicInfo(query)
       .then(song =>
         addSong(song.video_url, song.title, song.length_seconds / 60)
       )
@@ -113,27 +110,27 @@ module.exports = {
       let url = currentSong.link;
 
       vc.join().then(connection => {
-        const stream = ytdl(url, { filter: "audioonly" });
+        const stream = ytdl(url, { filter: 'audioonly' });
         const dispatcher = connection.playStream(stream, streamOptions);
 
         conn = dispatcher;
-        dispatcher.on("end", reason => onSongFinished(reason));
+        dispatcher.on('end', reason => onSongFinished(reason));
       });
     }
 
     function resume() {
       if (conn && currentSong) {
-        if (!conn.paused) return reply("Song is currently not paused");
+        if (!conn.paused) return reply('Song is currently not paused');
 
-        reply("resuming!");
+        reply('resuming!');
         conn.resume();
       } else {
-        reply("No song to resume");
+        reply('No song to resume');
       }
     }
 
     function onSongFinished(reason) {
-      if (reason !== "user" && reason !== undefined) {
+      if (reason !== 'user' && reason !== undefined) {
         playNext();
       }
     }
@@ -175,18 +172,18 @@ module.exports = {
       if (songID === undefined || isNaN(songID)) {
         let hasQ = showQueue();
         if (hasQ === false) return;
-        reply("`Enter songs position: `");
+        reply('`Enter songs position: `');
 
         const filter = m => isNaN(m.content) === false;
         const collector = message.channel.createMessageCollector(filter, {
           time: 10000
         });
 
-        collector.on("collect", m => {
+        collector.on('collect', m => {
           collector.stop();
 
           if (m < 1 || m > queue.length)
-            return reply("No song in that position!");
+            return reply('No song in that position!');
 
           if (m === 1) {
             return playNext();
@@ -200,11 +197,11 @@ module.exports = {
 
     function nowPlaying() {
       if (currentSong) {
-        embed = new discord.RichEmbed()
-          .setTitle("Currently Playing")
+        let embed = new discord.RichEmbed()
+          .setTitle('Currently Playing')
           .addField(currentSong.title, currentSong.link);
 
-        reply("", { embed: embed });
+        reply('', { embed: embed });
       } else {
         reply(`No song is playing right now...`);
       }
@@ -216,12 +213,12 @@ module.exports = {
         return false;
       }
 
-      embed = new discord.RichEmbed().setTitle(
-        "Queue\nCurrently Playing: " + currentSong.title
+      let embed = new discord.RichEmbed().setTitle(
+        'Queue\nCurrently Playing: ' + currentSong.title
       );
 
       for (let i = 0; i < queue.length; i++) {
-        embed.addField(i + 1, queue[i].title + "\n" + queue[i].link);
+        embed.addField(i + 1, queue[i].title + '\n' + queue[i].link);
       }
 
       send(embed);

@@ -12,7 +12,6 @@ module.exports = {
     cooldown: 15,
 
     execute(message, args) {
-
         const data = []
         const embed = new discord.RichEmbed()
         const { commands } = message.client
