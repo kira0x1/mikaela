@@ -15,8 +15,6 @@
 
 # Music.js
   
-  ## To-Do
-
 - [ ] Now playing - Show Current Time, Plus info
 - [ ] Rewind command
 - [x] Remove Song Command - Remove song from queue
@@ -24,9 +22,9 @@
 - [x] Force Skip will stop instead of playing the next song
 - [x] Song queue
 - [x] Now Playing Command
-  
-## bugs
-- [ ] skip song while paused
+    <br>
+    ## bugs
+  - [ ] skip song while paused
 
 
 <br>
