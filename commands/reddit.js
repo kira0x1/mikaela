@@ -1,9 +1,6 @@
 const Discord = require("discord.js");
 const snekfetch = require("snekfetch");
-const {
-    getFlags
-} = require('../util/util')
-const ct = require('common-tags')
+const { getFlags } = require('../util/util')
 
 const flags = [
     name = {
@@ -26,7 +23,7 @@ module.exports = {
     aliases: ['rd'],
     flags: flags,
     usage: ` \`<subreddit>\` \`-sort\` \`-time\` \`-amount\`
-**Flags:** ${flags.map(f => '\n**'.concat('\t',f.name,':** ', f.aliases.map(fa => '`'.concat(fa,'`'))))}`,
+**Flags:** ${flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`,
     guildOnly: true,
     args: true,
 
@@ -47,11 +44,12 @@ module.exports = {
                 return message.reply('\`amount must be between 1-5\`')
             }
 
+            const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`
+
             const {
                 body
             } = await snekfetch
-                .get(`
-    https: //www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}`)
+                .get(url)
                 .query({
                     limit: 800
                 });
@@ -67,7 +65,8 @@ module.exports = {
                     .setColor(0x00a2e8)
                     .setTitle(allowed[randomnumber].data.title)
                     .setImage(allowed[randomnumber].data.url)
-                    .addField('\nSort:', `${sort} / ${time}`)
+                    .addField('\nSort:', `
+                    ${sort}/${time}`)
                     .setFooter(`From r/${subreddit}`);
                 message.channel.send(embed);
             }

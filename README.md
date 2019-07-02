@@ -3,6 +3,7 @@
 <br>
 
 # Misc
+- [ ] Add flag `me` to `delete.js`, to delete my own messages
 - [ ] Pick image via Reactions
 - [ ] Set bot activity
 - [x] Post video command
