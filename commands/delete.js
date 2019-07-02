@@ -17,6 +17,7 @@ module.exports = {
     guildOnly: true,
     perms: ['admin'],
     flags: flags,
+    aliases: ['dl'],
 
     execute(message, args) {
         let flagsFound = getFlags(this.flags, args);

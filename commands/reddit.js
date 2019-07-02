@@ -2,8 +2,8 @@ const Discord = require("discord.js");
 const snekfetch = require("snekfetch");
 const { getFlags } = require('../util/util')
 
-const maxpost = 7
-const limit = 50
+const maxpost = 10
+const limit = 2500
 
 const flags = [
     name = {

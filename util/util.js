@@ -13,7 +13,6 @@ class flagConstruct {
 }
 
 module.exports = {
-
     getFlags(flags, args) {
         if (flags) {
             const flagsFound = [];
@@ -49,10 +48,13 @@ module.exports = {
 
     //Reply user with command usage
     usage(command) {
-        if (command.usage) {
-            reply += `\nUsage: \`${prefix}${command.name}\`${command.usage}`
-        }
-        reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
+        let reply = ''
+        if (command.usage)
+            reply += `\`${prefix}${command.name}\`${command.usage}\n`
+
+        if (command.flags)
+            reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
+
         return reply
     },
 

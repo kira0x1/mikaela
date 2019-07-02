@@ -1,7 +1,7 @@
 const discord = require('discord.js')
 const { prefix } = require('../config.json')
 const sendDM = false
-const util = require('../util/util')
+const { perms, usage } = require('../util/util')
 
 module.exports = {
     name: 'help',
@@ -28,7 +28,7 @@ module.exports = {
                 .setFooter(data[2])
 
             commands.map(command => {
-                if (util.perms(command.perms, message.author.id) && command !== undefined) {
+                if (perms(command.perms, message.author.id) && command !== undefined) {
                     embed.addField(command.name, command.description)
                 }
             })
@@ -63,12 +63,21 @@ module.exports = {
             return message.channel.send(`command not found: ${name}`)
         }
 
-        data.push(`**Name:** ${command.name}`)
-        if (command.aliases) data.push(`**Aliases:** ${command.aliases}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        const embedSpecific = new discord.RichEmbed()
+            .setTitle(`Command: ${command.name}`)
+            .setDescription(`\`Description: ${command.description}\``)
+            .addField('Aliases', `\`${command.aliases || 'None'}\``)
+            .addField('Usage', usage(command))
+            .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
 
-        message.channel.send(data, { split: true })
+        message.channel.send({ embed: embedSpecific })
+        // data.push(`**Name:** ${command.name}`)
+        // if (command.aliases) data.push(`**Aliases:** ${command.aliases}`);
+        // if (command.description) data.push(`**Description:** ${command.description}`);
+        // data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        // if (command.usage) data.push(usage(command));
+        // `**Usage:** ${prefix}${command.name} ${command.usage}`);
+
+        // message.channel.send(data, { split: true })
     }
 }

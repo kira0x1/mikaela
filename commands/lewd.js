@@ -1,5 +1,9 @@
 const agent = require('superagent')
-const util = require('../util/util')
+const { getFlags } = require('../util/util')
+
+const flags = [
+    amount = { name: 'amount', aliases: ['n'] }
+]
 
 module.exports = {
     name: 'lewd',
@@ -9,23 +13,21 @@ module.exports = {
             'hneko', 'hkitsune', 'anal',
             'gonewild', 'ass', 'pussy', 'thigh', 'hthigh'],
     cooldown: 2,
-    flags: ['n'],
+    flags: flags,
 
 
     execute(message, args) {
-        let amount = 1
         let search = 'hentai'
 
+        const flag = getFlags(flags, args)
         const al = this.aliases.find(a => message.content.startsWith('.' + a))
-        const flag = util.checkForFlags(this.flags, args)
 
-        if (flag) {
-            if (flag === 'n') {
+        let amount = flag.find(f => f.name === 'amount')
+        amount = amount === undefined ? 1 : amount.args
 
-                amount = args
-                if (amount < 1 || amount > 10) {
-                    return message.reply('Amount must be between 1 - 10')
-                }
+        if (amount) {
+            if (amount < 1 || amount > 10) {
+                return message.reply('Amount must be between 1 - 10')
             }
         }
 
