@@ -13,7 +13,7 @@ module.exports = {
 
     execute(message, args) {
         const data = []
-        const embed = new discord.RichEmbed()
+        const embed = new discord.RichEmbed().setColor(0xc71459)
         const { commands } = message.client
 
         //Send all commands if no arguments given
@@ -65,6 +65,7 @@ module.exports = {
 
         const embedSpecific = new discord.RichEmbed()
             .setTitle(`Command: ${command.name}`)
+            .setColor(0xc71459)
             .setDescription(`\`Description: ${command.description}\``)
             .addField('Aliases', `\`${command.aliases || 'None'}\``)
             .addField('Usage', usage(command))

@@ -64,7 +64,7 @@ module.exports = {
             for (let i = 0; i < amount; i++) {
                 const randomnumber = Math.floor(Math.random() * allowed.length);
                 const embed = new Discord.RichEmbed()
-                    .setColor(0x00a2e8)
+                    .setColor(0xc71459)
                     .setTitle(allowed[randomnumber].data.title)
                     .setImage(allowed[randomnumber].data.url)
                     .addField('\nSort:', `

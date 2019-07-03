@@ -12,7 +12,7 @@ const searchOptions = {
 };
 
 const streamOptions = {
-  volume: 0.3,
+  volume: 0.4,
   passes: 2
 };
 
@@ -159,12 +159,8 @@ module.exports = {
     }
 
     function stop() {
-      if (!conn) return;
-
-      conn.end();
-      currentSong = undefined;
-      queue = [];
       vc.leave();
+      queue = [];
     }
 
     function removeSong() {
@@ -199,7 +195,8 @@ module.exports = {
       if (currentSong) {
         let embed = new discord.RichEmbed()
           .setTitle('Currently Playing')
-          .addField(currentSong.title, currentSong.link);
+          .addField(currentSong.title, currentSong.link)
+          .setColor(0xc71459)
 
         reply('', { embed: embed });
       } else {
@@ -215,7 +212,7 @@ module.exports = {
 
       let embed = new discord.RichEmbed().setTitle(
         'Queue\nCurrently Playing: ' + currentSong.title
-      );
+      ).setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
         embed.addField(i + 1, queue[i].title + '\n' + queue[i].link);

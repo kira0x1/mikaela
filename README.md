@@ -3,7 +3,9 @@
 <br>
 
 # Misc
+
 - [ ] Pick image via Reactions
+- [x] Set all embed color to #c71459 
 - [x] Set bot activity
 - [x] Add flag `me` to `delete.js`, to delete my own messages
 - [x] Post video command
@@ -26,6 +28,8 @@
     <br>
     ## bugs
   - [ ] skip song while paused
+  - [ ] Song may end abruptly near the end
+  - [ ] Song does not play sometimes even when added to the queue
 
 
 <br>

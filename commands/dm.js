@@ -16,6 +16,7 @@ module.exports = {
             const embed = new discord.RichEmbed()
                 .setAuthor(`From: ${message.author.tag}`, message.author.avatarURL)
                 .addField('message', msg, false)
+                .setColor(0xc71459)
                 .addBlankField(true)
                 .setTimestamp()
             user.send(embed)

@@ -26,7 +26,7 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
-  client.user.setActivity('lovely music', { type: 'LISTENING' });
+  client.user.setActivity('lovely music | .help', { type: 'LISTENING' });
   console.log(`${client.user.username} Online!`);
 });
 
