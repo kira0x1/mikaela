@@ -3,7 +3,7 @@
 <br>
 
 # Misc
-
+- [ ] Make delete command delete 1 if no amount is given instead of not doing anything
 - [ ] Pick image via Reactions
 - [x] Set all embed color to #c71459 
 - [x] Set bot activity
@@ -30,7 +30,7 @@
   - [ ] skip song while paused
   - [ ] Song may end abruptly near the end
   - [ ] Song does not play sometimes even when added to the queue
-
+  - [ ] Sometimes mikaela will add to queue but wont join vc and wont play
 
 <br>
 
