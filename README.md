@@ -17,7 +17,8 @@
 <br>
 
 # Music.js
-  
+- [ ] Save users data in db (Favourites, Playlists, Spotify account?)
+- [ ] `Add to favourites` command
 - [ ] Rewind command
 - [ ] Now playing - Show Current Time, Plus info
 - [x] Remove Song Command - Remove song from queue

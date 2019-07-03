@@ -1,11 +1,14 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const util = require('./util/util');
+const chalk = require('chalk')
 
+const util = require('./util/util');
 const config = require('./config.json');
+
 const token = config.keys.token;
 const prefix = config.prefix;
 
+const log = console.log;
 const client = new Discord.Client();
 
 //False = admins are not effected by cooldowns
@@ -26,8 +29,8 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
-  client.user.setActivity('lovely music | .help', { type: 'LISTENING' });
-  console.log(`${client.user.username} Online!`);
+  client.user.setActivity('Wholesome propoganda | $help', { type: 'WATCHING' });
+  log(chalk.red(`${client.user.username} Online!`));
 });
 
 client.on('message', message => {
@@ -37,7 +40,7 @@ client.on('message', message => {
   const commandName = args.shift().toLowerCase();
 
   if (commandName.startsWith(prefix)) {
-    console.log('command name starts with prefix\n' + commandName);
+    log('command name starts with prefix\n' + commandName);
     return;
   }
 
@@ -48,7 +51,7 @@ client.on('message', message => {
       cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) {
-    console.log('could not find command ' + commandName);
+    log('could not find command ' + commandName);
     return;
   }
 
@@ -103,7 +106,7 @@ client.on('message', message => {
   try {
     command.execute(message, args);
   } catch (error) {
-    console.error(error);
+    error(error);
     message.reply('error trying to call command');
   }
 });
