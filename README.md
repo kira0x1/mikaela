@@ -13,7 +13,9 @@
 - [x] Postpic in specific domains
 - [x] Delete bots message
 - [x] Put all neko commands in fun.js
-
+    <br>
+    ## bugs
+    - [ ] Delete command tries to delete already deleted messages sometimes
 <br>
 
 # Music.js
