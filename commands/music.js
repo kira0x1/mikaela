@@ -11,13 +11,8 @@ const searchOptions = {
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo'
 };
 
-const streamOptions = {
-  volume: 0.4,
-  passes: 2
-};
-
-var conn;
-var currentSong;
+let conn;
+let currentSong;
 
 const flags = [
   (play = { name: 'play', aliases: ['play', 'p'] }),
@@ -111,7 +106,7 @@ module.exports = {
 
       vc.join().then(connection => {
         const stream = ytdl(url, { filter: 'audioonly' });
-        const dispatcher = connection.playStream(stream, streamOptions);
+        const dispatcher = connection.playStream(stream, { volume: 0.3, seek: 0, passes: 1 });
 
         conn = dispatcher;
         dispatcher.on('end', reason => onSongFinished(reason));
@@ -121,7 +116,6 @@ module.exports = {
     function resume() {
       if (conn && currentSong) {
         if (!conn.paused) return reply('Song is currently not paused');
-
         reply('resuming!');
         conn.resume();
       } else {
@@ -137,7 +131,6 @@ module.exports = {
 
     function playNext() {
       let song = queue.shift();
-
       if (queue.length === 0 || !song) {
         return stop();
       }
@@ -145,9 +138,8 @@ module.exports = {
     }
 
     function addSong(link, title) {
-      queue.push(new songInfo(link, title));
+      queue.push({ link, title });
       reply(`Added song: **${title}** to queue`);
-
       if (currentSong === undefined) play();
     }
 
@@ -159,8 +151,10 @@ module.exports = {
     }
 
     function stop() {
-      vc.leave();
       queue = [];
+      currentSong = undefined;
+      vc.leave();
+      conn.stop();
     }
 
     function removeSong() {
@@ -176,17 +170,19 @@ module.exports = {
         });
 
         collector.on('collect', m => {
-          collector.stop();
 
-          if (m < 1 || m > queue.length)
+          if (m < 1 || m > queue.length) {
+            collector.stop();
             return reply('No song in that position!');
+          }
 
           if (m === 1) {
-            return playNext();
+            playNext();
           } else {
             m--;
             queue.splice(m, 1);
           }
+          collector.stop();
         });
       }
     }
