@@ -48,6 +48,7 @@
 <br>
 
 ### Music.js
+- [ ] Compare user to user music to get a similarity percentage ( This would be its own command ) 
 - [ ] Save users data in db (Favourites, Playlists, Spotify account?)
 - [ ] `Add to favourites` command
 - [ ] Rewind command
