@@ -29,7 +29,9 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
-  client.user.setActivity('Wholesome propoganda | $help', { type: 'WATCHING' });
+  client.user.setActivity('Wholesome propoganda | $help', {
+    type: 'WATCHING'
+  });
   log(chalk.red(`${client.user.username} Online!`));
 });
 
@@ -69,10 +71,8 @@ client.on('message', message => {
   const perms = command.perms;
   let hasPerm = util.perms(perms, message.author.id);
 
-  if (!hasPerm) {
-    // message.channel.send('You dont have permission to use this command')
+  if (!hasPerm)
     return;
-  }
 
   //Cooldowns
   if (!cooldowns.has(command.name)) {
