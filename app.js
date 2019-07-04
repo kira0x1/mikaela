@@ -14,9 +14,7 @@ const adminCD = false
 
 //get commands
 client.commands = new Discord.Collection()
-const commandFiles = fs
-  .readdirSync('./commands')
-  .filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`)
@@ -27,15 +25,15 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
+  process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
   client.user.setActivity('Wholesome propoganda | $help', {
-    type: 'WATCHING'
+    type: 'WATCHING',
   })
   console.log(`${client.user.username} Online!`)
 })
 
 client.on('message', message => {
   if (!message.content.startsWith(prefix) || message.author.bot) return
-
   const args = message.content.slice(prefix.length).split(/ +/)
   const commandName = args.shift().toLowerCase()
 
@@ -46,10 +44,7 @@ client.on('message', message => {
 
   //Get command
   const command =
-    client.commands.get(commandName) ||
-    client.commands.find(
-      cmd => cmd.aliases && cmd.aliases.includes(commandName)
-    )
+    client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName))
   if (!command) {
     console.log('could not find command ' + commandName)
     return
@@ -62,15 +57,14 @@ client.on('message', message => {
 
   //Check if guild only
   if (command.guildOnly && message.channel.type !== 'text') {
-    message.reply('That command cannot be used inside of dm\'s')
+    message.reply("That command cannot be used inside of dm's")
     return
   }
 
   const perms = command.perms
   let hasPerm = util.perms(perms, message.author.id)
 
-  if (!hasPerm)
-    return
+  if (!hasPerm) return
 
   //Cooldowns
   if (!cooldowns.has(command.name)) {
@@ -91,9 +85,7 @@ client.on('message', message => {
 
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000
-      return message.reply(
-        `Command on cooldown. Cooldown: ${timeLeft.toFixed(1)} second(s)`
-      )
+      return message.reply(`Command on cooldown. Cooldown: ${timeLeft.toFixed(1)} second(s)`)
     }
   } else if (!noCD) {
     timestamps.set(message.author.id, now)
