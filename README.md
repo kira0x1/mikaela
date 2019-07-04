@@ -15,7 +15,7 @@
 >**Description**: lists all commands
 
 ### Lewd
-> **Description**: Posts nsfw content uwu
+> **Description**: Posts nsfw content ***UwU*** (from neko)
 > 
 ### Music
 >**Description**: Plays music via links or youtube searches
@@ -24,7 +24,7 @@
 >**Description**: commands from the neko api
 
 ### Reddit
->**Description**: Posts from subreddits
+>**Description**: Post from subreddits
 
 <br>
 
