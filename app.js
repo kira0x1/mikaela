@@ -1,6 +1,5 @@
 const fs = require('fs')
 const Discord = require('discord.js')
-const chalk = require('chalk')
 
 const util = require('./util/util')
 const config = require('./config.json')
@@ -8,7 +7,6 @@ const config = require('./config.json')
 const token = config.keys.token
 const prefix = config.prefix
 
-const log = console.log
 const client = new Discord.Client()
 
 //False = admins are not effected by cooldowns
@@ -32,7 +30,7 @@ client.once('ready', () => {
   client.user.setActivity('Wholesome propoganda | $help', {
     type: 'WATCHING'
   })
-  log(chalk.red(`${client.user.username} Online!`))
+  console.log(`${client.user.username} Online!`)
 })
 
 client.on('message', message => {
@@ -42,7 +40,7 @@ client.on('message', message => {
   const commandName = args.shift().toLowerCase()
 
   if (commandName.startsWith(prefix)) {
-    log('command name starts with prefix\n' + commandName)
+    console.log('command name starts with prefix\n' + commandName)
     return
   }
 
@@ -53,7 +51,7 @@ client.on('message', message => {
       cmd => cmd.aliases && cmd.aliases.includes(commandName)
     )
   if (!command) {
-    log('could not find command ' + commandName)
+    console.log('could not find command ' + commandName)
     return
   }
 
