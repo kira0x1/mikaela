@@ -3,8 +3,9 @@
 <br>
 
 # Misc
-- [ ] Make delete command delete 1 if no amount is given instead of not doing anything
 - [ ] Pick image via Reactions
+- [x] Delete command `-b` `-both` flag 
+- [x] Make delete command delete 1 if no amount is given instead of not doing anything
 - [x] Set all embed color to #c71459 
 - [x] Set bot activity
 - [x] Add flag `me` to `delete.js`, to delete my own messages
@@ -15,7 +16,7 @@
 - [x] Put all neko commands in fun.js
     <br>
     ## bugs
-    - [ ] Delete command tries to delete already deleted messages sometimes
+    - [x] Delete command tries to delete already deleted messages sometimes
 <br>
 
 # Music.js
