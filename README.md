@@ -2,7 +2,35 @@
 
 <br>
 
-# Misc
+## Commands
+
+### Delete  
+
+> **Description**: Delete Mikaelas last message(s)
+
+### DM
+>**Description**: used to dm people
+
+### Help
+>**Description**: lists all commands
+
+### Lewd
+> **Description**: Posts nsfw content uwu
+> 
+### Music
+>**Description**: Plays music via links or youtube searches
+
+### Neko
+>**Description**: commands from the neko api
+
+### Reddit
+>**Description**: Posts from subreddits
+
+<br>
+
+## Upcoming
+
+### Misc
 - [ ] Pick image via Reactions
 - [x] Delete command `-b` `-both` flag 
 - [x] Make delete command delete 1 if no amount is given instead of not doing anything
@@ -15,11 +43,11 @@
 - [x] Delete bots message
 - [x] Put all neko commands in fun.js
     <br>
-    ## bugs
+    ### bugs
     - [x] Delete command tries to delete already deleted messages sometimes
 <br>
 
-# Music.js
+### Music.js
 - [ ] Save users data in db (Favourites, Playlists, Spotify account?)
 - [ ] `Add to favourites` command
 - [ ] Rewind command
@@ -30,7 +58,7 @@
 - [x] Song queue
 - [x] Now Playing Command
     <br>
-    ## bugs
+    ### bugs
   - [ ] skip song while paused
   - [ ] Song may end abruptly near the end
   - [ ] Song does not play sometimes even when added to the queue
@@ -38,7 +66,7 @@
 
 <br>
 
-# Reddit.js
+### Reddit.js
 - [x] Reddit usage needs to be fixed
 - [x] `Reddit <subreddit>` command
 - [x] updte usage
