@@ -1,38 +1,34 @@
-const discord = require('discord.js');
-const search = require('youtube-search');
-const ytdl = require('ytdl-core');
-const { usage } = require('../util/util');
-const { prefix } = require('../config.json');
+const discord = require('discord.js')
+const search = require('youtube-search')
+const ytdl = require('ytdl-core-discord')
+const { usage } = require('../util/util')
+const { prefix } = require('../config.json')
 
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
   maxResults: 1,
-  key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo'
-};
+  key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
+}
 
-let conn;
-let currentSong;
+const streamOptions = { volume: 0.3, seek: 0, passes: 1 }
+
+var conn
+var currentSong
 
 const flags = [
   (play = { name: 'play', aliases: ['play', 'p'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
-  (exit = { name: 'exit', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
+  (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
+  (join = { name: 'join', aliases: ['join'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
   (skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] }),
   (queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
   (current = { name: 'current', aliases: ['current', 'np'] }),
-  (remove = { name: 'remove', aliases: ['remove', 'r'] })
-];
+  (remove = { name: 'remove', aliases: ['remove', 'r', 'rm', 'rmv'] }),
+]
 
-let queue = [];
-
-class songInfo {
-  constructor(link, title) {
-    this.link = link;
-    this.title = title;
-  }
-}
+var queue = []
 
 module.exports = {
   name: 'music',
@@ -42,149 +38,189 @@ module.exports = {
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
-  execute(message, args) {
-    const query = args.join(' ');
+  async execute(message, args) {
+    const query = args.join(' ')
     const arg = message.content
       .slice(prefix.length)
       .split(/ +/)
-      .shift();
+      .shift()
 
-    const vc = message.member.voiceChannel;
+    const vc = message.member.voiceChannel
 
-    let flag =
-      flags.find(f => f.name === arg) ||
-      flags.find(f => f.aliases && f.aliases.includes(arg));
-    status = 'play';
+    let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
+    status = 'play'
 
-    if (flag && flag.name !== 'play') {
-      if (flag.name === 'exit') {
-        status = 'end';
-        stop();
-      } else if (flag.name === 'pause') {
-        pause();
-      } else if (flag.name === 'resume') {
-        resume();
-      } else if (flag.name === 'skip') {
-        status = 'skip';
-        playNext();
-      } else if (flag.name === 'queue') {
-        showQueue();
-      } else if (flag.name === 'current') {
-        nowPlaying();
-      } else if (flag.name === 'remove') {
-        removeSong();
+    if (flag && flag.name) {
+      switch (flag.name) {
+        case 'play':
+          play()
+          break
+        case 'leave':
+          status = 'leave'
+          leaveVC()
+          break
+
+        case 'join':
+          joinVC()
+          break
+
+        case 'pause':
+          pause()
+          break
+        case 'resume':
+          resume()
+          break
+
+        case skip:
+          status = 'skip'
+          playNext()
+          break
+
+        case 'queue':
+          showQueue()
+          break
+
+        case 'current':
+          nowPlaying()
+          break
+
+        case 'remove':
+          removeSong()
+          break
       }
-      return;
+      return
     }
 
-    if (!query) return reply(usage(this));
-    if (!vc) return reply('You\'re not in a vc');
+    if (!query) return reply(usage(this))
+    if (!vc) return reply("You're not in a vc")
 
     //Check if its a link
-    ytdl.getBasicInfo(query)
-      .then(song =>
-        addSong(song.video_url, song.title, song.length_seconds / 60)
-      )
-      .catch(() => findVideo(query)); //If not link then search
+    ytdl
+      .getBasicInfo(query)
+      .then(song => addSong(song.video_url, song.title, song.length_seconds / 60))
+      .catch(() => findVideo(query)) //If not link then search
 
     //Search Function
     function findVideo(query) {
       search(query, searchOptions)
         .then(data => {
-          song = data.results[0];
-          addSong(song.link, song.title);
+          song = data.results[0]
+          addSong(song.link, song.title)
         })
         .catch(() => {
-          reply(`**Couldnt find video:** *${query}*`);
-        });
+          reply(`**Couldnt find video:** *${query}*`)
+        })
     }
 
     //Play Function
     function play() {
-      currentSong = queue[0];
-      let url = currentSong.link;
+      if (conn && currentSong) {
+        if (conn.paused) {
+          console.log('v1')
+          return joinVC()
+        }
+      } else {
+        console.log('v2')
+        currentSong = queue[0]
+        let url = currentSong.link
+        joinVC(url)
+      }
+    }
 
+    function joinVC(url) {
       vc.join().then(connection => {
-        const stream = ytdl(url, { filter: 'audioonly' });
-        const dispatcher = connection.playStream(stream, { volume: 0.3, seek: 0, passes: 1 });
+        if (conn.ispaused && currentSong !== undefined) return conn.resume()
 
-        conn = dispatcher;
-        dispatcher.on('end', reason => onSongFinished(reason));
-      });
+        if (url) {
+          const stream = ytdl(url, { filter: 'audioonly' })
+          const dispatcher = connection.playStream(stream, streamOptions)
+          conn = dispatcher
+          dispatcher.on('end', reason => onSongFinished(reason))
+        }
+      })
+    }
+
+    function leaveVC() {
+      console.log(`Leaving vc!`)
+      conn.pause()
+      vc.leave()
     }
 
     function resume() {
       if (conn && currentSong) {
-        if (!conn.paused) return reply('Song is currently not paused');
-        reply('resuming!');
-        conn.resume();
+        if (!conn.paused) return reply('Song is currently not paused')
+        reply('resuming!')
+        conn.resume()
       } else {
-        reply('No song to resume');
+        reply('No song to resume')
       }
     }
 
     function onSongFinished(reason) {
-      if (reason !== 'user' && reason !== undefined) {
-        playNext();
+      console.log(`song ended, reason: ${reason}`)
+      switch (reason) {
+        case undefined:
+          leaveVC()
+          break
+
+        default:
+          playNext()
+          break
       }
     }
 
     function playNext() {
-      let song = queue.shift();
+      let song = queue.shift()
       if (queue.length === 0 || !song) {
-        return stop();
+        return stop('end')
       }
-      play();
+      play()
     }
 
     function addSong(link, title) {
-      queue.push({ link, title });
-      reply(`Added song: **${title}** to queue`);
-      if (currentSong === undefined) play();
+      queue.push({ link, title })
+      reply(`Added song: **${title}** to queue`)
+      if (currentSong === undefined) play()
     }
 
     function pause() {
       if (conn && currentSong) {
-        reply(`Paused: ${currentSong.title}`);
-        conn.pause();
+        reply(`Paused: ${currentSong.title}`)
+        conn.pause()
       }
     }
 
     function stop() {
-      queue = [];
-      currentSong = undefined;
-      vc.leave();
-      conn.stop();
+      vc.leave()
+      if (reason) queue = []
+      currentSong = undefined
     }
 
     function removeSong() {
-      let songID = args[0];
-      if (songID === undefined || isNaN(songID)) {
-        let hasQ = showQueue();
-        if (hasQ === false) return;
-        reply('`Enter songs position: `');
+      let hasQ = showQueue()
+      if (hasQ === false) return
 
-        const filter = m => isNaN(m.content) === false;
-        const collector = message.channel.createMessageCollector(filter, {
-          time: 10000
-        });
+      reply('`Enter songs position: `')
 
-        collector.on('collect', m => {
+      const filter = m => m.content.length >= 1 && !isNaN(m.content)
+      const collector = message.channel.createMessageCollector(filter, { time: 6000 })
 
-          if (m < 1 || m > queue.length) {
-            collector.stop();
-            return reply('No song in that position!');
-          }
+      collector.on('collect', m => {
+        let qid = m.content
+        console.log(`QID: ${qid}`)
 
-          if (m === 1) {
-            playNext();
-          } else {
-            m--;
-            queue.splice(m, 1);
-          }
-          collector.stop();
-        });
-      }
+        if (qid < 1 || qid > queue.length + 1) {
+          console.log(`Value too low: input: ${qid} , length: ${queue.length}`)
+          collector.stop()
+          return reply('No song in that position!')
+        }
+        if (qid === 1) {
+          playNext()
+        } else {
+          qid--
+          queue.splice(qid, 1)
+        }
+      })
     }
 
     function nowPlaying() {
@@ -194,40 +230,38 @@ module.exports = {
           .addField(currentSong.title, currentSong.link)
           .setColor(0xc71459)
 
-        reply('', { embed: embed });
+        reply(embed)
       } else {
-        reply(`No song is playing right now...`);
+        reply(`No song is playing right now...`)
       }
     }
 
     function showQueue() {
       if (!hasQueue()) {
-        send(`Queue empty...`);
-        return false;
+        send(`Queue empty...`)
+        return false
       }
 
-      let embed = new discord.RichEmbed().setTitle(
-        'Queue\nCurrently Playing: ' + currentSong.title
-      ).setColor(0xc71459)
+      let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
-        embed.addField(i + 1, queue[i].title + '\n' + queue[i].link);
+        embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
       }
 
-      send(embed);
-      return true;
+      send(embed)
+      return true
     }
 
     function hasQueue() {
-      return !(queue.length === 0 || queue === undefined);
+      return !(queue.length === 0 || queue === undefined)
     }
 
     function reply(content) {
-      message.reply(content);
+      message.reply(content)
     }
 
     function send(content) {
-      message.channel.send(content);
+      message.channel.send(content)
     }
-  }
-};
+  },
+}
