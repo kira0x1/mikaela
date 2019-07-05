@@ -1,6 +1,6 @@
 const discord = require('discord.js')
 const search = require('youtube-search')
-const ytdl = require('ytdl-core-discord')
+const ytdl = require('ytdl-core')
 const { usage } = require('../util/util')
 const { prefix } = require('../config.json')
 
@@ -38,7 +38,7 @@ module.exports = {
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
-  async execute(message, args) {
+  execute(message, args) {
     const query = args.join(' ')
     const arg = message.content
       .slice(prefix.length)
@@ -61,7 +61,7 @@ module.exports = {
           break
 
         case 'join':
-          joinVC()
+          PlaySong()
           break
 
         case 'pause':
@@ -91,45 +91,43 @@ module.exports = {
       return
     }
 
-    if (!query) return reply(usage(this))
-    if (!vc) return reply("You're not in a vc")
-
-    //Check if its a link
-    ytdl
-      .getBasicInfo(query)
-      .then(song => addSong(song.video_url, song.title, song.length_seconds / 60))
-      .catch(() => findVideo(query)) //If not link then search
-
     //Search Function
-    function findVideo(query) {
+    function searchVideo() {
       search(query, searchOptions)
         .then(data => {
           song = data.results[0]
           addSong(song.link, song.title)
         })
-        .catch(() => {
+        .catch(err => {
           reply(`**Couldnt find video:** *${query}*`)
         })
     }
 
-    //Play Function
-    function play() {
-      if (conn && currentSong) {
-        if (conn.paused) {
-          console.log('v1')
-          return joinVC()
-        }
-      } else {
-        console.log('v2')
-        currentSong = queue[0]
-        let url = currentSong.link
-        joinVC(url)
-      }
+    function findVideoBylink() {
+      //Check if its a link
+      ytdl
+        .getBasicInfo(query)
+        .then(song => addSong(song.video_url, song.title))
+        .catch(() => searchVideo(query)) //If not link then search
     }
 
-    function joinVC(url) {
+    //Play Function
+    function play() {
+      if (!vc) return reply("You're not in a vc")
+      if (!query) {
+        if (conn) {
+          if (conn.ispaused) return conn.resume
+        }
+      }
+
+      findVideoBylink()
+    }
+
+    function PlaySong(url) {
       vc.join().then(connection => {
-        if (conn.ispaused && currentSong !== undefined) return conn.resume()
+        if (conn) {
+          if (conn.ispaused && currentSong !== undefined) return conn.resume()
+        }
 
         if (url) {
           const stream = ytdl(url, { filter: 'audioonly' })
@@ -157,6 +155,7 @@ module.exports = {
     }
 
     function onSongFinished(reason) {
+      currentSong = undefined
       console.log(`song ended, reason: ${reason}`)
       switch (reason) {
         case undefined:
@@ -174,13 +173,17 @@ module.exports = {
       if (queue.length === 0 || !song) {
         return stop('end')
       }
-      play()
+      PlaySong(song.link)
     }
 
     function addSong(link, title) {
       queue.push({ link, title })
       reply(`Added song: **${title}** to queue`)
-      if (currentSong === undefined) play()
+
+      if (currentSong === undefined) {
+        currentSong = queue.shift()
+        if (currentSong) PlaySong(currentSong.link)
+      }
     }
 
     function pause() {
