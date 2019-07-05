@@ -32,7 +32,7 @@ client.once('ready', () => {
   console.log(`${client.user.username} Online!`)
 })
 
-client.on('message', message => {
+client.on('message', async message => {
   if (!message.content.startsWith(prefix) || message.author.bot) return
   const args = message.content.slice(prefix.length).split(/ +/)
   const commandName = args.shift().toLowerCase()
@@ -94,7 +94,7 @@ client.on('message', message => {
 
   //Try to execute command
   try {
-    command.execute(message, args)
+    await command.execute(message, args)
   } catch (error) {
     console.error(error)
     message.reply('error trying to call command')
