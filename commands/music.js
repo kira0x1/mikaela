@@ -179,11 +179,7 @@ module.exports = {
     function addSong(link, title) {
       queue.push({ link, title })
       reply(`Added song: **${title}** to queue`)
-
-      if (currentSong === undefined) {
-        currentSong = queue.shift()
-        if (currentSong) PlaySong(currentSong.link)
-      }
+      if (!currentSong) playNext()
     }
 
     function pause() {
