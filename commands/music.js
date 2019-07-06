@@ -165,17 +165,13 @@ module.exports = {
 
     function playNext() {
       currentSong = queue.shift()
+      if (!currentSong) return stop()
 
-      if (currentSong) {
-        PlaySong()
-      } else {
-        stop()
-      }
+      PlaySong()
     }
 
     function addSong(link, title) {
       queue.push({ link, title })
-
       reply(`Added song: **${title}** to queue`)
       if (!currentSong) playNext()
     }
@@ -235,11 +231,10 @@ module.exports = {
     }
 
     function showQueue() {
-      if (!hasQueue() && !currentSong) {
+      if (!hasQueue() && currentSong === undefined) {
         send(`Queue empty...`)
         return false
       }
-
       let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
