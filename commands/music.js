@@ -3,9 +3,6 @@ const search = require('youtube-search')
 const ytdl = require('ytdl-core')
 const { prefix } = require('../config.json')
 
-const chalk = require('chalk')
-const log = console.log
-
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
@@ -50,7 +47,6 @@ module.exports = {
     let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
 
     if (flag && flag.name) {
-      log(chalk.magenta(`${flag.name} called!`))
       switch (flag.name) {
         case 'play':
           play()
@@ -87,7 +83,6 @@ module.exports = {
 
     //Search Function
     function searchVideo() {
-      log(chalk.yellow(`searching for video!`))
       search(query, searchOptions)
         .then(data => {
           song = data.results[0]
@@ -103,15 +98,12 @@ module.exports = {
       ytdl
         .getBasicInfo(query)
         .then(song => {
-          log(chalk.green`Adding song @ln:113`)
 
           title = song.title
           url = song.video_url
           addSong(url, title)
         })
         .catch(err => {
-          log(chalk.magenta(`\nnot link, will try searching for the video`))
-          log(chalk.red(`error:${err}\n`))
           searchVideo(query)
         }) //If not link then search
     }
@@ -121,15 +113,12 @@ module.exports = {
       if (!vc) return reply("You're not in a vc")
 
       if (!query) {
-        log(chalk.red`no query`)
         if (conn) {
           if (conn.ispaused) conn.resume
-          log(chalk.green`Resuming!`)
         }
         return
       }
 
-      log(chalk.yellow`Finding video by link`)
       findVideoBylink()
     }
 
@@ -142,7 +131,6 @@ module.exports = {
         }
 
         if (url) {
-          log(chalk.blue(`Creating stream!`))
           const stream = ytdl(url, { filter: 'audioonly' })
           const dispatcher = connection.playStream(stream, streamOptions)
           conn = dispatcher
@@ -163,7 +151,6 @@ module.exports = {
 
     function onSongFinished(reason) {
       currentSong = undefined
-      console.log(chalk`song ended, reason: {red ${reason}}`)
 
       switch (reason) {
         case undefined:
@@ -179,10 +166,8 @@ module.exports = {
       currentSong = queue.shift()
 
       if (currentSong) {
-        log(chalk`{bold Playing next song: }{blue.bold ${currentSong.title}}`)
         PlaySong()
       } else {
-        log(chalk.red.bold`No songs left to play!`)
         stop()
       }
     }
