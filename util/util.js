@@ -57,4 +57,36 @@ module.exports = {
     }
     return false
   },
+
+  getFlags(flags, args) {
+    if (flags) {
+      const flagsFound = []
+
+      for (let i = 0; i < args.length; i++) {
+        const ag = args[i]
+
+        const flagged = []
+        if (ag.startsWith(flagPrefix)) {
+          flagged.push(ag)
+        }
+
+        flagged.map(f => {
+          flags.map(fg => {
+            let flagGiven = f.slice(flagPrefix.length)
+            if (fg.name === flagGiven) return flagsFound.push({ name: fg.name, args: args[i + 1] })
+            else {
+              fg.aliases.map(als => {
+                if (als === flagGiven) {
+                  let arg = args[i + 1]
+                  flagsFound.push({ name: fg.name, args: arg })
+                  return
+                }
+              })
+            }
+          })
+        })
+      }
+      return flagsFound
+    }
+  },
 }
