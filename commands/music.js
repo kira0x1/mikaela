@@ -238,7 +238,7 @@ module.exports = {
       let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
-        embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
+        embed.addField(i, queue[i].title + '\n' + queue[i].link)
       }
 
       send(embed)
