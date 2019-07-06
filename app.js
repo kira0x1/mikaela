@@ -25,8 +25,8 @@ const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
   // process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
-  client.user.setActivity('Wholesome propoganda | $help', {
-    type: 'WATCHING',
+  client.user.setActivity(`Wholesome propoganda | ${prefix}help`, {
+    type: 'LISTENING',
   })
   console.log(`${client.user.username} Online!`)
 })

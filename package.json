@@ -11,6 +11,7 @@
   "author": "Kira",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.2",
     "common-tags": "^1.8.0",
     "discord.js": "^11.5.1",
     "node-fetch": "^2.6.0",
