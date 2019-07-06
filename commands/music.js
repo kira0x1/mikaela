@@ -10,11 +10,12 @@ const searchOptions = {
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.5, passes: 2 }
+const streamOptions = { volume: 0.4, passes: 3 }
 
-let conn
-let currentSong
-let queue = []
+var conn
+var currentSong
+var queue = []
+var status = 'skip'
 
 const flags = [
   (play = { name: 'play', aliases: ['play', 'p'] }),
@@ -35,7 +36,7 @@ module.exports = {
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
-  execute(message, args) {
+  async execute(message, args) {
     const query = args.join(' ')
 
     const arg = message.content
@@ -53,6 +54,7 @@ module.exports = {
           break
 
         case 'leave':
+          status = 'stop'
           stop()
           break
 
@@ -64,6 +66,7 @@ module.exports = {
           break
 
         case 'skip':
+          status = 'skip'
           playNext()
           break
 
@@ -82,8 +85,8 @@ module.exports = {
     }
 
     //Search Function
-    function searchVideo() {
-      search(query, searchOptions)
+    async function searchVideo() {
+      await search(query, searchOptions)
         .then(data => {
           song = data.results[0]
           addSong(song.link, song.title)
@@ -93,9 +96,9 @@ module.exports = {
         })
     }
 
-    function findVideoBylink() {
+    async function findVideoBylink() {
       //Check if its a link
-      ytdl
+      await ytdl
         .getBasicInfo(query)
         .then(song => {
           title = song.title
@@ -121,9 +124,9 @@ module.exports = {
       findVideoBylink()
     }
 
-    function PlaySong() {
+    async function PlaySong() {
       let url = currentSong.link
-      vc.join().then(connection => {
+      await vc.join().then(async connection => {
         if (conn) {
           if (conn.ispaused && currentSong !== undefined) {
             conn.resume()
@@ -132,10 +135,10 @@ module.exports = {
         }
 
         if (url) {
-          const stream = ytdl(url, { filter: 'audioonly' })
-          const dispatcher = connection.playStream(stream, streamOptions)
+          const stream = await ytdl(url, { filter: 'audioonly' })
+          const dispatcher = await connection.playStream(stream, streamOptions)
           conn = dispatcher
-          dispatcher.on('end', reason => onSongFinished(reason))
+          dispatcher.on('end', () => onSongFinished())
         }
       })
     }
@@ -150,24 +153,25 @@ module.exports = {
       }
     }
 
-    function onSongFinished(reason) {
-      currentSong = undefined
-
-      switch (reason) {
-        case undefined:
+    function onSongFinished() {
+      switch (status) {
+        case 'stop':
           stop()
           break
-        case 'user':
+        case 'skip':
           playNext()
           break
       }
     }
 
-    function playNext() {
-      currentSong = queue.shift()
-      if (!currentSong) return stop()
-
-      PlaySong()
+    async function playNext() {
+      if (hasQueue()) {
+        let song = queue.shift()
+        if (song) {
+          currentSong = song
+          await PlaySong()
+        }
+      }
     }
 
     function addSong(link, title) {
@@ -183,11 +187,10 @@ module.exports = {
       }
     }
 
-    function stop() {
-      vc.leave()
+    async function stop() {
       queue = []
       currentSong = undefined
-      if (conn) conn.destroy()
+      await vc.leave()
     }
 
     function removeSong() {
@@ -201,10 +204,8 @@ module.exports = {
 
       collector.on('collect', m => {
         let qid = m.content
-        console.log(`QID: ${qid}`)
 
         if (qid < 1 || qid > queue.length + 1) {
-          console.log(`Value too low: input: ${qid} , length: ${queue.length}`)
           collector.stop()
           return reply('No song in that position!')
         }
@@ -238,9 +239,8 @@ module.exports = {
       let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
-        embed.addField(i, queue[i].title + '\n' + queue[i].link)
+        embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
       }
-
       send(embed)
       return true
     }
