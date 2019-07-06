@@ -10,7 +10,7 @@ const searchOptions = {
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.3, passes: 3 }
+const streamOptions = { volume: 0.5, passes: 2 }
 
 let conn
 let currentSong
@@ -98,7 +98,6 @@ module.exports = {
       ytdl
         .getBasicInfo(query)
         .then(song => {
-
           title = song.title
           url = song.video_url
           addSong(url, title)
@@ -126,8 +125,10 @@ module.exports = {
       let url = currentSong.link
       vc.join().then(connection => {
         if (conn) {
-          if (conn.ispaused && currentSong !== undefined) conn.resume()
-          return
+          if (conn.ispaused && currentSong !== undefined) {
+            conn.resume()
+            return
+          }
         }
 
         if (url) {
