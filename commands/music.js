@@ -6,11 +6,11 @@ const { prefix } = require('../config.json')
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
-  maxResults: 3,
+  maxResults: 1,
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.4, passes: 3 }
+const streamOptions = { volume: 0.6, passes: 2 }
 
 var conn
 var currentSong
@@ -154,6 +154,7 @@ module.exports = {
     }
 
     function onSongFinished() {
+      currentSong = undefined
       switch (status) {
         case 'stop':
           stop()
