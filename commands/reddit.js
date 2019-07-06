@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const fetch = require('node-fetch')
 const { getFlags } = require('../util/util')
 
-const maxpost = 10
-let limit = 20
+const maxpost = 40
+let limit = 40
 
 const flags = [
   (name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] }),
