@@ -1,34 +1,34 @@
 const discord = require('discord.js')
 const search = require('youtube-search')
 const ytdl = require('ytdl-core')
-const { usage } = require('../util/util')
 const { prefix } = require('../config.json')
+
+const chalk = require('chalk')
+const log = console.log
 
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
-  maxResults: 1,
+  maxResults: 3,
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.3, seek: 0, passes: 1 }
+const streamOptions = { volume: 0.3, passes: 3 }
 
-var conn
-var currentSong
+let conn
+let currentSong
+let queue = []
 
 const flags = [
   (play = { name: 'play', aliases: ['play', 'p'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
-  (join = { name: 'join', aliases: ['join'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
   (skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] }),
   (queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
   (current = { name: 'current', aliases: ['current', 'np'] }),
   (remove = { name: 'remove', aliases: ['remove', 'r', 'rm', 'rmv'] }),
 ]
-
-var queue = []
 
 module.exports = {
   name: 'music',
@@ -40,28 +40,24 @@ module.exports = {
 
   execute(message, args) {
     const query = args.join(' ')
+
     const arg = message.content
       .slice(prefix.length)
       .split(/ +/)
       .shift()
 
     const vc = message.member.voiceChannel
-
     let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
-    status = 'play'
 
     if (flag && flag.name) {
+      log(chalk.magenta(`${flag.name} called!`))
       switch (flag.name) {
         case 'play':
           play()
           break
-        case 'leave':
-          status = 'leave'
-          leaveVC()
-          break
 
-        case 'join':
-          PlaySong()
+        case 'leave':
+          stop()
           break
 
         case 'pause':
@@ -71,8 +67,7 @@ module.exports = {
           resume()
           break
 
-        case skip:
-          status = 'skip'
+        case 'skip':
           playNext()
           break
 
@@ -88,11 +83,11 @@ module.exports = {
           removeSong()
           break
       }
-      return
     }
 
     //Search Function
     function searchVideo() {
+      log(chalk.yellow(`searching for video!`))
       search(query, searchOptions)
         .then(data => {
           song = data.results[0]
@@ -107,41 +102,53 @@ module.exports = {
       //Check if its a link
       ytdl
         .getBasicInfo(query)
-        .then(song => addSong(song.video_url, song.title))
-        .catch(() => searchVideo(query)) //If not link then search
+        .then(song => {
+          log(chalk.green`Adding song @ln:113`)
+
+          title = song.title
+          url = song.video_url
+          addSong(url, title)
+        })
+        .catch(err => {
+          log(chalk.magenta(`\nnot link, will try searching for the video`))
+          log(chalk.red(`error:${err}\n`))
+          searchVideo(query)
+        }) //If not link then search
     }
 
     //Play Function
     function play() {
       if (!vc) return reply("You're not in a vc")
+
       if (!query) {
+        log(chalk.red`no query`)
         if (conn) {
-          if (conn.ispaused) return conn.resume
+          if (conn.ispaused) conn.resume
+          log(chalk.green`Resuming!`)
         }
+        return
       }
 
+      log(chalk.yellow`Finding video by link`)
       findVideoBylink()
     }
 
-    function PlaySong(url) {
+    function PlaySong() {
+      let url = currentSong.link
       vc.join().then(connection => {
         if (conn) {
-          if (conn.ispaused && currentSong !== undefined) return conn.resume()
+          if (conn.ispaused && currentSong !== undefined) conn.resume()
+          return
         }
 
         if (url) {
+          log(chalk.blue(`Creating stream!`))
           const stream = ytdl(url, { filter: 'audioonly' })
           const dispatcher = connection.playStream(stream, streamOptions)
           conn = dispatcher
           dispatcher.on('end', reason => onSongFinished(reason))
         }
       })
-    }
-
-    function leaveVC() {
-      console.log(`Leaving vc!`)
-      conn.pause()
-      vc.leave()
     }
 
     function resume() {
@@ -156,28 +163,33 @@ module.exports = {
 
     function onSongFinished(reason) {
       currentSong = undefined
-      console.log(`song ended, reason: ${reason}`)
+      console.log(chalk`song ended, reason: {red ${reason}}`)
+
       switch (reason) {
         case undefined:
-          leaveVC()
+          stop()
           break
-
-        default:
+        case 'user':
           playNext()
           break
       }
     }
 
     function playNext() {
-      let song = queue.shift()
-      if (queue.length === 0 || !song) {
-        return stop('end')
+      currentSong = queue.shift()
+
+      if (currentSong) {
+        log(chalk`{bold Playing next song: }{blue.bold ${currentSong.title}}`)
+        PlaySong()
+      } else {
+        log(chalk.red.bold`No songs left to play!`)
+        stop()
       }
-      PlaySong(song.link)
     }
 
     function addSong(link, title) {
       queue.push({ link, title })
+
       reply(`Added song: **${title}** to queue`)
       if (!currentSong) playNext()
     }
@@ -191,8 +203,9 @@ module.exports = {
 
     function stop() {
       vc.leave()
-      if (reason) queue = []
+      queue = []
       currentSong = undefined
+      if (conn) conn.destroy()
     }
 
     function removeSong() {
@@ -236,7 +249,7 @@ module.exports = {
     }
 
     function showQueue() {
-      if (!hasQueue()) {
+      if (!hasQueue() && !currentSong) {
         send(`Queue empty...`)
         return false
       }

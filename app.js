@@ -8,7 +8,6 @@ const token = config.keys.token
 const prefix = config.prefix
 
 const client = new Discord.Client()
-
 //False = admins are not effected by cooldowns
 const adminCD = false
 
@@ -25,7 +24,7 @@ for (const file of commandFiles) {
 const cooldowns = new Discord.Collection()
 
 client.once('ready', () => {
-  process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
+  // process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
   client.user.setActivity('Wholesome propoganda | $help', {
     type: 'WATCHING',
   })
