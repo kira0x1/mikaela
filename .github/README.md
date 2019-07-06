@@ -1,7 +1,3 @@
-# Mikaela
-
-<br>
-
 ## Commands
 
 ### Delete  
