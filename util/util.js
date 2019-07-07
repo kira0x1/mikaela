@@ -71,7 +71,6 @@ module.exports = {
       for (let i = 0; i < argFlags.length; i++) {
         if (f.name === argFlags[i] || f.aliases.find(al => al === argFlags[i])) {
           flagsFound.push({ name: f.name, args: args[i + 1] })
-          log(`Found flag!`)
           break
         }
       }

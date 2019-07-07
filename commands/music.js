@@ -10,12 +10,13 @@ const searchOptions = {
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.6, passes: 2 }
+const streamOptions = { volume: 0.2, passes: 3 }
 
 var conn
 var currentSong
 var queue = []
 var status = 'skip'
+var isPlaying = false
 
 const flags = [
   (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
@@ -36,7 +37,7 @@ module.exports = {
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
-  async execute(message, args) {
+  execute(message, args) {
     const query = args.join(' ')
 
     const arg = message.content
@@ -113,6 +114,7 @@ module.exports = {
 
     //Play Function
     function play() {
+      status = ''
       if (!vc) return send("You're not in a vc")
 
       if (!query) {
@@ -136,6 +138,7 @@ module.exports = {
         }
 
         if (url) {
+          isPlaying = true
           const stream = await ytdl(url, { filter: 'audioonly' })
           const dispatcher = await connection.playStream(stream, streamOptions)
           conn = dispatcher
@@ -148,6 +151,7 @@ module.exports = {
       if (conn && currentSong) {
         if (!conn.paused) return send('Song is currently not paused')
         send('resuming!')
+        isPlaying = true
         conn.resume()
       } else {
         send('No song to resume')
@@ -159,16 +163,16 @@ module.exports = {
       playNext()
     }
 
-    async function playNext() {
+    function playNext() {
       status = ''
       if (queue.length === 0) {
-        return await stop()
+        return stop()
       }
 
       let song = queue.shift()
       if (song) {
         currentSong = song
-        await PlaySong()
+        PlaySong()
       }
     }
 
@@ -180,15 +184,17 @@ module.exports = {
 
     function pause() {
       if (conn && currentSong) {
+        isPlaying = false
         send(`Paused: ${currentSong.title}`)
         conn.pause()
       }
     }
 
-    async function stop() {
+    function stop() {
+      isPlaying = false
       queue = []
       currentSong = undefined
-      await vc.leave()
+      vc.leave()
     }
 
     function removeSong() {
