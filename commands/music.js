@@ -154,7 +154,6 @@ module.exports = {
     }
 
     function onSongFinished() {
-      currentSong = undefined
       switch (status) {
         case 'stop':
           stop()
@@ -166,12 +165,15 @@ module.exports = {
     }
 
     async function playNext() {
-      if (hasQueue()) {
-        let song = queue.shift()
-        if (song) {
-          currentSong = song
-          await PlaySong()
-        }
+      status = ''
+      if (queue.length === 0) {
+        return await stop()
+      }
+
+      let song = queue.shift()
+      if (song) {
+        currentSong = song
+        await PlaySong()
       }
     }
 
