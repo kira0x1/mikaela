@@ -79,3 +79,5 @@ typings/
 .fusebox/
 config.json
 ecosystem.config.js
+.vscode/sftp.json
+.github/.whitesource

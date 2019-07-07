@@ -6,19 +6,20 @@ const { prefix } = require('../config.json')
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
-  maxResults: 3,
+  maxResults: 1,
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-const streamOptions = { volume: 0.4, passes: 3 }
+const streamOptions = { volume: 0.2, passes: 3 }
 
 var conn
 var currentSong
 var queue = []
 var status = 'skip'
+var isPlaying = false
 
 const flags = [
-  (play = { name: 'play', aliases: ['play', 'p'] }),
+  (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
@@ -36,7 +37,7 @@ module.exports = {
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
-  async execute(message, args) {
+  execute(message, args) {
     const query = args.join(' ')
 
     const arg = message.content
@@ -45,7 +46,8 @@ module.exports = {
       .shift()
 
     const vc = message.member.voiceChannel
-    let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
+    let flag =
+      flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
 
     if (flag && flag.name) {
       switch (flag.name) {
@@ -92,7 +94,7 @@ module.exports = {
           addSong(song.link, song.title)
         })
         .catch(err => {
-          reply(`**Couldnt find video:** *${query}*`)
+          send(`**Couldnt find video:** *${query}*`)
         })
     }
 
@@ -112,7 +114,8 @@ module.exports = {
 
     //Play Function
     function play() {
-      if (!vc) return reply("You're not in a vc")
+      status = ''
+      if (!vc) return send("You're not in a vc")
 
       if (!query) {
         if (conn) {
@@ -135,6 +138,7 @@ module.exports = {
         }
 
         if (url) {
+          isPlaying = true
           const stream = await ytdl(url, { filter: 'audioonly' })
           const dispatcher = await connection.playStream(stream, streamOptions)
           conn = dispatcher
@@ -145,59 +149,59 @@ module.exports = {
 
     function resume() {
       if (conn && currentSong) {
-        if (!conn.paused) return reply('Song is currently not paused')
-        reply('resuming!')
+        if (!conn.paused) return send('Song is currently not paused')
+        send('resuming!')
+        isPlaying = true
         conn.resume()
       } else {
-        reply('No song to resume')
+        send('No song to resume')
       }
     }
 
     function onSongFinished() {
-      switch (status) {
-        case 'stop':
-          stop()
-          break
-        case 'skip':
-          playNext()
-          break
-      }
+      if (status === 'stop') return stop()
+      playNext()
     }
 
-    async function playNext() {
-      if (hasQueue()) {
-        let song = queue.shift()
-        if (song) {
-          currentSong = song
-          await PlaySong()
-        }
+    function playNext() {
+      status = ''
+      if (queue.length === 0) {
+        return stop()
+      }
+
+      let song = queue.shift()
+      if (song) {
+        currentSong = song
+        PlaySong()
       }
     }
 
     function addSong(link, title) {
       queue.push({ link, title })
-      reply(`Added song: **${title}** to queue`)
+      send(`Added song: **${title}** to queue`)
       if (!currentSong) playNext()
     }
 
     function pause() {
       if (conn && currentSong) {
-        reply(`Paused: ${currentSong.title}`)
+        isPlaying = false
+        send(`Paused: ${currentSong.title}`)
         conn.pause()
       }
     }
 
-    async function stop() {
+    function stop() {
+      isPlaying = false
       queue = []
       currentSong = undefined
-      await vc.leave()
+      vc.leave()
     }
 
     function removeSong() {
       let hasQ = showQueue()
       if (hasQ === false) return
 
-      reply('`Enter songs position: `')
+      send('`Enter songs position: `')
 
       const filter = m => m.content.length >= 1 && !isNaN(m.content)
       const collector = message.channel.createMessageCollector(filter, { time: 6000 })
@@ -207,7 +211,7 @@ module.exports = {
 
         if (qid < 1 || qid > queue.length + 1) {
           collector.stop()
-          return reply('No song in that position!')
+          return send('No song in that position!')
         }
         if (qid === 1) {
           playNext()
@@ -225,9 +229,9 @@ module.exports = {
           .addField(currentSong.title, currentSong.link)
           .setColor(0xc71459)
 
-        reply(embed)
+        send(embed)
       } else {
-        reply(`No song is playing right now...`)
+        send(`No song is playing right now...`)
       }
     }
 
@@ -236,7 +240,9 @@ module.exports = {
         send(`Queue empty...`)
         return false
       }
-      let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
+      let embed = new discord.RichEmbed()
+        .setTitle('Queue\nCurrently Playing: ' + currentSong.title)
+        .setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
         embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)

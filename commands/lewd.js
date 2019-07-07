@@ -27,7 +27,7 @@ module.exports = {
 
         if (amount) {
             if (amount < 1 || amount > 10) {
-                return message.reply('Amount must be between 1 - 10')
+                return message.channel.send('Amount must be between 1 - 10')
             }
         }
 
