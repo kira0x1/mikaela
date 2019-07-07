@@ -53,7 +53,7 @@ const nekoFunctions = [
       }
       return this.neko('whowouldwin', params, message)
     }
-    return message.reply(usage(this))
+    return message.channel.send(usage(this))
   }),
   (trap = function(message, args) {
     let isGoboblin = false
@@ -70,7 +70,7 @@ const nekoFunctions = [
     if (!isGoboblin) {
       //Get user from args
       let victim = message.mentions.users.first()
-      if (!victim) return message.reply(usage(this))
+      if (!victim) return message.channel.send(usage(this))
       trap = {
         name: victim.username, //victim
         author: message.author.username, //Author
@@ -94,9 +94,9 @@ const nekoFunctions = [
     if (intensity === undefined) {
       intensity = 3
     } else if (isNaN(intensity)) {
-      return message.reply(usage(this))
+      return message.channel.send(usage(this))
     } else if (intensity < 1 || intensity > 10) {
-      return message.reply('`Intensity must be between 1 - 10`')
+      return message.channel.send('`Intensity must be between 1 - 10`')
     }
 
     let user1 = message.mentions.users.first()

@@ -47,13 +47,13 @@ module.exports = {
       })
 
       if (amount < 1 || amount > maxpost) {
-        return message.reply(`\`amount must be between 1-${maxpost}\``)
+        return message.channel.send(`\`amount must be between 1-${maxpost}\``)
       }
 
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${limit}`
 
       const result = await fetch(url).then(res => res.json())
-      if (!result.data) return message.reply(`Couldnt retrieve reddit posts :<`)
+      if (!result.data) return message.channel.send(`Couldnt retrieve reddit posts :<`)
       const body = result.data.children
 
       console.log(`posts: ${body.length}`)

@@ -18,7 +18,7 @@ var queue = []
 var status = 'skip'
 
 const flags = [
-  (play = { name: 'play', aliases: ['play', 'p'] }),
+  (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
@@ -45,7 +45,8 @@ module.exports = {
       .shift()
 
     const vc = message.member.voiceChannel
-    let flag = flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
+    let flag =
+      flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
 
     if (flag && flag.name) {
       switch (flag.name) {
@@ -92,7 +93,7 @@ module.exports = {
           addSong(song.link, song.title)
         })
         .catch(err => {
-          reply(`**Couldnt find video:** *${query}*`)
+          send(`**Couldnt find video:** *${query}*`)
         })
     }
 
@@ -112,7 +113,7 @@ module.exports = {
 
     //Play Function
     function play() {
-      if (!vc) return reply("You're not in a vc")
+      if (!vc) return send("You're not in a vc")
 
       if (!query) {
         if (conn) {
@@ -145,23 +146,17 @@ module.exports = {
 
     function resume() {
       if (conn && currentSong) {
-        if (!conn.paused) return reply('Song is currently not paused')
-        reply('resuming!')
+        if (!conn.paused) return send('Song is currently not paused')
+        send('resuming!')
         conn.resume()
       } else {
-        reply('No song to resume')
+        send('No song to resume')
       }
     }
 
     function onSongFinished() {
-      switch (status) {
-        case 'stop':
-          stop()
-          break
-        case 'skip':
-          playNext()
-          break
-      }
+      if (status === 'stop') return stop()
+      playNext()
     }
 
     async function playNext() {
@@ -179,13 +174,13 @@ module.exports = {
 
     function addSong(link, title) {
       queue.push({ link, title })
-      reply(`Added song: **${title}** to queue`)
+      send(`Added song: **${title}** to queue`)
       if (!currentSong) playNext()
     }
 
     function pause() {
       if (conn && currentSong) {
-        reply(`Paused: ${currentSong.title}`)
+        send(`Paused: ${currentSong.title}`)
         conn.pause()
       }
     }
@@ -200,7 +195,7 @@ module.exports = {
       let hasQ = showQueue()
       if (hasQ === false) return
 
-      reply('`Enter songs position: `')
+      send('`Enter songs position: `')
 
       const filter = m => m.content.length >= 1 && !isNaN(m.content)
       const collector = message.channel.createMessageCollector(filter, { time: 6000 })
@@ -210,7 +205,7 @@ module.exports = {
 
         if (qid < 1 || qid > queue.length + 1) {
           collector.stop()
-          return reply('No song in that position!')
+          return send('No song in that position!')
         }
         if (qid === 1) {
           playNext()
@@ -228,9 +223,9 @@ module.exports = {
           .addField(currentSong.title, currentSong.link)
           .setColor(0xc71459)
 
-        reply(embed)
+        send(embed)
       } else {
-        reply(`No song is playing right now...`)
+        send(`No song is playing right now...`)
       }
     }
 
@@ -239,7 +234,9 @@ module.exports = {
         send(`Queue empty...`)
         return false
       }
-      let embed = new discord.RichEmbed().setTitle('Queue\nCurrently Playing: ' + currentSong.title).setColor(0xc71459)
+      let embed = new discord.RichEmbed()
+        .setTitle('Queue\nCurrently Playing: ' + currentSong.title)
+        .setColor(0xc71459)
 
       for (let i = 0; i < queue.length; i++) {
         embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
