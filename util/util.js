@@ -1,4 +1,5 @@
 const { prefix, flagPrefix, perms, users } = require('../config.json')
+const log = console.log
 
 module.exports = {
   //Reply user with command usage
@@ -59,34 +60,22 @@ module.exports = {
   },
 
   getFlags(flags, args) {
-    if (flags) {
-      const flagsFound = []
+    if (!flags || !args) return
 
-      for (let i = 0; i < args.length; i++) {
-        const ag = args[i]
+    const argFlags = args.map(f => {
+      if (f.startsWith(flagPrefix)) return f.slice(flagPrefix.length)
+    })
 
-        const flagged = []
-        if (ag.startsWith(flagPrefix)) {
-          flagged.push(ag)
+    let flagsFound = []
+    flags.find(f => {
+      for (let i = 0; i < argFlags.length; i++) {
+        if (f.name === argFlags[i] || f.aliases.find(al => al === argFlags[i])) {
+          flagsFound.push({ name: f.name, args: args[i + 1] })
+          log(`Found flag!`)
+          break
         }
-
-        flagged.map(f => {
-          flags.map(fg => {
-            let flagGiven = f.slice(flagPrefix.length)
-            if (fg.name === flagGiven) return flagsFound.push({ name: fg.name, args: args[i + 1] })
-            else {
-              fg.aliases.map(als => {
-                if (als === flagGiven) {
-                  let arg = args[i + 1]
-                  flagsFound.push({ name: fg.name, args: arg })
-                  return
-                }
-              })
-            }
-          })
-        })
       }
-      return flagsFound
-    }
+    })
+    return flagsFound
   },
 }

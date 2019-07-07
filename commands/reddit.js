@@ -24,17 +24,27 @@ module.exports = {
   async execute(message, args) {
     try {
       const subreddit = args[0]
+
       let flagsFound = getFlags(flags, args)
+      let sort = 'top'
+      let time = 'all'
+      let amount = 1
 
-      let sort = flagsFound.find(fg => fg.name === 'sort')
-      let time = flagsFound.find(fg => fg.name === 'time')
-      let amount = flagsFound.find(fg => fg.name === 'amount')
-      let rank = flagsFound.find(fg => fg.name === 'rank')
-
-      sort = sort === undefined ? 'top' : sort.args
-      time = time === undefined ? 'all' : time.args
-      amount = amount === undefined ? 1 : amount.args
-      rank = rank === undefined ? undefined : rank.args
+      flagsFound.map(fg => {
+        if (fg.args) {
+          switch (fg.name) {
+            case 'sort':
+              sort = fg.args
+              break
+            case 'time':
+              time = fg.args
+              break
+            case 'amount':
+              amount = fg.args
+              break
+          }
+        }
+      })
 
       if (amount < 1 || amount > maxpost) {
         return message.reply(`\`amount must be between 1-${maxpost}\``)
@@ -43,6 +53,7 @@ module.exports = {
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${limit}`
 
       const result = await fetch(url).then(res => res.json())
+      if (!result.data) return message.reply(`Couldnt retrieve reddit posts :<`)
       const body = result.data.children
 
       console.log(`posts: ${body.length}`)
