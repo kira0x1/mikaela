@@ -11,19 +11,14 @@ module.exports = {
   flags: flags,
 
   execute(message, args) {
-    let search = 'hentai'
-
     const flag = getFlags(flags, args)
-    const al = this.aliases.find(a => message.content.startsWith('.' + a))
+    let search = this.aliases.find(a => message.content.startsWith('.' + a))
+    if (!search) search = 'hentai'
 
     let amount = flag.find(f => f.name === 'amount')
-    amount = amount === undefined ? 1 : amount.args
+    if (!amount) amount = 1
 
-    if (amount < 1 || amount > 10) {
-      return message.channel.send('Amount must be between 1 - 10')
-    }
-
-    if (al && al !== 'nsfw' && al !== 'pn') search = al
+    if (amount < 1 || amount > 10) return message.channel.send('Amount must be between 1 - 10')
 
     if (message.channel.nsfw === false) return
 
