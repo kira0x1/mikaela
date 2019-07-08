@@ -26,10 +26,8 @@ module.exports = {
       agent
         .get('https://nekobot.xyz/api/image')
         .query({ type: search })
-        .then(result => {
-          message.channel.send({ file: result.body.message })
-        })
-        .catch(() => console.error)
+        .then(result => message.channel.send({ file: result.body.message }))
+        .catch()
     }
   },
 }

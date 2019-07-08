@@ -1,5 +1,4 @@
 const { prefix, flagPrefix, perms, users } = require('../config.json')
-const log = console.log
 
 module.exports = {
   //Reply user with command usage
@@ -7,10 +6,7 @@ module.exports = {
     let reply = ''
     if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}\n`
 
-    if (command.flags)
-      reply += `**Flags:** ${command.flags.map(f =>
-        '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`')))
-      )}`
+    if (command.flags) reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
 
     return reply
   },
@@ -32,14 +28,8 @@ module.exports = {
 
     //check if banned
     const bannedUsers = perms['banned']
-
     bannedUsers.forEach(user => {
-      const userID = users[user]
-
-      if (id === userID) {
-        console.log(`banned user[ ${user} ] tried to use command!`)
-        return (banned = true)
-      }
+      if (id === users[user]) return (banned = true)
     })
 
     if (banned) return false
