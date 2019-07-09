@@ -1,7 +1,6 @@
 const discord = require('discord.js')
 const search = require('youtube-search')
-const { getBasicInfo } = require('ytdl-core')
-const ytdlDiscord = require('ytdl-core-discord')
+const ytdl = require('ytdl-core')
 const { prefix } = require('../config.json')
 
 const searchOptions = {
@@ -11,15 +10,7 @@ const searchOptions = {
   key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
 }
 
-// const streamOptions = { volume: 0.2, passes: 3 }
-
-const streamOptions = {
-  bitrate: '120000',
-  passes: 3,
-  seek,
-  volume: volume / 100,
-  type: 'opus'
-}
+const streamOptions = { volume: 0.2, passes: 3 }
 
 var conn
 var currentSong
@@ -125,25 +116,34 @@ module.exports = {
     function play() {
       status = ''
       if (!vc) return send("You're not in a vc")
+
       if (!query) {
         if (conn) {
           if (conn.ispaused) conn.resume
         }
         return
       }
+
       findVideoBylink()
     }
 
     async function PlaySong() {
       let url = currentSong.link
       await vc.join().then(async connection => {
-        if (!url) return
-        isPlaying = true
-        const stream = await ytdl(url, { filter: 'audioonly' })
-        const dispatcher = await connection.playOpusStream(stream, streamOptions)
-        conn = dispatcher
-        dispatcher.on('end', () => onSongFinished())
+        if (conn) {
+          if (conn.ispaused && currentSong !== undefined) {
+            conn.resume()
+            return
+          }
+        }
 
+        if (url) {
+          isPlaying = true
+          const stream = await ytdl(url, { filter: 'audioonly' })
+          const dispatcher = await connection.playStream(stream, streamOptions)
+          conn = dispatcher
+          dispatcher.on('end', () => onSongFinished())
+        }
       })
     }
 
@@ -253,6 +253,10 @@ module.exports = {
 
     function hasQueue() {
       return !(queue.length === 0 || queue === undefined)
+    }
+
+    function reply(content) {
+      message.reply(content)
     }
 
     function send(content) {
