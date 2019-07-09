@@ -16,8 +16,6 @@ const searchOptions = {
 const streamOptions = {
   bitrate: '120000',
   passes: 3,
-  seek,
-  volume: volume / 100,
   type: 'opus'
 }
 

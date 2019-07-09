@@ -29,25 +29,26 @@ module.exports = {
           embed.addField(command.name, command.description)
         }
       })
+      message.channel.send({ embed: embed })
     } else {
       //Send specific command
       const name = args[0].toLowerCase()
-      const command =
-        commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name))
+      const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name))
 
       if (!command) {
         return message.channel.send(`command not found: ${name}`)
       }
+
+
+      const embedSpecific = new discord.RichEmbed()
+        .setTitle(`Command: ${command.name}`)
+        .setColor(0xc71459)
+        .setDescription(`\`Description: ${command.description}\``)
+        .addField('Aliases', `\`${command.aliases || 'None'}\``)
+        .addField('Usage', usage(command))
+        .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
+
+      message.channel.send({ embed: embedSpecific })
     }
-
-    const embedSpecific = new discord.RichEmbed()
-      .setTitle(`Command: ${command.name}`)
-      .setColor(0xc71459)
-      .setDescription(`\`Description: ${command.description}\``)
-      .addField('Aliases', `\`${command.aliases || 'None'}\``)
-      .addField('Usage', usage(command))
-      .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
-
-    message.channel.send({ embed: embedSpecific })
   },
 }

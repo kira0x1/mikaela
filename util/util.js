@@ -17,6 +17,8 @@ module.exports = {
     return id
   },
 
+
+
   getUserFromMention(mention, client) {
     const id = this.getIDFromMention(mention)
     return client.users.get(id)
@@ -67,4 +69,12 @@ module.exports = {
     })
     return flagsFound
   },
+  getAlias(aliases, content) {
+    const arg = content
+      .slice(prefix.length)
+      .split(/ +/)
+      .shift()
+
+    return aliases.find(f => f.name === arg) || aliases.find(f => f.aliases && f.aliases.includes(arg))
+  }
 }
