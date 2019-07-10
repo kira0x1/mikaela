@@ -2,19 +2,19 @@ const discord = require('discord.js')
 const search = require('youtube-search')
 const ytdl = require('ytdl-core')
 // const ytdlDiscord = require('ytdl-core-discord')
-const { prefix } = require('../config.json')
+const config = require('../config.json')
+const prefix = config.prefix
+const youTubeKey = config.keys.youTubeKey
 const { getFlags } = require('../util/util')
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
   maxResults: 1,
-  key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
+  key: youTubeKey,
 }
 
-// const streamOptions = { volume: 0.2, passes: 3 }
-
+//bitrate: '120000',
 const streamOptions = {
-  bitrate: '120000',
   passes: 3,
   type: 'opus',
   seek: 0
