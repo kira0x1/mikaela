@@ -1,9 +1,9 @@
 const discord = require('discord.js')
 const search = require('youtube-search')
-const { getBasicInfo } = require('ytdl-core')
-const ytdlDiscord = require('ytdl-core-discord')
+const ytdl = require('ytdl-core')
+// const ytdlDiscord = require('ytdl-core-discord')
 const { prefix } = require('../config.json')
-
+const { getFlags } = require('../util/util')
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
@@ -16,7 +16,8 @@ const searchOptions = {
 const streamOptions = {
   bitrate: '120000',
   passes: 3,
-  type: 'opus'
+  type: 'opus',
+  seek: 0
 }
 
 var conn
@@ -25,22 +26,30 @@ var queue = []
 var status = 'skip'
 var isPlaying = false
 
-const flags = [
+const commands = [
   (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
   (skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] }),
-  (queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
+  (queuecmd = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
   (current = { name: 'current', aliases: ['current', 'np'] }),
   (remove = { name: 'remove', aliases: ['remove', 'r', 'rm', 'rmv'] }),
 ]
 
+const aliases = [
+  (seek = {
+    name: 'seek',
+    description: '',
+    aliases: ['s', 't', 'time']
+  })
+]
+
 module.exports = {
   name: 'music',
-  aliases: [] + flags.map(f => f.aliases),
+  aliases: [] + commands.map(f => f.aliases),
   guildOnly: true,
-  usage: `[link | search] or [flag]`,
+  usage: `[link | search] or [alias]`,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
@@ -53,11 +62,14 @@ module.exports = {
       .shift()
 
     const vc = message.member.voiceChannel
-    let flag =
-      flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
+    let cmd = commands.find(f => f.name === arg) || commands.find(f => f.aliases && f.aliases.includes(arg))
 
-    if (flag && flag.name) {
-      switch (flag.name) {
+    let flags = getFlags(aliases, args)
+    let seek = flags.find(sk => sk.name === 'seek')
+    if (seek) streamOptions.seek = seek.args
+
+    if (cmd && cmd.name) {
+      switch (cmd.name) {
         case 'play':
           play()
           break
@@ -92,6 +104,7 @@ module.exports = {
           break
       }
     }
+
 
     //Search Function
     async function searchVideo() {
@@ -138,10 +151,9 @@ module.exports = {
         if (!url) return
         isPlaying = true
         const stream = await ytdl(url, { filter: 'audioonly' })
-        const dispatcher = await connection.playOpusStream(stream, streamOptions)
+        const dispatcher = await connection.playStream(stream, streamOptions)
         conn = dispatcher
         dispatcher.on('end', () => onSongFinished())
-
       })
     }
 
