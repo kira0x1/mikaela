@@ -1,16 +1,27 @@
 const discord = require('discord.js')
 const search = require('youtube-search')
 const ytdl = require('ytdl-core')
-const { prefix } = require('../config.json')
+// const ytdlDiscord = require('ytdl-core-discord')
+const config = require('../config.json')
+const fs = require('fs')
+const prefix = config.prefix
+const youTubeKey = config.keys.youTubeKey
+const { getFlags } = require('../util/util')
+
 
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
   maxResults: 1,
-  key: 'AIzaSyAQ_I6nDdIahO4hWerAQ32P4UXFf21_ELo',
+  key: youTubeKey,
 }
 
-const streamOptions = { volume: 0.2, passes: 3 }
+//bitrate: '120000',
+const streamOptions = {
+  passes: 3,
+  type: 'opus',
+  seek: 0
+}
 
 var conn
 var currentSong
@@ -18,22 +29,41 @@ var queue = []
 var status = 'skip'
 var isPlaying = false
 
-const flags = [
+const commandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'))
+let subcommands = []
+
+for (const file of commandFiles) {
+  const command = require(`./music/${file}`)
+  subcommands.push({ name: command.name, command: command })
+}
+
+const commands = [
   (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
   (resume = { name: 'resume', aliases: ['resume', 'rs'] }),
   (skip = { name: 'skip', aliases: ['skip', 'sk', 'fs'] }),
-  (queueFlag = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
+  (queuecmd = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
   (current = { name: 'current', aliases: ['current', 'np'] }),
   (remove = { name: 'remove', aliases: ['remove', 'r', 'rm', 'rmv'] }),
 ]
 
+const aliases = [
+  (seek = {
+    name: 'seek',
+    description: '',
+    aliases: ['s', 't', 'time']
+  })
+]
+// commands.map(f => f.aliases),
+
 module.exports = {
   name: 'music',
-  aliases: [] + flags.map(f => f.aliases),
+  aliases: ['p'],
   guildOnly: true,
-  usage: `[link | search] or [flag]`,
+  usage: `[link | search] or [alias]`,
+  commands: commands,
+  subcommands: subcommands,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 
@@ -46,11 +76,14 @@ module.exports = {
       .shift()
 
     const vc = message.member.voiceChannel
-    let flag =
-      flags.find(f => f.name === arg) || flags.find(f => f.aliases && f.aliases.includes(arg))
+    let cmd = commands.find(f => f.name === arg) || commands.find(f => f.aliases && f.aliases.includes(arg))
 
-    if (flag && flag.name) {
-      switch (flag.name) {
+    let flags = getFlags(aliases, args)
+    let seek = flags.find(sk => sk.name === 'seek')
+    if (seek) streamOptions.seek = seek.args
+
+    if (cmd && cmd.name) {
+      switch (cmd.name) {
         case 'play':
           play()
           break
@@ -86,6 +119,7 @@ module.exports = {
       }
     }
 
+
     //Search Function
     async function searchVideo() {
       await search(query, searchOptions)
@@ -116,34 +150,24 @@ module.exports = {
     function play() {
       status = ''
       if (!vc) return send("You're not in a vc")
-
       if (!query) {
         if (conn) {
           if (conn.ispaused) conn.resume
         }
         return
       }
-
       findVideoBylink()
     }
 
     async function PlaySong() {
       let url = currentSong.link
       await vc.join().then(async connection => {
-        if (conn) {
-          if (conn.ispaused && currentSong !== undefined) {
-            conn.resume()
-            return
-          }
-        }
-
-        if (url) {
-          isPlaying = true
-          const stream = await ytdl(url, { filter: 'audioonly' })
-          const dispatcher = await connection.playStream(stream, streamOptions)
-          conn = dispatcher
-          dispatcher.on('end', () => onSongFinished())
-        }
+        if (!url) return
+        isPlaying = true
+        const stream = await ytdl(url, { filter: 'audioonly' })
+        const dispatcher = await connection.playStream(stream, streamOptions)
+        conn = dispatcher
+        dispatcher.on('end', () => onSongFinished())
       })
     }
 
@@ -253,10 +277,6 @@ module.exports = {
 
     function hasQueue() {
       return !(queue.length === 0 || queue === undefined)
-    }
-
-    function reply(content) {
-      message.reply(content)
     }
 
     function send(content) {

@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const fetch = require('node-fetch')
 const { getFlags } = require('../util/util')
 
-const maxpost = 40
-let limit = 40
+const maxpost = 15 
+let limit = 10
 
 const flags = [
   (name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] }),
@@ -53,7 +53,7 @@ module.exports = {
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${limit}`
 
       const result = await fetch(url).then(res => res.json())
-      if (!result.data) return message.channel.send(`Couldnt retrieve reddit posts :<`)
+      if (!result.data) return message.channel.send(`Subreddit doesnt exist or couldnt get reddit post :<`)
       const body = result.data.children
 
       console.log(`posts: ${body.length}`)
