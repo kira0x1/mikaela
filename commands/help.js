@@ -8,7 +8,7 @@ module.exports = {
   aliases: ['h', 'commands', 'mikaela', 'cmd'],
   guildOnly: false,
   usage: '[command name]',
-  cooldown: 15,
+  cooldown: 5,
 
   execute(message, args) {
     const data = []
