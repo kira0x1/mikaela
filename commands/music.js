@@ -3,9 +3,12 @@ const search = require('youtube-search')
 const ytdl = require('ytdl-core')
 // const ytdlDiscord = require('ytdl-core-discord')
 const config = require('../config.json')
+const fs = require('fs')
 const prefix = config.prefix
 const youTubeKey = config.keys.youTubeKey
 const { getFlags } = require('../util/util')
+
+
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
@@ -26,6 +29,14 @@ var queue = []
 var status = 'skip'
 var isPlaying = false
 
+const commandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'))
+let subcommands = []
+
+for (const file of commandFiles) {
+  const command = require(`./music/${file}`)
+  subcommands.push({ name: command.name, command: command })
+}
+
 const commands = [
   (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
@@ -44,12 +55,15 @@ const aliases = [
     aliases: ['s', 't', 'time']
   })
 ]
+// commands.map(f => f.aliases),
 
 module.exports = {
   name: 'music',
-  aliases: [] + commands.map(f => f.aliases),
+  aliases: ['p'],
   guildOnly: true,
   usage: `[link | search] or [alias]`,
+  commands: commands,
+  subcommands: subcommands,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 

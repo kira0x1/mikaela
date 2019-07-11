@@ -29,16 +29,29 @@ module.exports = {
           embed.addField(command.name, command.description)
         }
       })
+
+      // ANCHOR send command list
       message.channel.send({ embed: embed })
     } else {
-      //Send specific command
+      // ANCHOR help-specific
       const name = args[0].toLowerCase()
-      const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name))
+
+      let command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name))
+
+      if (!command) {
+        // NOTE check if its a subcommand 
+        commands.forEach(cmd => {
+          if (cmd.subcommands) {
+            cmd.subcommands.map(c => {
+              if (c.name === name) return command = c.command
+            })
+          }
+        });
+      }
 
       if (!command) {
         return message.channel.send(`command not found: ${name}`)
       }
-
 
       const embedSpecific = new discord.RichEmbed()
         .setTitle(`Command: ${command.name}`)
@@ -47,6 +60,10 @@ module.exports = {
         .addField('Aliases', `\`${command.aliases || 'None'}\``)
         .addField('Usage', usage(command))
         .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
+
+      if (command.subcommands !== undefined) {
+        embedSpecific.addField('Subcommands', `\`${command.subcommands.map(c => c.name)}\``)
+      }
 
       message.channel.send({ embed: embedSpecific })
     }
