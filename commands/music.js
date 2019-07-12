@@ -60,6 +60,8 @@ const aliases = [
 
 module.exports = {
   name: 'music',
+  subcommands: subcommands,
+  aliases: ['p'] + subcommands.map(cmd => cmd.aliases),
   guildOnly: true,
   usage: `[link | search] or [alias]`,
   cooldown: 3,
