@@ -69,7 +69,6 @@ module.exports = {
     })
     return flagsFound
   },
-
   getAlias(aliases, content) {
     const arg = content
       .slice(prefix.length)
