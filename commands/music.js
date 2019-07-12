@@ -17,8 +17,8 @@ const searchOptions = {
 }
 
 //bitrate: '120000',
-const streamOptions = {
-  passes: 3,
+const streamOptions = 
+  passes: 2,
   type: 'opus',
   seek: 0
 }
@@ -59,11 +59,12 @@ const aliases = [
 
 module.exports = {
   name: 'music',
-  aliases: ['p'],
   guildOnly: true,
   usage: `[link | search] or [alias]`,
-  commands: commands,
-  subcommands: subcommands,
+  subcommands: subcommands
+  aliases: ['p'] + subcommands.map(cmd => cmd.aliases),
+  guildOnly: true,
+  usage: `[link | search] or [alias]`,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
 

@@ -52,7 +52,7 @@ module.exports = {
   },
 
   getFlags(flags, args) {
-    if (!flags || !args) return
+    if (!flags || !args) return console.log(`No flags or args`)
 
     const argFlags = args.map(f => {
       if (f.startsWith(flagPrefix)) return f.slice(flagPrefix.length)
