@@ -54,6 +54,7 @@ module.exports = {
   usage: `[link | search] or [alias]`,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
+  aliases: aliases + commands.map(cmd => cmd.name) + commands.map(cmd => cmd.aliases),
 
   execute(message, args) {
     const query = args.join(' ')
