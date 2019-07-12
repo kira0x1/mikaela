@@ -36,7 +36,6 @@ module.exports = {
       return message.reply('`amount must be between 1 - 25`')
     }
 
-    console.log(`Amount: ${amount}`)
     amount++
 
     await message.channel
