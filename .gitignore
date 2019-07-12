@@ -1,9 +1,6 @@
 #config
 config.json
 
-#music wip
-commands/music/*
-
 # Logs
 logs
 *.log
@@ -84,5 +81,6 @@ config.json
 ecosystem.config.js
 .vscode/sftp.json
 .github/.whitesource
+
 commands/music/play.js
 commands/music/stop.js
