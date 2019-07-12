@@ -18,7 +18,7 @@ const searchOptions = {
 
 //bitrate: '120000',
 const streamOptions = {
-  passes: 3,
+  passes: 2,
   type: 'opus',
   seek: 0
 }
@@ -59,7 +59,7 @@ const aliases = [
 
 module.exports = {
   name: 'music',
-  aliases: ['p'],
+  aliases: commands,
   guildOnly: true,
   usage: `[link | search] or [alias]`,
   commands: commands,
