@@ -1,6 +1,7 @@
 const discord = require('discord.js')
 const { prefix } = require('../config.json')
 const { perms, usage } = require('../util/util')
+const { findSubCommand } = require('../util/commandUtil')
 
 module.exports = {
   name: 'help',
@@ -40,13 +41,9 @@ module.exports = {
 
       if (!command) {
         // NOTE check if its a subcommand 
-        commands.forEach(cmd => {
-          if (cmd.subcommands) {
-            cmd.subcommands.map(c => {
-              if (c.name === name) return command = c.command
-            })
-          }
-        });
+        const subCommand = findSubCommand(name)
+        if (subCommand)
+          command = subCommand
       }
 
       if (!command) {

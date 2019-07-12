@@ -30,8 +30,6 @@ module.exports = {
         amount = flag.args
     }
 
-
-
     if (!force && (amount < 1 || amount > 25)) {
       return message.reply('`amount must be between 1 - 25`')
     }
