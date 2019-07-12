@@ -1,21 +1,10 @@
 const { usage, getFlags } = require('../util/util')
 
 const flags = [
-  (me = {
-    name: 'me',
-    aliases: ['m'],
-    description: 'Deletes users messages instead of the bots',
-  }),
-  (force = {
-    name: 'force',
-    aliases: ['f'],
-    description: 'Force a command',
-  }),
-  (both = {
-    name: 'both',
-    aliases: ['b'],
-    description: 'Deletes **both** the bots and the users messages',
-  }),
+  (me = { name: 'me', aliases: ['m'], description: 'Deletes users messages instead of the bots', }),
+  (force = { name: 'force', aliases: ['f'], description: 'Force a command', }),
+  (both = { name: 'both', aliases: ['b'], description: 'Deletes **both** the bots and the users messages' }),
+  (bots = { name: 'bots', aliases: ['bot', 'bt'], description: 'Delete bot messages' })
 ]
 
 module.exports = {
@@ -28,24 +17,26 @@ module.exports = {
 
   async execute(message, args) {
     const flagsFound = getFlags(this.flags, args)
+    let flag = ''
 
     let amount = 1
-    let me = flagsFound.find(fg => fg.name === 'me')
-    let force = flagsFound.find(fg => fg.name === 'force')
-    let both = flagsFound.find(fg => fg.name === 'both')
 
-    if (!both) amount = me === undefined ? args.shift() : me.args
-    else amount = both.args !== undefined ? both.args : amount
+    if (!isNaN(args[0])) {
+      amount = args[0]
+    }
+    else if (flagsFound.length > 0) {
+      flag = flagsFound.shift()
+      if (flag.args && !isNaN(flag.args))
+        amount = flag.args
+    }
 
-    amount = amount === undefined ? 1 : amount
-    amount = amount !== undefined && me !== undefined && me.args === undefined ? 1 : amount
 
-    if (isNaN(amount)) return
 
     if (!force && (amount < 1 || amount > 25)) {
       return message.reply('`amount must be between 1 - 25`')
     }
 
+    console.log(`Amount: ${amount}`)
     amount++
 
     await message.channel
@@ -54,8 +45,10 @@ module.exports = {
         const id = message.client.user.id
         let result = messages.filter(m => m.author.id === id)
 
-        if (both && !me) result = messages.filter(m => m.author.id === message.author.id || m.author.id === id)
-        else if (me) result = messages.filter(m => m.author.id === message.author.id)
+        if (flag.name === 'me') result = messages.filter(m => m.author.id === message.author.id)
+        else if (flag.name === 'both') result = messages.filter(m => m.author.id === message.author.id || m.author.id === id)
+        else if (flag.name === 'bots') result = messages.filter(m => m.author.bot)
+
         await message.channel.bulkDelete(result).catch()
       })
       .catch()
