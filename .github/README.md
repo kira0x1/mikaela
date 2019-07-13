@@ -3,9 +3,6 @@
 
 ## Commands
 
-### Delete  
-> **Description**: Delete Mikaelas last message(s)
-
 ### Help
 >**Description**: lists all commands
  
@@ -14,3 +11,9 @@
 
 ### Reddit
 >**Description**: Post from subreddits
+
+### Lewd
+>**Description**: Post nsfw posts from the neko api
+
+### Delete  
+> **Description**: Delete Mikaelas last message(s)
