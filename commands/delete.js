@@ -24,8 +24,10 @@ module.exports = {
     if (!isNaN(args[0])) {
       amount = args[0]
     }
-    else if (flagsFound.length > 0) {
-      flag = flagsFound.shift()
+
+    if (flagsFound.length > 0) {
+      flag = flagsFound[0]
+      console.log(`Flags found: ${flag.name}`)
       if (flag.args && !isNaN(flag.args))
         amount = flag.args
     }
