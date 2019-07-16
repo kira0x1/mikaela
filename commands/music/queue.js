@@ -1,6 +1,6 @@
 const discord = require('discord.js')
 const queue = []
-var currentSong = ' '
+var currentSong = undefined
 
 module.exports = {
     name: 'queue',
@@ -38,6 +38,6 @@ module.exports = {
 
     AddSong(song, message) {
         queue.push({ title: song.title, link: song.link })
-        message.channel.send(`Song ${song.title} added`)
+        message.channel.send(`**Song Added:** ${song.title} added`)
     },
 }

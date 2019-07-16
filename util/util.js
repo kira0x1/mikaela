@@ -76,6 +76,6 @@ module.exports = {
       .split(/ +/)
       .shift()
 
-    return aliases.find(f => f.name === arg) || aliases.find(f => f.aliases && f.aliases.includes(arg))
-  }
+    return aliases.find(al => al === arg)
+  },
 }

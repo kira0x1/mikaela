@@ -13,5 +13,9 @@ module.exports = {
         const song = ytdl.getBasicInfo(query).then(song => {
             queue.AddSong(song, message)
         }).catch(err => console.log(err))
+
+        function SearchForSong(query) {
+
+        }
     }
 }

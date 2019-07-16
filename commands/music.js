@@ -11,7 +11,6 @@ for (const file of commandFiles) {
   subcommands.push({ name: command.name, command: command })
 }
 
-
 module.exports = {
   name: 'music',
   guildOnly: true,
