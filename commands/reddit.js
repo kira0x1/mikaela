@@ -2,8 +2,8 @@ const Discord = require('discord.js')
 const fetch = require('node-fetch')
 const { getFlags } = require('../util/util')
 
-const maxpost = 15 
-let limit = 10
+const maxpost = 15
+let limit = 30
 
 const flags = [
   (name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] }),
@@ -26,7 +26,7 @@ module.exports = {
       const subreddit = args[0]
 
       let flagsFound = getFlags(flags, args)
-      let sort = 'top'
+      let sort = 'hot'
       let time = 'all'
       let amount = 1
 
@@ -46,6 +46,8 @@ module.exports = {
         }
       })
 
+      console.log(`Amount: ${amount}`)
+
       if (amount < 1 || amount > maxpost) {
         return message.channel.send(`\`amount must be between 1-${maxpost}\``)
       }
@@ -55,8 +57,6 @@ module.exports = {
       const result = await fetch(url).then(res => res.json())
       if (!result.data) return message.channel.send(`Subreddit doesnt exist or couldnt get reddit post :<`)
       const body = result.data.children
-
-      console.log(`posts: ${body.length}`)
 
       const redditPost = message.channel.nsfw ? body : body.filter(post => !post.data.over_18)
       if (!redditPost.length) return message.channel.send('This is not a **NSFW** channel.')

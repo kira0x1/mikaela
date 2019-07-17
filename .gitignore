@@ -77,7 +77,6 @@ typings/
 
 # FuseBox cache
 .fusebox/
-config.json
 ecosystem.config.js
 .vscode/sftp.json
 .github/.whitesource

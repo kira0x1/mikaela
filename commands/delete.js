@@ -24,13 +24,13 @@ module.exports = {
     if (!isNaN(args[0])) {
       amount = args[0]
     }
-    else if (flagsFound.length > 0) {
-      flag = flagsFound.shift()
+
+    if (flagsFound.length > 0) {
+      flag = flagsFound[0]
+      console.log(`Flags found: ${flag.name}`)
       if (flag.args && !isNaN(flag.args))
         amount = flag.args
     }
-
-
 
     if (!force && (amount < 1 || amount > 25)) {
       return message.reply('`amount must be between 1 - 25`')
