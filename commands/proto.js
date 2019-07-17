@@ -1,16 +1,7 @@
 //FIXME REMOVE THIS FILE BEFORE UPLOADING
-const config = require('../config.json')
 const music = require('./music')
 const { getFlags } = require('../util/util')
-const chalk = require('chalk')
-const youtube = require('youtube-api')
-const youTubeKey = config.keys.youTubeKey
 const search = require('./music/youtube')
-
-youtube.authenticate({
-  type: "key",
-  key: youTubeKey
-})
 
 const flags = [
   (amount = { name: 'amount', aliases: ['n'] }),
@@ -37,23 +28,8 @@ module.exports = {
         await music.PlaySong(message, site)
       }
     } else {
-      const video = await search.GetVideo(query)
-      log(`Qvideo: ${video}`)
-
-      // const id = await search.Search(query).then(res => res.id.videoId)
-      //     .catch(err => console.log(err))
-
-      // console.log(`id: ${id}`)
-      // await search.GetVideo(id).then(video => {
-      //     log(`Video!`)
-      //     log(JSON.stringify(video))
-      // }).catch(err => console.log(err))
-    }
-    // const voice = message.client.voice.connections.map(vc => console.dir(`vc: ${vc}`))
-    function log(msg, color = chalk.blue) {
-      console.log(color(msg))
+      const video = await search.Search(query)
     }
   },
-
 
 }
