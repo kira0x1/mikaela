@@ -12,8 +12,5 @@
 ### Reddit
 >**Description**: Post from subreddits
 
-### Lewd
->**Description**: Post nsfw posts from the neko api
-
 ### Delete  
 > **Description**: Delete Mikaelas last message(s)
