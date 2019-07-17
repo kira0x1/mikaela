@@ -52,16 +52,13 @@ module.exports = {
       let song = undefined
 
       //NOTE GetSong: URL
-      song = await ytdl.getBasicInfo(query).catch(async err => {
-
+      song = ytdl.getBasicInfo(query).catch(err => {
         //NOTE
         //If failed then assume the user gave a query not a link
         //Try to search instead...
 
         //ANCHOR GetSong: Searchs
-        await search.GetVideo(query).then(res => {
-          song = res
-        })
+        song = search.Search(query)
       })
 
       return song
