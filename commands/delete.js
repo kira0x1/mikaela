@@ -1,4 +1,4 @@
-const { usage, getFlags } = require('../util/util')
+const { getFlags } = require('../util/util')
 
 const flags = [
   (me = { name: 'me', aliases: ['m'], description: 'Deletes users messages instead of the bots', }),

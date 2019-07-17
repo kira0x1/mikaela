@@ -1,11 +1,11 @@
 const discord = require('discord.js')
-const search = require('youtube-search')
 const ytdl = require('ytdl-core')
-// const ytdlDiscord = require('ytdl-core-discord')
+const search = require('youtube-search')
 const config = require('../config.json')
+const { getFlags } = require('../util/util')
+
 const prefix = config.prefix
 const youTubeKey = config.keys.youTubeKey
-const { getFlags } = require('../util/util')
 
 
 const searchOptions = {
@@ -20,7 +20,7 @@ const streamOptions = {
   passes: 1,
   type: 'opus',
   seek: 0,
-  volume: 0.3
+  volume: 0.3,
 }
 
 var conn
@@ -46,8 +46,6 @@ const aliases = [
     aliases: ['s', 't', 'time']
   })
 ]
-// commands.map(f => f.aliases),
-// aliases: [] + commands.map(cmd => cmd.aliases),
 
 module.exports = {
   name: 'music',
