@@ -9,10 +9,10 @@ const que = require('./queue')
 
 const streamOptions = {
     bitrate: '120000',
-    passes: 2,
+    passes: 1,
     type: 'opus',
     seek: 0,
-    volume: 0.4,
+    volume: 0.2,
 }
 
 module.exports = {
@@ -38,7 +38,6 @@ module.exports = {
             isConnected = true
         }).catch(err => {
             message.channel.send(`Failed to join voice channel!`)
-            console.log(err)
         })
     },
 

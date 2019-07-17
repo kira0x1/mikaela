@@ -65,14 +65,4 @@ module.exports = {
         if (result.id !== undefined)
             return await this.GetVideo(result.id.videoId)
     }
-
-    /*
-         youtube.video.list({
-            part: "contentDetails",
-            id: id
-        }, (err, data) => {
-            if (err) return console.error(err)
-            return data.items[0].snippet
-        });
-    */
 }

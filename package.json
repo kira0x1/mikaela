@@ -11,13 +11,11 @@
   "author": "Kira",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^2.4.2",
     "discord.js": "^11.5.1",
-    "ffmpeg-binaries": "^4.0.0",
+    "ffmpeg-static": "^2.5.0",
     "node-fetch": "^2.6.0",
     "opusscript": "0.0.6",
     "youtube-api": "^2.0.10",
-    "ytdl-core": "^0.29.2",
-    "ytdl-core-discord": "^1.0.3"
+    "ytdl-core": "^0.29.2"
   }
 }
