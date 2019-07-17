@@ -20,12 +20,8 @@ module.exports = {
 
     async Search(query) {
         youtube.search(query, 2, function (error, result) {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log(JSON.stringify(result, null, 2));
-            }
+            if (error) return
+            return result
         });
     },
 }
