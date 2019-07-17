@@ -7,7 +7,6 @@ const { getFlags } = require('../util/util')
 const prefix = config.prefix
 const youTubeKey = config.keys.youTubeKey
 
-
 const searchOptions = {
   part: ['snippet', 'contentDetails'],
   chart: 'mostPopular',
@@ -28,7 +27,7 @@ var currentSong
 var queue = []
 var status = 'skip'
 
-const commands = [
+const aliases = [
   (play = { name: 'play', aliases: ['play', 'p', 'music'] }),
   (pause = { name: 'pause', aliases: ['pause', 'hold', 'ps'] }),
   (leave = { name: 'leave', aliases: ['stop', 'exit', 'quit', 'lv', 'leave'] }),
@@ -37,14 +36,7 @@ const commands = [
   (queuecmd = { name: 'queue', aliases: ['queue', 'q', 'list'] }),
   (current = { name: 'current', aliases: ['current', 'np'] }),
   (remove = { name: 'remove', aliases: ['remove', 'r', 'rm', 'rmv'] }),
-]
-
-const aliases = [
-  (seek = {
-    name: 'seek',
-    description: '',
-    aliases: ['s', 't', 'time']
-  })
+  (seek = { name: 'seek', description: '', aliases: ['s', 't', 'time'] })
 ]
 
 module.exports = {
@@ -53,7 +45,7 @@ module.exports = {
   usage: `[link | search] or [alias]`,
   cooldown: 3,
   description: `Plays music via links or youtube searches`,
-  aliases: aliases + commands.map(cmd => cmd.name) + commands.map(cmd => cmd.aliases),
+  aliases: aliases,
 
   execute(message, args) {
     const query = args.join(' ')
@@ -64,11 +56,7 @@ module.exports = {
       .shift()
 
     const vc = message.member.voiceChannel
-    let cmd = commands.find(f => f.name === arg) || commands.find(f => f.aliases && f.aliases.includes(arg))
-
-    let flags = getFlags(aliases, args)
-    let seek = flags.find(sk => sk.name === 'seek')
-    if (seek) streamOptions.seek = seek.args
+    let cmd = aliases.find(f => f.name === arg) || aliases.find(f => f.aliases && f.aliases.includes(arg))
 
     if (cmd && cmd.name) {
       switch (cmd.name) {
