@@ -37,7 +37,7 @@ module.exports = {
         })
     },
 
-    async GetVideo(id) {
+    async GetVideoByID(id) {
         return new Promise(function (resolve, reject) {
             var req = youtube.videos.list({
                 part: ['contentDetails'],
@@ -58,11 +58,12 @@ module.exports = {
             maxResults: 1,
             q: query
         }, (err, data) => {
-            if (err) return console.error(err)
+            if (err) return
             return req.response.body.items[0]
         })
 
-        return await this.GetVideo(result.id.videoId)
+        if (result.id !== undefined)
+            return await this.GetVideo(result.id.videoId)
     }
 
     /*

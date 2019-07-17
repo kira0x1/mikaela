@@ -68,8 +68,7 @@ module.exports = {
             let cmd = commands[i]
             if (!cmd.subcommands) continue
             let subCmd = cmd.subcommands.find(c => c.name === name) || cmd.subcommands.find(c => c.command.aliases && c.command.aliases.includes(name))
-            subCmd = parent === true ? cmd : subCmd.command
-            return subCmd
+            return subCmd.command
         }
     }
 }
