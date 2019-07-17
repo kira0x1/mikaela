@@ -8,7 +8,6 @@ var dispatcher = undefined
 const que = require('./queue')
 
 const streamOptions = {
-    bitrate: '120000',
     passes: 1,
     type: 'opus',
     seek: 0,
