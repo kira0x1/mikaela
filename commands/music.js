@@ -1,7 +1,12 @@
 const config = require('../config.json')
 const prefix = config.prefix
 const ytdl = require('ytdl-core')
-const queue = require('./music/queue')
+
+const que = require('./music/queue')
+const stream = require('./music/stream')
+
+//NOTE Remove after developing 
+const chalk = require('chalk')
 
 const fs = require('fs')
 const { findSubCommand } = require('../util/commandUtil')
@@ -33,8 +38,18 @@ module.exports = {
 
     const query = args.join(' ')
     await ytdl.getBasicInfo(query).then(async song => {
-      await queue.AddSong(song, message)
-    }).catch(err => console.log(err))
+      await que.AddSong(song, message)
 
+      if (que.GetCurrentSong() === undefined) {
+        stream.playSong(message, que.shiftNextSong())
+        //NOTE Remove after developing
+        console.log(chalk`{magenta Playing next..}`)
+      }
+    }).catch(err => console.log(err))
   },
+
+
+  async playSong(message, song) {
+    await stream.playSong(message, song)
+  }
 }

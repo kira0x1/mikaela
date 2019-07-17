@@ -1,4 +1,5 @@
 const stream = require('./stream')
+const que = require('./queue')
 
 module.exports = {
     name: 'Stop',
@@ -9,6 +10,9 @@ module.exports = {
 
     //NOTE Leaves the voice channel
     async execute(message, args) {
-        await stream.Leave(message)
+        if (stream.inVoice())
+            await stream.Leave(message)
+
+        que.clearQueue()
     }
 }

@@ -5,6 +5,9 @@ const youTubeKey = config.keys.youTubeKey
 var isConnected = false
 var connection = undefined
 var voiceChannel = undefined
+var dispatcher = undefined
+
+const que = require('./queue')
 
 const searchOptions = {
     part: ['snippet', 'contentDetails'],
@@ -21,18 +24,12 @@ const streamOptions = {
     volume: 0.3,
 }
 
-const { test } = require('./queue')
-
 module.exports = {
     name: 'stream',
     description: 'handles streams',
     aliases: ['str'],
     usage: ' ',
     guildOnly: true,
-
-    execute(message, args) {
-        test
-    },
 
     //ANCHOR Join vc
     async Join(message) {
@@ -53,10 +50,7 @@ module.exports = {
 
     //ANCHOR Leave vc
     async Leave(message) {
-        if (!isConnected) {
-            //Check if bot is connected to voice channel
-            message.channel.send(`I'm not in a voicechannel to leave one.`)
-        } else if (isConnected) {
+        if (isConnected) {
             await voiceChannel.leave()
             isConnected = false
         }
@@ -68,12 +62,32 @@ module.exports = {
         if (!isConnected) return message.channel.send(`You must be in a voicechannel`)
         console.log(`Song to play: ${song.link}`)
         const stream = ytdl(song.link, { filter: 'audioonly' })
-        const dispatcher = await connection.playStream(stream, streamOptions)
+        dispatcher = await connection.playStream(stream, streamOptions)
         this.isPlaying = true
-        dispatcher.on('end', () => this.OnSongEnd())
+        dispatcher.on('end', () => this.OnSongEnd(message))
     },
 
-    OnSongEnd() {
-        console.log(`Song has ended`)
-    }
+    OnSongEnd(message) {
+        console.log(`on song end`)
+        this.PlayNext(message)
+    },
+
+    SkipSong() {
+        if (dispatcher)
+            dispatcher.end()
+    },
+
+    PlayNext(message) {
+        if (que.hasNextSong() === true) {
+            const song = que.shiftNextSong()
+            this.playSong(message, song)
+        } else {
+            que.clearQueue()
+            this.Leave(message)
+        }
+    },
+
+    inVoice() {
+        return isConnected
+    },
 }

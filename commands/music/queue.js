@@ -1,7 +1,7 @@
 const discord = require('discord.js')
-const queue = []
+
+var queue = []
 var currentSong = undefined
-const stream = require('./stream')
 
 module.exports = {
     name: 'queue',
@@ -19,12 +19,6 @@ module.exports = {
     async AddSong(song, message) {
         queue.push({ title: song.title, link: song.video_url })
         message.channel.send(`Added song: **${song.title}** to queue`)
-
-        //NOTE if theres no song currently playing / queue is empty : play the song immediatly
-        if (stream.isPlaying === false && queue.length === 1) {
-            currentSong = queue.shift()
-            await stream.playSong(message, currentSong)
-        }
     },
 
     //ANCHOR send embed of queue 
@@ -50,13 +44,26 @@ module.exports = {
         return !(queue.length === 0 || queue === undefined)
     },
 
-    //ANCHOR on song ended
-    onSongEnd() {
-        console.log(`Queue song end called`)
+    hasNextSong() {
+        return this.hasQueue()
     },
 
-    test() {
-        console.log(`Test called!`)
+    GetSongs() {
+        return queue
+    },
+
+    GetCurrentSong() {
+        return currentSong
+    },
+
+    shiftNextSong() {
+        currentSong = queue.shift()
+        return currentSong
+    },
+
+    clearQueue() {
+        currentSong = undefined
+        queue = []
     }
 }
 
