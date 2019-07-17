@@ -3,7 +3,8 @@ const stream = require('./stream')
 module.exports = {
     name: 'skip',
     description: 'skips the current song',
-    alias: ['fs', 'next', 'sk'],
+    aliases: ['fs', 'next', 'sk'],
+    usage: ' ',
     guildOnly: true,
 
     execute(message, args) {

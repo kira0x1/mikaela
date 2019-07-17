@@ -1,6 +1,4 @@
-const config = require('../../config.json')
 const ytdl = require('ytdl-core')
-const youTubeKey = config.keys.youTubeKey
 
 var isConnected = false
 var connection = undefined
@@ -9,19 +7,12 @@ var dispatcher = undefined
 
 const que = require('./queue')
 
-const searchOptions = {
-    part: ['snippet', 'contentDetails'],
-    chart: 'mostPopular',
-    maxResults: 1,
-    key: youTubeKey,
-}
-
 const streamOptions = {
     bitrate: '120000',
-    passes: 1,
+    passes: 2,
     type: 'opus',
     seek: 0,
-    volume: 0.3,
+    volume: 0.4,
 }
 
 module.exports = {
@@ -29,15 +20,18 @@ module.exports = {
     description: 'handles streams',
     aliases: ['str'],
     usage: ' ',
+    helper: true,
     guildOnly: true,
 
     //ANCHOR Join vc
     async Join(message) {
-        //Join vc 
-        //Check if user is in vc or not
-        const vc = message.member.voiceChannel
-        if (!vc) return message.reply(`You must be in a voicechannel to use this command!`)
 
+        //NOTE Check if user is in vc or not
+        const vc = message.member.voiceChannel
+
+        if (!vc) return message.channel.send(`You must be in a voicechannel to use this command!`)
+
+        //NOTE Join voice channel
         await vc.join().then(conn => {
             voiceChannel = vc
             connection = conn
@@ -58,26 +52,20 @@ module.exports = {
 
     //ANCHOR Create stream, and play song 
     async playSong(message, song) {
+
+        //NOTE if the bot is not connected then try to connect.
         if (!isConnected) await this.Join(message)
         if (!isConnected) return message.channel.send(`You must be in a voicechannel`)
-        console.log(`Song to play: ${song.link}`)
+
         const stream = ytdl(song.link, { filter: 'audioonly' })
         dispatcher = await connection.playStream(stream, streamOptions)
         this.isPlaying = true
         dispatcher.on('end', () => this.OnSongEnd(message))
     },
 
+    //ANCHOR Song End
     OnSongEnd(message) {
-        console.log(`on song end`)
-        this.PlayNext(message)
-    },
-
-    SkipSong() {
-        if (dispatcher)
-            dispatcher.end()
-    },
-
-    PlayNext(message) {
+        //NOTE check if there any more songs to play, if not then clear queue, and leave voice channel.
         if (que.hasNextSong() === true) {
             const song = que.shiftNextSong()
             this.playSong(message, song)
@@ -87,7 +75,13 @@ module.exports = {
         }
     },
 
-    inVoice() {
-        return isConnected
+    //ANCHOR Skip Song
+    SkipSong() {
+        if (dispatcher)
+            dispatcher.end()
     },
+
+    InVoice() {
+        return isConnected
+    }
 }

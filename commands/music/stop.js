@@ -2,7 +2,7 @@ const stream = require('./stream')
 const que = require('./queue')
 
 module.exports = {
-    name: 'Stop',
+    name: 'stop',
     description: 'Stops the current song if one is playing, and then leaves the voice channel',
     aliases: ['leave', 'stop'],
     guildOnly: true,
@@ -10,7 +10,7 @@ module.exports = {
 
     //NOTE Leaves the voice channel
     async execute(message, args) {
-        if (stream.inVoice())
+        if (stream.InVoice())
             await stream.Leave(message)
 
         que.clearQueue()

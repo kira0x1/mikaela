@@ -1,13 +1,11 @@
-const config = require('../config.json')
-const prefix = config.prefix
+const { prefix } = require('../config.json')
 const ytdl = require('ytdl-core')
-
 const que = require('./music/queue')
 const stream = require('./music/stream')
+const search = require('./music/youtube')
 
-//NOTE Remove after developing 
-const chalk = require('chalk')
 
+//ANCHOR Sub Commands
 const fs = require('fs')
 const { findSubCommand } = require('../util/commandUtil')
 const commandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'))
@@ -33,23 +31,26 @@ module.exports = {
       .split(/ +/)
       .shift()
 
+    //NOTE if a subcommand is found in the message, then call the subcommand and exit out 
     cmd = findSubCommand(arg)
     if (cmd) return await cmd.execute(message, args)
 
+    //NOTE  Get Query
     const query = args.join(' ')
-    await ytdl.getBasicInfo(query).then(async song => {
-      await que.AddSong(song, message)
+    await this.PlaySong(message, query)
 
-      if (que.GetCurrentSong() === undefined) {
-        stream.playSong(message, que.shiftNextSong())
-        //NOTE Remove after developing
-        console.log(chalk`{magenta Playing next..}`)
-      }
-    }).catch(err => console.log(err))
+    async function FindSong(query) {
+
+    }
   },
 
-
-  async playSong(message, song) {
-    await stream.playSong(message, song)
+  async PlaySong(message, query) {
+    //ANCHOR GetSong: URL
+    await ytdl.getBasicInfo(query).then(async song => {
+      await que.AddSong(song, message)
+      if (que.GetCurrentSong() === undefined) {
+        stream.playSong(message, que.shiftNextSong())
+      }
+    }).catch(err => console.log(err))
   }
 }
