@@ -26,9 +26,7 @@ module.exports = {
   guildOnly: true,
   subcommands: subcommands,
 
-
   async execute(message, args) {
-
 
     if (!getAlias(this.aliases, message.content)) {
       const arg = message.content
