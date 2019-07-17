@@ -10,18 +10,30 @@ module.exports = {
     usage: ' ',
     guildOnly: true,
 
-    async execute(message, args) {
-        if (this.hasQueue())
-            this.showQueue(message)
-        else
-            message.channel.send('Queue is empty')
+    //ANCHOR Execute
+    execute(message, args) {
+        this.showQueue(message)
     },
 
+    //ANCHOR Add song to queue
+    async AddSong(song, message) {
+        queue.push({ title: song.title, link: song.video_url })
+        message.channel.send(`Added song: **${song.title}** to queue`)
+
+        //NOTE if theres no song currently playing / queue is empty : play the song immediatly
+        if (stream.isPlaying === false && queue.length === 1) {
+            currentSong = queue.shift()
+            await stream.playSong(message, currentSong)
+        }
+    },
+
+    //ANCHOR send embed of queue 
     showQueue(message) {
-        if (!this.hasQueue() && currentSong === undefined) {
+        if (!this.hasQueue || currentSong === undefined) {
             message.channel.send(`Queue empty...`)
             return false
         }
+
         let embed = new discord.RichEmbed()
             .setTitle('Queue\nCurrently Playing: ' + currentSong.title)
             .setColor(0xc71459)
@@ -33,14 +45,20 @@ module.exports = {
         return true
     },
 
+    //ANCHOR returns true if has songs in the queue
     hasQueue() {
         return !(queue.length === 0 || queue === undefined)
     },
 
-    async AddSong(song, message) {
-        queue.push({ title: song.title, link: song.video_url })
-        message.channel.send(`Added song: **${song.title}** to queue`)
-        if (stream.isPlaying === false)
-            await stream.playSong(message, queue.shift())
+    //ANCHOR on song ended
+    onSongEnd() {
+        console.log(`Queue song end called`)
     },
+
+    test() {
+        console.log(`Test called!`)
+    }
 }
+
+
+

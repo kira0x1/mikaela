@@ -32,7 +32,6 @@ module.exports = {
     if (cmd) return await cmd.execute(message, args)
 
     const query = args.join(' ')
-
     await ytdl.getBasicInfo(query).then(async song => {
       await queue.AddSong(song, message)
     }).catch(err => console.log(err))

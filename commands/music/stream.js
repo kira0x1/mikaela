@@ -1,12 +1,10 @@
-const { getAlias } = require('../../util/util')
-const queue = require('./queue')
 const config = require('../../config.json')
 const ytdl = require('ytdl-core')
 const youTubeKey = config.keys.youTubeKey
 
 var isConnected = false
-var connection
-var voiceChannel
+var connection = undefined
+var voiceChannel = undefined
 
 const searchOptions = {
     part: ['snippet', 'contentDetails'],
@@ -23,25 +21,21 @@ const streamOptions = {
     volume: 0.3,
 }
 
+const { test } = require('./queue')
 
 module.exports = {
     name: 'stream',
     description: 'handles streams',
-    usage: '',
-    helper: true,
+    aliases: ['str'],
+    usage: ' ',
     guildOnly: true,
-    isPlaying: false,
 
-    async execute(message, args) {
-        const al = getAlias(this.aliases, message.content)
-        if (al === 'join')
-            await this.Join(message)
-        else if (al === 'leave')
-            await this.Leave(message)
+    execute(message, args) {
+        test
     },
 
-    async  Join(message) {
-        console.log('join :0')
+    //ANCHOR Join vc
+    async Join(message) {
         //Join vc 
         //Check if user is in vc or not
         const vc = message.member.voiceChannel
@@ -57,25 +51,29 @@ module.exports = {
         })
     },
 
-    async  Leave(message) {
-        if (isConnected) {
+    //ANCHOR Leave vc
+    async Leave(message) {
+        if (!isConnected) {
+            //Check if bot is connected to voice channel
+            message.channel.send(`I'm not in a voicechannel to leave one.`)
+        } else if (isConnected) {
             await voiceChannel.leave()
             isConnected = false
-        } else if (!isConnected) {
-            message.channel.send(`I'm not in a voicechannel to leave one.`)
         }
     },
 
+    //ANCHOR Create stream, and play song 
     async playSong(message, song) {
         if (!isConnected) await this.Join(message)
         if (!isConnected) return message.channel.send(`You must be in a voicechannel`)
         console.log(`Song to play: ${song.link}`)
         const stream = ytdl(song.link, { filter: 'audioonly' })
         const dispatcher = await connection.playStream(stream, streamOptions)
-        dispatcher.on('end', () => this.onSongFinished())
+        this.isPlaying = true
+        dispatcher.on('end', () => this.OnSongEnd())
     },
 
-    onSongFinished() {
-        console.log(`Song has finished!`)
+    OnSongEnd() {
+        console.log(`Song has ended`)
     }
 }
