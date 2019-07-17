@@ -37,7 +37,6 @@ module.exports = {
             connection = conn
             isConnected = true
         }).catch(err => {
-            console.error(err)
             message.channel.send(`Failed to join voice channel!`)
         })
     },

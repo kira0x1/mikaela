@@ -1,8 +1,11 @@
 const config = require('../../config.json')
-const ytNode = require('youtube-node')
+const youtube = require('youtube-api')
 const youTubeKey = config.keys.youTubeKey
-const youtube = new ytNode()
-youtube.setKey(youTubeKey)
+
+youtube.authenticate({
+    type: "key",
+    key: youTubeKey
+})
 
 //ANCHOR Search Options
 const searchOptions = {
@@ -19,13 +22,47 @@ module.exports = {
     helper: true,
 
     async Search(query) {
-        youtube.search(query, 2, function (error, result) {
-            if (error) {
-                console.log(error);
-            }
-            else {
-                console.log(JSON.stringify(result, null, 2));
-            }
-        });
+        return new Promise(function (resolve, reject) {
+            var req = youtube.search.list({
+                type: "video",
+                part: "snippet",
+                maxResults: 1,
+                q: query
+            }, (err, data) => {
+                if (err)
+                    reject(Error(err))
+                else
+                    resolve(req.response.body.items[0])
+            })
+        })
     },
+
+    async GetVideoByID(id) {
+        return new Promise(function (resolve, reject) {
+            var req = youtube.videos.list({
+                part: ['contentDetails'],
+                id: id
+            }, (err, data) => {
+                if (err)
+                    reject(Error(err))
+                else
+                    resolve(req.response.body.items[0])
+            })
+        })
+    },
+
+    async GetVideo(query) {
+        const result = youtube.search.list({
+            type: "video",
+            part: "snippet",
+            maxResults: 1,
+            q: query
+        }, (err, data) => {
+            if (err) return
+            return req.response.body.items[0]
+        })
+
+        if (result.id !== undefined)
+            return await this.GetVideo(result.id.videoId)
+    }
 }
