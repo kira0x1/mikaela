@@ -21,20 +21,19 @@ module.exports = {
 
     let amount = 1
 
-    if (!isNaN(args[0])) {
+    //NOTE check if user entered an amount to delete
+    if (!isNaN(args[0]))
       amount = args[0]
-    }
+
 
     if (flagsFound.length > 0) {
       flag = flagsFound[0]
-      console.log(`Flags found: ${flag.name}`)
       if (flag.args && !isNaN(flag.args))
         amount = flag.args
     }
 
-    if (!force && (amount < 1 || amount > 25)) {
+    if (!force && (amount < 1 || amount > 25))
       return message.reply('`amount must be between 1 - 25`')
-    }
 
     amount++
 
@@ -48,8 +47,8 @@ module.exports = {
         else if (flag.name === 'both') result = messages.filter(m => m.author.id === message.author.id || m.author.id === id)
         else if (flag.name === 'bots') result = messages.filter(m => m.author.bot)
 
-        await message.channel.bulkDelete(result).catch()
+        await message.channel.bulkDelete(result)
       })
-      .catch()
+      .catch(error => console.log(error))
   },
 }
