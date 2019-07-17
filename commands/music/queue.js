@@ -1,6 +1,7 @@
 const discord = require('discord.js')
 const queue = []
 var currentSong = undefined
+const stream = require('./stream')
 
 module.exports = {
     name: 'queue',
@@ -36,8 +37,10 @@ module.exports = {
         return !(queue.length === 0 || queue === undefined)
     },
 
-    AddSong(song, message) {
-        queue.push({ title: song.title, link: song.link })
-        message.channel.send(`**Song Added:** ${song.title} added`)
+    async AddSong(song, message) {
+        queue.push({ title: song.title, link: song.video_url })
+        message.channel.send(`Added song: **${song.title}** to queue`)
+        if (stream.isPlaying === false)
+            await stream.playSong(message, queue.shift())
     },
 }

@@ -1,9 +1,12 @@
+const stream = require('./stream')
+
 module.exports = {
-    name: 'stop',
-    description: 'stops music',
-    usage: ``,
+    name: 'Stop',
+    description: 'Stops the current song if one is playing, and then leaves the voice channel',
+    aliases: ['leave', 'stop'],
     guildOnly: true,
 
-    execute() {
+    execute(message, args) {
+        stream.Leave(message)
     }
 }

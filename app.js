@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-
 const util = require('./util/util')
 const commandUtil = require('./util/commandUtil')
 const config = require('./config.json')
@@ -35,6 +34,11 @@ client.on('message', async message => {
     command = commandUtil.findSubCommand(commandName)
 
   if (!command) return console.log('could not find command ' + commandName)
+
+  //Check if command is supposed to be used
+  if (command.helper) {
+    return message.reply(`This command is unusable!`)
+  }
 
   //Check if command needs arguments
   if (command.args && !args.length) {
