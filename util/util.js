@@ -17,8 +17,6 @@ module.exports = {
     return id
   },
 
-
-
   getUserFromMention(mention, client) {
     const id = this.getIDFromMention(mention)
     return client.users.get(id)

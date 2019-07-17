@@ -50,14 +50,15 @@ module.exports = {
       let song = undefined
 
       //NOTE GetSong: URL
-      song = ytdl.getBasicInfo(query).catch(err => {
-        //NOTE
-        //If failed then assume the user gave a query not a link
-        //Try to search instead...
+      song = await ytdl.getBasicInfo(query).catch(() => { })
 
-        //ANCHOR GetSong: Searchs
-        song = search.Search(query)
-      })
+      //NOTE
+      //If failed then assume the user gave a query not a link
+      //Try to search instead...
+
+      //ANCHOR GetSong: Searchs
+      if (song === undefined)
+        song = await search.Search(query).catch(() => { })
 
       return song
     }

@@ -62,7 +62,7 @@ module.exports = {
         return util.perms(perms, id)
     },
 
-    findSubCommand(name, parent = false) {
+    findSubCommand(name) {
         const commands = Client.commands.array()
         for (let i = 0; i < commands.length; i++) {
             let cmd = commands[i]

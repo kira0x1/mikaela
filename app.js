@@ -29,6 +29,7 @@ client.on('message', async message => {
 
   //ANCHOR Get command
   let command = commandUtil.findCommand(commandName)
+
   if (!command) {
     command = commandUtil.findSubCommand(commandName)
   }
