@@ -24,7 +24,6 @@ module.exports = {
 
     //ANCHOR Check if command is on cooldown
     IsOnCoolDown(command, id) {
-
         //Cooldowns
         if (!cooldowns.has(command.name)) {
             //Check if cooldowns has the commend, if not then add it in
@@ -54,7 +53,7 @@ module.exports = {
 
     //ANCHOR Find Command from by name
     findCommand(name) {
-        const cmd = Client.commands.get(name) || Client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(name)) || this.findSubCommand(name, true)
+        const cmd = Client.commands.get(name) || Client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(name))
         return cmd
     },
 
@@ -69,10 +68,7 @@ module.exports = {
             let cmd = commands[i]
             if (!cmd.subcommands) continue
             let subCmd = cmd.subcommands.find(c => c.name === name) || cmd.subcommands.find(c => c.command.aliases && c.command.aliases.includes(name))
-            if (subCmd) {
-                subCmd = parent === true ? cmd : subCmd.command
-                return subCmd
-            }
+            return subCmd.command
         }
     }
 }

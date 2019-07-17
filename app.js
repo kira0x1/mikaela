@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-
 const util = require('./util/util')
 const commandUtil = require('./util/commandUtil')
 const config = require('./config.json')
@@ -26,15 +25,18 @@ client.on('message', async message => {
   const commandName = args.shift().toLowerCase()
 
 
-  if (commandName.startsWith(prefix))
-    return console.log('command name starts with prefix\n' + commandName)
+  if (commandName.startsWith(prefix)) return
 
   //ANCHOR Get command
   let command = commandUtil.findCommand(commandName)
-  if (!command)
+  if (!command) {
     command = commandUtil.findSubCommand(commandName)
+  }
 
   if (!command) return console.log('could not find command ' + commandName)
+
+  //Check if command is supposed to be used
+  if (command.helper) return console.log(`helper command '${commandName}' tried to be called by: ${message.author.username}`)
 
   //Check if command needs arguments
   if (command.args && !args.length) {

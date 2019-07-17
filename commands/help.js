@@ -16,10 +16,12 @@ module.exports = {
     const embed = new discord.RichEmbed().setColor(0xc71459)
     const { commands } = message.client
 
-    //Send all commands if no arguments given
+    //ANCHOR List all commands
+    //NOTE is called when no arguments are given
+
     if (!args.length) {
       data.push('List of commands:')
-      data.push(commands.map(command => command.name).join(', '))
+      data.push(commands.map(command => command.name && !command.helper).join(', '))
       data.push(`\nTo get info about a specific command send \`${prefix}<help> [command name]\``)
 
       // let embed = new discord.RichEmbed()
@@ -59,7 +61,14 @@ module.exports = {
         .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
 
       if (command.subcommands !== undefined) {
-        embedSpecific.addField('Subcommands', `\`${command.subcommands.map(c => c.name)}\``)
+        let subcmd = []
+        command.subcommands.map(cmd => {
+          if (!cmd.command.helper)
+            subcmd.push(cmd.name)
+        })
+
+        if (subcmd.length > 0)
+          embedSpecific.addField('Subcommands', `\`${subcmd}\``)
       }
 
       message.channel.send({ embed: embedSpecific })
