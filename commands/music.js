@@ -15,11 +15,12 @@ const searchOptions = {
   key: youTubeKey,
 }
 
-//bitrate: '120000',
 const streamOptions = {
-  passes: 2,
+  bitrate: '120000',
+  passes: 1,
   type: 'opus',
-  seek: 0
+  seek: 0,
+  volume: 0.3
 }
 
 var conn
