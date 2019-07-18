@@ -1,7 +1,7 @@
 //FIXME REMOVE THIS FILE BEFORE UPLOADING
 const music = require('./music')
 const { getFlags } = require('../util/util')
-const search = require('./music/youtube')
+const search = require('./subcommands/music/youtube')
 
 const flags = [
   (amount = { name: 'amount', aliases: ['n'] }),

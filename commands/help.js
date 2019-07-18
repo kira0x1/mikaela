@@ -57,8 +57,10 @@ module.exports = {
         .setColor(0xc71459)
         .setDescription(`\`Description: ${command.description}\``)
         .addField('Aliases', `\`${command.aliases || 'None'}\``)
-        .addField('Usage', usage(command))
         .addField('Cooldown', `\`${command.cooldown || 3} second(s)\``)
+
+      if (command.usage)
+        embedSpecific.addField('Usage', usage(command))
 
       if (command.subcommands !== undefined) {
         let subcmd = []
