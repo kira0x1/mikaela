@@ -9,6 +9,9 @@ const sequelize = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.pass,
 });
 
 sequelize.import('./models/Users.js')
+sequelize.import('./models/Songs.js')
+sequelize.import('./models/UserSongs.js')
+
 const force = process.argv.includes('--force') || process.argv.includes('-f')
 
 sequelize.sync({ force })
