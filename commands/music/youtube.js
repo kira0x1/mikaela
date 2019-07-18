@@ -1,4 +1,4 @@
-const config = require('../../../config.json')
+const config = require('../../config.json')
 const ytNode = require('youtube-node')
 const youTubeKey = config.keys.youTubeKey
 const youtube = new ytNode()

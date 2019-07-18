@@ -1,18 +1,18 @@
 const { prefix } = require('../config.json')
 const ytdl = require('ytdl-core')
-const que = require('./subcommands/music/queue')
-const stream = require('./subcommands/music/stream')
-const search = require('./subcommands/music/youtube')
+const que = require('./music/queue')
+const stream = require('./music/stream')
+const search = require('./music/youtube')
 const { findSubCommand } = require('../util/commandUtil')
 const { getAlias } = require('../util/util')
 
 //ANCHOR Sub Commands
 const fs = require('fs')
-const commandFiles = fs.readdirSync('./commands/subcommands/music').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'))
 let subcommands = []
 
 for (const file of commandFiles) {
-  const command = require(`./subcommands/music/${file}`)
+  const command = require(`./music/${file}`)
   subcommands.push({ name: command.name, command: command })
 }
 
