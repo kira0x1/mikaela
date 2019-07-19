@@ -28,7 +28,7 @@ module.exports = {
         //NOTE Check if user is in vc or not
         const vc = message.member.voiceChannel
 
-        if (!vc) return message.channel.send(`You must be in a voicechannel to use this command!`)
+        if (!vc) return message.channel.send(`You must be in a voicechannel`)
 
         //NOTE Join voice channel
         await vc.join().then(conn => {
@@ -51,10 +51,9 @@ module.exports = {
 
     //ANCHOR Create stream, and play song 
     async playSong(message, song) {
-
         //NOTE if the bot is not connected then try to connect.
         if (!isConnected) await this.Join(message)
-        if (!isConnected) return message.channel.send(`You must be in a voicechannel`)
+        if (!isConnected) return
 
         const stream = ytdl(song.url, { filter: 'audioonly' })
         dispatcher = await connection.playStream(stream, streamOptions)
