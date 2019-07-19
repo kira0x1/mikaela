@@ -13,12 +13,12 @@ module.exports = {
 
     async GetSong(query) {
         let song = await this.GetInfo(query)
-
         if (!song) {
             id = await Search(query).then(res => res.id.videoId)
             link = this.ConvertId(id)
             song = await this.GetInfo(link)
         }
+
 
         return this.ConvertToSong(song)
     },
@@ -29,6 +29,15 @@ module.exports = {
 
     ConvertToSong(info) {
         return new Song(info.title, info.video_url, info.length_seconds)
+    },
+
+    ConvertDuration(duration) {
+        let minutes = Math.floor(duration / 60)
+        let seconds = Math.floor(duration - minutes * 60)
+
+        if (seconds < 10) seconds = '0' + seconds
+
+        return `Duration: ${minutes}:${seconds}`
     },
 
     //ANCHOR returns a link from a video id

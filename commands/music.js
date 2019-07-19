@@ -39,7 +39,6 @@ module.exports = {
     //NOTE  Get Query
     const query = args.join(' ')
     const song = await musicUtil.GetSong(query)
-
     if (!song) return message.channel.send(`Couldnt find video: **${query}**`)
     await this.PlaySong(message, song)
   },

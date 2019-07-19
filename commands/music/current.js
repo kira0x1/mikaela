@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const { GetCurrentSong } = require('./queue')
+const { ConvertDuration } = require('./musicUtil')
 
 module.exports = {
     name: 'current',
@@ -12,12 +13,15 @@ module.exports = {
         const song = GetCurrentSong()
         if (!song) return message.channel.send(`No song being played currently`)
 
+        const duration = ConvertDuration(song.duration)
+
         let minutes = Math.floor(song.duration / 60)
         let seconds = Math.floor(song.duration - minutes * 60)
+        if (seconds < 10) '0' + seconds
 
         let embed = new Discord.RichEmbed()
             .setTitle(song.title)
-            .setDescription(`Duration: ${minutes}:${seconds}\n<${song.url}>`)
+            .setDescription(duration + `\n<${song.url}>`)
             .setColor(0xc71459)
 
         message.channel.send(embed)
