@@ -19,7 +19,8 @@ module.exports = {
     async execute(message, args) {
         const arg = args.shift()
         const cmd = this.flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
-        if (!cmd) return
+        if (!cmd) return await this.listFav(message)
+
         if (cmd.name === 'list')
             await this.listFav(message)
         else if (cmd.name === 'add')
@@ -39,7 +40,7 @@ module.exports = {
             if (f.user_name === target.tag)
                 embed.addField(position + 1, `**${userDB.getSongByID(f.song_id).song_title}**`)
         })
-        
+
         return message.channel.send(embed)
     },
 
