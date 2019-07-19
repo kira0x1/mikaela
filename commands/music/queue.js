@@ -1,4 +1,4 @@
-const discord = require('discord.js')
+const Discord = require('discord.js')
 
 var queue = []
 var currentSong = undefined
@@ -16,9 +16,19 @@ module.exports = {
     },
 
     //ANCHOR Add song to queue
-    async AddSong(song, message) {
+
+    AddSong(song, message) {
         queue.push(song)
-        message.channel.send(`Added song: **${song.title}** to queue`)
+
+        let minutes = Math.floor(song.duration / 60)
+        let seconds = Math.floor(song.duration - minutes * 60)
+
+        let embed = new Discord.RichEmbed()
+            .setTitle('Song added:\n' + song.title)
+            .setDescription(`Duration: ${minutes}:${seconds}`)
+            .setColor(0xc71459)
+
+        message.channel.send(embed)
     },
 
     //ANCHOR send embed of queue 
@@ -28,13 +38,19 @@ module.exports = {
             return false
         }
 
-        let embed = new discord.RichEmbed()
-            .setTitle('Queue\nCurrently Playing: ' + currentSong.title)
+        let minutes = Math.floor(currentSong.duration / 60)
+        let seconds = Math.floor(currentSong.duration - minutes * 60)
+        let duration = `Duration: ${minutes}:${seconds}`
+
+        let embed = new Discord.RichEmbed()
+            .setTitle(`Playing: ${currentSong.title}`)
+            .setDescription(duration)
             .setColor(0xc71459)
 
         for (let i = 0; i < queue.length; i++) {
-            embed.addField(i + 1, queue[i].title + '\n' + queue[i].url)
+            embed.addField(`(${i + 1})\n${queue[i].title}`, queue[i].url)
         }
+
         message.channel.send(embed)
         return true
     },

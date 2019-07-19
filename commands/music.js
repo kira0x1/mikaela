@@ -1,10 +1,7 @@
 const { findSubCommand } = require('../util/commandUtil')
-const ytdl = require('ytdl-core')
 const que = require('./music/queue')
 const stream = require('./music/stream')
-const search = require('./music/youtube')
 const { getAlias } = require('../util/util')
-
 const musicUtil = require('./music/musicUtil')
 
 //Subcommands
@@ -28,7 +25,6 @@ module.exports = {
   subcommands: subcommands,
 
   async execute(message, args) {
-
     if (!getAlias(this.aliases, message.content)) {
       const arg = message.content
         .slice(1)
@@ -39,7 +35,6 @@ module.exports = {
       cmd = findSubCommand(arg)
       if (cmd) return await cmd.execute(message, args)
     }
-
 
     //NOTE  Get Query
     const query = args.join(' ')
