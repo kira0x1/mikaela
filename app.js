@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const util = require('./util/util')
 const commandUtil = require('./util/commandUtil')
+const database = require('./commands/favorites')
 const config = require('./config.json')
 
 const token = config.keys.token
@@ -8,8 +9,9 @@ const prefix = config.prefix
 
 const client = new Discord.Client()
 
-client.once('ready', () => {
+client.once('ready', async () => {
   commandUtil.initCommands(client)
+  await database.init()
   client.user.setActivity(`with commi's | ${prefix}help`, {
     type: 'PLAYING',
   })

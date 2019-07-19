@@ -56,7 +56,7 @@ module.exports = {
         if (!isConnected) await this.Join(message)
         if (!isConnected) return message.channel.send(`You must be in a voicechannel`)
 
-        const stream = ytdl(song.link, { filter: 'audioonly' })
+        const stream = ytdl(song.url, { filter: 'audioonly' })
         dispatcher = await connection.playStream(stream, streamOptions)
         this.isPlaying = true
         dispatcher.on('end', () => this.OnSongEnd(message))

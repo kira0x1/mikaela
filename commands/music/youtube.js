@@ -2,14 +2,16 @@ const config = require('../../config.json')
 const ytNode = require('youtube-node')
 const youTubeKey = config.keys.youTubeKey
 const youtube = new ytNode()
+
 youtube.setKey(youTubeKey)
 
 //ANCHOR Search Options
 const searchOptions = {
-    part: ['snippet', 'contentDetails'],
+    part: ['snippet'],
     chart: 'mostPopular',
     maxResults: 1,
     key: youTubeKey,
+    type: 'video'
 }
 
 module.exports = {
@@ -19,9 +21,14 @@ module.exports = {
     helper: true,
 
     async Search(query) {
-        youtube.search(query, 2, function (error, result) {
-            if (error) return
-            return result
-        });
+        return new Promise((resolve, reject) => {
+            youtube.search(query, 1, searchOptions, function (error, result) {
+                if (error) {
+                    reject(error)
+                    return
+                }
+                resolve(result.items[0])
+            });
+        })
     },
 }

@@ -17,7 +17,7 @@ module.exports = {
 
     //ANCHOR Add song to queue
     async AddSong(song, message) {
-        queue.push({ title: song.title, link: song.video_url })
+        queue.push(song)
         message.channel.send(`Added song: **${song.title}** to queue`)
     },
 
@@ -33,7 +33,7 @@ module.exports = {
             .setColor(0xc71459)
 
         for (let i = 0; i < queue.length; i++) {
-            embed.addField(i + 1, queue[i].title + '\n' + queue[i].link)
+            embed.addField(i + 1, queue[i].title + '\n' + queue[i].url)
         }
         message.channel.send(embed)
         return true

@@ -3,11 +3,9 @@ const { prefix, flagPrefix, perms, users } = require('../config.json')
 module.exports = {
   //Reply user with command usage
   usage(command) {
-    let reply = ''
+    let reply = ' '
     if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}\n`
-
     if (command.flags) reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
-
     return reply
   },
 
