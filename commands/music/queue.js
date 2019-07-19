@@ -36,7 +36,7 @@ module.exports = {
             return false
         }
 
-        const duration = ConvertDuration(song.duration)
+        const duration = ConvertDuration(currentSong.duration)
 
         let embed = new Discord.RichEmbed()
             .setTitle(`Playing: ${currentSong.title}`)
