@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const util = require('./util/util')
 const commandUtil = require('./util/commandUtil')
-const database = require('./commands/favorites')
+const database = require('./commands/music/favorites')
 const config = require('./config.json')
 
 const token = config.keys.token
