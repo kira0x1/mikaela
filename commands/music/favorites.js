@@ -1,5 +1,4 @@
-const { init: userInit } = require('./db/users')
-const { getUsers } = require('./db/users')
+const { getUsers, init: userInit } = require('../db/users')
 
 //ANCHOR Sub Commands
 const fs = require('fs')
@@ -7,7 +6,7 @@ const commandFiles = fs.readdirSync('./commands/db/').filter(file => file.endsWi
 let subcommands = []
 
 for (const file of commandFiles) {
-    const command = require(`./db/${file}`)
+    const command = require(`../db/${file}`)
     subcommands.push({ name: command.name, command: command })
 }
 
