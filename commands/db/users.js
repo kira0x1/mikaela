@@ -1,5 +1,8 @@
-const { Users } = require('../../database/dbObjects')
+const { Users, Songs, UserSongs } = require('../../database/dbObjects')
+
 const users = []
+const songs = []
+const favorites = []
 
 module.exports = {
     name: 'user',
@@ -9,17 +12,61 @@ module.exports = {
         return users
     },
 
+    async addFavorite(song, id, username) {
+        await this.addUser(id, username)
+
+        //Add the song to the database if it doesnt exist there already
+        const songAdded = await this.addSong(song)
+        userSongs = favorites.map(songs => songs.user_name === username)
+
+        const songFound = favorites.find(s => s.song_id === song.id)
+        if (songFound) return undefined
+
+        const newSong = await UserSongs.create({ song_id: song.id, user_name: username })
+        favorites.push({ song_id: song.id, user_name: username, song: songAdded })
+        return newSong
+    },
+
+    async getUserFavorites(id, username) {
+        const user = await this.addUser(id, username)
+        const songs = await favorites.map(s => s.user_name === username)
+        return songs
+    },
+
+    getFavorites() {
+        return favorites
+    },
+
+    getSongByID(id) {
+        return songs.find(song => song.song_id === id)
+    },
+
+    async addSong(song) {
+        const result = songs.find(s => s.song_id === song.id)
+        if (result) return result
+
+        const newSong = await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url })
+        songs.push({ song_id: song.id, song_title: song.title, song_url: song.url })
+        return newSong
+    },
+
     //NOTE add song to paramaters
-    async add(id, username) {
+    async addUser(id, username) {
         const user = users.find(usr => usr.user_id === id)
-        if (user) return
+        if (user) return user
 
         const newUser = await Users.create({ user_id: id, user_name: username })
         users.push({ user_id: id, user_name: username })
         return newUser
     },
     async init() {
-        const result = await Users.findAll({ attributes: ['user_id', 'user_name'] }, { raw: true })
-        result.map((data) => users.push(data.toJSON()))
-    }
+        const allUsers = await Users.findAll({ attributes: ['user_id', 'user_name'] }, { raw: true })
+        allUsers.map((data) => users.push(data.toJSON()))
+
+        const allSongs = await Songs.findAll({ attributes: ['song_id', 'song_title', 'song_url'] }, { raw: true })
+        allSongs.map((data) => songs.push(data.toJSON()))
+
+        const allFavorites = await UserSongs.findAll({ attributes: ['song_id', 'user_name'] }, { raw: true })
+        allFavorites.map((data) => favorites.push(data.toJSON()))
+    },
 }

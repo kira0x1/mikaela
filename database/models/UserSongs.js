@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('user_songs', {
         song_id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
             unique: false,
         },
-        user_id: {
+        user_name: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: false

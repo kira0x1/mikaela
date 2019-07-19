@@ -23,11 +23,9 @@ module.exports = {
     async Search(query) {
         return new Promise((resolve, reject) => {
             youtube.search(query, 1, searchOptions, function (error, result) {
-                if (error) {
-                    reject(error)
-                    return
-                }
-                resolve(result.items[0])
+                if (error)
+                    return reject(error)
+                return resolve(result.items[0])
             });
         })
     },

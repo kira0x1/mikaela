@@ -1,9 +1,10 @@
 const ytdl = require('ytdl-core')
 const { Search } = require('./youtube')
 class Song {
-    constructor(title, url, duration) {
+    constructor(title, url, id, duration) {
         this.title = title
         this.url = url
+        this.id = id
         this.duration = duration
     }
 }
@@ -14,12 +15,11 @@ module.exports = {
     async GetSong(query) {
         let song = await this.GetInfo(query)
         if (!song) {
-            id = await Search(query).then(res => res.id.videoId)
+            id = await Search(query).then(res => res.id.videoId).catch(() => { })
+            if (!id) return
             link = this.ConvertId(id)
             song = await this.GetInfo(link)
         }
-
-
         return this.ConvertToSong(song)
     },
 
@@ -28,7 +28,7 @@ module.exports = {
     },
 
     ConvertToSong(info) {
-        return new Song(info.title, info.video_url, info.length_seconds)
+        return new Song(info.title, info.video_url, info.video_id, info.length_seconds)
     },
 
     ConvertDuration(duration) {
