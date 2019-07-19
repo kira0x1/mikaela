@@ -1,4 +1,3 @@
-//FIXME REMOVE THIS FILE BEFORE UPLOADING
 const music = require('./music')
 const { getFlags } = require('../util/util')
 const search = require('./music/youtube')
