@@ -19,7 +19,7 @@ module.exports = {
     async execute(message, args) {
         const arg = args.shift()
         const cmd = this.flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
-        if (!cmd) return
+        if (!cmd) return await this.listFav(message)
         if (cmd.name === 'list')
             await this.listFav(message)
         else if (cmd.name === 'add')
