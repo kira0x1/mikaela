@@ -29,7 +29,6 @@ module.exports = {
     async listFav(message) {
         const target = message.mentions.users.first() || message.author
         let favorites = userDB.getFavorites()
-
         if (!favorites) return `**${target.tag}** has no favorites`
 
         let embed = new Discord.RichEmbed()
@@ -40,12 +39,13 @@ module.exports = {
             if (f.user_name === target.tag)
                 embed.addField(position + 1, `**${userDB.getSongByID(f.song_id).song_title}**`)
         })
+        
         return message.channel.send(embed)
     },
 
     //TODO Add song command
     async addSong(message, args) {
-        const target = message.mentions.users.first() || message.author
+        const target = message.author
         const query = args.join(' ')
         const song = await musicUtil.GetSong(query)
         if (!song) return message.channel.send(`Couldnt find video: **${query}**`)
