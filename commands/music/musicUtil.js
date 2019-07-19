@@ -9,6 +9,8 @@ class Song {
 }
 
 module.exports = {
+    helper: true,
+
     async GetSong(query) {
         let song = await this.GetInfo(query)
 
