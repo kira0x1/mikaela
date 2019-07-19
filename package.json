@@ -11,6 +11,7 @@
   "author": "Kira",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.2",
     "discord.js": "^11.5.1",
     "ffmpeg-static": "^2.5.0",
     "mysql2": "^1.6.5",

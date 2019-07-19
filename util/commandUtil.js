@@ -66,7 +66,9 @@ module.exports = {
         const commands = Client.commands.array()
         for (let i = 0; i < commands.length; i++) {
             let cmd = commands[i]
+
             if (!cmd.subcommands) continue
+
             let subCmd = cmd.subcommands.find(c => c.name === name) || cmd.subcommands.find(c => c.command.aliases && c.command.aliases.includes(name))
 
             if (subCmd)
