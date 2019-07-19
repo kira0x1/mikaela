@@ -15,11 +15,10 @@ module.exports = {
         if (!song) {
             id = await Search(query).then(res => res.id.videoId)
             link = this.ConvertId(id)
-            info = await this.GetInfo(link)
-            if (info) song = this.ConvertToSong(info)
+            song = await this.GetInfo(link)
         }
 
-        return song
+        return this.ConvertToSong(song)
     },
 
     async GetInfo(link) {
