@@ -10,7 +10,7 @@ const prefix = config.prefix
 const client = new Discord.Client()
 
 client.once('ready', async () => {
-  commandUtil.initCommands(client)
+  commandUtil.initCommands(client) 
   await database.init()
   client.user.setActivity(`with commi's | ${prefix}help`, {
     type: 'PLAYING',
