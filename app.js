@@ -39,7 +39,7 @@ client.on('message', async message => {
   if (!command) return console.log('could not find command ' + commandName)
 
   //Check if command is supposed to be used
-  if (command.helper) return console.log(`helper command '${commandName}' tried to be called by: ${message.author.username}`)
+  if (command.helper) return console.log(`helper command '${command.name}' tried to be called by: ${message.author.username}`)
 
   //Check if command needs arguments
   if (command.args && !args.length) {
