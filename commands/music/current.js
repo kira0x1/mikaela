@@ -17,8 +17,7 @@ module.exports = {
 
         let embed = new Discord.RichEmbed()
             .setTitle(song.title)
-            .setDescription(`Duration: ${minutes}:${seconds}`)
-            .addField(song.url)
+            .setDescription(`Duration: ${minutes}:${seconds}\n<${song.url}>`)
             .setColor(0xc71459)
 
         message.channel.send(embed)
