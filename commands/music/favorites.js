@@ -13,7 +13,6 @@ module.exports = {
     description: 'Favourite songs',
     guildOnly: true,
     usage: ' \`[flag]\`',
-    args: true,
     flags: flags,
 
     async execute(message, args) {
