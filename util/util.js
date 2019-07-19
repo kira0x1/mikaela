@@ -5,7 +5,11 @@ module.exports = {
   usage(command) {
     let reply = ' '
     if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}\n`
-    if (command.flags) reply += `**Flags:** ${command.flags.map(f => '\n**'.concat('\t', f.name, ':** ', f.aliases.map(fa => '`'.concat(fa, '`'))))}`
+    if (command.flags) '**Flags:**' + command.flags.map(f => {
+      reply += `\n** ${f.name}**`
+      if (f.aliases)
+        reply += `: ${f.aliases.map(fa => '\`' + fa + '\`')}`
+    })
     return reply
   },
 
