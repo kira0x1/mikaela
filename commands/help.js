@@ -74,7 +74,18 @@ module.exports = {
       }
 
       if (command.flags !== undefined) {
-        embedSpecific.addField('Flags', getFlagsString(command))
+        embedSpecific.addBlankField()
+        embedSpecific.addBlankField(true)
+
+        command.flags.map(flag => {
+          let flagAliases = []
+          if (flag.aliases)
+            flag.aliases.map(al => flagAliases.push(`***\`${al}\`***`))
+          else
+            flagAliases = '***`none`***'
+
+          embedSpecific.addField(flag.name, `**aliases:** ${flagAliases}`, true)
+        })
       }
 
       message.channel.send({ embed: embedSpecific })

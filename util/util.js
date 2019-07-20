@@ -13,7 +13,8 @@ module.exports = {
     if (command.flags) '**Flags:**' + command.flags.map(f => {
       reply += `**${f.name}**\n`
       if (f.aliases)
-        reply += `Aliases: \`${f.aliases.map(fa => fa)}\`\n`
+        reply += `*Aliases: \`${f.aliases.map(fa => fa)}\`*\n`
+      reply += `*${f.description}*\n`
     })
     return reply
   },
