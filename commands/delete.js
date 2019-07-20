@@ -20,6 +20,11 @@ module.exports = {
     let flag = ''
 
     let amount = 1
+    let force = false
+
+    if (flagsFound) {
+      force = flagsFound.find(f => f.name === 'force') ? true : false
+    }
 
     //NOTE check if user entered an amount to delete
     if (!isNaN(args[0]))

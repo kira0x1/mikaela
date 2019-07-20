@@ -4,11 +4,16 @@ module.exports = {
   //Reply user with command usage
   usage(command) {
     let reply = ' '
-    if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}\n`
+    if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}`
+    return reply
+  },
+
+  getFlagsString(command) {
+    let reply = ''
     if (command.flags) '**Flags:**' + command.flags.map(f => {
-      reply += `\n** ${f.name}**`
+      reply += `**${f.name}**\n`
       if (f.aliases)
-        reply += `: ${f.aliases.map(fa => '\`' + fa + '\`')}`
+        reply += `Aliases: \`${f.aliases.map(fa => fa)}\`\n`
     })
     return reply
   },
@@ -68,6 +73,10 @@ module.exports = {
       }
     })
     return flagsFound
+  },
+
+  getFlagCommand(flags, arg) {
+    return flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
   },
 
   getAlias(aliases, content) {

@@ -19,7 +19,6 @@ module.exports = {
         const arg = args.shift()
         const cmd = this.flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
         if (!cmd) return await this.listFav(message)
-
         if (cmd.name === 'list')
             await this.listFav(message)
         else if (cmd.name === 'add')
@@ -35,15 +34,19 @@ module.exports = {
             .setTitle(`${target.tag}'s favorites`)
             .setColor(0xc71459)
 
-        favorites = favorites.map((f, position) => {
-            if (f.user_name === target.tag)
-                embed.addField(position + 1, `**${userDB.getSongByID(f.song_id).song_title}**`)
+        const userFavorites = []
+
+        favorites.map((fav, position) => {
+            if (fav.user_name === target.tag) {
+                userFavorites.push(fav)
+                embed.addField(position + 1, `**${userDB.getSongByID(fav.song_id).song_title}**`)
+                return fav
+            }
         })
 
         return message.channel.send(embed)
     },
 
-    //TODO Add song command
     async addSong(message, args) {
         const target = message.author
         const query = args.join(' ')
