@@ -1,6 +1,7 @@
 const userDB = require('../favorites/users')
 const musicUtil = require('./musicUtil')
 const Discord = require('discord.js')
+const { getHypeEmoji } = require('../../util/emojis')
 
 const flags = [
     (list = { name: 'list', aliases: ['l', 'ls'], description: 'Lists favorite songs' }),
@@ -107,7 +108,7 @@ module.exports = {
         if (!song) return message.channel.send(`Couldnt find video: **${query}**`)
         const songAdded = await userDB.addFavorite(song, target.id, target.tag)
         if (!songAdded) return message.channel.send(`You have already added this song to your favorites`)
-        return message.channel.send(`Added song : **${song.title}** to favorites`)
+        return message.channel.send(`Added song : **${song.title}** to your favorites ${getHypeEmoji()}`)
     },
 
     async init() {

@@ -77,6 +77,7 @@ module.exports = {
         embedSpecific.addField('Flags', getFlagsString(command))
       }
 
+
       message.channel.send({ embed: embedSpecific })
     }
   },
