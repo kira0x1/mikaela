@@ -24,7 +24,7 @@ module.exports = {
         if (!cmd) return await this.displaySongInfo(message, arg)
 
         if (cmd.name === 'list')
-            await this.listFav(message, args)
+            await this.listFav(message)
         else if (cmd.name === 'add')
             await this.addSong(message, args)
         else if (cmd.name === 'remove')
