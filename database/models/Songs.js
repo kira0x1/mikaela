@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        song_duration: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
     },
         {
             timestamps: false
