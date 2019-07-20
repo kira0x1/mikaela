@@ -1,16 +1,16 @@
 const { findSubCommand } = require('../util/commandUtil')
-const que = require('./music/queue')
-const stream = require('./music/stream')
+const que = require('./music_commands/queue')
+const stream = require('./music_commands/stream')
 const { getAlias } = require('../util/util')
-const musicUtil = require('./music/musicUtil')
+const musicUtil = require('./music_commands/musicUtil')
 
 //Subcommands
 const fs = require('fs')
-const commandFiles = fs.readdirSync('./commands/music').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./commands/music_commands').filter(file => file.endsWith('.js'))
 let subcommands = []
 
 for (const file of commandFiles) {
-  const command = require(`./music/${file}`)
+  const command = require(`./music_commands/${file}`)
   subcommands.push({ name: command.name, command: command })
 }
 

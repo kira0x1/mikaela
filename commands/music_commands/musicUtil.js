@@ -31,6 +31,10 @@ module.exports = {
         return new Song(info.title, info.video_url, info.video_id, info.length_seconds)
     },
 
+    CreateSong(title, url, id, duration) {
+        return new Song(title, url, id, duration)
+    },
+
     ConvertDuration(duration) {
         let minutes = Math.floor(duration / 60)
         let seconds = Math.floor(duration - minutes * 60)
