@@ -11,7 +11,7 @@ const streamOptions = {
     passes: 1,
     type: 'opus',
     seek: 0,
-    volume: 0.2,
+    volume: 0.5,
 }
 
 module.exports = {
