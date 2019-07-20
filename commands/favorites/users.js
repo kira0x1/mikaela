@@ -14,17 +14,36 @@ module.exports = {
 
     async addFavorite(song, id, username) {
         await this.addUser(id, username)
-
         //Add the song to the database if it doesnt exist there already
         const songAdded = await this.addSong(song)
-        userSongs = favorites.map(songs => songs.user_name === username)
 
-        const songFound = favorites.find(s => s.song_id === song.id)
-        if (songFound) return undefined
+        //Make sure the user doesnt already have the song set to favorites
+        if (this.isSongFavorite(song.id, username))
+            return
 
         const newSong = await UserSongs.create({ song_id: song.id, user_name: username })
         favorites.push({ song_id: song.id, user_name: username, song: songAdded })
         return newSong
+    },
+
+    async removeFromFavorite(song_id, user_name) {
+        const song = this.isSongFavorite(song_id, user_name)
+        if (!song) return
+
+        await UserSongs.destroy({
+            where: {
+                user_name: user_name,
+                song_id: song_id
+            }
+        })
+
+        const songIndex = favorites.indexOf(song)
+        if (songIndex != -1)
+            favorites.splice(songIndex, 1)
+    },
+
+    isSongFavorite(song_id, user_name) {
+        return favorites.find(s => s.song_id === song_id && s.user_name === user_name)
     },
 
     async getUserFavorites(id, username) {

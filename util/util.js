@@ -79,6 +79,12 @@ module.exports = {
     return flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
   },
 
+  getFlagArgs(flags, flagName, defaultValue) {
+    let flag = defaultValue
+    flags.find(f => { if (f.name === flagName && f.args) { flag = f.args } })
+    return flag
+  },
+
   getAlias(aliases, content) {
     const arg = content
       .slice(prefix.length)
