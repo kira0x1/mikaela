@@ -1,6 +1,6 @@
 const discord = require('discord.js')
 const { prefix } = require('../config.json')
-const { perms, usage } = require('../util/util')
+const { perms, usage, getFlagsString } = require('../util/util')
 const { findSubCommand } = require('../util/commandUtil')
 
 module.exports = {
@@ -71,6 +71,10 @@ module.exports = {
 
         if (subcmd.length > 0)
           embedSpecific.addField('Subcommands', `\`${subcmd}\``)
+      }
+
+      if (command.flags !== undefined) {
+        embedSpecific.addField('Flags', getFlagsString(command))
       }
 
       message.channel.send({ embed: embedSpecific })

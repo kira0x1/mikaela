@@ -20,6 +20,11 @@ module.exports = {
     let flag = ''
 
     let amount = 1
+    let force = false
+
+    if (flagsFound) {
+      force = flagsFound.find(f => f.name === 'force') ? true : false
+    }
 
     //NOTE check if user entered an amount to delete
     if (!isNaN(args[0]))
@@ -34,6 +39,9 @@ module.exports = {
 
     if (!force && (amount < 1 || amount > 25))
       return message.reply('`amount must be between 1 - 25`')
+
+    if (amount > 90)
+      return message.reply(`\`Amount cant excede 90\``)
 
     amount++
 
