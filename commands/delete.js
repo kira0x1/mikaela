@@ -35,6 +35,9 @@ module.exports = {
     if (!force && (amount < 1 || amount > 25))
       return message.reply('`amount must be between 1 - 25`')
 
+    if (amount > 90)
+      return message.reply(`\`Amount cant excede 90\``)
+
     amount++
 
     await message.channel
