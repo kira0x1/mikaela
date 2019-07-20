@@ -95,6 +95,8 @@ module.exports = {
             .setTitle(`${target.tag}'s favorites`)
             .setColor(0xc71459)
 
+        favorites.map((fav, position) => embed.addField(position + 1, `**${userDB.getSongByID(fav.song_id).song_title}**`))
+
         return message.channel.send(embed)
     },
 
