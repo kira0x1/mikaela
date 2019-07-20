@@ -47,7 +47,7 @@ module.exports = {
     },
 
     async getUserFavorites(id, username) {
-        const user = await this.addUser(id, username)
+        await this.addUser(id, username)
         const songs = await favorites.map(s => s.user_name === username)
         return songs
     },
@@ -64,8 +64,8 @@ module.exports = {
         const result = songs.find(s => s.song_id === song.id)
         if (result) return result
 
-        const newSong = await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url })
-        songs.push({ song_id: song.id, song_title: song.title, song_url: song.url })
+        const newSong = await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
+        songs.push({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
         return newSong
     },
 
@@ -82,7 +82,7 @@ module.exports = {
         const allUsers = await Users.findAll({ attributes: ['user_id', 'user_name'] }, { raw: true })
         allUsers.map((data) => users.push(data.toJSON()))
 
-        const allSongs = await Songs.findAll({ attributes: ['song_id', 'song_title', 'song_url'] }, { raw: true })
+        const allSongs = await Songs.findAll({ attributes: ['song_id', 'song_title', 'song_url', 'song_duration'] }, { raw: true })
         allSongs.map((data) => songs.push(data.toJSON()))
 
         const allFavorites = await UserSongs.findAll({ attributes: ['song_id', 'user_name'] }, { raw: true })
