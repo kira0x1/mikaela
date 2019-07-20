@@ -4,7 +4,10 @@ const fetch = require('node-fetch')
 const { getFlags } = require('../util/util')
 
 const maxpost = 5 //How many images to post
-let searchLimit = 30 //Amount to request from the api
+let searchLimit = 20 //Amount to request from the api
+
+const checkWords = ['i.imgur.com', 'jpg', 'png', 'gif', 'gfycat.com', 'webm',]
+const gyfwords = ['gfycat.com']
 
 const flags = [
   (name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] }),
@@ -37,28 +40,30 @@ module.exports = {
       return message.channel.send(`\`amount must be between 1-${maxpost}\``)
     }
 
-    await postUsingFetch()
+    //NOTE  get subreddit
+    const posts = await getRedditPost()
+    if (!posts) return
 
-    async function postUsingFetch() {
-      //NOTE  get subreddit
-      const posts = await getRedditPost()
-      if (!posts) return
+    const reply = []
 
-      for (let i = 0; i < amount; i++) {
-        //NOTE Get a random number
-        const randomnumber = Math.floor(Math.random() * posts.length)
+    for (let i = 0; i < amount; i++) {
+      //NOTE Get a random number
+      const randomnumber = Math.floor(Math.random() * posts.length)
 
-        //NOTE Get post data
-        const data = posts[randomnumber].data
-        if (!data) return
+      //NOTE Get post data
+      const data = posts[randomnumber].data
+      if (!data) return
 
-        //NOTE Create embed
-        const embed = createEmbed(data.title, data.url)
+      reply.push(`**${data.title}:** ${data.url}`)
 
-        //NOTE send message :)
-        await message.channel.send(embed)
-      }
+      //NOTE Create embed
+      // const embed = createEmbed(data.title, data.url)
+      //NOTE send message :)
+      // if (embed)
+      // await message.channel.send(embed)
     }
+
+    message.channel.send(reply.join('\n'))
 
     async function getRedditPost() {
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${searchLimit}`
@@ -76,8 +81,8 @@ module.exports = {
       }
 
       const postChildren = result.data.children
+
       //NOTE Dont allow nsfw posts in nsfw channels
-      // console.dir(result)
       const redditPost = message.channel.nsfw ? postChildren : postChildren.filter(post => !post.data.over_18)
       if (!redditPost.length) {
         message.channel.send('This is not a **NSFW** channel.')
@@ -87,7 +92,28 @@ module.exports = {
       return postChildren
     }
 
-    function createEmbed(title, image) {
+    function getImage(url) {
+      const domain = checkWords.find(word => url.includes(word))
+      const isGifCat = gyfwords.find(word => url.includes(word))
+      let urlText = undefined
+
+      if (domain) {
+        urlText = url
+        if (isGifCat) {
+          const gifcat = `http://.*gfycat.com/${url}`
+          urlText = `http://giant.gfycat.com/${gifcat}.gif`
+        }
+      }
+
+      return urlText
+    }
+
+    function createEmbed(title, url) {
+      if (url === 'self') return
+
+      const postImage = getImage(url)
+      if (!postImage) return
+
       const embed = new Discord.RichEmbed()
         .setColor(0xc71459)
         .setTitle(title)
@@ -98,9 +124,7 @@ module.exports = {
         )
         .setFooter(`From r/${subreddit}`)
 
-      if (image !== 'self')
-        embed.setImage(image)
-
+      embed.setImage(postImage)
       return embed
     }
 
