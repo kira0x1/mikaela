@@ -83,6 +83,7 @@ ecosystem.config.js
 .vscode/sftp.json
 .github/.whitesource
 .vscode/launch.json
+.vscode/
 
 # dev classes
 commands/proto.js
