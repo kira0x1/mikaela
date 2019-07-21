@@ -1,8 +1,8 @@
 const fetch = require('node-fetch')
 const { getFlags, getFlagArgs } = require('../util/util')
 
-const maxpost = 10 //How many images to post
-let searchLimit = 30 //Amount to request from the api
+const maxpost = 5 //How many images to post
+let searchLimit = 40 //Amount to request from the api
 
 const flags = [
   (name = { name: 'sort', aliases: ['top', 'hot', 'new', 'controversial', 'rising'] }),
@@ -40,6 +40,11 @@ module.exports = {
 
     const reply = []
 
+    //Add title subreddit
+    const postData = posts[0].data
+    reply.push(`**Subreddit:** *https://www.reddit.com/r/${postData.subreddit}*\n`)
+
+
     for (let i = 0; i < amount; i++) {
       //NOTE Get a random number
       const randomnumber = Math.floor(Math.random() * posts.length)
@@ -48,7 +53,7 @@ module.exports = {
       const data = posts[randomnumber].data
       if (!data) return
 
-      reply.push(`**${data.title}:** ${data.url}`)
+      reply.push(`**Title:** *${data.title}:* ${data.url}`)
     }
 
     message.channel.send(reply.join('\n'))
