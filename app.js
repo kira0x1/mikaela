@@ -53,8 +53,7 @@ client.on('message', async message => {
   }
 
   if (!commandUtil.checkCommandPerms(command, message.author.id)) return
-  if (commandUtil.IsOnCoolDown(command, message.author.id)) return
-
+  if (commandUtil.IsOnCoolDown(command,message)) return
   //Try to execute command
   try {
     await command.execute(message, args)

@@ -23,7 +23,8 @@ module.exports = {
     },
 
     //ANCHOR Check if command is on cooldown
-    IsOnCoolDown(command, id) {
+    IsOnCoolDown(command, message) {
+        const id = message.author.id
         //Cooldowns
         if (!cooldowns.has(command.name)) {
             //Check if cooldowns has the commend, if not then add it in
