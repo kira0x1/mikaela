@@ -54,8 +54,7 @@ module.exports = {
 
     //ANCHOR Find Command from by name
     findCommand(name) {
-        const cmd = Client.commands.get(name) || Client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(name))
-        return cmd
+        return Client.commands.get(name) || Client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(name))
     },
 
     checkCommandPerms(command, id) {

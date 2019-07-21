@@ -75,8 +75,6 @@ module.exports = {
 
       if (command.flags !== undefined) {
         embedSpecific.addBlankField()
-        embedSpecific.addBlankField(true)
-
         command.flags.map(flag => {
           let flagAliases = []
           if (flag.aliases)
@@ -84,7 +82,7 @@ module.exports = {
           else
             flagAliases = '***`none`***'
 
-          embedSpecific.addField(flag.name, `**aliases:** ${flagAliases}`, true)
+          embedSpecific.addField(flag.name, `**aliases** ${flagAliases}`, true)
         })
       }
 

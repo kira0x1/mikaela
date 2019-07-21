@@ -18,7 +18,7 @@ const commandsMessage = `**Commands:** ${flags.map(f => `\`${f.name}\``)}`
 
 module.exports = {
     name: 'favorites',
-    aliases: ['fav', 'favorite'],
+    aliases: ['f', 'fav', 'favorite'],
     description: 'Favourite songs',
     guildOnly: true,
     args: true,
@@ -91,13 +91,17 @@ module.exports = {
     async listFav(message) {
         const target = message.mentions.users.first() || message.author
         const favorites = this.getFavByUser(target.tag)
-        if (!favorites) return message.channel.send(`User **${target.tag}** has no favorites`)
+        // if (!favorites) return message.channel.send(`User **${target.tag}** has no favorites`)
 
         let embed = new Discord.RichEmbed()
-            .setTitle(`${target.tag}'s favorites`)
+            .addField(`**${target.tag}**\tfavorite songs`, '\u200b')
+            .setThumbnail(target.avatarURL)
             .setColor(0xc71459)
 
-        favorites.map((fav, position) => embed.addField(position + 1, `**${userDB.getSongByID(fav.song_id).song_title}**`))
+        if (!favorites.length) embed.addField('\u200b', '***no favorites 😕***')
+
+        // favorites.map((fav, position) => embed.addField(position + 1, `**${userDB.getSongByID(fav.song_id).song_title}**`))
+        favorites.map((fav, position) => embed.addField(`***(${position + 1}***)  *${userDB.getSongByID(fav.song_id).song_title}*`, '\u200b'))
 
         return message.channel.send(embed)
     },
@@ -124,7 +128,7 @@ module.exports = {
 
         //Tell the user they succesfuly added their song to favorites
         const ms = await message.channel.send(`Added song : **${song.title}** to your favorites`)
-        await getHypeEmoji(ms, message.client)
+        await getHypeEmoji(ms, message)
     },
 
     async callCommand(cmd, message, args) {

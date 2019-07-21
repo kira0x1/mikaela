@@ -17,16 +17,19 @@ module.exports = {
 
     //ANCHOR Add song to queue
 
-    AddSong(song, message) {
+    async AddSong(song, message) {
         queue.push(song)
         const duration = ConvertDuration(song.duration)
 
         let embed = new Discord.RichEmbed()
-            .setTitle('Song added:\n' + song.title)
-            .setDescription(duration)
+            .setTitle(song.title)
+            .setDescription(`***Added to queue\n\n${duration}***`)
+            .setURL(song.url)
             .setColor(0xc71459)
+            .setFooter(`React to 💝 add/remove from favorites`)
 
-        message.channel.send(embed)
+        const msg = await message.channel.send(embed)
+        await msg.react('💝')
     },
 
     //ANCHOR send embed of queue 
