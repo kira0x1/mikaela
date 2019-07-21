@@ -53,7 +53,7 @@ module.exports = {
       const data = posts[randomnumber].data
       if (!data) return
 
-      reply.push(`**Title:** *${data.title}:* ${data.url}`)
+      reply.push(`**${data.title}:** ${data.url}`)
     }
 
     message.channel.send(reply.join('\n'))
