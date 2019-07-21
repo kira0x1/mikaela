@@ -2,17 +2,22 @@ const hype = [
     { name: 'sparkling_heart', emoji: '💖', isID: false },
     { name: 'tada', emoji: '🎉', isID: false },
     { name: 'confetti_ball', emoji: '🎊', isID: false },
-
-    // { name: 'gift_heart', emoji: '💝', isID: false },
-    // { name: 'POGGERS', emoji: '588715176577073180', isID: true }
-    // { name: 'cursor', emoji: '602159575420108840', isID: true }
 ]
 
+const accept = '451356007747026944'
+
 module.exports = {
-    getHypeEmoji(message, client) {
-        hype.map(emoji => {
-            message.react(emoji.emoji)
+    async getHypeEmoji(msg1, msg2) {
+        await hype.map(emoji => {
+            msg1.react(emoji.emoji)
+
+            if (msg2)
+                msg2.react(emoji.emoji)
         })
+    },
+
+    getAcceptEmoji() {
+        return accept
     },
 
     getRandomEmoji() {
