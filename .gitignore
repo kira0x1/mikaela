@@ -1,6 +1,8 @@
 #config
 config.json
 
+prettier.config.js
+
 # Logs
 logs
 *.log
