@@ -1,7 +1,9 @@
 const fetch = require('node-fetch')
 const { getFlags, getFlagArgs } = require('../util/util')
+const { getThumbsDown, getThumbsUp } = require('../util/emojis')
 
 const maxpost = 5 //How many images to post
+let defaultLimit = 50
 let searchLimit = 50 //Amount to request from the api
 
 const flags = [
@@ -14,7 +16,7 @@ const flags = [
 module.exports = {
   name: 'reddit',
   description: 'Posts from subreddits',
-  aliases: ['rd'],
+  aliases: ['r', 'rd'],
   flags: flags,
   usage: ` \`<subreddit>\` \`-sort\` \`-time\` \`-amount\` \`-rank\``,
   guildOnly: true,
@@ -36,6 +38,18 @@ module.exports = {
       return message.channel.send(`\`amount must be between 1-${maxpost}\``)
     }
 
+    //NOTE Make sure rank is within range
+    if (amount < 0 || rank > defaultLimit) {
+      return message.channel.send(`\`amount must be between 0-${defaultLimit}\``)
+    }
+
+    if (rank !== -1) {
+      searchLimit = rank
+    }
+    else {
+      searchLimit = defaultLimit
+    }
+    searchLimit++
 
     //NOTE  get subreddit
     const posts = await getRedditPost()
@@ -45,22 +59,23 @@ module.exports = {
 
     //Add title subreddit
     const postData = posts[0].data
-    reply.push(`**Subreddit:** *https://www.reddit.com/r/${postData.subreddit}*\n`)
+    // reply.push(`**${postData.subreddit_name_prefixed}**\n`)
+    reply.push(`**Subreddit** *https://www.reddit.com/r/${postData.subreddit}*\n`)
 
 
     for (let i = 0; i < amount; i++) {
       //NOTE Get a random number
       let postNumber = Math.floor(Math.random() * posts.length)
 
-      if (rank > -1) {
-        searchLimit = rank + 1
-      }
+      if (rank !== -1)
+        postNumber = rank
 
       //NOTE Get post data
       const data = posts[postNumber].data
       if (!data) return
 
-      reply.push(`**${data.title}:** ${data.url}`)
+      const postString = `**${data.title}** *(${data.ups} upvotes)*  ${data.url}`
+      reply.push(postString)
     }
 
     await message.channel.send(reply.join('\n'))
