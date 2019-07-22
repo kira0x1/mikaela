@@ -7,7 +7,15 @@ const hype = [
 const accept = '451356007747026944'
 const heart = '602593297986486295'
 
+const thumbsUp = '👍'
+const thumbsDown = '👎'
+
 module.exports = {
+
+    getAcceptEmoji() { return accept },
+    getThumbsUp() { return thumbsUp },
+    getThumbsDown() { return thumbsDown },
+
     async getHypeEmoji(msg1, msg2) {
         await hype.map(emoji => {
             msg1.react(emoji.emoji)
@@ -15,10 +23,6 @@ module.exports = {
             if (msg2)
                 msg2.react(emoji.emoji)
         })
-    },
-
-    getAcceptEmoji() {
-        return accept
     },
 
     getEmoji(name, client) {
