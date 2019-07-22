@@ -52,14 +52,11 @@ module.exports = {
 
     for (let i = 0; i < amount; i++) {
       //NOTE Get a random number
-      let postNumber = rank
+      let postNumber = Math.floor(Math.random() * posts.length)
 
-      if (rank !== -1) {
+      if (rank > -1) {
         searchLimit = rank + 1
         console.log(`rank: ${rank}`)
-      } else {
-        console.log(`no rank`)
-        postNumber = Math.floor(Math.random() * posts.length)
       }
 
       console.log(`post:${postNumber}`)
@@ -71,7 +68,7 @@ module.exports = {
       reply.push(`**${data.title}:** ${data.url}`)
     }
 
-    message.channel.send(reply.join('\n'))
+    await message.channel.send(reply.join('\n'))
 
     async function getRedditPost() {
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${searchLimit}`
