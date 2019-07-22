@@ -24,8 +24,6 @@ module.exports = {
     const subreddit = args[0]
     let flagsFound = getFlags(flags, args)
 
-    console.dir(flagsFound)
-
     //NOTE Set flags
     let sort = getFlagArgs(flagsFound, 'sort', 'top')
     let amount = getFlagArgs(flagsFound, 'amount', 1)
@@ -56,10 +54,7 @@ module.exports = {
 
       if (rank > -1) {
         searchLimit = rank + 1
-        console.log(`rank: ${rank}`)
       }
-
-      console.log(`post:${postNumber}`)
 
       //NOTE Get post data
       const data = posts[postNumber].data
