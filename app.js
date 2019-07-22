@@ -3,6 +3,8 @@ const util = require('./util/util')
 const commandUtil = require('./util/commandUtil')
 const database = require('./commands/favorites')
 const config = require('./config.json')
+const chalk = require('chalk')
+const ct = require('common-tags')
 
 const token = config.keys.token
 const prefix = config.prefix
@@ -15,7 +17,7 @@ client.once('ready', async () => {
   client.user.setActivity(`with commi's | ${prefix}help`, {
     type: 'PLAYING',
   })
-  console.log(`${client.user.username} Online!`)
+  console.log(chalk`{bold ${client.user.username} Online!}`)
 })
 
 client.on('message', async message => {
@@ -36,10 +38,14 @@ client.on('message', async message => {
     command = commandUtil.findSubCommand(commandName)
   }
 
-  if (!command) return console.log('could not find command ' + commandName)
+  if (!command)
+    return console.log(ct.stripIndents(
+      chalk`{bold Could not find command:} {bold.red ${prefix}${commandName}} {bold From:} {bold.red ${message.author.tag}}`
+    ))
 
   //Check if command is supposed to be used
-  if (command.helper) return console.log(`helper command '${command.name}' tried to be called by: ${message.author.username}`)
+  if (command.helper)
+    return console.log(`helper command '${command.name}' tried to be called by: ${message.author.tag}`)
 
   //Check if command needs arguments
   if (command.args && !args.length) {
@@ -47,13 +53,12 @@ client.on('message', async message => {
   }
 
   //Check if guild only
-  if (command.guildOnly && message.channel.type !== 'text') {
-    message.reply("That command cannot be used inside of dm's")
-    return
-  }
+  if (command.guildOnly && message.channel.type !== 'text')
+    return message.reply("That command cannot be used inside of dm's")
 
   if (!commandUtil.checkCommandPerms(command, message.author.id)) return
-  if (commandUtil.IsOnCoolDown(command,message)) return
+  if (commandUtil.IsOnCoolDown(command, message)) return
+
   //Try to execute command
   try {
     await command.execute(message, args)
