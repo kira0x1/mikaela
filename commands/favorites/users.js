@@ -48,7 +48,12 @@ module.exports = {
 
     async getUserFavorites(id, username) {
         await this.addUser(id, username)
-        const songs = await favorites.map(s => s.user_name === username)
+        const songs = []
+        await favorites.map(s => {
+            if (s.user_name === username)
+                songs.push(s)
+        })
+
         return songs
     },
 

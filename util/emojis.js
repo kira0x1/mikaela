@@ -5,6 +5,7 @@ const hype = [
 ]
 
 const accept = '451356007747026944'
+const heart = '602593297986486295'
 
 module.exports = {
     async getHypeEmoji(msg1, msg2) {
@@ -20,17 +21,20 @@ module.exports = {
         return accept
     },
 
+    getEmoji(name, client) {
+        let emoji = undefined
+
+        client.emojis.map(em => {
+            if (em.name === name)
+                emoji = em
+        })
+
+        return emoji
+    },
+
     getRandomEmoji() {
         const rand = Math.floor(Math.random() * hype.length)
         let result = this.getEmoji(hype[rand].name)
         return result
     },
-
-    getEmoji(name, guild) {
-        let result = hype.find(f => f.name === name)
-
-        result = result.isID ? guild.emojis.find(emoji => emoji.name === result.name) : result.emoji
-
-        return result
-    }
 }

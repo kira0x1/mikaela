@@ -61,19 +61,8 @@ module.exports = {
             message.reply(`**Song at position ${query} not found**`)
             return
         }
+
         return userDB.getSongByID(song.song_id)
-    },
-
-    async removeSong(message, args) {
-        const songPicked = this.getSongByIndex(message, args.shift())
-        if (!songPicked) return
-        await userDB.removeFromFavorite(songPicked.song_id, message.author.tag)
-
-        const embed = new Discord.RichEmbed()
-            .setTitle(`Removing from favorites:\n**${songPicked.song_title}**`)
-            .setColor(0xc71459)
-
-        message.channel.send(embed)
     },
 
     getFavByUser(username) {
@@ -106,6 +95,7 @@ module.exports = {
         return message.channel.send(embed)
     },
 
+    //ANCHOR Add song to favorites
     async addSong(message, args) {
         const target = message.author
 
@@ -131,6 +121,19 @@ module.exports = {
         await getHypeEmoji(ms, message)
     },
 
+    //ANCHOR Remove song from favorites
+    async removeSong(message, args) {
+        const songPicked = this.getSongByIndex(message, args.shift())
+        if (!songPicked) return
+        await userDB.removeFromFavorite(songPicked.song_id, message.author.tag)
+
+        const embed = new Discord.RichEmbed()
+            .setTitle(`Removing from favorites:\n**${songPicked.song_title}**`)
+            .setColor(0xc71459)
+
+        message.channel.send(embed)
+    },
+    
     async callCommand(cmd, message, args) {
         if (cmd.name === 'list')
             await this.listFav(message)
