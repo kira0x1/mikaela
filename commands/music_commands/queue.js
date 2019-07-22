@@ -1,5 +1,8 @@
 const Discord = require('discord.js')
 const { ConvertDuration } = require('./musicUtil')
+const { addSong, removeSong } = require('../favorites/favoritesUtil')
+const { getEmoji } = require('../../util/emojis')
+
 var queue = []
 var currentSong = undefined
 
@@ -19,17 +22,30 @@ module.exports = {
 
     async AddSong(song, message) {
         queue.push(song)
+        const emoji = getEmoji('heart', message.client)
         const duration = ConvertDuration(song.duration)
 
         let embed = new Discord.RichEmbed()
             .setTitle(song.title)
-            .setDescription(`***Added to queue\n\n${duration}***`)
+            .setDescription(`**Added to queue**\n${duration}\n\nReact to ${emoji} to add the song to your favorites`)
             .setURL(song.url)
             .setColor(0xc71459)
-            .setFooter(`React to 💝 add/remove from favorites`)
 
         const msg = await message.channel.send(embed)
-        await msg.react('💝')
+        await msg.react(emoji)
+
+        const filter = (reaction, user) => {
+            return reaction.emoji.name === emoji.name && !user.bot
+        }
+
+        const collector = msg.createReactionCollector(filter, { time: 120000 })
+        const users = []
+
+        collector.on('collect', async (reaction, reactionCollector) => {
+            const user = reaction.users.last()
+            await addSong(message, song, user)
+            message.channel.send(`Added song: ***${song.title}*** to your favorites`)
+        })
     },
 
     //ANCHOR send embed of queue 
