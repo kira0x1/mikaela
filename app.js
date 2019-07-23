@@ -18,6 +18,7 @@ client.once('ready', async () => {
     type: 'PLAYING',
   })
   console.log(chalk`{bold ${client.user.username} Online!}`)
+  
 })
 
 client.on('message', async message => {

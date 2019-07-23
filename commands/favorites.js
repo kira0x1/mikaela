@@ -118,7 +118,6 @@ module.exports = {
 
         //Tell the user they succesfuly added their song to favorites
         const ms = await message.channel.send(`Added song : **${song.title}** to your favorites`)
-        await getHypeEmoji(ms, message)
     },
 
     //ANCHOR Remove song from favorites
@@ -133,7 +132,7 @@ module.exports = {
 
         message.channel.send(embed)
     },
-    
+
     async callCommand(cmd, message, args) {
         if (cmd.name === 'list')
             await this.listFav(message)
