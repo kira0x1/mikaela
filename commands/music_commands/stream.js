@@ -1,4 +1,5 @@
 const ytdl = require('ytdl-core')
+const { quickEmbed } = require('../../util/embedUtil')
 
 var isConnected = false
 var connection = undefined
@@ -28,7 +29,7 @@ module.exports = {
         //NOTE Check if user is in vc or not
         const vc = message.member.voiceChannel
 
-        if (!vc) return message.channel.send(`You must be in a voicechannel`)
+        if (!vc) return quickEmbed(`You must be in a voicechannel`)
 
         //NOTE Join voice channel
         await vc.join().then(conn => {
@@ -37,7 +38,7 @@ module.exports = {
             isConnected = true
         }).catch(err => {
             console.error(err)
-            message.channel.send(`Failed to join voice channel!`)
+            quickEmbed(`Failed to join voice channel!`)
         })
     },
 

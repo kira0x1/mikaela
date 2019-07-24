@@ -2,6 +2,7 @@ const discord = require('discord.js')
 const { prefix } = require('../config.json')
 const { perms, usage, getFlagsString } = require('../util/util')
 const { findSubCommand } = require('../util/commandUtil')
+const { quickEmbed } = require('../util/embedUtil')
 
 module.exports = {
   name: 'help',
@@ -49,7 +50,7 @@ module.exports = {
       }
 
       if (!command) {
-        return message.channel.send(`command not found: ${name}`)
+        return quickEmbed(`command not found: **${name}**`)
       }
 
       const embedSpecific = new discord.RichEmbed()

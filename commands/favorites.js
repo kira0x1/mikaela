@@ -5,6 +5,8 @@ const musicUtil = require('./music_commands/musicUtil')
 const { CreateSong } = require('./music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
 const { quickEmbed } = require('../util/embedUtil')
+
+
 const flags = [
     (list = { name: 'list', aliases: ['l', 'ls'], description: 'Lists favorite songs' }),
     (add = { name: 'add', description: 'Adds a song to favorite songs' }),
@@ -29,7 +31,7 @@ module.exports = {
         const arg = args.shift()
         const cmd = this.flags.find(f => f.name === arg || f.aliases && f.aliases.includes(arg))
 
-        if (!cmd) return message.channel.send(`"**${arg}**" is not a command\n` + commandsMessage)
+        if (!cmd) return quickEmbed(`"**${arg}**" is not a command\n` + commandsMessage)
         await this.callCommand(cmd, message, args)
     },
 

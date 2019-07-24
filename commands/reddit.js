@@ -1,6 +1,7 @@
 const fetch = require('node-fetch')
 const { getFlags, getFlagArgs } = require('../util/util')
-const { getThumbsDown, getThumbsUp } = require('../util/emojis')
+const { quickEmbed } = require('../util/embedUtil')
+
 
 const maxpost = 5 //How many images to post
 let defaultLimit = 50
@@ -35,12 +36,12 @@ module.exports = {
 
     //NOTE Make sure amount is within range
     if (amount < 1 || amount > maxpost) {
-      return message.channel.send(`\`amount must be between 1-${maxpost}\``)
+      return quickEmbed(`amount must be between 1-${maxpost}`)
     }
 
     //NOTE Make sure rank is within range
-    if (amount < 0 || rank > defaultLimit) {
-      return message.channel.send(`\`amount must be between 0-${defaultLimit}\``)
+    if (rank > defaultLimit) {
+      return quickEmbed(`rank must be between 0-${defaultLimit}`)
     }
 
     if (rank !== -1) {
@@ -79,7 +80,7 @@ module.exports = {
       reply.push(postString)
     }
 
-    await message.channel.send(reply.join('\n'))
+    message.channel.send(reply.join('\n'))
 
     async function getRedditPost() {
       const url = `https://www.reddit.com/r/${subreddit}/${sort}.json?&t=${time}&limit=${searchLimit}`
@@ -100,7 +101,7 @@ module.exports = {
       const redditPost = message.channel.nsfw ? postChildren : postChildren.filter(post => !post.data.over_18)
 
       if (!redditPost.length) {
-        message.channel.send('This is not a **NSFW** channel.')
+        quickEmbed('This is not a **NSFW** channel.')
         return
       }
 
@@ -108,7 +109,7 @@ module.exports = {
     }
 
     function subredditNotFound() {
-      message.channel.send(`**Subreddit doesnt exist :<**`)
+      quickEmbed(`**Subreddit doesnt exist :<**`)
     }
   },
 }
