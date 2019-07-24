@@ -2,6 +2,7 @@ const userDB = require('./favorites/users')
 const Discord = require('discord.js')
 const music = require('./music')
 const musicUtil = require('./music_commands/musicUtil')
+const { CreateSong } = require('./music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
 
 const flags = [
@@ -59,9 +60,9 @@ module.exports = {
         if (!song) {
             message.reply(`**Song at position ${query} not found**`)
             return
-
-            return userDB.getSongByID(song.song_id)
         }
+
+        return userDB.getSongByID(song.song_id)
     },
 
     getFavByUser(username) {
@@ -175,8 +176,8 @@ module.exports = {
 
     async playSong(message, args) {
         const songInfo = await this.getSongByIndex(message, args)
-        if (!songInfo) return
-        music.PlaySong(message, musicUtil.CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
+        if (!songInfo) return console.log(`Couldnt find song ${args}`)
+        music.PlaySong(message, CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
     },
 
     async init() {
