@@ -18,7 +18,7 @@ client.once('ready', async () => {
     type: 'PLAYING',
   })
   console.log(chalk`{bold ${client.user.username} Online!}`)
-  
+
 })
 
 client.on('message', async message => {
@@ -62,6 +62,12 @@ client.on('message', async message => {
 
   //Try to execute command
   try {
+    /**
+    *
+    *
+    * @param {Discord.Message} message
+    * @param {Array} args
+    */
     await command.execute(message, args)
   } catch (error) {
     console.error(error)
