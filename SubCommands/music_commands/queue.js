@@ -22,7 +22,7 @@ module.exports = {
 
     //ANCHOR AddSong
 
-    /**
+	/**
      *
      *
      * @param {*} song
@@ -46,7 +46,7 @@ module.exports = {
             return reaction.emoji.name === emoji.name && !user.bot
         }
 
-        const collector = msg.createReactionCollector(filter, { time: ms('4s') })
+        const collector = msg.createReactionCollector(filter, { time: ms('4m') })
         const users = []
 
         //ANCHOR AddSong Collector
