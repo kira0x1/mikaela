@@ -30,8 +30,9 @@ module.exports = {
    * @returns
    */
   async searchForUser(displayName, message) {
-    console.log(chalk`Searching for user {bold.blue ${displayName}}`);
-    return message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
+    console.log(chalk`Searching for user {bold.red ${displayName}}`);
+    const target = await message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
+    return target
   },
 
   getIDFromMention(mention) {

@@ -34,8 +34,16 @@ module.exports = {
     },
 
     async displaySongInfo(message, args) {
-        const song = this.getSongByIndex(message, args)
+        const songId = args.shift()
+        console.log(`songId: ${songId}`);
+
+        const userFound = await this.getUser(message, args)
+        if (!userFound) return
+
+        const song = await this.getSongByIndex(message, userFound, songId)
+
         if (!song) return
+        console.dir(song)
 
         const duration = musicUtil.ConvertDuration(song.song_duration)
 
@@ -51,10 +59,20 @@ module.exports = {
         message.channel.send(embed)
     },
 
-    getSongByIndex(message, query) {
-        if (!query) return console.log(`no query given`)
+    /**
+     *
+     *
+     * @param {Discord.Message} message
+     * @param {string} query
+     * @returns
+     */
+    async getSongByIndex(message, user, query) {
+        if (!query) return
+        if (!query.length) return console.log(`No query given`)
 
-        songs = this.getFavByUser(message.author.tag)
+        songs = this.getFavByUser(user.tag)
+        console.log(`tagFound: ${user.tag}`);
+
         let song = songs[query - 1]
 
         if (!song) {
@@ -81,16 +99,12 @@ module.exports = {
      *
      *
      * @param {Discord.Message} message
-     * @param {String} query
+     * @param {String} args
      * @returns
      */
-    async listFav(message, query) {
-        let target = message.mentions.members.first() || message.author
-
-        if (query) {
-            target = await searchForUser(query, message)
-        }
-
+    async listFav(message, args) {
+        const query = args.join(' ')
+        let target = await this.getUser(message, args)
 
         if (!target) {
             const errEmbed = new Discord.RichEmbed()
@@ -99,13 +113,13 @@ module.exports = {
             return message.channel.send(errEmbed)
         }
 
-        let userTag = query ? target.user.tag : target.tag
-        console.log(`Found: ${userTag}`)
+        //let userTag =  query ? target.user.tag : target.tag
+        let userTag = target.tag
         const favorites = this.getFavByUser(userTag)
 
         let embed = new Discord.RichEmbed()
-            .addField(`**${target.tag || query || `Couldnt Find user "${query}"`}**\tfavorite songs`, '\u200b')
-            .setThumbnail(target.avatarURL || target.user.avatarURL)
+            .addField(`**${userTag || query || `Couldnt Find user "${query}"`}**\tfavorite songs`, '\u200b')
+            .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
             .setColor(0xc71459)
 
         if (!favorites.length) {
@@ -116,6 +130,26 @@ module.exports = {
         return message.channel.send(embed)
     },
 
+    /**
+     *
+     *
+     * @param {Discord.Message} message
+     * @param {string} args
+     * @returns
+     */
+    async getUser(message, args = undefined) {
+        let query = args ? args.join(' ') : args
+        let target = message.mentions.members.first() || message.author
+
+        if (message.mentions.members.size === 0 && query) {
+            target = await searchForUser(query, message)
+        }
+
+        if (!target) return console.log(`No targets were able to be found`)
+        let userTag = query ? target.user.tag : target.tag
+        return { tag: userTag, user: target }
+    },
+
     //ANCHOR Add song to favorites
     async addSong(message, args) {
         const target = message.author
@@ -124,7 +158,7 @@ module.exports = {
         if (!args.length)
             return message.channel.send(`\`No song given\``)
 
-        //Search for song
+        //Searchz for song
         const query = args.join(' ')
         const song = await musicUtil.GetSong(query)
 
@@ -163,7 +197,7 @@ module.exports = {
      */
     async callCommand(cmd, message, args) {
         if (cmd.name === 'list')
-            await this.listFav(message, args.join(' '))
+            await this.listFav(message, args)
         else if (cmd.name === 'add')
             await this.addSong(message, args)
         else if (cmd.name === 'remove')
