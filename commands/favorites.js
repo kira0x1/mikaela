@@ -8,7 +8,7 @@ const { searchForUser } = require('../util/util')
 const flags = [
     (list = { name: 'list', aliases: ['l', 'ls'], description: 'Lists favorite songs' }),
     (add = { name: 'add', description: 'Adds a song to favorite songs' }),
-    (remove = { name: 'remove', aliases: ['del', 'rm', 'rem'], description: 'Remove song from favorites' }),
+    (remove = { name: 'remove', aliases: ['del', 'rm', 'rem', 'r'], description: 'Remove song from favorites' }),
     (play = { name: 'play', aliases: ['p'], description: 'Play a song from your favorites' }),
     (info = { name: 'info', aliases: ['i'], description: 'Displays info about a song' }),
 
@@ -175,9 +175,10 @@ module.exports = {
         const ms = await message.channel.send(`Added song : **${song.title}** to your favorites`)
     },
 
-    //ANCHOR Remove song from favorites
+    //ANCHOR Remove  song from favorites
     async removeSong(message, args) {
-        const songPicked = this.getSongByIndex(message, args.shift())
+        const songId = args.shift()
+        const songPicked = await this.getSongByIndex(message, message.author, songId)
         if (!songPicked) return
         await userDB.removeFromFavorite(songPicked.song_id, message.author.tag)
 
@@ -211,7 +212,7 @@ module.exports = {
     async playSong(message, args) {
         const songId = args.shift()
         const userFound = await this.getUser(message, args)
-        const songInfo = await this.getSongByIndex(message,userFound, songId)
+        const songInfo = await this.getSongByIndex(message, userFound, songId)
         console.dir(userFound)
         if (!songInfo) return console.log(`Couldnt find song ${args}`)
         music.PlaySong(message, CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
