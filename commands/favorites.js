@@ -1,8 +1,8 @@
-const userDB = require('./favorites/users')
+const userDB = require('../SubCommands/favorites/users')
 const Discord = require('discord.js')
 const music = require('./music')
-const musicUtil = require('./music_commands/musicUtil')
-const { CreateSong } = require('./music_commands/musicUtil')
+const musicUtil = require('../SubCommands/music_commands/musicUtil')
+const { CreateSong } = require('../SubCommands/music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
 const { quickEmbed } = require('../util/embedUtil')
 
