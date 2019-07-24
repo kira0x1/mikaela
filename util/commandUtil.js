@@ -8,9 +8,15 @@ let Client
 //False = admins are not effected by cooldowns
 const adminCD = false
 
+
 module.exports = {
 
     //ANCHOR Get js files from commands folder and add it to the bots commands
+    /**
+     *
+     *
+     * @param {discord.Client} client
+     */
     initCommands(client) {
         Client = client
         client.commands = new discord.Collection()
@@ -18,6 +24,7 @@ module.exports = {
 
         for (const file of commandFiles) {
             const command = require(`../commands/${file}`)
+
             client.commands.set(command.name, command)
         }
     },

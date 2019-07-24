@@ -59,9 +59,10 @@ module.exports = {
 
     //Add title subreddit
     const postData = posts[0].data
+    if (!postData.ups) return subredditNotFound()
+
     // reply.push(`**${postData.subreddit_name_prefixed}**\n`)
     reply.push(`**Subreddit** *https://www.reddit.com/r/${postData.subreddit}*\n`)
-
 
     for (let i = 0; i < amount; i++) {
       //NOTE Get a random number
@@ -85,14 +86,12 @@ module.exports = {
       const result = await fetch(url).then(res => res.json())
 
       if (!result.data) {
-        message.channel.send(`**Subreddit doesnt exist :<**`)
-        return
+        return subredditNotFound()
       }
 
       //NOTE If result.data.after is undefined/null then that usually means the subreddit doesnt exist
       if (!result.data.after) {
-        message.channel.send(`**Subreddit doesnt exist :<**`)
-        return
+        return subredditNotFound();
       }
 
       const postChildren = result.data.children
@@ -106,6 +105,10 @@ module.exports = {
       }
 
       return postChildren
+    }
+
+    function subredditNotFound() {
+      message.channel.send(`**Subreddit doesnt exist :<**`)
     }
   },
 }
