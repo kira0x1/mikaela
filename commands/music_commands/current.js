@@ -5,7 +5,7 @@ const { ConvertDuration } = require('./musicUtil')
 module.exports = {
     name: 'current',
     description: 'Displays the current song',
-    aliases: ['np'],
+    aliases: ['np','c'],
     cooldown: 3,
     guildOnly: true,
 
