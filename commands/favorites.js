@@ -1,9 +1,8 @@
 const userDB = require('./favorites/users')
-const musicUtil = require('./music_commands/musicUtil')
 const Discord = require('discord.js')
-const { getHypeEmoji } = require('../util/emojis')
 const music = require('./music')
-const { CreateSong } = require('./music_commands/musicUtil')
+const musicUtil = require('./music_commands/musicUtil')
+const { searchForUser } = require('../util/util')
 
 const flags = [
     (list = { name: 'list', aliases: ['l', 'ls'], description: 'Lists favorite songs' }),
@@ -60,9 +59,9 @@ module.exports = {
         if (!song) {
             message.reply(`**Song at position ${query} not found**`)
             return
-        }
 
-        return userDB.getSongByID(song.song_id)
+            return userDB.getSongByID(song.song_id)
+        }
     },
 
     getFavByUser(username) {
@@ -77,19 +76,40 @@ module.exports = {
         return userFavorites
     },
 
-    async listFav(message) {
-        const target = message.mentions.users.first() || message.author
-        const favorites = this.getFavByUser(target.tag)
-        // if (!favorites) return message.channel.send(`User **${target.tag}** has no favorites`)
+    /**
+     *
+     *
+     * @param {Discord.Message} message
+     * @param {String} query
+     * @returns
+     */
+    async listFav(message, query) {
+        let target = message.mentions.members.first() || message.author
+
+        if (query) {
+            target = await searchForUser(query, message)
+        }
+
+
+        if (!target) {
+            const errEmbed = new Discord.RichEmbed()
+                .setTitle(`Couldnt find anyone with the username **${query}**`)
+
+            return message.channel.send(errEmbed)
+        }
+
+        let userTag = query ? target.user.tag : target.tag
+        console.log(`Found: ${userTag}`)
+        const favorites = this.getFavByUser(userTag)
 
         let embed = new Discord.RichEmbed()
-            .addField(`**${target.tag}**\tfavorite songs`, '\u200b')
-            .setThumbnail(target.avatarURL)
+            .addField(`**${target.tag || query || `Couldnt Find user "${query}"`}**\tfavorite songs`, '\u200b')
+            .setThumbnail(target.avatarURL || target.user.avatarURL)
             .setColor(0xc71459)
 
-        if (!favorites.length) embed.addField('\u200b', '***no favorites 😕***')
-
-        // favorites.map((fav, position) => embed.addField(position + 1, `**${userDB.getSongByID(fav.song_id).song_title}**`))
+        if (!favorites.length) {
+            embed.addField('\u200b', '***no favorites 😕***')
+        }
         favorites.map((fav, position) => embed.addField(`***(${position + 1}***)  *${userDB.getSongByID(fav.song_id).song_title}*`, '\u200b'))
 
         return message.channel.send(embed)
@@ -133,9 +153,16 @@ module.exports = {
         message.channel.send(embed)
     },
 
+    /**
+     *
+     *
+     * @param {*} cmd
+     * @param {*} message
+     * @param {Array<String>} args
+     */
     async callCommand(cmd, message, args) {
         if (cmd.name === 'list')
-            await this.listFav(message)
+            await this.listFav(message, args.join(' '))
         else if (cmd.name === 'add')
             await this.addSong(message, args)
         else if (cmd.name === 'remove')
@@ -149,7 +176,7 @@ module.exports = {
     async playSong(message, args) {
         const songInfo = await this.getSongByIndex(message, args)
         if (!songInfo) return
-        music.PlaySong(message, CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
+        music.PlaySong(message, musicUtil.CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
     },
 
     async init() {

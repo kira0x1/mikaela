@@ -1,4 +1,6 @@
+const { Message } = require('discord.js')
 const { prefix, flagPrefix, perms, users } = require('../config.json')
+const chalk = require('chalk')
 
 module.exports = {
   //Reply user with command usage
@@ -17,6 +19,19 @@ module.exports = {
       reply += `*${f.description}*\n`
     })
     return reply
+  },
+
+
+  /**
+   *
+   *
+   * @param {String} displayName
+   * @param {Message} message
+   * @returns
+   */
+  async searchForUser(displayName, message) {
+    console.log(chalk`Searching for user {bold.blue ${displayName}}`);
+    return message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
   },
 
   getIDFromMention(mention) {
@@ -42,8 +57,8 @@ module.exports = {
 
     if (banned) return false
     if (!roles) return true
-
     for (let i = 0; i < roles.length; i++) {
+
       const permUsers = perms[roles[i]]
       const user = permUsers.map(uname => users[uname])
 
