@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const { ConvertDuration } = require('./musicUtil')
-const { addSong, removeSong } = require('../favorites/favoritesUtil')
+const { addSong } = require('../favorites/favoritesUtil')
 const { getEmoji } = require('../../util/emojis')
 const { quickEmbed } = require('../../util/embedUtil')
 const ms = require('ms')
@@ -20,8 +20,14 @@ module.exports = {
         this.showQueue(message)
     },
 
-    //ANCHOR Add song to queue
+    //ANCHOR AddSong
 
+    /**
+     *
+     *
+     * @param {*} song
+     * @param {Discord.Message} message
+     */
     async AddSong(song, message) {
         queue.push(song)
         const emoji = getEmoji('heart', message.client)
@@ -40,14 +46,19 @@ module.exports = {
             return reaction.emoji.name === emoji.name && !user.bot
         }
 
-        const collector = msg.createReactionCollector(filter, { time: ms('3m') })
+        const collector = msg.createReactionCollector(filter, { time: ms('4s') })
         const users = []
 
+        //ANCHOR AddSong Collector
         collector.on('collect', async (reaction, reactionCollector) => {
             const user = reaction.users.last()
             const hasSong = await addSong(message, song, user)
             if (!hasSong) return console.log(`has song`)
             quickEmbed(`**${user.tag}** Added song ***${song.title}*** to their favorites`)
+        })
+
+        collector.on('end', collected => {
+            msg.clearReactions()
         })
     },
 

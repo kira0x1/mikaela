@@ -3,6 +3,7 @@ const que = require('./music_commands/queue')
 const stream = require('./music_commands/stream')
 const { getAlias } = require('../util/util')
 const musicUtil = require('./music_commands/musicUtil')
+const { quickEmbed } = require('../util/embedUtil')
 
 //Subcommands
 const fs = require('fs')
@@ -39,7 +40,7 @@ module.exports = {
     //NOTE  Get Query
     const query = args.join(' ')
     const song = await musicUtil.GetSong(query)
-    if (!song) return message.channel.send(`Couldnt find video: **${query}**`)
+    if (!song) return quickEmbed(`Couldnt find video: **${query}**`)
     await this.PlaySong(message, song)
   },
 
