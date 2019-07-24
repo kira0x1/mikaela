@@ -2,12 +2,25 @@ const { Message } = require('discord.js')
 const { prefix, flagPrefix, perms, users } = require('../config.json')
 const chalk = require('chalk')
 
+var currentMessage
+
 module.exports = {
   //Reply user with command usage
   usage(command) {
     let reply = ' '
     if (command.usage) reply += `\`${prefix}${command.name}\`${command.usage}`
     return reply
+  },
+
+  /**
+   *
+   *
+   * @param {*} [message | empty]
+   * @returns {Message}
+   */
+  getCurrentMessage(message = undefined) {
+    if (message) currentMessage = message
+    return currentMessage;
   },
 
   getFlagsString(command) {

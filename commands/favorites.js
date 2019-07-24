@@ -4,7 +4,7 @@ const music = require('./music')
 const musicUtil = require('./music_commands/musicUtil')
 const { CreateSong } = require('./music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
-
+const { quickEmbed } = require('../util/embedUtil')
 const flags = [
     (list = { name: 'list', aliases: ['l', 'ls'], description: 'Lists favorite songs' }),
     (add = { name: 'add', description: 'Adds a song to favorite songs' }),
@@ -103,10 +103,7 @@ module.exports = {
         let target = await this.getUser(message, args)
 
         if (!target) {
-            const errEmbed = new Discord.RichEmbed()
-                .setTitle(`Couldnt find anyone with the username **${query}**`)
-
-            return message.channel.send(errEmbed)
+            return await quickEmbed(`Couldnt find anyone with the username **${query}**`)
         }
 
         //let userTag =  query ? target.user.tag : target.tag
@@ -152,23 +149,25 @@ module.exports = {
 
         //If no arguments then return
         if (!args.length)
-            return message.channel.send(`\`No song given\``)
+            return quickEmbed(`\`No song given\``)
 
         //Searchz for song
         const query = args.join(' ')
         const song = await musicUtil.GetSong(query)
 
         //If song is not found then return
-        if (!song) return message.channel.send(`Couldnt find video: **${query}**`)
+        if (!song)
+            return quickEmbed(`Couldnt find video: **${query}**`)
 
         //Add the song to favorites
         const songAdded = await userDB.addFavorite(song, target.id, target.tag)
 
         //If the song is already in the users favorites return
-        if (!songAdded) return message.channel.send(`You have already added this song to your favorites`)
+        if (!songAdded)
+            return quickEmbed(`**${message.author.tag}** You already have this song added to your favorites`)
 
         //Tell the user they succesfuly added their song to favorites
-        const ms = await message.channel.send(`Added song : **${song.title}** to your favorites`)
+        quickEmbed(`**${message.author.tag}** Added song ***${song.title}*** to their favorites`)
     },
 
     //ANCHOR Remove  song from favorites

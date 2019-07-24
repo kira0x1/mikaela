@@ -62,6 +62,9 @@ client.on('message', async message => {
 
   //Try to execute command
   try {
+
+    //Set current message in util
+    util.getCurrentMessage(message)
     /**
     *
     *

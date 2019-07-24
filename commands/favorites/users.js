@@ -19,7 +19,7 @@ module.exports = {
 
         //Make sure the user doesnt already have the song set to favorites
         if (this.isSongFavorite(song.id, username))
-            return
+            return false
 
         const newSong = await UserSongs.create({ song_id: song.id, user_name: username })
         favorites.push({ song_id: song.id, user_name: username, song: songAdded })

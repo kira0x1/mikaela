@@ -2,6 +2,8 @@ const Discord = require('discord.js')
 const { ConvertDuration } = require('./musicUtil')
 const { addSong, removeSong } = require('../favorites/favoritesUtil')
 const { getEmoji } = require('../../util/emojis')
+const { quickEmbed } = require('../../util/embedUtil')
+const ms = require('ms')
 
 var queue = []
 var currentSong = undefined
@@ -38,20 +40,21 @@ module.exports = {
             return reaction.emoji.name === emoji.name && !user.bot
         }
 
-        const collector = msg.createReactionCollector(filter, { time: 120000 })
+        const collector = msg.createReactionCollector(filter, { time: ms('3m') })
         const users = []
 
         collector.on('collect', async (reaction, reactionCollector) => {
             const user = reaction.users.last()
-            await addSong(message, song, user)
-            message.channel.send(`Added song: ***${song.title}*** to your favorites`)
+            const hasSong = await addSong(message, song, user)
+            if (!hasSong) return console.log(`has song`)
+            quickEmbed(`**${user.tag}** Added song ***${song.title}*** to their favorites`)
         })
     },
 
     //ANCHOR send embed of queue 
     showQueue(message) {
         if (!this.hasQueue || currentSong === undefined) {
-            message.channel.send(`Queue empty...`)
+            quickEmbed(`Queue empty...`)
             return false
         }
 
