@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const { GetCurrentSong } = require('./queue')
 const { ConvertDuration } = require('./musicUtil')
+const { quickEmbed } = require('../../util/embedUtil')
 
 module.exports = {
     name: 'current',
@@ -11,7 +12,7 @@ module.exports = {
 
     async execute(message, args) {
         const song = GetCurrentSong()
-        if (!song) return message.channel.send(`No song being played currently`)
+        if (!song) return quickEmbed(`No song being played currently`)
 
         const duration = ConvertDuration(song.duration)
 
