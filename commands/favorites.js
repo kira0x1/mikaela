@@ -209,7 +209,10 @@ module.exports = {
     },
 
     async playSong(message, args) {
-        const songInfo = await this.getSongByIndex(message, args)
+        const songId = args.shift()
+        const userFound = await this.getUser(message, args)
+        const songInfo = await this.getSongByIndex(message,userFound, songId)
+        console.dir(userFound)
         if (!songInfo) return console.log(`Couldnt find song ${args}`)
         music.PlaySong(message, CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
     },
