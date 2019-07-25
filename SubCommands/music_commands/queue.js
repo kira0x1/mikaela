@@ -7,6 +7,7 @@ const ms = require('ms')
 
 var queue = []
 var currentSong = undefined
+const reactionDuration = ms('7m')
 
 module.exports = {
     name: 'queue',
@@ -46,7 +47,7 @@ module.exports = {
             return reaction.emoji.name === emoji.name && !user.bot
         }
 
-        const collector = msg.createReactionCollector(filter, { time: ms('4m') })
+        const collector = msg.createReactionCollector(filter, { time: reactionDuration })
         const users = []
 
         //ANCHOR AddSong Collector
