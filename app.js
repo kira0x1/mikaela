@@ -23,6 +23,7 @@ client.once('ready', async () => {
 	console.log(chalk`{bold.bgCyan ${client.user.username} Online!}`);
 });
 
+
 const logCommandsToDB = false;
 
 client.on('message', async message => {
