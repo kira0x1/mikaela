@@ -1,19 +1,19 @@
 const { findSubCommand } = require('../util/commandUtil')
-const que = require('../SubCommands/music_commands/queue')
-const stream = require('../SubCommands/music_commands/stream')
+const que = require('../subcommands/music_commands/queue')
+const stream = require('../subcommands/music_commands/stream')
 const { getAlias } = require('../util/util')
-const musicUtil = require('../SubCommands/music_commands/musicUtil')
+const musicUtil = require('../subcommands/music_commands/musicUtil')
 const { quickEmbed } = require('../util/embedUtil')
 
 //Subcommands
-// const fs = require('fs')
-// const commandFiles = fs.readdirSync('./SubCommands/music_commands/').filter(file => file.endsWith('.js'))
+const fs = require('fs')
+const commandFiles = fs.readdirSync('./subcommands/music_commands').filter(file => file.endsWith('.js'))
 let subcommands = []
 
-// for (const file of commandFiles) {
-  // const command = require(`../SubCommands/music_commands/${file}`)
-  // subcommands.push({ name: command.name, command: command })
-// }
+for (const file of commandFiles) {
+  const command = require(`../subcommands/music_commands/${file}`)
+  subcommands.push({ name: command.name, command: command })
+}
 
 module.exports = {
   name: 'music',

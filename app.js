@@ -17,11 +17,13 @@ client.once('ready', async () => {
 	commandUtil.initCommands(client);
 	await database.init();
 	client.user.setActivity(`with commi's | ${prefix}help`, {
-		type: 'PLAYING',
+		type: 'PLAYING'
 	});
-	console.log(chalk`{bold ${client.user.username} Online!}`);
 
+	console.log(chalk`{bold.bgCyan ${client.user.username} Online!}`);
 });
+
+const logCommandsToDB = false;
 
 client.on('message', async message => {
 
@@ -32,9 +34,11 @@ client.on('message', async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	log(chalk`{cyan.bold Command Recieved}{cyan :} {bold ${prefix}${commandName}} 
-  {cyan.bold Args}{cyan :} {bold ${args.join(' ')}}
-  {cyan.bold User}{cyan :} {bold ${message.author.tag}}\n`);
+	log(chalk`{red.bold Command Recieved}{cyan :} {bold ${prefix}${commandName}} 
+  {red.bold Args}{cyan :} {bold ${args.join(' ')}}
+  {red.bold User}{cyan :} {bold ${message.author.tag}}
+  {red.bold Guild}{cyan :} {bold ${message.guild.name}}
+  \n`);
 
 
 	if (commandName.startsWith(prefix)) return;
@@ -46,14 +50,10 @@ client.on('message', async message => {
 		command = commandUtil.findSubCommand(commandName);
 	}
 
-	console.log(`Guild: ${message.guild.name}`)
-	InsertUserCommand(message.author.tag, commandName, args.join(' '), message.guild.name)
+	if (logCommandsToDB)
+		InsertUserCommand(message.author.tag, commandName, args.join(' '), message.guild.name)
 
-	if (!command) {
-		return console.log(ct.stripIndents(
-			chalk`{bold Could not find command:} {bold.red ${prefix}${commandName}} {bold From:} {bold.red ${message.author.tag}}`
-		));
-	}
+	if (!command) return;
 
 	// Check if command is supposed to be used
 	if (command.helper) { return console.log(`helper command '${command.name}' tried to be called by: ${message.author.tag}`); }

@@ -9,7 +9,7 @@ var dispatcher = undefined
 const que = require('./queue')
 
 const streamOptions = {
-    passes: 1,
+    passes: 3,
     type: 'opus',
     seek: 0,
     volume: 0.5,

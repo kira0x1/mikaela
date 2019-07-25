@@ -1,8 +1,8 @@
-const userDB = require('../SubCommands/favorites/users')
+const userDB = require('../subcommands/favorites/users')
 const Discord = require('discord.js')
 const music = require('./music')
-const musicUtil = require('../SubCommands/music_commands/musicUtil')
-const { CreateSong } = require('../SubCommands/music_commands/musicUtil')
+const musicUtil = require('../subcommands/music_commands/musicUtil')
+const { CreateSong } = require('../subcommands/music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
 const { quickEmbed } = require('../util/embedUtil')
 
@@ -70,7 +70,6 @@ module.exports = {
         if (!query.length) return
 
         songs = this.getFavByUser(user.tag)
-
         let song = songs[query - 1]
 
         if (!song) {
@@ -103,10 +102,7 @@ module.exports = {
     async listFav(message, args) {
         const query = args.join(' ')
         let target = await this.getUser(message, args)
-
-        if (!target) {
-            return await quickEmbed(`Couldnt find anyone with the username **${query}**`)
-        }
+        if (!target) return
 
         //let userTag =  query ? target.user.tag : target.tag
         let userTag = target.tag
@@ -140,7 +136,7 @@ module.exports = {
             target = await searchForUser(query, message)
         }
 
-        if (!target) return
+        if (!target) return await quickEmbed(`Couldnt find anyone with the username **${query}**`)
         let userTag = query ? target.user.tag : target.tag
         return { tag: userTag, user: target }
     },
@@ -209,8 +205,11 @@ module.exports = {
     async playSong(message, args) {
         const songId = args.shift()
         const userFound = await this.getUser(message, args)
+        if (!userFound) return
+
         const songInfo = await this.getSongByIndex(message, userFound, songId)
         if (!songInfo) return
+
         music.PlaySong(message, CreateSong(songInfo.song_title, songInfo.song_url, songInfo.song_id, songInfo.song_duration))
     },
 
