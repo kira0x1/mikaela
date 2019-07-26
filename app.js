@@ -5,12 +5,10 @@ const commandUtil = require('./util/commandUtil');
 const database = require('./commands/favorites');
 const config = require('./config.json');
 const chalk = require('chalk');
-const ct = require('common-tags');
 const log = console.log;
 
 const token = config.keys.token;
 const prefix = config.prefix;
-
 const client = new Discord.Client();
 
 client.once('ready', async () => {
@@ -21,10 +19,25 @@ client.once('ready', async () => {
 	});
 
 	console.log(chalk`{bold.bgCyan ${client.user.username} Online!}`);
+
+	//Display servers mikaela is apart of
+	const guilds = []
+	client.guilds.map(g => guilds.push(g))
+	log(`Guilds: ${guilds}`)
 });
 
 
 const logCommandsToDB = false;
+
+function logCommand(commandName, message, args, error) {
+	let color = error ? `bold.bgRed` : `bold.bgGreen`
+
+	log(chalk`{bold Command Recieved}{cyan :} {bold.blue ${prefix}${commandName}} 
+	{${color} Args}{cyan :} {bold ${args.join(' ')}}
+	{${color} User}{cyan :} {bold ${message.author.tag}}
+	{${color} Guild}{cyan :} {bold ${message.guild.name}}
+	\n`);
+}
 
 client.on('message', async message => {
 
@@ -34,13 +47,6 @@ client.on('message', async message => {
 
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
-
-	log(chalk`{red.bold Command Recieved}{cyan :} {bold ${prefix}${commandName}} 
-  {red.bold Args}{cyan :} {bold ${args.join(' ')}}
-  {red.bold User}{cyan :} {bold ${message.author.tag}}
-  {red.bold Guild}{cyan :} {bold ${message.guild.name}}
-  \n`);
-
 
 	if (commandName.startsWith(prefix)) return;
 
@@ -70,17 +76,12 @@ client.on('message', async message => {
 	if (!commandUtil.checkCommandPerms(command, message.author.id)) return;
 	if (commandUtil.IsOnCoolDown(command, message)) return;
 
+	logCommand(commandName, message, args, false);
+
 	// Try to execute command
 	try {
-
 		// Set current message in util
 		util.getCurrentMessage(message);
-		/**
-    *
-    *
-    * @param {Discord.Message} message
-    * @param {Array} args
-    */
 		await command.execute(message, args);
 	}
 	catch (error) {

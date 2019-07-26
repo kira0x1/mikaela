@@ -1,4 +1,5 @@
 const { getFlags } = require('../util/util')
+const { Message } = require('discord.js')
 
 const flags = [
   (me = { name: 'me', aliases: ['m'], description: 'Deletes users messages instead of the bots', }),
@@ -13,8 +14,15 @@ module.exports = {
   guildOnly: true,
   perms: ['admin'],
   flags: flags,
-  aliases: ['dl'],
+  aliases: ['dl', 'del'],
 
+  /**
+   *
+   *
+   * @param {Message} message
+   * @param {*} args
+   * @returns
+   */
   async execute(message, args) {
     const flagsFound = getFlags(this.flags, args)
     let flag = ''
@@ -43,6 +51,7 @@ module.exports = {
     if (amount > 90)
       return message.reply(`\`Amount cant excede 90\``)
 
+
     amount++
 
     await message.channel
@@ -55,7 +64,9 @@ module.exports = {
         else if (flag.name === 'both') result = messages.filter(m => m.author.id === message.author.id || m.author.id === id)
         else if (flag.name === 'bots') result = messages.filter(m => m.author.bot)
 
-        await message.channel.bulkDelete(result)
+        await message.channel.bulkDelete(result).then(msg => {
+          console.log(msg.map(m => m.content))
+        })
       })
       .catch(error => console.log(error))
   },
