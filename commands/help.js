@@ -29,7 +29,7 @@ module.exports = {
       embed.setTitle(data[0]).setFooter(data[2])
 
       commands.map(command => {
-        if (perms(command.perms, message.author.id) && command !== undefined) {
+        if (perms(command.perms, message.author.id) && command !== undefined && !command.hide) {
           embed.addField(command.name, command.description)
         }
       })

@@ -12,6 +12,11 @@ module.exports = {
     return reply
   },
 
+  //Display all servers mikaela is apart of
+  getAllGuilds() {
+    
+  },
+
   /**
    *
    *
