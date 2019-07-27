@@ -28,7 +28,7 @@ async function pageEmbed(message, target, pages) {
         .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
         .setColor(0xc71459)
 
-    await embedSongs(embed, pages[pageAt].songs)
+    await embedSongs(embed, pages[pageAt].songs, pageAt)
 
     let msg = await message.channel.send(embed)
     await msg.react('⬅')
@@ -56,7 +56,7 @@ async function pageEmbed(message, target, pages) {
             .addField(`\n\n***Favorites***\n**Page: ${pageAt + 1} / ${pageAmount}**`, '\u200b')
             .setColor(0xc71459)
 
-        await embedSongs(newEmbed, pages[pageAt].songs)
+        await embedSongs(newEmbed, pages[pageAt].songs, pageAt)
 
         await r.message.edit(newEmbed)
     })
@@ -68,9 +68,9 @@ async function pageEmbed(message, target, pages) {
  * @param {Discord.RichEmbed} embed
  * @param {Array} songs
  */
-async function embedSongs(embed, songs) {
+async function embedSongs(embed, songs, pageAt) {
     songs.map((song, pos) => {
-        embed.addField(`** ${pos + 1}  ${song.song_title}**`, ConvertDuration(song.song_duration))
+        embed.addField(`**${(pageAt * 5) + (pos + 1)}  ${song.song_title}**`, ConvertDuration(song.song_duration))
     })
 }
 
