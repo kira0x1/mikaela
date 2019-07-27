@@ -28,14 +28,15 @@ async function pageEmbed(message, target, pages) {
 
     const embed = new Discord.RichEmbed()
 
-    if (!totalSongs === 0)
+    if (totalSongs === 0)
         embed.addField('\u200b', '***no favorites 😕***')
 
     embed.addField(`\n\n***Favorites***\nPage **${pageAt + 1}**\nTotal Songs **${totalSongs}**`, '\u200b')
         .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
         .setColor(0xc71459)
 
-    await embedSongs(embed, pages[pageAt].songs, pageAt)
+    if (totalSongs > 0)
+        await embedSongs(embed, pages[pageAt].songs, pageAt)
 
     let msg = await message.channel.send(embed)
     if (pages.length <= 1) return
