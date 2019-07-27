@@ -23,8 +23,11 @@ async function pageEmbed(message, target, pages) {
     let pageAt = 0
     let pageAmount = pages.length
 
+    let totalSongs = 0
+    pages.map(pg => totalSongs += pg.songs.length)
+
     const embed = new Discord.RichEmbed()
-        .addField(`\n\n***Favorites***\n**Page: ${pageAt + 1}**`, '\u200b')
+        .addField(`\n\n***Favorites***\nPage **${pageAt + 1}**\nTotal Songs **${totalSongs}**`, '\u200b')
         .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
         .setColor(0xc71459)
 
@@ -53,7 +56,7 @@ async function pageEmbed(message, target, pages) {
 
         const newEmbed = new Discord.RichEmbed()
             .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
-            .addField(`\n\n***Favorites***\n**Page: ${pageAt + 1} / ${pageAmount}**`, '\u200b')
+            .addField(`\n\n***Favorites***\nPage **${pageAt + 1}**\nTotal Songs **${totalSongs}**`, '\u200b')
             .setColor(0xc71459)
 
         await embedSongs(newEmbed, pages[pageAt].songs, pageAt)
