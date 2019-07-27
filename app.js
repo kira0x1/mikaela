@@ -34,11 +34,11 @@ client.on('message', async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	log(chalk`{red.bold Command Recieved}{cyan :} {bold ${prefix}${commandName}} 
-  {red.bold Args}{cyan :} {bold ${args.join(' ')}}
-  {red.bold User}{cyan :} {bold ${message.author.tag}}
-  {red.bold Guild}{cyan :} {bold ${message.guild.name}}
-  \n`);
+	// 	log(chalk`{red.bold Command Recieved}{cyan :} {bold ${prefix}${commandName}} 
+	//   {red.bold Args}{cyan :} {bold ${args.join(' ')}}
+	//   {red.bold User}{cyan :} {bold ${message.author.tag}}
+	//   {red.bold Guild}{cyan :} {bold ${message.guild.name}}
+	//   \n`);
 
 
 	if (commandName.startsWith(prefix)) return;
