@@ -9,4 +9,4 @@ async function quickEmbed(title) {
     await util.getCurrentMessage().channel.send(embed)
 }
 
-module.exports = { quickEmbed }
+module.exports = { quickEmbed } 
