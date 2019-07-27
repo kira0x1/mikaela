@@ -100,32 +100,21 @@ module.exports = {
      * @returns
      */
     async listFav(message, args) {
-        const query = args.join(' ')
         let target = await this.getUser(message, args)
         if (!target) return
 
         let userTag = target.tag
         const favorites = this.getFavByUser(userTag)
 
-        let embed = new Discord.RichEmbed()
-            .addField(`**${userTag || query || `Couldnt Find user "${query}"`}**\n\n***Favorites***\n**Page: 1**`, '\u200b')
-            .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
-            .setColor(0xc71459)
-
-        if (!favorites.length)
-            embed.addField('\u200b', '***no favorites 😕***')
-
         let pages = []
         const pageAmount = Math.floor(favorites.length / 4);
         favorites.map((fav, position) => {
-            let currentPage = Math.floor(position / pageAmount)
-            if (pages.length <= currentPage) pages.push({ page: currentPage, songs: [] })
+            let currentPage = 0
+            if (pageAmount > 0)
+                currentPage = Math.floor(position / pageAmount)
 
+            if (pages.length <= currentPage) pages.push({ page: currentPage, songs: [] })
             pages[currentPage].songs.push(userDB.getSongByID(fav.song_id))
-            if (currentPage === 0) {
-                const song = userDB.getSongByID(fav.song_id)
-                embed.addField(`**${position + 1}**`, `**${song.song_title}**\n\u200b`)
-            }
         })
 
         pageEmbed(message, target, pages)

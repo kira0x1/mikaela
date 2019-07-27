@@ -27,21 +27,27 @@ async function pageEmbed(message, target, pages) {
     pages.map(pg => totalSongs += pg.songs.length)
 
     const embed = new Discord.RichEmbed()
-        .addField(`\n\n***Favorites***\nPage **${pageAt + 1}**\nTotal Songs **${totalSongs}**`, '\u200b')
+
+    if (!totalSongs === 0)
+        embed.addField('\u200b', '***no favorites 😕***')
+
+    embed.addField(`\n\n***Favorites***\nPage **${pageAt + 1}**\nTotal Songs **${totalSongs}**`, '\u200b')
         .setThumbnail(target.user.avatarURL || target.user.user.avatarURL)
         .setColor(0xc71459)
 
     await embedSongs(embed, pages[pageAt].songs, pageAt)
 
     let msg = await message.channel.send(embed)
+    if (pages.length <= 1) return
+
     await msg.react('⬅')
     msg.react('➡')
+
 
     const filter = (reaction, user) => {
         return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot
     }
-
-    const collector = msg.createReactionCollector(filter, { time: ms('10m') })
+    const collector = msg.createReactionCollector(filter, { time: ms('18m') })
     collector.on('collect', async r => {
         if (r.emoji.name === '➡') {
             pageAt++
