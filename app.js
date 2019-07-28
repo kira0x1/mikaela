@@ -20,10 +20,30 @@ client.once('ready', async () => {
 		type: 'PLAYING'
 	});
 
-	console.log(chalk`{bold.bgCyan ${client.user.username} Online!}`);
+	log(chalk`{bold.bgGreen ${client.user.username} Online!}`);
+
+	//Display servers mikaela is apart of
+	log(chalk`{bgMagenta.bold Guilds}`)
+	let count = 0
+	client.guilds.map(g => {
+		count++
+		log(chalk`{bgMagenta.bold ${count}: ${g.name}}`)
+	})
 });
 
 const logCommandsToDB = false;
+const logCommandsToConsole = false;
+
+function logCommand(commandName, message, args, error) {
+	let color = error ? `bold.bgRed` : `bold.bgGreen`
+
+	if (logCommandsToConsole)
+		log(chalk`{bold Command Recieved}{cyan :} {bold.blue ${prefix}${commandName}} 
+	{${color} Args}{cyan :} {bold ${args.join(' ')}}
+	{${color} User}{cyan :} {bold ${message.author.tag}}
+	{${color} Guild}{cyan :} {bold ${message.guild.name}}
+	\n`);
+}
 
 client.on('message', async message => {
 

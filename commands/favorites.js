@@ -4,7 +4,7 @@ const music = require('./music')
 const musicUtil = require('../subcommands/music_commands/musicUtil')
 const { CreateSong } = require('../subcommands/music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
-const { quickEmbed, pageEmbed } = require('../util/embedUtil')
+const { quickEmbed, songPageEmbed } = require('../util/embedUtil')
 
 
 const flags = [
@@ -117,7 +117,7 @@ module.exports = {
             pages[currentPage].songs.push(userDB.getSongByID(fav.song_id))
         })
 
-        pageEmbed(message, target, pages)
+        songPageEmbed(message, target, pages)
     },
 
     /**
