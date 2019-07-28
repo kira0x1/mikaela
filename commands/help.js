@@ -29,7 +29,7 @@ module.exports = {
       embed.setTitle(data[0]).setFooter(data[2])
 
       commands.map(command => {
-        if (perms(command.perms, message.author.id) && command !== undefined && !command.hide) {
+        if (perms(command.perms, message.author.id) && command !== undefined) {
           embed.addField(command.name, command.description)
         }
       })
@@ -86,6 +86,7 @@ module.exports = {
           embedSpecific.addField(flag.name, `**aliases** ${flagAliases}`, true)
         })
       }
+
 
       message.channel.send({ embed: embedSpecific })
     }

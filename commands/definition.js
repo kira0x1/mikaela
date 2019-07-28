@@ -1,36 +1,13 @@
-const http = require('https')
 const unirest = require('unirest')
 const { Message, RichEmbed } = require('discord.js')
-const chalk = require('chalk')
-const ct = require('common-tags')
-const dir = console.dir
-const log = console.log
-const { quickEmbed } = require('../util/embedUtil')
+const { quickEmbed, pageEmbed } = require('../util/embedUtil')
 
-// const { id: app_id, key: app_key } = require('./oxford')
-const app_key = '3f819411b99d63544bc61c9e6d10fd0b'
-const app_id = 'ae8ba8e6'
-
-const wordId = "ace";
-const fields = "pronunciations";
-const strictMatch = "false";
-
-const options = {
-    host: 'od-api.oxforddictionaries.com',
-    port: '443',
-    path: '/api/v2/entries/en-gb/' + wordId + '?fields=' + fields + '&strictMatch=' + strictMatch,
-    method: "GET",
-    headers: {
-        'app_id': app_id,
-        'app_key': app_key,
-    }
-};
-
+const { urban } = require('../config').keys
 
 module.exports = {
     name: 'definition',
     description: 'Displays the definition of a word.',
-    aliases: ['define', 'df'],
+    aliases: ['define', 'def', 'df'],
     cooldown: 3,
     usage: ' \`[word]\`',
     guildOnly: true,
@@ -42,13 +19,32 @@ module.exports = {
      * @param {Discord.Message} message
      * @param {Array} args
      */
-
     async execute(message, args) {
-        unirest.post('')
-            .headers({ 'Accept': 'application/json', 'Content-Type': 'application/json' })
-            .send({ "parameter": 23, "foo": "bar" })
-            .end(function (response) {
-                console.log(response.body);
+        const query = args.join(' ')
+
+        const headers = {
+            'X-RapidAPI-Host': 'mashape-community-urban-dictionary.p.rapidapi.com',
+            'X-RapidAPI-Key': urban,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+
+        unirest.get(`https://mashape-community-urban-dictionary.p.rapidapi.com/define?term=${query}`)
+            .headers(headers)
+            .end(function (result) {
+                const body = result.body.list
+                if (body === undefined) {
+                    let embed = quickEmbed(`No definitions found for "${query}"`)
+                    return message.channel.send(embed)
+                }
+
+                let definitions = []
+                body.map((def, pos) => {
+                    if (pos > 3) return
+                    definitions.push({ definition: def.definition, example: def.example, word: def.word, link: def.permalink, upvotes: def.upvotes, downvotes: def.downvotes })
+                })
+
+                pageEmbed(message, body, 4, query)
             });
     }
 }

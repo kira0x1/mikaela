@@ -7,7 +7,7 @@ const ms = require('ms')
 
 var queue = []
 var currentSong = undefined
-const reactionDuration = ms('7m')
+const reactionDuration = ms('12m')
 
 module.exports = {
     name: 'queue',
@@ -48,7 +48,6 @@ module.exports = {
         }
 
         const collector = msg.createReactionCollector(filter, { time: reactionDuration })
-        const users = []
 
         //ANCHOR AddSong Collector
         collector.on('collect', async (reaction, reactionCollector) => {
