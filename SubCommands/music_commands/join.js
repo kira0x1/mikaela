@@ -1,4 +1,5 @@
 const stream = require('./stream')
+const queue = require('./queue')
 
 module.exports = {
     name: 'join',
@@ -7,6 +8,11 @@ module.exports = {
     usage: ' ',
 
     async execute(message, args) {
-        await stream.Join(message)
+        const song = queue.GetCurrentSong()
+
+        if (!song)
+            stream.Join(message)
+        else
+            stream.playSong(message, song)
     }
 }
