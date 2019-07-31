@@ -1,5 +1,8 @@
 const ytdl = require('ytdl-core')
 const { Search } = require('./youtube')
+const ms = require('ms')
+const prettyMs = require('pretty-ms')
+
 class Song {
     constructor(title, url, id, duration) {
         this.title = title
@@ -11,16 +14,25 @@ class Song {
 
 module.exports = {
     helper: true,
-
     async GetSong(query) {
+        //Get song from ytdl
         let song = await this.GetInfo(query)
+
+        //If ytdl doesnt work (Query is not a url) then search youtube
         if (!song) {
-            id = await Search(query).then(res => res.id.videoId).catch(() => { })
-            if (!id) return
+            //Check if its a youtube id
+            console.log(`Searching for id: ${query}`)
+            id = await Search(query).then(res => res.id.videoId).catch(err => console.log(`Search error: ${err}`))
+            if (!id) return console.log(`youtube id not found`)
+
             link = this.ConvertId(id)
+            console.log(`Converting id to link: ${link}`)
             song = await this.GetInfo(link)
         }
-        return this.ConvertToSong(song)
+
+        const convertedSong = await this.ConvertToSong(song)
+        console.log(`Converted song: ${convertedSong}`)
+        return convertedSong
     },
 
     async GetInfo(link) {
@@ -36,11 +48,14 @@ module.exports = {
     },
 
     ConvertDuration(duration) {
+        console.log(`Duration: ${duration}`)
+        const pretty = prettyMs(duration * 1000, { verbose: true }) 
+
+
         let minutes = Math.floor(duration / 60)
         let seconds = Math.floor(duration - minutes * 60)
 
         if (seconds < 10) seconds = '0' + seconds
-
         return `Duration: ${minutes}:${seconds}`
     },
 

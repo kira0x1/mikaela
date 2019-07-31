@@ -8,11 +8,6 @@ module.exports = {
     usage: ' ',
 
     async execute(message, args) {
-        const song = queue.GetCurrentSong()
-
-        if (!song)
-            stream.Join(message)
-        else
-            stream.playSong(message, song)
+        stream.Join(message)
     }
 }
