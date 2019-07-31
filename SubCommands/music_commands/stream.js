@@ -27,7 +27,6 @@ module.exports = {
     async Join(message) {
         //NOTE Check if user is in vc or not
         const vc = message.member.voiceChannel
-
         if (!vc) return quickEmbed(`You must be in a voicechannel`)
 
         //NOTE Join voice channel
@@ -35,7 +34,7 @@ module.exports = {
             voiceChannel = vc
             connection = conn
             isConnected = true
-            
+
         }).catch(err => {
             console.error(err)
             quickEmbed(`Failed to join voice channel!`)
