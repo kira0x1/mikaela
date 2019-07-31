@@ -19,7 +19,6 @@
     "mysql2": "^1.6.5",
     "node-fetch": "^2.6.0",
     "node-opus": "^0.3.2",
-    "pretty-ms": "^5.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "sequelize": "^5.10.1",

@@ -34,16 +34,12 @@ module.exports = {
 
       //NOTE if a subcommand is found in the message, then call the subcommand and exit out 
       cmd = findSubCommand(arg)
-      console.log(`Subcommand: ${cmd.name}`);
       if (cmd) return await cmd.execute(message, args)
     }
 
     //Get Query
     const query = args.join(' ')
-    console.log(`Query: ${query}`)
     const song = await musicUtil.GetSong(query)
-    const songJSON = JSON.stringify(song)
-    console.log(`Song: ${songJSON}`);
 
     if (!song) return quickEmbed(`Couldnt find video: **${query}**`)
     await this.PlaySong(message, song)
