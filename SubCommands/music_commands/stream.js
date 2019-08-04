@@ -9,9 +9,8 @@ var dispatcher = undefined
 const que = require('./queue')
 
 const streamOptions = {
-    passes: 3,
+    passes: 2,
     type: 'opus',
-    seek: 0,
     volume: 0.5,
 }
 
@@ -34,7 +33,6 @@ module.exports = {
             voiceChannel = vc
             connection = conn
             isConnected = true
-
         }).catch(err => {
             console.error(err)
             quickEmbed(`Failed to join voice channel!`)
@@ -43,18 +41,17 @@ module.exports = {
 
     //ANCHOR Leave vc
     async Leave(message) {
-        if (isConnected) {
-            this.Pause()
-            await voiceChannel.leave()
-            isConnected = false
-        }
+        await voiceChannel.leave()
+        que.clearQueue()
+        isConnected = false
+        connection = undefined
+        voiceChannel = undefined
     },
 
     //ANCHOR Create stream, and play song 
     async playSong(message, song) {
         //NOTE if the bot is not connected then try to connect.
-        if (!isConnected) await this.Join(message)
-        if (!isConnected) return
+        if (!connection) await this.Join(message)
 
         const stream = ytdl(song.url, { filter: 'audioonly' })
         dispatcher = await connection.playStream(stream, streamOptions)
@@ -63,24 +60,15 @@ module.exports = {
     },
 
     //ANCHOR Song End
-    OnSongEnd(message) {
+    async OnSongEnd(message) {
         //NOTE check if there any more songs to play, if not then clear queue, and leave voice channel.
-        if (que.hasNextSong() === true) {
-            const song = que.shiftNextSong()
-            this.playSong(message, song)
-        } else {
-            this.Leave(message)
+        if (que.hasNextSong() === false) {
+            this.Leave()
+            return
         }
-    },
 
-    Pause() {
-        if (dispatcher)
-            dispatcher.pause()
-    },
-
-    Resume() {
-        if (dispatcher)
-            dispatcher.resume()
+        const song = que.shiftNextSong()
+        this.playSong(message, song)
     },
 
     //ANCHOR Skip Song

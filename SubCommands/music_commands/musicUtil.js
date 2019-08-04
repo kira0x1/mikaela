@@ -15,18 +15,18 @@ module.exports = {
     async GetSong(query) {
         //Get song from ytdl
         let song = await this.GetInfo(query)
-
-        //If ytdl doesnt work (Query is not a url) then search youtube
-        if (!song) {
+        if (song === undefined) {
+            //If ytdl doesnt work (Query is not a url) then search youtube
             //Check if its a youtube id
             id = await Search(query).then(res => res.id.videoId).catch(() => { })
-            if (!id) return
+            if (!id) return undefined
 
             link = this.ConvertId(id)
             song = await this.GetInfo(link)
         }
 
-        return this.ConvertToSong(song)
+        
+        return song
     },
 
     async GetInfo(link) {

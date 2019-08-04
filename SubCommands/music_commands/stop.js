@@ -18,12 +18,6 @@ module.exports = {
      * @param {Array} args
      */
     async execute(message, args) {
-        const aliasUsed = message.content.slice(1).split(/ +/).shift().toLowerCase()
-
-        if (stream.InVoice())
-            await stream.Leave(message)
-
-        if (aliasUsed === 'stop')
-            que.clearQueue()
+        await stream.Leave(message)
     }
 }

@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const { ConvertDuration } = require('./musicUtil')
-const { addSong } = require('../favorites/favoritesUtil')
+const { addSong } = require('../favorites/users')
 const { getEmoji } = require('../../util/emojis')
 const { quickEmbed } = require('../../util/embedUtil')
 const ms = require('ms')
@@ -53,7 +53,7 @@ module.exports = {
         collector.on('collect', async (reaction, reactionCollector) => {
             const user = reaction.users.last()
             const hasSong = await addSong(message, song, user)
-            if (!hasSong) return console.log(`has song`)
+            if (!hasSong) return quickEmbed(`You already have this song added`)
             quickEmbed(`**${user.tag}** Added song ***${song.title}*** to their favorites`)
         })
 
