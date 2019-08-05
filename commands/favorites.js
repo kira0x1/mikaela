@@ -107,20 +107,17 @@ module.exports = {
         const favorites = this.getFavByUser(userTag)
 
         let pages = []
-        const songsPerPage = 6
-        const pageAmount = Math.floor(favorites.length / songsPerPage);
-
+        const pageAmount = Math.floor(favorites.length / 4);
         favorites.map((fav, position) => {
             let currentPage = 0
-
             if (pageAmount > 0)
-                currentPage = Math.floor(position / songsPerPage)
+                currentPage = Math.floor(position / pageAmount)
 
             if (pages.length <= currentPage) pages.push({ page: currentPage, songs: [] })
             pages[currentPage].songs.push(userDB.getSongByID(fav.song_id))
         })
 
-        songPageEmbed(message, target, pages, pageAmount, songsPerPage)
+        songPageEmbed(message, target, pages)
     },
 
     /**
