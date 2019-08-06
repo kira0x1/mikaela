@@ -60,6 +60,11 @@ module.exports = {
     },
 
     //ANCHOR Song End
+    /**
+     *
+     *
+     * @param {*} message
+     */
     async OnSongEnd(message) {
         //NOTE check if there any more songs to play, if not then clear queue, and leave voice channel.
         if (que.hasNextSong() === false) {
@@ -67,7 +72,7 @@ module.exports = {
             return
         }
 
-        const song = que.shiftNextSong()
+        const song = await que.shiftNextSong()
         this.playSong(message, song)
     },
 

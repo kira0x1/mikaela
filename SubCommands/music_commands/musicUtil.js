@@ -19,13 +19,15 @@ module.exports = {
             //If ytdl doesnt work (Query is not a url) then search youtube
             //Check if its a youtube id
             id = await Search(query).then(res => res.id.videoId).catch(() => { })
+
+
             if (!id) return undefined
 
             link = this.ConvertId(id)
             song = await this.GetInfo(link)
         }
 
-        
+        song = await this.ConvertToSong(song)
         return song
     },
 
