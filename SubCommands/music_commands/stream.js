@@ -24,10 +24,8 @@ module.exports = {
 
     //ANCHOR Join vc
     async Join(message) {
-
         //NOTE Check if user is in vc or not
         const vc = message.member.voiceChannel
-
         if (!vc) return quickEmbed(`You must be in a voicechannel`)
 
         //NOTE Join voice channel
@@ -43,10 +41,11 @@ module.exports = {
 
     //ANCHOR Leave vc
     async Leave(message) {
-        if (isConnected) {
-            await voiceChannel.leave()
-            isConnected = false
-        }
+        await voiceChannel.leave()
+        que.clearQueue()
+        isConnected = false
+        connection = undefined
+        voiceChannel = undefined
     },
 
     //ANCHOR Create stream, and play song 
@@ -68,13 +67,14 @@ module.exports = {
      */
     async OnSongEnd(message) {
         //NOTE check if there any more songs to play, if not then clear queue, and leave voice channel.
-        if (que.hasNextSong() === true) {
-            const song = que.shiftNextSong()
-            this.playSong(message, song)
-        } else {
-            que.clearQueue()
-            this.Leave(message)
+        if (que.hasNextSong() === false) {
+            this.Leave()
+            return
         }
+
+        const song = await que.shiftNextSong()
+        this.playSong(message, song)
+    },
 
     //ANCHOR Skip Song
     SkipSong() {
