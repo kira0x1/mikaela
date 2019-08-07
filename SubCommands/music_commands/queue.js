@@ -53,7 +53,7 @@ module.exports = {
         collector.on('collect', async (reaction, reactionCollector) => {
             const user = reaction.users.last()
             const hasSong = await addSong(message, song, user)
-            if (!hasSong) return quickEmbed(`You already have this song added`)
+            if (!hasSong) return
             quickEmbed(`**${user.tag}** Added song ***${song.title}*** to their favorites`)
         })
 
