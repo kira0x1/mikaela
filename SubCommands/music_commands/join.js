@@ -1,5 +1,4 @@
 const stream = require('./stream')
-const queue = require('./queue')
 
 module.exports = {
     name: 'join',
@@ -8,6 +7,6 @@ module.exports = {
     usage: ' ',
 
     async execute(message, args) {
-        stream.Join(message)
+        await stream.Join(message)
     }
 }
