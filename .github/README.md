@@ -12,5 +12,5 @@
 ### Reddit
 >**Description**: Post from subreddits
 
-### Delete  
-> **Description**: Delete Mikaelas last message(s)
+### Define  
+> **Description**: Post definitions

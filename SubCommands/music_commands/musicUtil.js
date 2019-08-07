@@ -1,6 +1,5 @@
 const ytdl = require('ytdl-core')
 const { Search } = require('./youtube')
-
 class Song {
     constructor(title, url, id, duration) {
         this.title = title
@@ -12,20 +11,15 @@ class Song {
 
 module.exports = {
     helper: true,
-    async GetSong(query) {
-        //Get song from ytdl
-        let song = await this.GetInfo(query)
 
-        //If ytdl doesnt work (Query is not a url) then search youtube
+    async GetSong(query) {
+        let song = await this.GetInfo(query)
         if (!song) {
-            //Check if its a youtube id
             id = await Search(query).then(res => res.id.videoId).catch(() => { })
             if (!id) return
-
             link = this.ConvertId(id)
             song = await this.GetInfo(link)
         }
-
         return this.ConvertToSong(song)
     },
 
@@ -46,6 +40,7 @@ module.exports = {
         let seconds = Math.floor(duration - minutes * 60)
 
         if (seconds < 10) seconds = '0' + seconds
+
         return `Duration: ${minutes}:${seconds}`
     },
 

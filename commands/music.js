@@ -37,22 +37,17 @@ module.exports = {
       if (cmd) return await cmd.execute(message, args)
     }
 
-    //Get Query
+    //NOTE  Get Query
     const query = args.join(' ')
     const song = await musicUtil.GetSong(query)
-
     if (!song) return quickEmbed(`Couldnt find video: **${query}**`)
     await this.PlaySong(message, song)
   },
 
   //ANCHOR Play Song
   async PlaySong(message, song) {
-    //Add song to queue
     await que.AddSong(song, message)
-
-    //Check if there is a song currently playing
     if (que.GetCurrentSong() === undefined) {
-      //If no current song, play the song.
       stream.playSong(message, que.shiftNextSong())
     }
   }

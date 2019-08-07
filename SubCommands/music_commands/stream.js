@@ -25,8 +25,10 @@ module.exports = {
 
     //ANCHOR Join vc
     async Join(message) {
+
         //NOTE Check if user is in vc or not
         const vc = message.member.voiceChannel
+
         if (!vc) return quickEmbed(`You must be in a voicechannel`)
 
         //NOTE Join voice channel
@@ -34,7 +36,6 @@ module.exports = {
             voiceChannel = vc
             connection = conn
             isConnected = true
-
         }).catch(err => {
             console.error(err)
             quickEmbed(`Failed to join voice channel!`)
@@ -44,7 +45,6 @@ module.exports = {
     //ANCHOR Leave vc
     async Leave(message) {
         if (isConnected) {
-            this.Pause()
             await voiceChannel.leave()
             isConnected = false
         }
@@ -69,18 +69,9 @@ module.exports = {
             const song = que.shiftNextSong()
             this.playSong(message, song)
         } else {
+            que.clearQueue()
             this.Leave(message)
         }
-    },
-
-    Pause() {
-        if (dispatcher)
-            dispatcher.pause()
-    },
-
-    Resume() {
-        if (dispatcher)
-            dispatcher.resume()
     },
 
     //ANCHOR Skip Song
