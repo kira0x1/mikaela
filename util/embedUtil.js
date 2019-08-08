@@ -22,8 +22,9 @@ async function quickEmbed(title) {
 async function songPageEmbed(message, target, pages, pageAmount, songsPerPage) {
     let pageAt = 0
     let totalSongs = 0
-    pages.map(pg => totalSongs += pg.songs.length)
+    await pages.map(pg => totalSongs += pg.songs.length)
 
+    console.dir(pages, { depth: 5 })
     const embed = new Discord.RichEmbed()
 
     if (totalSongs === 0)
@@ -50,11 +51,11 @@ async function songPageEmbed(message, target, pages, pageAmount, songsPerPage) {
     collector.on('collect', async r => {
         if (r.emoji.name === '➡') {
             pageAt++
-            if (pageAt >= pageAmount) pageAt = 0
+            if (pageAt > pageAmount) pageAt = 0
         }
         else if (r.emoji.name === '⬅') {
             pageAt--
-            if (pageAt < 0) pageAt = pageAmount - 1;
+            if (pageAt < 0) pageAt = pageAmount;
         }
 
         r.remove(r.users.last())
@@ -74,8 +75,9 @@ async function songPageEmbed(message, target, pages, pageAmount, songsPerPage) {
 }
 
 async function embedSongs(embed, songs, pageAt, songsPerPage) {
-    songs.map((song, pos) => {
-        embed.addField(`**${(pageAt * songsPerPage) + (pos + 1)}  ${song.song_title}**`, ConvertDuration(song.song_duration))
+    await songs.map((song, pos) => {
+        if (song)
+            embed.addField(`**${(pageAt * songsPerPage) + (pos + 1)}  ${song.song_title}**`, ConvertDuration(song.song_duration))
     })
 }
 

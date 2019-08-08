@@ -5,6 +5,7 @@ const musicUtil = require('../subcommands/music_commands/musicUtil')
 const { CreateSong } = require('../subcommands/music_commands/musicUtil')
 const { searchForUser } = require('../util/util')
 const { quickEmbed, songPageEmbed } = require('../util/embedUtil')
+const { addSong } = require('../subcommands/favorites/favoritesUtil')
 
 
 const flags = [
@@ -83,13 +84,8 @@ module.exports = {
     getFavByUser(username) {
         let favorites = userDB.getFavorites()
         if (!favorites) return
-        const userFavorites = []
 
-        favorites.map((fav) => {
-            if (fav.user_name === username)
-                userFavorites.push(fav)
-        })
-        return userFavorites
+        return favorites.filter(fav => fav.user_name === username)
     },
 
     /**
@@ -104,20 +100,25 @@ module.exports = {
         if (!target) return
 
         let userTag = target.tag
-        const favorites = this.getFavByUser(userTag)
+        const favorites = await this.getFavByUser(userTag)
+        console.log(`Favorites: ${favorites.length}`)
 
         let pages = []
         const songsPerPage = 6
         const pageAmount = Math.floor(favorites.length / songsPerPage);
 
-        favorites.map((fav, position) => {
+        await favorites.map((fav, position) => {
             let currentPage = 0
 
             if (pageAmount > 0)
                 currentPage = Math.floor(position / songsPerPage)
 
-            if (pages.length <= currentPage) pages.push({ page: currentPage, songs: [] })
-            pages[currentPage].songs.push(userDB.getSongByID(fav.song_id))
+            if (pages.length <= currentPage)
+                pages.push({ page: currentPage, songs: [] })
+
+            const song = userDB.getSongByID(fav.song_id)
+            // console.dir(song, { depth: 5 })
+            pages[currentPage].songs.push(song)
         })
 
         songPageEmbed(message, target, pages, pageAmount, songsPerPage)
@@ -148,19 +149,20 @@ module.exports = {
         const target = message.author
 
         //If no arguments then return
-        if (!args.length)
+        if (!args.length || !args)
             return quickEmbed(`\`No song given\``)
 
         //Searchz for song
         const query = args.join(' ')
         const song = await musicUtil.GetSong(query)
 
+
         //If song is not found then return
         if (!song)
             return quickEmbed(`Couldnt find video: **${query}**`)
 
         //Add the song to favorites
-        const songAdded = await userDB.addFavorite(song, target.id, target.tag)
+        const songAdded = await addSong(song, target)
 
         //If the song is already in the users favorites return
         if (!songAdded)
