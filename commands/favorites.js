@@ -101,7 +101,6 @@ module.exports = {
 
         let userTag = target.tag
         const favorites = await this.getFavByUser(userTag)
-        console.log(`Favorites: ${favorites.length}`)
 
         let pages = []
         const songsPerPage = 6
@@ -117,7 +116,7 @@ module.exports = {
                 pages.push({ page: currentPage, songs: [] })
 
             const song = userDB.getSongByID(fav.song_id)
-            // console.dir(song, { depth: 5 })
+            // (song, { depth: 5 })
             pages[currentPage].songs.push(song)
         })
 

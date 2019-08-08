@@ -3,7 +3,7 @@ const { getFlags, getFlagArgs } = require('../util/util')
 const { quickEmbed } = require('../util/embedUtil')
 
 
-const maxpost = 5 //How many images to post
+const maxpost = 15 //How many images to post
 let defaultLimit = 50
 let searchLimit = 50 //Amount to request from the api
 

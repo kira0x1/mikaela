@@ -55,8 +55,7 @@ module.exports = {
         else if (flag.name === 'both') result = messages.filter(m => m.author.id === message.author.id || m.author.id === id)
         else if (flag.name === 'bots') result = messages.filter(m => m.author.bot)
 
-        await message.channel.bulkDelete(result)
+        await message.channel.bulkDelete(result).catch(() => { })
       })
-      .catch(error => console.log(error))
   },
 }

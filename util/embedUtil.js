@@ -24,7 +24,7 @@ async function songPageEmbed(message, target, pages, pageAmount, songsPerPage) {
     let totalSongs = 0
     await pages.map(pg => totalSongs += pg.songs.length)
 
-    console.dir(pages, { depth: 5 })
+    (pages, { depth: 5 })
     const embed = new Discord.RichEmbed()
 
     if (totalSongs === 0)

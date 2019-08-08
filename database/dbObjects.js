@@ -18,7 +18,6 @@ UserSongs.belongsTo(Songs, { foreignKey: 'song_id', as: 'song' })
 
 Users.prototype.getUsers = async function () {
     return Users.findAll().then(user => {
-        console.log(user)
     })
 }
 
