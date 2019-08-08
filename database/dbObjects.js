@@ -24,7 +24,7 @@ Users.prototype.getUsers = async function () {
 
 Users.prototype.getUserSongs = function () {
     return UserSongs.findAll({
-        where: { user_id: this.user_id },
+        where: { user_name: this.user_name },
         include: ['item']
     })
 }
@@ -36,7 +36,7 @@ Songs.prototype.getSong = async function (id) {
 }
 
 Songs.prototype.addSong = async function (song) {
-    return await Songs.create({ id: song.id, song_title: song.title, song_url: song.url })
+    return await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
 }
 
 module.exports = { Users, Songs, UserSongs, Commands, UserCommands }

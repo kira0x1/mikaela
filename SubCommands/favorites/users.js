@@ -14,16 +14,17 @@ module.exports = {
 
     async addFavorite(song, id, username) {
         await this.addUser(id, username)
+
         //Add the song to the database if it doesnt exist there already
-        const songAdded = await this.addSong(song)
+        await this.addSong(song)
 
         //Make sure the user doesnt already have the song set to favorites
         if (this.isSongFavorite(song.id, username))
             return false
 
-        const newSong = await UserSongs.create({ song_id: song.id, user_name: username })
-        favorites.push({ song_id: song.id, user_name: username, song: songAdded })
-        return newSong
+        await UserSongs.create({ user_name: username, song_id: song.id })
+        favorites.push({ song_id: song.id, user_name: username })
+        return true
     },
 
     async removeFromFavorite(song_id, user_name) {
@@ -48,13 +49,7 @@ module.exports = {
 
     async getUserFavorites(id, username) {
         await this.addUser(id, username)
-        const songs = []
-        await favorites.map(s => {
-            if (s.user_name === username)
-                songs.push(s)
-        })
-
-        return songs
+        return favorites.filter(fav => fav.user_name === username)
     },
 
     getFavorites() {
@@ -67,11 +62,11 @@ module.exports = {
 
     async addSong(song) {
         const result = songs.find(s => s.song_id === song.id)
-        if (result) return result
 
-        const newSong = await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
-        songs.push({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
-        return newSong
+        if (!result) {
+            await Songs.create({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
+            songs.push({ song_id: song.id, song_title: song.title, song_url: song.url, song_duration: song.duration })
+        }
     },
 
     //NOTE add song to paramaters
