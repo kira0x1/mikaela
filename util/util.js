@@ -14,7 +14,7 @@ module.exports = {
 
   //Display all servers mikaela is apart of
   getAllGuilds() {
-    
+
   },
 
   /**
@@ -48,7 +48,6 @@ module.exports = {
    * @returns
    */
   async searchForUser(displayName, message) {
-    console.log(chalk`Searching for user {bold.red ${displayName}}`);
     const target = await message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
     return target
   },
@@ -92,7 +91,7 @@ module.exports = {
   },
 
   getFlags(flags, args) {
-    if (!flags || !args) return console.log(`No flags or args`)
+    if (!flags || !args) return
 
     const argFlags = args.map(f => {
       if (f.startsWith(flagPrefix)) return f.slice(flagPrefix.length)
