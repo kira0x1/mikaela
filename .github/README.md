@@ -9,9 +9,6 @@
 ### Music
 >**Description**: Plays music via links or youtube searches
 
-### Favorites
->**Description**: Favorite Songs
-
 ### Reddit
 >**Description**: Post from subreddits
 
