@@ -111,7 +111,7 @@ export class Player {
   private async OnSongEnd(reason: string) {
     //If song is undefined then play song
     this.queue.currentSong = undefined;
-    const song = this.queue.songs.pop();
+    const song = this.queue.songs.shift();
 
     if (song) return this.Play(song, GetMessage());
 

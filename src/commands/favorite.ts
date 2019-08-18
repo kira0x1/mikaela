@@ -36,7 +36,6 @@ export const command: Command = {
         case "list":
           await ListFavorites(args);
           break;
-
         case "add":
           if (!args || (args && args.length === 0)) return QuickEmbed(`no songs given`);
           AddSong(args);
