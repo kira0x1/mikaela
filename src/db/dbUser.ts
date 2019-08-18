@@ -1,8 +1,8 @@
-import { Collection } from 'discord.js';
-import { model, Schema } from 'mongoose';
+import { Collection } from "discord.js";
+import { model, Schema } from "mongoose";
 
-import { conn } from './dbSetup';
-import { CreateSong, ISong } from './song';
+import { conn } from "./dbSetup";
+import { CreateSong, ISong } from "./dbSong";
 
 export const users: Collection<string, User> = new Collection();
 
@@ -22,10 +22,10 @@ export const UserSchema = new Schema({
 });
 
 //Create or Get the users model (table)
-const UserModel = model('users', UserSchema);
+const UserModel = model("users", UserSchema);
 
 export async function initUsers() {
-  var userModel = await conn.model('users', UserSchema);
+  var userModel = await conn.model("users", UserSchema);
   const usersFound = await userModel.find();
 
   usersFound.map(async doc => {
@@ -58,7 +58,7 @@ export async function FindUser(tag: string) {
 
 //Create a UserModel and insert it into the database, returns an error if the user already exists
 export async function CreateUser(tag: string, id: string, nickname: string) {
-  var usersModel = await conn.model('users', UserSchema);
+  var usersModel = await conn.model("users", UserSchema);
   console.log(`creating user: ${tag}`);
   usersModel.create({ tag: tag, id: id, nickname: nickname });
   users.set(id, new User(tag, nickname, id, []));

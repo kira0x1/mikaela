@@ -1,7 +1,7 @@
 import { Collection, GuildMember, Message, RichEmbed, User, Guild } from "discord.js";
-import { ISong } from "../db/song";
-import { FindOrCreate, IUser, users, CreateUser } from "../db/user";
-import { AddUserSong, GetUserSongs, RemoveSong } from "../db/userSongs";
+import { ISong } from "../db/dbSong";
+import { FindOrCreate, IUser, users, CreateUser } from "../db/dbUser";
+import { AddUserSong, GetUserSongs, RemoveSong } from "../db/dbFavorites";
 import { Command, Flag } from "../objects/Command";
 import { GetSong } from "../objects/song";
 import { GetMessage } from "../util/MessageHandler";

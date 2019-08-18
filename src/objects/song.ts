@@ -1,5 +1,5 @@
 import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
-import { ConvertDuration, ISong } from "../db/song";
+import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
 import { FavoritesHandler } from "../util/Emoji";
 import { GetMessage } from "../util/MessageHandler";
@@ -7,7 +7,6 @@ import { embedColor, QuickEmbed } from "../util/Style";
 
 import ytdl = require("ytdl-core");
 
-import ytdl = require("ytdl-core");
 //Get song by url
 export async function GetSong(url: string): Promise<ISong | void> {
   let song: ISong | undefined = undefined;

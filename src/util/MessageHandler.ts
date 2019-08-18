@@ -1,7 +1,7 @@
-import { Message, MessageOptions } from 'discord.js';
-import { admin, prefix } from '../config';
-import { CommandUtil } from './CommandUtil';
-import { darken, QuickEmbed } from './Style';
+import { Message, MessageOptions } from "discord.js";
+import { admin, prefix } from "../config";
+import { CommandUtil } from "./CommandUtil";
+import { darken, QuickEmbed } from "./Style";
 
 let messageInstance: Message;
 
@@ -14,28 +14,27 @@ export function GetMessage() {
 }
 
 export function OnMessage(message: Message) {
-  if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type !== 'text') return;
-
+  if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type !== "text") return;
   let args = message.content.slice(prefix.length).split(/ +/);
   messageInstance = message;
 
   //Command name
-  let cname = (args.shift() || 'none').toLowerCase();
-  if (cname === prefix || cname === 'none') return;
+  let cname = (args.shift() || "none").toLowerCase();
+  if (cname.startsWith(prefix) || cname === "none") return;
 
   const command = CommandUtil.GetCommand(cname);
   if (command === undefined) return QuickEmbed(`Command **${cname}** not found`);
 
   if (command.args && !args.length) {
     // Check if args is required
-    return Send(darken(`${prefix}${command.name}`, command.usage || ''));
+    return Send(darken(`${prefix}${command.name}`, command.usage || ""));
   }
 
   let hasPerms = true;
 
   if (command.perms) {
     command.perms.map(perm => {
-      if (perm === 'admin') {
+      if (perm === "admin") {
         if (message.author.id !== admin[0]) {
           hasPerms = false;
         }

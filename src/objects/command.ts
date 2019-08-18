@@ -23,12 +23,14 @@ export abstract class Command {
   cooldown?: number | 3;
   perms?: string[];
   adminOnly?: boolean | false;
+  // wip?: boolean | false;
 
   constructor(command: Command) {
     this.name = command.name;
     this.description = command.description;
     this.subCmd = command.subCmd;
     this.flags = command.flags;
+    // this.wip = command.wip;
     this.perms = command.perms;
     this.usage = command.usage;
     this.aliases = command.aliases;

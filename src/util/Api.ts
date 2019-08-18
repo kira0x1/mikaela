@@ -1,7 +1,7 @@
 import rp from 'request-promise'
 import { IReddit, IRedditRequest } from '../objects/reddit'
 import { youTubeKey } from '../config'
-import { ISong, ConvertDuration } from '../db/song';
+import { ISong, ConvertDuration } from '../db/dbSong';
 import { getInfo } from 'ytdl-core';
 
 export function Get(url: string, options?: any) {

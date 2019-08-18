@@ -1,6 +1,6 @@
 import { Client, Collection, Emoji, Message } from 'discord.js'
-import { ISong } from '../db/song'
-import { AddUserSong } from '../db/userSongs'
+import { ISong } from '../db/dbSong'
+import { AddUserSong } from '../db/dbFavorites'
 const ms = require('ms')
 
 const reactionDuration = ms(`5m`)
