@@ -64,7 +64,7 @@ export async function RemoveSong(userId: string, songIndex: number) {
   const song = user.favorites[songIndex];
   if (!song) return QuickEmbed(`Couldnt find a song at that position`);
 
-  await userSongsModel.findOneAndRemove({ userId: userId, songId: song.id });
+  await userSongsModel.deleteOne({ userId: userId, songId: song.id });
   users.get(userId).favorites.splice(songIndex, 1);
 }
 
