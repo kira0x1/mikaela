@@ -59,9 +59,13 @@ export async function AddUserSong(user: IUser, song: ISong) {
 
 export async function RemoveSong(userId: string, songIndex: number) {
   var userSongsModel = await conn.model("userSongs", UserSongSchema);
-  const song = users.get(userId).favorites[songIndex];
-  userSongsModel.remove({ userId: userId, songId: song.id });
-  users.get(userId).favorites.splice(songIndex);
+  const user = users.get(userId);
+  if (!user) return QuickEmbed(`You have no favorites to remove`);
+  const song = user.favorites[songIndex];
+  if (!song) return QuickEmbed(`Couldnt find a song at that position`);
+
+  await userSongsModel.findOneAndRemove({ userId: userId, songId: song.id });
+  users.get(userId).favorites.splice(songIndex, 1);
 }
 
 export async function initUserSongs() {

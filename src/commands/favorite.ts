@@ -63,11 +63,8 @@ export const command: Command = {
 async function Remove(args) {
   let songIndex = Number(args.shift());
   const favorites = GetUserSongs(GetMessage().author.id);
-
   songIndex--;
-
-  if (songIndex <= 0 || songIndex > favorites.length) return QuickEmbed(`invalid song position`);
-
+  if (songIndex < 0 || songIndex > favorites.length) return QuickEmbed(`invalid song position`);
   RemoveSong(GetMessage().author.id, songIndex);
 }
 
@@ -85,6 +82,7 @@ async function Play(args) {
         return;
       }
     });
+
   if (songIndex === undefined) return QuickEmbed(`no song index given`);
 
   let user = undefined;
