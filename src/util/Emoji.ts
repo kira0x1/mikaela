@@ -1,11 +1,13 @@
-import { Client, Collection, Emoji, Message } from 'discord.js';
-import { ISong } from '../db/song';
-import { AddUserSong } from '../db/userSongs';
+import { Client, Collection, Emoji, Message } from 'discord.js'
+import { ISong } from '../db/song'
+import { AddUserSong } from '../db/userSongs'
 const ms = require('ms')
 
 const reactionDuration = ms(`5m`)
-let emojis: Collection<string, Emoji> = new Collection()
 
+//Emojis in collection
+let emojis: Collection<string, Emoji> = new Collection()
+export const sweat = '😰'
 
 export function init(client: Client) {
     client.emojis.map(emoji => emojis.set(emoji.name, emoji))

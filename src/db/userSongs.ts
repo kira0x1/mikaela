@@ -27,7 +27,8 @@ export const UserSongSchema = new Schema({
 export function GetUserSongs(userId: string) {
     const user = users.get(userId)
     if (!user) return undefined
-    return users.get(userId).favorites
+
+    return user.favorites
 }
 
 export async function FindSong(userId: string, songId: string) {
@@ -38,7 +39,6 @@ export async function AddUserSong(user: IUser, song: ISong) {
 
     //Make sure user exists
     await FindOrCreate(user)
-
     let usersSongs = await GetUserSongs(user.id)
 
     if (usersSongs.length > 0) {
@@ -54,6 +54,13 @@ export async function AddUserSong(user: IUser, song: ISong) {
     var userSongsModel = await conn.model('userSongs', UserSongSchema)
     users.get(user.id).AddSongToFavorites(song)
     userSongsModel.create({ userId: user.id, song: { id: song.id, title: song.title, url: song.url, duration: song.duration } })
+}
+
+export async function RemoveSong(userId: string, songIndex: number) {
+    var userSongsModel = await conn.model('userSongs', UserSongSchema)
+    const song = users.get(userId).favorites[songIndex]
+    userSongsModel.remove({ userId: userId, songId: song.id })
+    users.get(userId).favorites.splice(songIndex)
 }
 
 export async function initUserSongs() {

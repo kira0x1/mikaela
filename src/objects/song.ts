@@ -1,30 +1,30 @@
-import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js';
-import * as yt from 'ytdl-core';
-import { ConvertDuration, ISong } from '../db/song';
-import { Youtube } from '../util/Api';
-import { FavoritesHandler } from '../util/Emoji';
-import { GetMessage } from '../util/MessageHandler';
-import { embedColor, QuickEmbed } from '../util/Style';
+import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
+import { ConvertDuration, ISong } from "../db/song";
+import { Youtube } from "../util/Api";
+import { FavoritesHandler } from "../util/Emoji";
+import { GetMessage } from "../util/MessageHandler";
+import { embedColor, QuickEmbed } from "../util/Style";
 
+import ytdl = require("ytdl-core");
 
 import ytdl = require("ytdl-core");
 //Get song by url
 export async function GetSong(url: string): Promise<ISong | void> {
   let song: ISong | undefined = undefined;
 
-  await yt
+  await ytdl
     .getInfo(url)
     .then(info => {
       song = ConvertInfo(info);
     })
     .catch(async () => {
-      song = await Youtube.Get(url)
+      song = await Youtube.Get(url);
     });
 
   return song;
 }
 
-export function ConvertInfo(info: yt.videoInfo): ISong {
+export function ConvertInfo(info: ytdl.videoInfo): ISong {
   return {
     title: info.title,
     id: info.video_id,
@@ -48,10 +48,22 @@ export class Player {
     this.queue.ClearQueue();
   }
 
-  public async Play(query: string, message: Message) {
+  public RemoveSong(pos: number) {
+    this.queue.RemoveSong(pos);
+  }
+
+  public async Play(query: string | ISong, message: Message) {
+    let song: ISong | undefined | void = undefined;
+
+    //Check if is in voice, if not join
+    if (!this.inVoice && message) await this.JoinVoice(message);
+
+    //Check if in voice and has connection
+    if (!this.inVoice || !this.connection) return;
 
     //Get Song
-    let song: ISong | undefined | void = await GetSong(query)
+    if (typeof query !== "string") song = query;
+    else song = await GetSong(query);
 
     //Check if found song
     if (!song) return QuickEmbed(`song not found`);
@@ -63,21 +75,12 @@ export class Player {
       .setColor(embedColor);
 
     //Notify player their song is added
-    const msgTemp = await message.channel.send(embed)
-    let msg: undefined | Message = undefined
+    const msgTemp = await GetMessage().channel.send(embed);
+    let msg: undefined | Message = undefined;
 
-    if (!Array.isArray(msgTemp))
-      msg = msgTemp
-
-    //Add favorites emoji 
-    if (msg)
-      FavoritesHandler(msg, 'heart', song)
-
-    //Check if is in voice, if not join
-    if (!this.inVoice && message) await this.JoinVoice(message);
-
-    //Check if in voice and has connection
-    if (!this.inVoice || !this.connection) return;
+    if (!Array.isArray(msgTemp)) msg = msgTemp;
+    //Add favorites emoji
+    if (msg) FavoritesHandler(msg, "heart", song);
 
     //If song is undefined then play song
     if (this.queue.currentSong === undefined) {
@@ -87,44 +90,39 @@ export class Player {
       return;
     }
 
-    //Add song to queue
     this.queue.AddSong(song);
   }
 
   public Skip() {
-    this.OnSongEnd("skip");
+    this.stream.end();
   }
 
   public async ListQueue() {
-    if (this.queue.songs.length === 0 || !this.queue.currentSong)
-      return QuickEmbed(`Queue empty...`);
+    if (this.queue.songs.length === 0 && !this.queue.currentSong) return QuickEmbed(`Queue empty...`);
 
     let embed = new RichEmbed()
       .setTitle(`Playing: ${this.queue.currentSong.title}`)
       .setDescription(this.queue.currentSong.duration.duration)
       .setColor(embedColor);
 
-    this.queue.songs.map((song, pos) =>
-      embed.addField(`(${pos + 1})\n${song.title}`, song.url)
-    );
-
+    this.queue.songs.map((song, pos) => embed.addField(`${pos + 1}\n${song.title}`, song.url));
     GetMessage().channel.send(embed);
   }
 
-  private OnSongEnd(reason: string) {
-    this.queue.NextSong();
+  private async OnSongEnd(reason: string) {
+    //If song is undefined then play song
+    this.queue.currentSong = undefined;
+    const song = this.queue.songs.pop();
 
-    if (!this.connection || !this.queue.currentSong) return this.Stop();
+    if (song) return this.Play(song, GetMessage());
 
-    this.stream = this.connection.playStream(
-      ytdl(this.queue.currentSong.url, { filter: "audioonly" })
-    );
-    this.stream.on("end", reason => this.OnSongEnd(reason));
+    this.LeaveVoice();
+    this.queue.ClearQueue();
   }
 
   private async JoinVoice(message: Message) {
     this.voiceChannel = message.member.voiceChannel;
-    if (!this.voiceChannel) return QuickEmbed(`You must be in a voice channel`)
+    if (!this.voiceChannel) return QuickEmbed(`You must be in a voice channel`);
     if (!this.voiceChannel.joinable) {
       this.inVoice = false;
       return QuickEmbed(`Can't join that voicechannel`);
@@ -148,7 +146,7 @@ export class Player {
   }
 }
 
-class Queue {
+export class Queue {
   songs: ISong[] = [];
   currentSong: ISong | undefined = undefined;
 
@@ -158,11 +156,24 @@ class Queue {
 
   public AddSong(song: ISong) {
     this.songs.push(song);
-    if (this.currentSong === undefined) this.currentSong = song;
+    if (this.currentSong === undefined) this.currentSong = this.songs.pop();
   }
 
   public ClearQueue() {
     this.songs = [];
     this.currentSong = undefined;
+  }
+
+  public RemoveSong(position: number) {
+    const pos = Number(position) - 1;
+
+    if (pos > this.songs.length || pos < 0) {
+      return QuickEmbed(`Invalid position`);
+    }
+
+    const song = this.songs[pos];
+    this.songs.splice(pos, 1);
+    if (song) QuickEmbed(`Removed song **${song.title}**`);
+    else QuickEmbed(`Invalid position`);
   }
 }
