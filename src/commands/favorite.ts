@@ -25,16 +25,15 @@ export const command: Command = {
   flags: flags,
   cooldown: 3,
 
-  async execute(message, args) {
+  execute(message, args) {
     message.channel.startTyping();
-
     let msg = args.shift();
     let flag = flags.find(f => f.name === msg || (f.aliases && f.aliases.includes(msg)));
 
     if (flag) {
       switch (flag.name) {
         case "list":
-          await ListFavorites(args);
+          ListFavorites(args);
           break;
         case "add":
           if (!args || (args && args.length === 0)) return QuickEmbed(`no songs given`);
@@ -60,7 +59,7 @@ export const command: Command = {
   }
 };
 
-async function Remove(args) {
+function Remove(args) {
   let songIndex = Number(args.shift());
   const favorites = GetUserSongs(GetMessage().author.id);
   songIndex--;
@@ -72,7 +71,6 @@ async function Play(args) {
   if (args.length > 14) return QuickEmbed(`Too many arguments given`);
 
   let songIndex: number | undefined = undefined;
-
   if (args.length === 1) songIndex = Number(args.shift());
   else
     args.find((arg, pos) => {
@@ -165,11 +163,9 @@ async function Info(args: string[]) {
 async function AddSong(args: string[]) {
   const song = await GetSong(args.shift());
   if (!song) return QuickEmbed("song not found");
-
   const author = GetMessage().author;
-
   const user: IUser = { nickname: author.username, tag: author.tag, id: author.id };
-  await FindOrCreate(user);
+  FindOrCreate(user);
   AddUserSong({ tag: user.tag, id: user.id, nickname: user.nickname }, song);
 }
 
@@ -177,9 +173,7 @@ const maxSongs: number = 5;
 
 async function ListFavorites(args: string[]) {
   const target = await getTarget(args.join(" "));
-
-  const id = target.id;
-  const fav = await GetUserSongs(id);
+  const fav = GetUserSongs(target.id);
   const pages: Collection<number, ISong[]> = new Collection();
 
   if (!fav || !fav.length) {
@@ -260,7 +254,7 @@ async function ListFavorites(args: string[]) {
       .map((s, pos) =>
         newEmbed.addField(`**${pos + 1 + currentPage * maxSongs}\t${s.title}**`, "Duration: " + s.duration.duration)
       );
-    await msg.edit(newEmbed);
+    msg.edit(newEmbed);
   });
 }
 
@@ -289,10 +283,4 @@ export async function getTarget(userName: string) {
 
   FindOrCreate({ tag: user.tag, id: user.id, nickname: user.username });
   return user;
-}
-
-async function DebugFav() {
-  const id = GetMessage().author.id;
-  const fav = await GetUserSongs(id);
-  console.dir(fav);
 }

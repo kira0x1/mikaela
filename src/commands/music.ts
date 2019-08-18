@@ -71,13 +71,13 @@ export const command: Command = {
   usage: "[Search | Link]",
   subCmd: subcmd,
 
-  async execute(message, args) {
+  execute(message, args) {
     let query = args.join();
     if (query === "") return QuickEmbed(`${prefix}${this.usage}`);
     player.Play(query, message);
   }
 };
 
-export async function playerInit() {
+export function playerInit() {
   player = new Player();
 }

@@ -9,7 +9,7 @@ export const command: Command = {
   aliases: ["h"],
   cooldown: 3,
 
-  async execute(message, args) {
+  execute(message, args) {
     if (args.length === 0) {
       let fields: Array<{ title: string; content?: string; inline?: boolean }>;
       fields = CommandUtil.GetCommands().map(cmd => ({
@@ -17,7 +17,7 @@ export const command: Command = {
         content: cmd.description + "\n \u200b",
         inline: false
       }));
-      await ListEmbed("Commands", undefined, fields);
+      ListEmbed("Commands", undefined, fields);
     } else {
       const commandName = args.shift().toLowerCase();
       const command = CommandUtil.GetCommand(commandName);
@@ -34,7 +34,7 @@ export const command: Command = {
       } else if (command.subCmd) {
         insertFlags(embed, command.subCmd);
       }
-      await message.channel.send(embed);
+      message.channel.send(embed);
     }
   }
 };

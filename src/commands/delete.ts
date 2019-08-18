@@ -35,7 +35,6 @@ export const command: Command = {
     else amount = Number(arg);
 
     if (!force && (amount < 1 || amount > 25)) return message.reply("`amount must be between 1 - 25`");
-
     if (amount > 35) return message.reply(`\`Amount cant excede 35\``);
 
     amount++;
@@ -46,28 +45,28 @@ export const command: Command = {
 
       switch (flag) {
         case "me":
-          await messages.filter(m => m.author.id === message.author.id).map(m => purgable.push(m));
+          messages.filter(m => m.author.id === message.author.id).map(m => purgable.push(m));
           break;
         case "both":
-          await messages
+          messages
             .filter(m => m.author.id === message.author.id || m.author.id === message.client.user.id)
             .map(m => purgable.push(m));
           break;
 
         case "bots":
-          await messages.filter(m => m.author.bot).map(m => purgable.push(m));
+          messages.filter(m => m.author.bot).map(m => purgable.push(m));
           break;
       }
 
       if (!flag) {
-        await messages.filter(m => m.author.id === message.client.user.id).map(m => purgable.push(m));
+        messages.filter(m => m.author.id === message.client.user.id).map(m => purgable.push(m));
       }
 
       if (!purgable.length) return;
 
       try {
         message.channel.bulkDelete(purgable);
-        await message.delete().catch(() => {});
+        message.delete().catch(() => {});
       } catch (err) {
         console.error(`error while trying to delete\n\n${err}`);
       }

@@ -26,7 +26,6 @@ export const UserSongSchema = new Schema({
 export function GetUserSongs(userId: string) {
   const user = users.get(userId);
   if (!user) return undefined;
-
   return user.favorites;
 }
 
