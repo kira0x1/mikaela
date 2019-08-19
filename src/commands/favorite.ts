@@ -1,7 +1,7 @@
-import { Collection, GuildMember, Message, RichEmbed, User, Guild } from "discord.js";
-import { ISong } from "../db/dbSong";
-import { FindOrCreate, IUser, users, CreateUser } from "../db/dbUser";
+import { Collection, GuildMember, Message, MessageReaction, RichEmbed, User } from "discord.js";
 import { AddUserSong, GetUserSongs, RemoveSong } from "../db/dbFavorites";
+import { ISong } from "../db/dbSong";
+import { FindOrCreate, IUser, users } from "../db/dbUser";
 import { Command, Flag } from "../objects/Command";
 import { GetSong } from "../objects/song";
 import { GetMessage } from "../util/MessageHandler";
@@ -27,8 +27,9 @@ export const command: Command = {
 
   execute(message, args) {
     message.channel.startTyping();
-    let msg = args.shift();
     let msg: string = args.shift() || "";
+    if (msg === "") return;
+
     let flag = flags.find(f => f.name === msg || (f.aliases && f.aliases.includes(msg)));
 
     if (flag) {
@@ -60,15 +61,16 @@ export const command: Command = {
   }
 };
 
-function Remove(args) {
+function Remove(args: string[]) {
   let songIndex = Number(args.shift());
   const favorites = GetUserSongs(GetMessage().author.id);
   songIndex--;
-  if (songIndex < 0 || songIndex > favorites.length) return QuickEmbed(`invalid song position`);
+
+  if (!favorites || songIndex < 0 || songIndex > favorites.length) return QuickEmbed(`invalid song position`);
   RemoveSong(GetMessage().author.id, songIndex);
 }
 
-async function Play(args) {
+async function Play(args: string[]) {
   if (args.length > 14) return QuickEmbed(`Too many arguments given`);
 
   let songIndex: number | undefined = undefined;
@@ -107,7 +109,7 @@ async function Play(args) {
     if (fav.length < songIndex) return QuickEmbed(`song not found`);
 
     const song = fav[songIndex];
-    player.Play(song, GetMessage());
+    player.AddSong(song, GetMessage());
   }
 }
 
@@ -133,9 +135,6 @@ async function Info(args: string[]) {
   if (usersMentioned && usersMentioned.size > 0) user = usersMentioned.first();
 
   if (!user) {
-    let userName = args.join();
-    // / message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
-
     let name = args.join(" ");
     const member = await GetMessage().guild.members.find(usr => usr.displayName.toLowerCase() === name.toLowerCase());
 
@@ -162,7 +161,11 @@ async function Info(args: string[]) {
 }
 
 async function AddSong(args: string[]) {
-  const song = await GetSong(args.shift());
+  const query = args.shift();
+  if (!query) return;
+
+  const song = await GetSong(query);
+
   if (!song) return QuickEmbed("song not found");
   const author = GetMessage().author;
   const user: IUser = { nickname: author.username, tag: author.tag, id: author.id };
@@ -170,9 +173,8 @@ async function AddSong(args: string[]) {
   AddUserSong({ tag: user.tag, id: user.id, nickname: user.nickname }, song);
 }
 
-const maxSongs: number = 5;
-
 async function ListFavorites(args: string[]) {
+  const maxSongs: number = 5;
   const target = await getTarget(args.join(" "));
   const fav = GetUserSongs(target.id);
   const pages: Collection<number, ISong[]> = new Collection();
@@ -182,7 +184,7 @@ async function ListFavorites(args: string[]) {
     return QuickEmbed(`no favorites`);
   }
 
-  let currentPage = 0;
+  let currentPage: number = 0;
   let songsInPage = 0;
 
   let embed = new RichEmbed();
@@ -194,7 +196,6 @@ async function ListFavorites(args: string[]) {
     }
 
     pages.get(currentPage).push(song);
-
     songsInPage++;
 
     if (songsInPage >= maxSongs) {
@@ -204,6 +205,8 @@ async function ListFavorites(args: string[]) {
   }
 
   currentPage = 0;
+  if (pages.get(currentPage) === undefined || pages === undefined || currentPage === undefined) return;
+
   embed
     .setThumbnail(target.avatarURL)
     .addField(
@@ -226,7 +229,7 @@ async function ListFavorites(args: string[]) {
   if (!msg) return GetMessage().channel.stopTyping(true);
   msg.react("⬅").then(() => msg.react("➡"));
 
-  const filter = (reaction, user) => {
+  const filter = (reaction: MessageReaction, user: User) => {
     return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
   };
 
