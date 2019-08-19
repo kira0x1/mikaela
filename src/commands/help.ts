@@ -1,4 +1,4 @@
-import { RichEmbed } from "discord.js";
+import { RichEmbed, Message } from "discord.js";
 import { Command, Flag } from "../objects/Command";
 import { CommandUtil } from "../util/CommandUtil";
 import { createEmptyField, createField, embedColor, ListEmbed, QuickEmbed } from "../util/Style";
@@ -10,34 +10,41 @@ export const command: Command = {
   cooldown: 3,
 
   execute(message, args) {
-    if (args.length === 0) {
-      let fields: Array<{ title: string; content?: string; inline?: boolean }>;
-      fields = CommandUtil.GetCommands().map(cmd => ({
-        title: cmd.name,
-        content: cmd.description + "\n \u200b",
-        inline: false
-      }));
-      ListEmbed("Commands", undefined, fields);
-    } else {
-      const commandName = args.shift().toLowerCase();
-      const command = CommandUtil.GetCommand(commandName);
-
-      //Check if command is found
-      if (!command) return QuickEmbed(`Command not found`);
-
-      //Create embed
-      const embed = new RichEmbed().setColor(embedColor);
-      embed.fields.push(createField(command.name, command.description + `\n\u200b`));
-
-      if (command.flags) {
-        insertFlags(embed, command.flags);
-      } else if (command.subCmd) {
-        insertFlags(embed, command.subCmd);
-      }
-      message.channel.send(embed);
-    }
+    if (args.length === 0) HelpAll();
+    else HelpCommand(message, args);
   }
 };
+
+function HelpAll() {
+  let fields: Array<{ title: string; content?: string; inline?: boolean }>;
+  fields = CommandUtil.GetCommands().map(cmd => ({
+    title: cmd.name,
+    content: cmd.description + "\n \u200b",
+    inline: false
+  }));
+  ListEmbed("Commands", undefined, fields);
+}
+function HelpCommand(message: Message, args: string[]) {
+  {
+    const commandName = args.shift().toLowerCase();
+    const command = CommandUtil.GetCommand(commandName);
+
+    //Check if command is found
+    if (!command) return QuickEmbed(`Command not found`);
+
+    //Create embed
+    const embed = new RichEmbed().setColor(embedColor);
+    embed.fields.push(createField(command.name, command.description + `\n\u200b`));
+
+    if (command.flags) {
+      insertFlags(embed, command.flags);
+    } else if (command.subCmd) {
+      insertFlags(embed, command.subCmd);
+    }
+
+    message.channel.send(embed);
+  }
+}
 
 function insertFlags(embed: RichEmbed, children: Flag[] | Command[]) {
   //Get amound of rows for flags

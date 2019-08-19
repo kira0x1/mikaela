@@ -1,12 +1,11 @@
 {
   "name": "mikaela-rewrite",
-  "version": "1.0.0",
-  "main": "dist/main.js",
-  "license": "MIT",
+  "version": "1.1.0",
+  "main": "./dist/main.js",
   "scripts": {
-    "start": "node .",
-    "db": "node dist/db/dbSetup.js"
+    "start": "node ."
   },
+  "license": "MIT",
   "dependencies": {
     "@discordjs/uws": "^10.149.0",
     "bufferutil": "^4.0.0",

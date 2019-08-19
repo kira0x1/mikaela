@@ -28,6 +28,7 @@ export const command: Command = {
   execute(message, args) {
     message.channel.startTyping();
     let msg = args.shift();
+    let msg: string = args.shift() || "";
     let flag = flags.find(f => f.name === msg || (f.aliases && f.aliases.includes(msg)));
 
     if (flag) {

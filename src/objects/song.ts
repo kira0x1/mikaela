@@ -1,11 +1,11 @@
 import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
 import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
-import { FavoritesHandler } from "../util/Emoji";
 import { GetMessage } from "../util/MessageHandler";
 import { embedColor, QuickEmbed } from "../util/Style";
 
 import ytdl = require("ytdl-core");
+import { FavoritesHandler } from "../util/Emoji";
 
 //Get song by url
 export async function GetSong(url: string): Promise<ISong | void> {
@@ -38,6 +38,7 @@ export class Player {
   stream: StreamDispatcher | undefined;
   voiceChannel: VoiceChannel | undefined;
   inVoice: boolean = false;
+  isPlaying: boolean = false;
 
   //Queue
   queue: Queue = new Queue();
@@ -45,27 +46,25 @@ export class Player {
   public Stop() {
     this.LeaveVoice();
     this.queue.ClearQueue();
+    this.isPlaying = false;
   }
 
   public RemoveSong(pos: number) {
     this.queue.RemoveSong(pos);
   }
 
-  public async Play(query: string | ISong, message: Message) {
+  public async AddSong(query: string | ISong, message: Message) {
     let song: ISong | undefined | void = undefined;
 
-    //Check if is in voice, if not join
-    if (!this.inVoice && message) await this.JoinVoice(message);
-
-    //Check if in voice and has connection
-    if (!this.inVoice || !this.connection) return;
-
-    //Get Song
+    //Check if we are given a string or a song
     if (typeof query !== "string") song = query;
     else song = await GetSong(query);
 
-    //Check if found song
+    //If we couldnt find the song exit out
     if (!song) return QuickEmbed(`song not found`);
+
+    //Then add the song to queue
+    this.queue.AddSong(song);
 
     let embed = new RichEmbed()
       .setTitle(song.title)
@@ -81,19 +80,29 @@ export class Player {
     //Add favorites emoji
     if (msg) FavoritesHandler(msg, "heart", song);
 
-    //If song is undefined then play song
-    if (this.queue.currentSong === undefined) {
-      this.queue.AddSong(song);
-      this.stream = this.connection.playStream(ytdl(song.url, { filter: "audioonly" }));
-      this.stream.on("end", reason => this.OnSongEnd(reason));
-      return;
-    }
+    //If nothing is playing then play this song
+    if (!this.isPlaying) this.Play(message);
+  }
 
-    this.queue.AddSong(song);
+  public async Play(message: Message) {
+    //Check if is in voice, if not join
+    if (!this.inVoice && message) await this.JoinVoice(message);
+
+    //Check if in voice and has connection
+    if (!this.inVoice || !this.connection) return console.error(`connection error while trying to play music`);
+
+    if (this.queue.currentSong !== undefined) {
+      this.isPlaying = true;
+      this.stream = await this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }));
+      this.stream.on("end", reason => this.OnSongEnd(reason));
+    } else {
+      console.error(`no song left to play`);
+    }
   }
 
   public Skip() {
-    this.stream.end();
+    if (this.stream) this.stream.end();
+    else console.log(`Tried to skip when no stream exists`);
   }
 
   public async ListQueue() {
@@ -109,14 +118,10 @@ export class Player {
   }
 
   private async OnSongEnd(reason: string) {
-    //If song is undefined then play song
-    this.queue.currentSong = undefined;
-    const song = this.queue.songs.shift();
-
-    if (song) return this.Play(song, GetMessage());
-
-    this.LeaveVoice();
-    this.queue.ClearQueue();
+    this.isPlaying = false;
+    const song = this.queue.NextSong();
+    if (song) return this.Play(GetMessage());
+    else if (!song) this.LeaveVoice();
   }
 
   private async JoinVoice(message: Message) {
@@ -141,7 +146,9 @@ export class Player {
   private LeaveVoice() {
     if (!this.voiceChannel) return;
     this.voiceChannel.leave();
+    this.isPlaying = false;
     this.inVoice = false;
+    this.queue.ClearQueue();
   }
 }
 
@@ -150,12 +157,13 @@ export class Queue {
   currentSong: ISong | undefined = undefined;
 
   public NextSong() {
-    this.currentSong = this.songs.pop();
+    this.currentSong = this.songs.shift();
+    return this.currentSong;
   }
 
   public AddSong(song: ISong) {
     this.songs.push(song);
-    if (this.currentSong === undefined) this.currentSong = this.songs.pop();
+    if (this.currentSong === undefined) this.NextSong();
   }
 
   public ClearQueue() {

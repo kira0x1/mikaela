@@ -62,7 +62,6 @@ const subcmd: Command[] = [
 ];
 
 export var player = new Player();
-
 export const command: Command = {
   name: "music",
   description: "Plays music",
@@ -74,7 +73,7 @@ export const command: Command = {
   execute(message, args) {
     let query = args.join();
     if (query === "") return QuickEmbed(`${prefix}${this.usage}`);
-    player.Play(query, message);
+    player.AddSong(query, message);
   }
 };
 
