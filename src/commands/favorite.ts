@@ -4,8 +4,9 @@ import { ISong } from "../db/dbSong";
 import { FindOrCreate, IUser, users } from "../db/dbUser";
 import { Command, Flag } from "../objects/Command";
 import { GetSong } from "../objects/song";
+import { GetMessage } from "../util/MessageHandler";
 import { embedColor, QuickEmbed } from "../util/Style";
-import { getPlayer } from './music';
+import { player } from "./music";
 
 const ms = require("ms");
 
@@ -34,24 +35,24 @@ export const command: Command = {
     if (flag) {
       switch (flag.name) {
         case "list":
-          ListFavorites(message, args);
+          ListFavorites(args);
           break;
         case "add":
           if (!args || (args && args.length === 0)) return QuickEmbed(`no songs given`);
-          AddSong(message, args);
+          AddSong(args);
           break;
 
         case "info":
           if (!args || (args && args.length < 1)) return QuickEmbed(`no arguments given`);
-          Info(message, args);
+          Info(args);
           break;
         case "play":
           if (!args || (args && args.length < 1)) return QuickEmbed(`no arguments given`);
-          Play(message, args);
+          Play(args);
           break;
         case "remove":
           if (!args || (args && args.length < 1)) return QuickEmbed(`no arguments given`);
-          Remove(message, args);
+          Remove(args);
           break;
       }
     }
@@ -60,16 +61,16 @@ export const command: Command = {
   }
 };
 
-function Remove(message: Message, args: string[]) {
+function Remove(args: string[]) {
   let songIndex = Number(args.shift());
-  const favorites = GetUserSongs(message.author.id);
+  const favorites = GetUserSongs(GetMessage().author.id);
   songIndex--;
 
   if (!favorites || songIndex < 0 || songIndex > favorites.length) return QuickEmbed(`invalid song position`);
-  RemoveSong(message.author.id, songIndex);
+  RemoveSong(GetMessage().author.id, songIndex);
 }
 
-async function Play(message: Message, args: string[]) {
+async function Play(args: string[]) {
   if (args.length > 14) return QuickEmbed(`Too many arguments given`);
 
   let songIndex: number | undefined = undefined;
@@ -86,18 +87,18 @@ async function Play(message: Message, args: string[]) {
   if (songIndex === undefined) return QuickEmbed(`no song index given`);
 
   let user = undefined;
-  const usersMentioned = message.mentions.members;
+  const usersMentioned = GetMessage().mentions.members;
   if (usersMentioned && usersMentioned.size > 0) user = usersMentioned.first();
 
   if (!user) {
     let userName = args.join();
     // / message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
-    let user: GuildMember | User = await message.channel.guild.members.find(
+    let user: GuildMember | User = await GetMessage().channel.guild.members.find(
       usr => usr.displayName.toLowerCase() === userName.toLowerCase()
     );
 
     if (!user) {
-      user = message.author;
+      user = GetMessage().author;
     }
 
     const userResult = users.get(user.id);
@@ -108,11 +109,11 @@ async function Play(message: Message, args: string[]) {
     if (fav.length < songIndex) return QuickEmbed(`song not found`);
 
     const song = fav[songIndex];
-    getPlayer(message.guild.id).AddSong(song, message)
+    player.AddSong(song, GetMessage());
   }
 }
 
-async function Info(message: Message, args: string[]) {
+async function Info(args: string[]) {
   if (args.length > 14) return QuickEmbed(`Too many arguments given`);
 
   let songIndex: number | undefined = undefined;
@@ -130,15 +131,15 @@ async function Info(message: Message, args: string[]) {
   if (songIndex === undefined) return QuickEmbed(`no song index given`);
 
   let user = undefined;
-  const usersMentioned = message.mentions.members;
+  const usersMentioned = GetMessage().mentions.members;
   if (usersMentioned && usersMentioned.size > 0) user = usersMentioned.first();
 
   if (!user) {
     let name = args.join(" ");
-    const member = await message.guild.members.find(usr => usr.displayName.toLowerCase() === name.toLowerCase());
+    const member = await GetMessage().guild.members.find(usr => usr.displayName.toLowerCase() === name.toLowerCase());
 
     if (member) user = member.user;
-    else user = message.author;
+    else user = GetMessage().author;
 
     const userResult = users.get(user.id);
     if (!userResult) return QuickEmbed(`user not found`);
@@ -155,31 +156,31 @@ async function Info(message: Message, args: string[]) {
       .setDescription(song.duration.duration + `\n<${song.url}>`)
       .setColor(embedColor);
 
-    message.channel.send(embed);
+    GetMessage().channel.send(embed);
   }
 }
 
-async function AddSong(message: Message, args: string[]) {
+async function AddSong(args: string[]) {
   const query = args.shift();
   if (!query) return;
 
   const song = await GetSong(query);
 
   if (!song) return QuickEmbed("song not found");
-  const author = message.author;
+  const author = GetMessage().author;
   const user: IUser = { nickname: author.username, tag: author.tag, id: author.id };
   FindOrCreate(user);
   AddUserSong({ tag: user.tag, id: user.id, nickname: user.nickname }, song);
 }
 
-async function ListFavorites(message: Message, args: string[]) {
+async function ListFavorites(args: string[]) {
   const maxSongs: number = 5;
-  const target = await getTarget(message, args.join(" "));
+  const target = await getTarget(args.join(" "));
   const fav = GetUserSongs(target.id);
   const pages: Collection<number, ISong[]> = new Collection();
 
   if (!fav || !fav.length) {
-    message.channel.stopTyping(true);
+    GetMessage().channel.stopTyping(true);
     return QuickEmbed(`no favorites`);
   }
 
@@ -209,7 +210,7 @@ async function ListFavorites(message: Message, args: string[]) {
   embed
     .setThumbnail(target.avatarURL)
     .addField(
-      `\n\n***Favorites***\nPage **${currentPage + 1}**\nTotal Songs **${fav.length}**`,
+      `\n\n***Favorites***\nPage **${currentPage + 1}**\nTotal Songs **${pages.get(currentPage).length}**`,
       "\u200b"
     )
     .setColor(embedColor);
@@ -218,14 +219,14 @@ async function ListFavorites(message: Message, args: string[]) {
     .get(currentPage)
     .map((s, pos) => embed.addField(`**${pos + 1}\t${s.title}**`, "Duration: " + s.duration.duration));
 
-  const msgTemp = await message.channel.send(embed);
+  const msgTemp = await GetMessage().channel.send(embed);
 
-  if (pages.size <= 1) return message.channel.stopTyping(true);
+  if (pages.size <= 1) return GetMessage().channel.stopTyping(true);
 
   let msg: undefined | Message = undefined;
   if (!Array.isArray(msgTemp)) msg = msgTemp;
 
-  if (!msg) return message.channel.stopTyping(true);
+  if (!msg) return GetMessage().channel.stopTyping(true);
   msg.react("⬅").then(() => msg.react("➡"));
 
   const filter = (reaction: MessageReaction, user: User) => {
@@ -261,25 +262,26 @@ async function ListFavorites(message: Message, args: string[]) {
   });
 }
 
-export async function getTarget(message: Message, userName: string) {
+export async function getTarget(userName: string) {
+  const msg = GetMessage();
   let user: undefined | User = undefined;
 
   var userName = userName.toLowerCase();
 
   if (!userName) {
-    let member = await message.guild.fetchMember(message.author);
+    let member = await msg.guild.fetchMember(msg.author);
     user = member.user;
   } else {
-    if (message.mentions.users.size > 0) user = message.mentions.members.first().user;
+    if (msg.mentions.users.size > 0) user = msg.mentions.members.first().user;
     else {
-      let member = await message.guild.members.find(m => m.displayName.toLowerCase() === userName);
+      let member = await msg.guild.members.find(m => m.displayName.toLowerCase() === userName);
 
       if (member) user = member.user;
     }
   }
 
   if (!user) {
-    let member = await message.guild.fetchMember(message.author);
+    let member = await msg.guild.fetchMember(msg.author);
     user = member.user;
   }
 
