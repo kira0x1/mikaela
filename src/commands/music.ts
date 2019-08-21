@@ -1,67 +1,110 @@
-import { RichEmbed } from "discord.js";
-import { Command } from "../objects/command";
-import { embedColor, QuickEmbed } from "../util/Style";
-import { Player } from "../objects/song";
-import { prefix } from "../config";
+import { RichEmbed, Collection } from 'discord.js';
+import { prefix } from '../config';
+import { Command } from '../objects/command';
+import { Player } from '../objects/playerOld';
+import { embedColor, QuickEmbed } from '../util/Style';
 
-const subcmd: Command[] = [
+const subcmd: Array<Command> = [
   {
     name: "stop",
     aliases: ["quit", "end", "leave"],
-    execute() {
-      player.Stop();
+    execute(message, args) {
+      const guildId = message.guild.id
+      let player = players.get(guildId)
+
+      if (!player) {
+        players.set(guildId, new Player())
+        player = players.get(guildId)
+      }
+
+      player.Stop()
     }
   },
   {
     name: "skip",
     aliases: ["next", "fs"],
-    execute() {
-      player.Skip();
+    execute(message, args) {
+      const guildId = message.guild.id
+      let player = players.get(guildId)
+
+      if (!player) {
+        players.set(guildId, new Player())
+        player = players.get(guildId)
+      }
+
+      player.Skip()
     }
   },
   {
     name: "remove",
     aliases: ["rem", "cancel"],
     execute(message, args: string[]) {
+      const guildId = message.guild.id
+      let player = players.get(guildId)
+
+      if (!player) {
+        players.set(guildId, new Player())
+        player = players.get(guildId)
+      }
+
       if (args) {
-        let pos = args.shift();
-        if (Number(pos)) player.RemoveSong(Number(pos));
+        let pos = args.shift()
+        if (Number(pos)) player.RemoveSong(Number(pos))
       }
     }
   },
   {
     name: "list",
     aliases: ["q", "ls"],
-    execute() {
-      player.ListQueue();
+    execute(message, args) {
+      const guildId = message.guild.id
+      let player = players.get(guildId)
+
+      if (!player) {
+        players.set(guildId, new Player())
+        player = players.get(guildId)
+      }
+
+      player.ListQueue(message)
     }
   },
   {
     name: "current",
     aliases: ["np", "c"],
     execute(message, args) {
-      const currentSong = player.queue.currentSong;
-      if (!currentSong) return QuickEmbed(`No song currently playing`);
+      const guildId = message.guild.id
+      let player = players.get(guildId)
+
+      if (!player) {
+        players.set(guildId, new Player())
+        player = players.get(guildId)
+      }
+
+      const currentSong = player.queue.currentSong
+      if (!currentSong) return QuickEmbed(`No song currently playing`)
 
       let embed = new RichEmbed()
         .setTitle(`currently playing **${currentSong.title}**`)
         .setDescription(currentSong.duration.duration)
-        .setColor(embedColor);
+        .setColor(embedColor)
 
-      message.channel.send(embed);
+      message.channel.send(embed)
     }
-  }
-  // {
-  //   name: "volume increase",
-  //   aliases: ["+", "inc"],
-  //   wip: true,
-  //   execute(message, args) {
-  //     const amount = args.shift();
-  //   }
-  // }
-];
 
-export var player = new Player();
+    // {
+    //   name: "volume increase",
+    //   aliases: ["+", "inc"],
+    //   wip: true,
+    //   execute(message, args) {
+    //     const amount = args.shift();
+    //   }
+    // }
+  }
+]
+
+
+const players: Collection<string, Player> = new Collection()
+
 export const command: Command = {
   name: "music",
   description: "Plays music",
@@ -71,12 +114,31 @@ export const command: Command = {
   subCmd: subcmd,
 
   execute(message, args) {
-    let query = args.join();
-    if (query === "") return QuickEmbed(`${prefix}${this.usage}`);
-    player.AddSong(query, message);
-  }
-};
+    let query = args.join()
+    if (query === "") return QuickEmbed(`${prefix}${this.usage}`)
 
-export function playerInit() {
-  player = new Player();
+    const guildId = message.guild.id
+
+    let player = players.get(guildId)
+
+    if (!player) {
+      players.set(guildId, new Player())
+      player = players.get(guildId)
+    }
+
+    player.AddSong(query, message)
+  }
 }
+
+export function getPlayer(guildId: string) {
+  let player = players.get(guildId)
+
+  if (!player) {
+    players.set(guildId, new Player())
+    player = players.get(guildId)
+  }
+
+  return player
+}
+
+Command.init(command)

@@ -1,9 +1,10 @@
 {
-  "name": "mikaela-rewrite",
-  "version": "1.1.0",
+  "name": "mikaela",
+  "version": "2.0.0",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "node . -dev"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,10 +16,9 @@
     "libsodium-wrappers": "^0.7.3",
     "mongoose": "^5.6.9",
     "ms": "^2.1.2",
-    "node-opus": "^0.2.7",
+    "node-opus": "^0.3.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "winston": "^3.2.1",
     "ytdl-core": "^0.29.5"
   },
   "devDependencies": {

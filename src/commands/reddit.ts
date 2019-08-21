@@ -1,10 +1,10 @@
-import { Collection } from "discord.js";
-import { Command } from "../objects/command";
-import { Reddit } from "../util/Api";
-import { CommandUtil } from "../util/CommandUtil";
-import { getEmoji, sweat } from "../util/Emoji";
-import { Send } from "../util/MessageHandler";
-import { QuickEmbed } from "../util/Style";
+import { Collection } from "discord.js"
+import { Command, Perms } from "../objects/command"
+import { Reddit } from "../util/Api"
+import { CommandUtil } from "../util/CommandUtil"
+import { sweat } from "../util/Emoji"
+import { Send } from "../util/MessageHandler"
+import { QuickEmbed } from "../util/Style"
 
 const Flags = [
   {
@@ -21,8 +21,14 @@ const Flags = [
     name: "amount",
     aliases: ["n"],
     description: "Amount of posts"
+  },
+  {
+    name: "force",
+    aliases: ["f"],
+    description: "Force post",
+    perm: Perms.admin
   }
-];
+]
 
 const command: Command = {
   name: "reddit",
@@ -33,33 +39,38 @@ const command: Command = {
   flags: Flags,
 
   async execute(message, args) {
-    const flagsFound: Collection<string, string> = CommandUtil.GetArgs(args, Flags, true);
-    let subreddit = args.join();
+    const flagsFound: Collection<string, string> = CommandUtil.GetArgs(args, Flags, true)
+    let subreddit = args.join()
 
-    let limit = Number(flagsFound.get("amount")) || 1;
-    let time = flagsFound.get("time") || "all";
-    let sort = flagsFound.get("sort") || "top";
+    let limit = Number(flagsFound.get("amount")) || 1
+    let time = flagsFound.get("time") || "all"
+    let sort = flagsFound.get("sort") || "top"
+    let force =
+      (flagsFound.get("force") && CommandUtil.HasPerms(message.member.id, Perms.admin)) || false
 
-    if (!subreddit) return QuickEmbed(`no subreddit given`);
-    if (limit > 10) limit = 10;
+    if (force) console.log(`Force called by user ${message.member.user.tag}`)
 
-    message.channel.startTyping();
-    const posts = await Reddit.Get(subreddit, sort, time, limit);
-    message.channel.stopTyping(true);
+    if (!subreddit) return QuickEmbed(`no subreddit given`)
+    if (limit > 10) limit = 10
 
-    let msg: any = [];
-    if (posts === undefined) return QuickEmbed(`subreddit not found`);
+    message.channel.startTyping()
+    const posts = await Reddit.Get(subreddit, sort, time, limit)
+    message.channel.stopTyping(true)
 
-    msg.push(`**Subreddit** *https://www.reddit.com/r/${posts.posts[0].subreddit}*\n`);
+    let msg: any = []
+    if (posts === undefined) return QuickEmbed(`subreddit not found`)
 
-    if (message.channel.nsfw === false && posts.nsfw) return QuickEmbed(`This is not a **NSFW** channel.  ${sweat}`);
+    msg.push(`**Subreddit** *https://www.reddit.com/r/${posts.posts[0].subreddit}*\n`)
+
+    if (message.channel.nsfw === false && posts.nsfw && !force)
+      return QuickEmbed(`This is not a **NSFW** channel.  ${sweat}`)
 
     posts.posts.map(p => {
-      msg.push(`**${p.title}** *(${p.ups} upvotes)*  ${p.url}`);
-    });
+      msg.push(`**${p.title}** *(${p.ups} upvotes)*  ${p.url}`)
+    })
 
-    Send(msg.join("\n"));
+    Send(msg.join("\n"))
   }
-};
+}
 
-module.exports = { command };
+module.exports = { command }
