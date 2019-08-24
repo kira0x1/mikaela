@@ -6,14 +6,13 @@ import { initUserSongs } from "./dbFavorites";
 
 export var conn: Connection | undefined = undefined;
 
-init();
-
 async function init() {
   conn = await createConnection(dbLogin, {
     useNewUrlParser: true,
-    useCreateIndex: true,
     keepAlive: true
   });
+
+  await console.log(`connected to mongodb`);
 
   await initUsers();
   await initUserSongs();

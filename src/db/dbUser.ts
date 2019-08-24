@@ -37,9 +37,7 @@ export async function initUsers() {
 
 export async function FindOrCreate(user: IUser) {
   let userFound = users.get(user.id);
-
   if (!userFound) await CreateUser(user.tag, user.id, user.nickname);
-
   return users.get(user.id);
 }
 

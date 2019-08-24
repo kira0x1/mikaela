@@ -1,5 +1,5 @@
 import { Message, MessageOptions } from "discord.js";
-import { admin, prefix } from "../config";
+import { admins, prefix } from "../config";
 import { CommandUtil } from "./CommandUtil";
 import { darken, QuickEmbed } from "./Style";
 
@@ -35,7 +35,7 @@ export function OnMessage(message: Message) {
   if (command.perms) {
     command.perms.map(perm => {
       if (perm === "admin") {
-        if (message.author.id !== admin[0]) {
+        if (message.author.id !== admins[0]) {
           hasPerms = false;
         }
       }

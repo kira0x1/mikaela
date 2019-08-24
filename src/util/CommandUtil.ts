@@ -1,6 +1,5 @@
 import { Collection } from "discord.js";
 import { readdirSync } from "fs";
-import { createLogger, format, transports } from "winston";
 import { flagPrefix } from "../config";
 import { Command, Flag } from "../objects/command";
 import { playerInit } from "../commands/music";
@@ -60,16 +59,16 @@ export class CommandUtil {
   }
 }
 
-const logger = createLogger({
-  level: "info",
-  format: format.combine(format.errors({ stack: true }), format.splat(), format.json()),
-  transports: [
-    new transports.Console({
-      format: format.combine(format.colorize(), format.simple())
-    })
-  ]
-});
+// const logger = createLogger({
+// level: "info",
+// format: format.combine(format.errors({ stack: true }), format.splat(), format.json()),
+// transports: [
+// new transports.Console({
+// format: format.combine(format.colorize(), format.simple())
+// })
+// ]
+// });
 
-export function log(content: string) {
-  logger.info(content);
-}
+// export function log(content: string) {
+// logger.info(content);
+// }

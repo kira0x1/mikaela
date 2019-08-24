@@ -1,28 +1,28 @@
 {
-  "name": "mikaela-rewrite",
-  "version": "1.1.0",
+  "name": "mikaela",
+  "version": "1.0.0",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "node . -dev",
+    "postinstall": "Mikaela finished installing :3"
+  },
+  "engines": {
+    "node": "11.15.0"
   },
   "license": "MIT",
   "dependencies": {
     "@discordjs/uws": "^10.149.0",
     "bufferutil": "^4.0.0",
-    "chalk": "^2.4.2",
     "discord.js": "^11.5.1",
-    "erlpack": "github:discordapp/erlpack",
-    "libsodium-wrappers": "^0.7.3",
     "mongoose": "^5.6.9",
     "ms": "^2.1.2",
     "node-opus": "^0.2.7",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "winston": "^3.2.1",
     "ytdl-core": "^0.29.5"
   },
   "devDependencies": {
-    "@types/chalk": "^2.2.0",
     "@types/mongoose": "^5.5.12",
     "@types/node": "^12.7.2",
     "@types/request-promise": "^4.1.44"
