@@ -1,4 +1,10 @@
-import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
+import {
+  Message,
+  RichEmbed,
+  StreamDispatcher,
+  VoiceChannel,
+  VoiceConnection
+} from "discord.js";
 import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
 import { GetMessage } from "../util/MessageHandler";
@@ -88,12 +94,11 @@ export class Player {
     //Check if is in voice, if not join
     if (!this.inVoice && message) await this.JoinVoice(message);
 
-    //Check if in voice and has connection
-    if (!this.inVoice || !this.connection) return console.error(`connection error while trying to play music`);
-
     if (this.queue.currentSong !== undefined) {
       this.isPlaying = true;
-      this.stream = await this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }));
+      this.stream = await this.connection.playStream(
+        ytdl(this.queue.currentSong.url, { filter: "audioonly" })
+      );
       this.stream.on("end", reason => this.OnSongEnd(reason));
     } else {
       console.error(`no song left to play`);
@@ -106,14 +111,17 @@ export class Player {
   }
 
   public async ListQueue() {
-    if (this.queue.songs.length === 0 && !this.queue.currentSong) return QuickEmbed(`Queue empty...`);
+    if (this.queue.songs.length === 0 && !this.queue.currentSong)
+      return QuickEmbed(`Queue empty...`);
 
     let embed = new RichEmbed()
       .setTitle(`Playing: ${this.queue.currentSong.title}`)
       .setDescription(this.queue.currentSong.duration.duration)
       .setColor(embedColor);
 
-    this.queue.songs.map((song, pos) => embed.addField(`${pos + 1}\n${song.title}`, song.url));
+    this.queue.songs.map((song, pos) =>
+      embed.addField(`${pos + 1}\n${song.title}`, song.url)
+    );
     GetMessage().channel.send(embed);
   }
 

@@ -1,24 +1,32 @@
 import { Client } from "discord.js";
-import { token } from "./config";
-import { init as initDb } from "./db/dbSetup";
+import { createConnection } from "mongoose";
+import { dbLogin, token } from "./config";
 import { Init as cmdInit } from "./util/CommandUtil";
 import { init as emojiInit } from "./util/Emoji";
 import { OnMessage } from "./util/MessageHandler";
+import { debugUsers, initUsers } from "./db/dbUser";
+import { initUserSongs } from "./db/dbFavorites";
+import { dbinit } from "./db/dbSetup";
+
 const client = new Client();
 
 client.once("ready", () => {
-  console.log(`${client.user.username} online :3`);
   cmdInit();
   emojiInit(client);
+  console.log(`${client.user.username} online!`);
 });
 
-client.on("message", message => {
+client.on("message", async message => {
   OnMessage(message);
 });
 
-async function login() {
-  await initDb();
+async function init() {
+  console.log(`connecting to db`);
+  await dbinit();
+  console.log(`connection done`);
+
   client.login(token);
 }
 
-login();
+init();
+// client.login(token);

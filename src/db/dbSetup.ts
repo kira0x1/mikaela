@@ -7,6 +7,7 @@ import { initUserSongs } from "./dbFavorites";
 export var conn: Connection | undefined = undefined;
 
 async function init() {
+  console.log(`dblogin: ${dbLogin}`);
   conn = await createConnection(dbLogin, {
     useNewUrlParser: true,
     keepAlive: true
@@ -19,4 +20,4 @@ async function init() {
   await initSongs();
 }
 
-export { init };
+export { init as dbinit };

@@ -3,15 +3,16 @@ import { readdirSync } from "fs";
 import { flagPrefix } from "../config";
 import { Command, Flag } from "../objects/command";
 import { playerInit } from "../commands/music";
+import path from "path";
 
 const commands: Array<Command> = [];
 
 export function Init() {
   playerInit();
-  readdirSync("./dist/commands")
+  readdirSync(path.join(__dirname, "..", "commands"))
     .filter(file => file.endsWith("js"))
     .forEach(file => {
-      const cmd = require(`../commands/${file}`);
+      const cmd = require(path.join(__dirname, "..", "commands", file));
       commands.push(cmd.command);
     });
 }
@@ -19,12 +20,18 @@ export function Init() {
 export class CommandUtil {
   public static GetCommand(name: string): Command | undefined {
     //Look for command
-    const cmd = commands.find(cmd => cmd.name === name || (cmd.aliases && cmd.aliases.includes(name)));
+    const cmd = commands.find(
+      cmd => cmd.name === name || (cmd.aliases && cmd.aliases.includes(name))
+    );
     if (cmd) return cmd;
     //If no command found, then Check subcommands
     let subCmd = undefined;
     commands.find(c => {
-      if (c.subCmd) subCmd = c.subCmd.find(subC => subC.name === name || (subC.aliases && subC.aliases.includes(name)));
+      if (c.subCmd)
+        subCmd = c.subCmd.find(
+          subC =>
+            subC.name === name || (subC.aliases && subC.aliases.includes(name))
+        );
     });
 
     //Return subcommand
@@ -36,10 +43,16 @@ export class CommandUtil {
   }
 
   public static FindFlag(name: string, flags: Array<Flag>): Flag | undefined {
-    return flags.find(f => f.name === name || (f.aliases && f.aliases.includes(name)));
+    return flags.find(
+      f => f.name === name || (f.aliases && f.aliases.includes(name))
+    );
   }
 
-  public static GetArgs(args: Array<string>, flags: Array<Flag>, strip?: boolean | false) {
+  public static GetArgs(
+    args: Array<string>,
+    flags: Array<Flag>,
+    strip?: boolean | false
+  ) {
     let flagsFound: Collection<string, string> = new Collection();
 
     args.map((arg, pos) => {

@@ -47,12 +47,19 @@ export async function AddUserSong(user: IUser, song: ISong) {
     }
   }
 
-  QuickEmbed(`**${user.tag}** Added song ***${song.title}*** to their favorites`);
+  QuickEmbed(
+    `**${user.tag}** Added song ***${song.title}*** to their favorites`
+  );
   var userSongsModel = await conn.model("userSongs", UserSongSchema);
   users.get(user.id).AddSongToFavorites(song);
   userSongsModel.create({
     userId: user.id,
-    song: { id: song.id, title: song.title, url: song.url, duration: song.duration }
+    song: {
+      id: song.id,
+      title: song.title,
+      url: song.url,
+      duration: song.duration
+    }
   });
 }
 

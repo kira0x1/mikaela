@@ -51,14 +51,6 @@ const subcmd: Command[] = [
       message.channel.send(embed);
     }
   }
-  // {
-  //   name: "volume increase",
-  //   aliases: ["+", "inc"],
-  //   wip: true,
-  //   execute(message, args) {
-  //     const amount = args.shift();
-  //   }
-  // }
 ];
 
 export var player = new Player();
