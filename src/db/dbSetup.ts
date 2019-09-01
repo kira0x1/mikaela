@@ -1,15 +1,15 @@
 import { Connection, createConnection } from "mongoose";
 import { dbLogin } from "../config";
+import { initUserSongs } from "./dbFavorites";
 import { initSongs } from "./dbSong";
 import { initUsers } from "./dbUser";
-import { initUserSongs } from "./dbFavorites";
 
 export var conn: Connection | undefined = undefined;
 
 async function init() {
-  console.log(`dblogin: ${dbLogin}`);
   conn = await createConnection(dbLogin, {
     useNewUrlParser: true,
+    useCreateIndex: true,
     keepAlive: true
   });
 
