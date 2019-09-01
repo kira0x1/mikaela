@@ -5,3 +5,4 @@ dist/
 src/config.ts
 *.log
 ecosystem.config.js
+out/
