@@ -1,5 +1,6 @@
 node_modules/
 dist/
+**/config.*
 **/config.json
 src/config.ts
 *.log
