@@ -97,6 +97,7 @@ export class Player {
     }
   }
 
+  //Skip song
   public async Skip() {
     if (this.stream) this.stream.end();
     else console.log(`Tried to skip when no stream exists`);
