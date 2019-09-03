@@ -80,7 +80,7 @@ exports.command = {
                 case "play":
                     if (!args || (args && args.length < 1))
                         return Style_1.QuickEmbed("no arguments given");
-                    Play(args);
+                    Play(message, args);
                     break;
                 case "remove":
                     if (!args || (args && args.length < 1))
@@ -100,7 +100,7 @@ function Remove(args) {
         return Style_1.QuickEmbed("invalid song position");
     dbFavorites_1.RemoveSong(MessageHandler_1.GetMessage().author.id, songIndex);
 }
-function Play(args) {
+function Play(message, args) {
     return __awaiter(this, void 0, void 0, function () {
         var songIndex, user, usersMentioned, userName_1, user_1, userResult, fav, song;
         return __generator(this, function (_a) {
@@ -263,9 +263,7 @@ function ListFavorites(args) {
                         }
                     }
                     currentPage = 0;
-                    if (pages.get(currentPage) === undefined ||
-                        pages === undefined ||
-                        currentPage === undefined)
+                    if (pages.get(currentPage) === undefined || pages === undefined || currentPage === undefined)
                         return [2 /*return*/];
                     embed
                         .setThumbnail(target.avatarURL)
@@ -273,9 +271,7 @@ function ListFavorites(args) {
                         .setColor(Style_1.embedColor);
                     pages
                         .get(currentPage)
-                        .map(function (s, pos) {
-                        return embed.addField("**" + (pos + 1) + "\t" + s.title + "**", "Duration: " + s.duration.duration);
-                    });
+                        .map(function (s, pos) { return embed.addField("**" + (pos + 1) + "\t" + s.title + "**", "Duration: " + s.duration.duration); });
                     return [4 /*yield*/, MessageHandler_1.GetMessage().channel.send(embed)];
                 case 2:
                     msgTemp = _a.sent();
@@ -288,7 +284,7 @@ function ListFavorites(args) {
                         return [2 /*return*/, MessageHandler_1.GetMessage().channel.stopTyping(true)];
                     msg.react("⬅").then(function () { return msg.react("➡"); });
                     filter = function (reaction, user) {
-                        return ((reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot);
+                        return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
                     };
                     collector = msg.createReactionCollector(filter, { time: ms("15m") });
                     collector.on("collect", function (r) { return __awaiter(_this, void 0, void 0, function () {
