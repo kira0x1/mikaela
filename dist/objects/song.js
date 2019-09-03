@@ -40,6 +40,7 @@ var dbSong_1 = require("../db/dbSong");
 var Api_1 = require("../util/Api");
 var Emoji_1 = require("../util/Emoji");
 var Style_1 = require("../util/Style");
+var MessageHandler_1 = require("../util/MessageHandler");
 var ytdl = require("ytdl-core");
 //Get song by url
 function GetSong(url) {
@@ -147,6 +148,8 @@ var Player = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        if (!message)
+                            console.error("Message was not set");
                         if (!(!this.inVoice && message)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.JoinVoice(message)];
                     case 1:
@@ -204,7 +207,7 @@ var Player = /** @class */ (function () {
                 this.isPlaying = false;
                 song = this.queue.NextSong();
                 if (song)
-                    return [2 /*return*/, this.Play(undefined)];
+                    return [2 /*return*/, this.Play(MessageHandler_1.GetMessage())];
                 else if (!song)
                     this.LeaveVoice();
                 return [2 /*return*/];
@@ -213,11 +216,15 @@ var Player = /** @class */ (function () {
     };
     Player.prototype.JoinVoice = function (message) {
         return __awaiter(this, void 0, void 0, function () {
+            var _a;
             var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        this.voiceChannel = message.member.voiceChannel;
+                        _a = this;
+                        return [4 /*yield*/, message.member.voiceChannel];
+                    case 1:
+                        _a.voiceChannel = _b.sent();
                         if (!this.voiceChannel)
                             return [2 /*return*/, Style_1.QuickEmbed("You must be in a voice channel")];
                         if (!this.voiceChannel.joinable) {
@@ -233,8 +240,8 @@ var Player = /** @class */ (function () {
                                 .catch(function () {
                                 _this.inVoice = false;
                             })];
-                    case 1:
-                        _a.sent();
+                    case 2:
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });

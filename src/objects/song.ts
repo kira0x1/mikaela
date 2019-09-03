@@ -3,6 +3,7 @@ import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
 import { FavoritesHandler } from "../util/Emoji";
 import { embedColor, QuickEmbed } from "../util/Style";
+import { GetMessage } from "../util/MessageHandler";
 
 import ytdl = require("ytdl-core");
 
@@ -85,6 +86,7 @@ export class Player {
 
   //If no message given it will assume that the bot is already connected to voice
   public async Play(message: Message) {
+    if (!message) console.error(`Message was not set`);
     //Check if is in voice, if not join
     if (!this.inVoice && message) await this.JoinVoice(message);
 
@@ -118,12 +120,12 @@ export class Player {
   private async OnSongEnd(reason: string) {
     this.isPlaying = false;
     const song = this.queue.NextSong();
-    if (song) return this.Play(undefined);
+    if (song) return this.Play(GetMessage());
     else if (!song) this.LeaveVoice();
   }
 
   private async JoinVoice(message: Message) {
-    this.voiceChannel = message.member.voiceChannel;
+    this.voiceChannel = await message.member.voiceChannel;
     if (!this.voiceChannel) return QuickEmbed(`You must be in a voice channel`);
     if (!this.voiceChannel.joinable) {
       this.inVoice = false;

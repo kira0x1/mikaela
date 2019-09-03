@@ -57,39 +57,45 @@ exports.command = {
     flags: flags,
     cooldown: 3,
     execute: function (message, args) {
-        message.channel.startTyping();
-        var msg = args.shift() || "";
-        if (msg === "")
-            return;
-        var flag = flags.find(function (f) { return f.name === msg || (f.aliases && f.aliases.includes(msg)); });
-        if (flag) {
-            switch (flag.name) {
-                case "list":
-                    ListFavorites(args);
-                    break;
-                case "add":
-                    if (!args || (args && args.length === 0))
-                        return Style_1.QuickEmbed("no songs given");
-                    AddSong(args);
-                    break;
-                case "info":
-                    if (!args || (args && args.length < 1))
-                        return Style_1.QuickEmbed("no arguments given");
-                    Info(args);
-                    break;
-                case "play":
-                    if (!args || (args && args.length < 1))
-                        return Style_1.QuickEmbed("no arguments given");
-                    Play(message, args);
-                    break;
-                case "remove":
-                    if (!args || (args && args.length < 1))
-                        return Style_1.QuickEmbed("no arguments given");
-                    Remove(args);
-                    break;
-            }
-        }
-        message.channel.stopTyping(true);
+        return __awaiter(this, void 0, void 0, function () {
+            var msg, flag;
+            return __generator(this, function (_a) {
+                message.channel.startTyping();
+                msg = args.shift() || "";
+                if (msg === "")
+                    return [2 /*return*/];
+                flag = flags.find(function (f) { return f.name === msg || (f.aliases && f.aliases.includes(msg)); });
+                if (flag) {
+                    switch (flag.name) {
+                        case "list":
+                            ListFavorites(args);
+                            break;
+                        case "add":
+                            if (!args || (args && args.length === 0))
+                                return [2 /*return*/, Style_1.QuickEmbed("no songs given")];
+                            AddSong(args);
+                            break;
+                        case "info":
+                            if (!args || (args && args.length < 1))
+                                return [2 /*return*/, Style_1.QuickEmbed("no arguments given")];
+                            Info(args);
+                            break;
+                        case "play":
+                            if (!args || (args && args.length < 1))
+                                return [2 /*return*/, Style_1.QuickEmbed("no arguments given")];
+                            Play(message, args);
+                            break;
+                        case "remove":
+                            if (!args || (args && args.length < 1))
+                                return [2 /*return*/, Style_1.QuickEmbed("no arguments given")];
+                            Remove(args);
+                            break;
+                    }
+                }
+                message.channel.stopTyping(true);
+                return [2 /*return*/];
+            });
+        });
     }
 };
 function Remove(args) {
@@ -122,16 +128,16 @@ function Play(message, args) {
                     if (songIndex === undefined)
                         return [2 /*return*/, Style_1.QuickEmbed("no song index given")];
                     user = undefined;
-                    usersMentioned = MessageHandler_1.GetMessage().mentions.members;
+                    usersMentioned = message.mentions.members;
                     if (usersMentioned && usersMentioned.size > 0)
                         user = usersMentioned.first();
                     if (!!user) return [3 /*break*/, 2];
                     userName_1 = args.join();
-                    return [4 /*yield*/, MessageHandler_1.GetMessage().channel.guild.members.find(function (usr) { return usr.displayName.toLowerCase() === userName_1.toLowerCase(); })];
+                    return [4 /*yield*/, message.channel.guild.members.find(function (usr) { return usr.displayName.toLowerCase() === userName_1.toLowerCase(); })];
                 case 1:
                     user_1 = _a.sent();
                     if (!user_1) {
-                        user_1 = MessageHandler_1.GetMessage().author;
+                        user_1 = message.author;
                     }
                     userResult = dbUser_1.users.get(user_1.id);
                     if (!userResult)
@@ -141,7 +147,7 @@ function Play(message, args) {
                     if (fav.length < songIndex)
                         return [2 /*return*/, Style_1.QuickEmbed("song not found")];
                     song = fav[songIndex];
-                    music_1.player.AddSong(song, MessageHandler_1.GetMessage());
+                    music_1.player.AddSong(song, message);
                     _a.label = 2;
                 case 2: return [2 /*return*/];
             }

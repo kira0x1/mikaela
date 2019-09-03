@@ -25,7 +25,7 @@ export const command: Command = {
   flags: flags,
   cooldown: 3,
 
-  execute(message, args) {
+  async execute(message, args) {
     message.channel.startTyping();
     let msg: string = args.shift() || "";
     if (msg === "") return;
@@ -87,18 +87,18 @@ async function Play(message: Message, args: string[]) {
   if (songIndex === undefined) return QuickEmbed(`no song index given`);
 
   let user = undefined;
-  const usersMentioned = GetMessage().mentions.members;
+  const usersMentioned = message.mentions.members;
   if (usersMentioned && usersMentioned.size > 0) user = usersMentioned.first();
 
   if (!user) {
     let userName = args.join();
     // / message.guild.members.find(usr => usr.displayName.toLowerCase() === displayName.toLowerCase())
-    let user: GuildMember | User = await GetMessage().channel.guild.members.find(
+    let user: GuildMember | User = await message.channel.guild.members.find(
       usr => usr.displayName.toLowerCase() === userName.toLowerCase()
     );
 
     if (!user) {
-      user = GetMessage().author;
+      user = message.author;
     }
 
     const userResult = users.get(user.id);
@@ -109,7 +109,7 @@ async function Play(message: Message, args: string[]) {
     if (fav.length < songIndex) return QuickEmbed(`song not found`);
 
     const song = fav[songIndex];
-    player.AddSong(song, GetMessage());
+    player.AddSong(song, message);
   }
 }
 
