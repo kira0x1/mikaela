@@ -169,6 +169,7 @@ var Player = /** @class */ (function () {
             });
         });
     };
+    //Skip song
     Player.prototype.Skip = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -203,7 +204,7 @@ var Player = /** @class */ (function () {
                 this.isPlaying = false;
                 song = this.queue.NextSong();
                 if (song)
-                    return [2 /*return*/, this.Play()];
+                    return [2 /*return*/, this.Play(undefined)];
                 else if (!song)
                     this.LeaveVoice();
                 return [2 /*return*/];

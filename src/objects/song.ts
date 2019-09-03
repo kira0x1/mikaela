@@ -84,7 +84,7 @@ export class Player {
   }
 
   //If no message given it will assume that the bot is already connected to voice
-  public async Play(message?: Message) {
+  public async Play(message: Message) {
     //Check if is in voice, if not join
     if (!this.inVoice && message) await this.JoinVoice(message);
 
@@ -118,7 +118,7 @@ export class Player {
   private async OnSongEnd(reason: string) {
     this.isPlaying = false;
     const song = this.queue.NextSong();
-    if (song) return this.Play();
+    if (song) return this.Play(undefined);
     else if (!song) this.LeaveVoice();
   }
 
