@@ -1,11 +1,11 @@
 import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
 import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
-import { FavoritesHandler } from "../util/Emoji";
-import { embedColor, QuickEmbed } from "../util/Style";
 import { GetMessage } from "../util/MessageHandler";
+import { embedColor, QuickEmbed } from "../util/Style";
 
 import ytdl = require("ytdl-core");
+import { FavoritesHandler } from "../util/Emoji";
 
 //Get song by url
 export async function GetSong(url: string): Promise<ISong | void> {
@@ -73,7 +73,7 @@ export class Player {
       .setColor(embedColor);
 
     //Notify player their song is added
-    const msgTemp = await message.channel.send(embed);
+    const msgTemp = await GetMessage().channel.send(embed);
     let msg: undefined | Message = undefined;
 
     if (!Array.isArray(msgTemp)) msg = msgTemp;
@@ -84,9 +84,7 @@ export class Player {
     if (!this.isPlaying) this.Play(message);
   }
 
-  //If no message given it will assume that the bot is already connected to voice
   public async Play(message: Message) {
-    if (!message) console.error(`Message was not set`);
     //Check if is in voice, if not join
     if (!this.inVoice && message) await this.JoinVoice(message);
 
@@ -99,13 +97,12 @@ export class Player {
     }
   }
 
-  //Skip song
-  public async Skip() {
+  public Skip() {
     if (this.stream) this.stream.end();
     else console.log(`Tried to skip when no stream exists`);
   }
 
-  public async ListQueue(message: Message) {
+  public async ListQueue() {
     if (this.queue.songs.length === 0 && !this.queue.currentSong) return QuickEmbed(`Queue empty...`);
 
     let embed = new RichEmbed()
@@ -114,7 +111,7 @@ export class Player {
       .setColor(embedColor);
 
     this.queue.songs.map((song, pos) => embed.addField(`${pos + 1}\n${song.title}`, song.url));
-    message.channel.send(embed);
+    GetMessage().channel.send(embed);
   }
 
   private async OnSongEnd(reason: string) {
@@ -125,7 +122,7 @@ export class Player {
   }
 
   private async JoinVoice(message: Message) {
-    this.voiceChannel = await message.member.voiceChannel;
+    this.voiceChannel = message.member.voiceChannel;
     if (!this.voiceChannel) return QuickEmbed(`You must be in a voice channel`);
     if (!this.voiceChannel.joinable) {
       this.inVoice = false;
