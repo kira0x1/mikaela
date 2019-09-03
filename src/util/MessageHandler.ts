@@ -9,11 +9,12 @@ export function Send(content?: any, options?: MessageOptions) {
   messageInstance.channel.send(content, options);
 }
 
+//TODO Remove MessageInstances
 export function GetMessage() {
   return messageInstance;
 }
 
-export function OnMessage(message: Message) {
+export async function OnMessage(message: Message) {
   if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type !== "text") return;
   let args = message.content.slice(prefix.length).split(/ +/);
   messageInstance = message;

@@ -1,4 +1,4 @@
-import { RichEmbed } from "discord.js";
+import { RichEmbed, Message } from "discord.js";
 import { Command } from "../objects/command";
 import { embedColor, QuickEmbed } from "../util/Style";
 import { Player } from "../objects/song";
@@ -8,21 +8,21 @@ const subcmd: Command[] = [
   {
     name: "stop",
     aliases: ["quit", "end", "leave"],
-    execute() {
+    async execute() {
       player.Stop();
     }
   },
   {
     name: "skip",
     aliases: ["next", "fs"],
-    execute() {
+    async execute() {
       player.Skip();
     }
   },
   {
     name: "remove",
     aliases: ["rem", "cancel"],
-    execute(message, args: string[]) {
+    async execute(message, args: string[]) {
       if (args) {
         let pos = args.shift();
         if (Number(pos)) player.RemoveSong(Number(pos));
@@ -32,14 +32,14 @@ const subcmd: Command[] = [
   {
     name: "list",
     aliases: ["q", "ls"],
-    execute() {
-      player.ListQueue();
+    async execute(message: Message) {
+      player.ListQueue(message);
     }
   },
   {
     name: "current",
     aliases: ["np", "c"],
-    execute(message, args) {
+    async execute(message, args) {
       const currentSong = player.queue.currentSong;
       if (!currentSong) return QuickEmbed(`No song currently playing`);
 
@@ -62,7 +62,7 @@ export const command: Command = {
   usage: "[Search | Link]",
   subCmd: subcmd,
 
-  execute(message, args) {
+  async execute(message, args) {
     let query = args.join();
     if (query === "") return QuickEmbed(`${prefix}${this.usage}`);
     player.AddSong(query, message);

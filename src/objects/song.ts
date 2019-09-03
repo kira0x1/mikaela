@@ -1,17 +1,10 @@
-import {
-  Message,
-  RichEmbed,
-  StreamDispatcher,
-  VoiceChannel,
-  VoiceConnection
-} from "discord.js";
+import { Message, RichEmbed, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
 import { ConvertDuration, ISong } from "../db/dbSong";
 import { Youtube } from "../util/Api";
-import { GetMessage } from "../util/MessageHandler";
+import { FavoritesHandler } from "../util/Emoji";
 import { embedColor, QuickEmbed } from "../util/Style";
 
 import ytdl = require("ytdl-core");
-import { FavoritesHandler } from "../util/Emoji";
 
 //Get song by url
 export async function GetSong(url: string): Promise<ISong | void> {
@@ -79,7 +72,7 @@ export class Player {
       .setColor(embedColor);
 
     //Notify player their song is added
-    const msgTemp = await GetMessage().channel.send(embed);
+    const msgTemp = await message.channel.send(embed);
     let msg: undefined | Message = undefined;
 
     if (!Array.isArray(msgTemp)) msg = msgTemp;
@@ -90,45 +83,41 @@ export class Player {
     if (!this.isPlaying) this.Play(message);
   }
 
-  public async Play(message: Message) {
+  //If no message given it will assume that the bot is already connected to voice
+  public async Play(message?: Message) {
     //Check if is in voice, if not join
     if (!this.inVoice && message) await this.JoinVoice(message);
 
     if (this.queue.currentSong !== undefined) {
       this.isPlaying = true;
-      this.stream = await this.connection.playStream(
-        ytdl(this.queue.currentSong.url, { filter: "audioonly" })
-      );
+      this.stream = await this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }));
       this.stream.on("end", reason => this.OnSongEnd(reason));
     } else {
       console.error(`no song left to play`);
     }
   }
 
-  public Skip() {
+  public async Skip() {
     if (this.stream) this.stream.end();
     else console.log(`Tried to skip when no stream exists`);
   }
 
-  public async ListQueue() {
-    if (this.queue.songs.length === 0 && !this.queue.currentSong)
-      return QuickEmbed(`Queue empty...`);
+  public async ListQueue(message: Message) {
+    if (this.queue.songs.length === 0 && !this.queue.currentSong) return QuickEmbed(`Queue empty...`);
 
     let embed = new RichEmbed()
       .setTitle(`Playing: ${this.queue.currentSong.title}`)
       .setDescription(this.queue.currentSong.duration.duration)
       .setColor(embedColor);
 
-    this.queue.songs.map((song, pos) =>
-      embed.addField(`${pos + 1}\n${song.title}`, song.url)
-    );
-    GetMessage().channel.send(embed);
+    this.queue.songs.map((song, pos) => embed.addField(`${pos + 1}\n${song.title}`, song.url));
+    message.channel.send(embed);
   }
 
   private async OnSongEnd(reason: string) {
     this.isPlaying = false;
     const song = this.queue.NextSong();
-    if (song) return this.Play(GetMessage());
+    if (song) return this.Play();
     else if (!song) this.LeaveVoice();
   }
 

@@ -25,10 +25,7 @@ export const command: Command = {
 
   //ANCHOR Execute
   async execute(message, args) {
-    const flagsFound: Collection<string, string> = await CommandUtil.GetArgs(
-      args,
-      flags
-    );
+    const flagsFound: Collection<string, string> = await CommandUtil.GetArgs(args, flags);
 
     let amount = 1;
     let force = false;
@@ -37,8 +34,7 @@ export const command: Command = {
     if (isNaN(Number(arg))) amount = 1;
     else amount = Number(arg);
 
-    if (!force && (amount < 1 || amount > 25))
-      return message.reply("`amount must be between 1 - 25`");
+    if (!force && (amount < 1 || amount > 25)) return message.reply("`amount must be between 1 - 25`");
     if (amount > 35) return message.reply(`\`Amount cant excede 35\``);
 
     amount++;
@@ -49,17 +45,11 @@ export const command: Command = {
 
       switch (flag) {
         case "me":
-          messages
-            .filter(m => m.author.id === message.author.id)
-            .map(m => purgable.push(m));
+          messages.filter(m => m.author.id === message.author.id).map(m => purgable.push(m));
           break;
         case "both":
           messages
-            .filter(
-              m =>
-                m.author.id === message.author.id ||
-                m.author.id === message.client.user.id
-            )
+            .filter(m => m.author.id === message.author.id || m.author.id === message.client.user.id)
             .map(m => purgable.push(m));
           break;
 
@@ -69,9 +59,7 @@ export const command: Command = {
       }
 
       if (!flag) {
-        messages
-          .filter(m => m.author.id === message.client.user.id)
-          .map(m => purgable.push(m));
+        messages.filter(m => m.author.id === message.client.user.id).map(m => purgable.push(m));
       }
 
       if (!purgable.length) return;

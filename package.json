@@ -1,7 +1,7 @@
 {
   "name": "mikaela",
   "version": "3.0.0",
-  "main": "out/main.js",
+  "main": "./out/main.js",
   "scripts": {
     "start": "node ."
   },

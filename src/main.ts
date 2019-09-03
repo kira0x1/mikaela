@@ -5,6 +5,8 @@ import { Init as cmdInit } from "./util/CommandUtil";
 import { init as emojiInit } from "./util/Emoji";
 import { OnMessage } from "./util/MessageHandler";
 
+process.on("unhandledRejection", error => console.error(`Uncaught Promise Rejection`, error));
+
 const client = new Client();
 
 client.once("ready", () => {
