@@ -43,8 +43,8 @@ export async function FindOrCreate(user: IUser) {
 
 //Find a user by their tag
 export async function FindUser(tag: string) {
-  return new Promise<IUser>(async function(resolve, reject) {
-    await UserModel.collection.findOne({ tag: tag }, function(err, usr) {
+  return new Promise<IUser>(async function (resolve, reject) {
+    await UserModel.collection.findOne({ tag: tag }, function (err, usr) {
       if (err || !usr) {
         return reject(undefined);
       }

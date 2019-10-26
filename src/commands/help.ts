@@ -9,28 +9,29 @@ export const command: Command = {
   aliases: ["h"],
   cooldown: 3,
 
-  execute(message, args) {
-    if (args.length === 0) HelpAll();
+  async execute(message, args) {
+    if (args.length === 0 || !args) HelpAll(message);
     else HelpCommand(message, args);
   }
 };
 
-function HelpAll() {
+function HelpAll(message: Message) {
   let fields: Array<{ title: string; content?: string; inline?: boolean }>;
   fields = CommandUtil.GetCommands().map(cmd => ({
     title: cmd.name,
     content: cmd.description + "\n \u200b",
     inline: false
   }));
-  ListEmbed("Commands", undefined, fields);
+  ListEmbed(message, "Commands", undefined, fields);
 }
+
 function HelpCommand(message: Message, args: string[]) {
   {
     const commandName = args.shift().toLowerCase();
     const command = CommandUtil.GetCommand(commandName);
 
     //Check if command is found
-    if (!command) return QuickEmbed(`Command not found`);
+    if (!command) return QuickEmbed(message, `Command not found`);
 
     //Create embed
     const embed = new RichEmbed().setColor(embedColor);
@@ -59,7 +60,11 @@ function insertFlags(embed: RichEmbed, children: Flag[] | Command[]) {
       if (flagIndex >= children.length) {
         embed.fields.push(createEmptyField(true));
       } else {
-        embed.fields.push(createField(children[flagIndex].name, children[flagIndex].aliases.join(", "), true));
+        let aliases = 'aliases: none'
+        if (children[flagIndex].aliases !== undefined)
+          aliases = children[flagIndex].aliases.join(", ")
+
+        embed.fields.push(createField(children[flagIndex].name, aliases, true));
       }
       flagIndex++;
     }

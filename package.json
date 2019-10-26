@@ -14,10 +14,12 @@
     "node-opus": "^0.3.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "spotify-web-api-node": "^4.0.0",
     "ytdl-core": "^0.29.5"
   },
   "devDependencies": {
     "@types/mongoose": "^5.5.16",
-    "@types/node": "^12.7.3"
+    "@types/node": "^12.7.3",
+    "@types/spotify-web-api-node": "^4.0.1"
   }
 }

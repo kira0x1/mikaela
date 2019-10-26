@@ -1,51 +1,51 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var discord_js_1 = require("discord.js");
-var Style_1 = require("../util/Style");
-var song_1 = require("../objects/song");
-var config_1 = require("../config");
-var subcmd = [
+const discord_js_1 = require("discord.js");
+const Style_1 = require("../util/Style");
+const song_1 = require("../objects/song");
+const config_1 = require("../config");
+const subcmd = [
     {
         name: "stop",
         aliases: ["quit", "end", "leave"],
-        execute: function () {
+        execute() {
             exports.player.Stop();
         }
     },
     {
         name: "skip",
         aliases: ["next", "fs"],
-        execute: function () {
-            exports.player.Skip();
+        execute(message) {
+            exports.player.Skip(message);
         }
     },
     {
         name: "remove",
         aliases: ["rem", "cancel"],
-        execute: function (message, args) {
+        execute(message, args) {
             if (args) {
-                var pos = args.shift();
+                let pos = args.shift();
                 if (Number(pos))
-                    exports.player.RemoveSong(Number(pos));
+                    exports.player.RemoveSong(message, Number(pos));
             }
         }
     },
     {
         name: "list",
         aliases: ["q", "ls"],
-        execute: function () {
-            exports.player.ListQueue();
+        execute(message, args) {
+            exports.player.ListQueue(message);
         }
     },
     {
         name: "current",
         aliases: ["np", "c"],
-        execute: function (message, args) {
-            var currentSong = exports.player.queue.currentSong;
+        execute(message, args) {
+            const currentSong = exports.player.queue.currentSong;
             if (!currentSong)
-                return Style_1.QuickEmbed("No song currently playing");
-            var embed = new discord_js_1.RichEmbed()
-                .setTitle("currently playing **" + currentSong.title + "**")
+                return Style_1.QuickEmbed(message, `No song currently playing`);
+            let embed = new discord_js_1.RichEmbed()
+                .setTitle(`currently playing **${currentSong.title}**`)
                 .setDescription(currentSong.duration.duration)
                 .setColor(Style_1.embedColor);
             message.channel.send(embed);
@@ -60,10 +60,10 @@ exports.command = {
     args: false,
     usage: "[Search | Link]",
     subCmd: subcmd,
-    execute: function (message, args) {
-        var query = args.join();
+    execute(message, args) {
+        let query = args.join();
         if (query === "")
-            return Style_1.QuickEmbed("" + config_1.prefix + this.usage);
+            return Style_1.QuickEmbed(message, `${config_1.prefix}${this.usage}`);
         exports.player.AddSong(query, message);
     }
 };

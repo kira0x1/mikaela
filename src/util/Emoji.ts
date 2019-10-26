@@ -30,7 +30,7 @@ export async function FavoritesHandler(message: Message, emojiName: string, song
 
   collector.on("collect", async (reaction, reactionCollector) => {
     const user = reaction.users.last();
-    AddUserSong({ tag: user.tag, id: user.id, nickname: user.username }, song);
+    AddUserSong(message, { tag: user.tag, id: user.id, nickname: user.username }, song);
   });
 
   collector.on("end", collected => {

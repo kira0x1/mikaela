@@ -1,7 +1,5 @@
-import { StreamDispatcher, VoiceConnection, Message } from "discord.js";
-import { GetMessage } from "../util/MessageHandler";
+import { Message, StreamDispatcher, VoiceConnection } from "discord.js";
 import { QuickEmbed } from "../util/Style";
-import { connection } from "mongoose";
 
 let volume = 5;
 
@@ -17,7 +15,7 @@ class Player {
     changeVolume(amount);
   }
 
-  Play() {}
+  Play() { }
 
   Join(message: Message) {
     joinVoice(message);
@@ -36,8 +34,8 @@ function changeVolume(amount: number) {
 
 function joinVoice(message: Message) {
   const vc = message.member.voiceChannel;
-  if (!vc) QuickEmbed(`you're not in a voice channel`);
-  else if (!vc.joinable) QuickEmbed(`Cant join this voice channel`);
+  if (!vc) QuickEmbed(message, `you're not in a voice channel`);
+  else if (!vc.joinable) QuickEmbed(message, `Cant join this voice channel`);
   else {
     message.member.voiceChannel.join().then(connection => {
       conn = connection;

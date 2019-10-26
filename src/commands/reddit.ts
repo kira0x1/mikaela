@@ -40,7 +40,7 @@ const command: Command = {
     let time = flagsFound.get("time") || "all";
     let sort = flagsFound.get("sort") || "top";
 
-    if (!subreddit) return QuickEmbed(`no subreddit given`);
+    if (!subreddit) return QuickEmbed(message, `no subreddit given`);
     if (limit > 10) limit = 10;
 
     message.channel.startTyping();
@@ -48,11 +48,11 @@ const command: Command = {
     message.channel.stopTyping(true);
 
     let msg: any = [];
-    if (posts === undefined) return QuickEmbed(`subreddit not found`);
+    if (posts === undefined) return QuickEmbed(message, `subreddit not found`);
 
     msg.push(`**Subreddit** *https://www.reddit.com/r/${posts.posts[0].subreddit}*\n`);
 
-    if (message.channel.nsfw === false && posts.nsfw) return QuickEmbed(`This is not a **NSFW** channel.  ${sweat}`);
+    if (message.channel.nsfw === false && posts.nsfw) return QuickEmbed(message, `This is not a **NSFW** channel.  ${sweat}`);
 
     posts.posts.map(p => {
       msg.push(`**${p.title}** *(${p.ups} upvotes)*  ${p.url}`);

@@ -3,32 +3,24 @@ import { admins, prefix } from "../config";
 import { CommandUtil } from "./CommandUtil";
 import { darken, QuickEmbed } from "./Style";
 
-let messageInstance: Message;
-
-export function Send(content?: any, options?: MessageOptions) {
-  messageInstance.channel.send(content, options);
-}
-
-//TODO Remove MessageInstances
-export function GetMessage() {
-  return messageInstance;
+export function Send(message: Message, content?: any, options?: MessageOptions) {
+  message.channel.send(content, options);
 }
 
 export async function OnMessage(message: Message) {
   if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type !== "text") return;
   let args = message.content.slice(prefix.length).split(/ +/);
-  messageInstance = message;
 
   //Command name
   let cname = (args.shift() || "none").toLowerCase();
   if (cname.startsWith(prefix) || cname === "none") return;
 
   const command = CommandUtil.GetCommand(cname);
-  if (command === undefined) return QuickEmbed(`Command **${cname}** not found`);
+  if (command === undefined) return QuickEmbed(message, `Command **${cname}** not found`);
 
+  // Check if args is required
   if (command.args && !args.length) {
-    // Check if args is required
-    return Send(darken(`${prefix}${command.name}`, command.usage || ""));
+    return Send(message, darken(`${prefix}${command.name}`, command.usage || ""));
   }
 
   let hasPerms = true;

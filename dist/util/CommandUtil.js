@@ -3,64 +3,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var discord_js_1 = require("discord.js");
-var fs_1 = require("fs");
-var config_1 = require("../config");
-var music_1 = require("../commands/music");
-var path_1 = __importDefault(require("path"));
-var commands = [];
+const discord_js_1 = require("discord.js");
+const fs_1 = require("fs");
+const config_1 = require("../config");
+const music_1 = require("../commands/music");
+const path_1 = __importDefault(require("path"));
+const commands = [];
 function Init() {
     music_1.playerInit();
     fs_1.readdirSync(path_1.default.join(__dirname, "..", "commands"))
-        .filter(function (file) { return file.endsWith("js"); })
-        .forEach(function (file) {
-        var cmd = require(path_1.default.join(__dirname, "..", "commands", file));
+        .filter(file => file.endsWith("js"))
+        .forEach(file => {
+        const cmd = require(path_1.default.join(__dirname, "..", "commands", file));
         commands.push(cmd.command);
     });
 }
 exports.Init = Init;
-var CommandUtil = /** @class */ (function () {
-    function CommandUtil() {
-    }
-    CommandUtil.GetCommand = function (name) {
+class CommandUtil {
+    static GetCommand(name) {
         //Look for command
-        var cmd = commands.find(function (cmd) { return cmd.name === name || (cmd.aliases && cmd.aliases.includes(name)); });
+        const cmd = commands.find(cmd => cmd.name === name || (cmd.aliases && cmd.aliases.includes(name)));
         if (cmd)
             return cmd;
         //If no command found, then Check subcommands
-        var subCmd = undefined;
-        commands.find(function (c) {
+        let subCmd = undefined;
+        commands.find(c => {
             if (c.subCmd)
-                subCmd = c.subCmd.find(function (subC) { return subC.name === name || (subC.aliases && subC.aliases.includes(name)); });
+                subCmd = c.subCmd.find(subC => subC.name === name || (subC.aliases && subC.aliases.includes(name)));
         });
         //Return subcommand
         return subCmd;
-    };
-    CommandUtil.GetCommands = function () {
+    }
+    static GetCommands() {
         return commands;
-    };
-    CommandUtil.FindFlag = function (name, flags) {
-        return flags.find(function (f) { return f.name === name || (f.aliases && f.aliases.includes(name)); });
-    };
-    CommandUtil.GetArgs = function (args, flags, strip) {
-        var _this = this;
-        var flagsFound = new discord_js_1.Collection();
-        args.map(function (arg, pos) {
+    }
+    static FindFlag(name, flags) {
+        return flags.find(f => f.name === name || (f.aliases && f.aliases.includes(name)));
+    }
+    static GetArgs(args, flags, strip) {
+        let flagsFound = new discord_js_1.Collection();
+        args.map((arg, pos) => {
             if (arg.startsWith(config_1.flagPrefix)) {
-                var flagName = args
+                let flagName = args
                     .splice(pos, 1)
                     .toString()
                     .slice(config_1.flagPrefix.length);
-                var flagArgs = strip ? args.splice(pos, 1).toString() : "";
-                var flag = _this.FindFlag(flagName, flags);
+                let flagArgs = strip ? args.splice(pos, 1).toString() : "";
+                const flag = this.FindFlag(flagName, flags);
                 if (flag)
                     flagsFound.set(flag.name, flagArgs);
             }
         });
         return flagsFound;
-    };
-    return CommandUtil;
-}());
+    }
+}
 exports.CommandUtil = CommandUtil;
 // const logger = createLogger({
 // level: "info",

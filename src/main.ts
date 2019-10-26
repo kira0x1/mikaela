@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Collection, GuildMember } from 'discord.js';
 import { token } from "./config";
 import { dbinit } from "./db/dbSetup";
 import { Init as cmdInit } from "./util/CommandUtil";
@@ -9,11 +9,12 @@ process.on("unhandledRejection", error => console.error(`Uncaught Promise Reject
 
 const client = new Client();
 
-client.once("ready", () => {
+client.on("ready", async () => {
   cmdInit();
   emojiInit(client);
   console.log(`${client.user.username} online!`);
 });
+
 
 client.on("message", async message => {
   OnMessage(message);
@@ -25,3 +26,4 @@ async function init() {
 }
 
 init();
+// client.login(token);

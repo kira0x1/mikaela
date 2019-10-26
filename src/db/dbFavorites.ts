@@ -3,6 +3,7 @@ import { QuickEmbed } from "../util/Style";
 import { conn } from "./dbSetup";
 import { ISong } from "./dbSong";
 import { FindOrCreate, IUser, users } from "./dbUser";
+import { Message } from "discord.js";
 
 export const UserSongSchema = new Schema({
   userId: { type: String, unique: false, required: true },
@@ -33,7 +34,7 @@ export async function FindSong(userId: string, songId: string) {
   return await users.get(userId).favorites.find(song => song.id === songId);
 }
 
-export async function AddUserSong(user: IUser, song: ISong) {
+export async function AddUserSong(message: Message, user: IUser, song: ISong) {
   //Make sure user exists
   await FindOrCreate(user);
   let usersSongs = await GetUserSongs(user.id);
@@ -42,12 +43,12 @@ export async function AddUserSong(user: IUser, song: ISong) {
     const songFound = await usersSongs.find(s => s.id === song.id);
 
     if (songFound) {
-      QuickEmbed(`you already have this song as a favorite`);
+      QuickEmbed(message, `you already have this song as a favorite`);
       return;
     }
   }
 
-  QuickEmbed(
+  QuickEmbed(message,
     `**${user.tag}** Added song ***${song.title}*** to their favorites`
   );
   var userSongsModel = await conn.model("userSongs", UserSongSchema);
@@ -63,12 +64,12 @@ export async function AddUserSong(user: IUser, song: ISong) {
   });
 }
 
-export async function RemoveSong(userId: string, songIndex: number) {
+export async function RemoveSong(message: Message, userId: string, songIndex: number) {
   var userSongsModel = await conn.model("userSongs", UserSongSchema);
   const user = users.get(userId);
-  if (!user) return QuickEmbed(`You have no favorites to remove`);
+  if (!user) return QuickEmbed(message, `You have no favorites to remove`);
   const song = user.favorites[songIndex];
-  if (!song) return QuickEmbed(`Couldnt find a song at that position`);
+  if (!song) return QuickEmbed(message, `Couldnt find a song at that position`);
 
   await userSongsModel.deleteOne({ userId: userId, songId: song.id });
   users.get(userId).favorites.splice(songIndex, 1);

@@ -1,27 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Style_1 = require("../util/Style");
-var volume = 5;
-var maxVolume = 7;
-var minVolume = 1;
+const Style_1 = require("../util/Style");
+let volume = 5;
+const maxVolume = 7;
+const minVolume = 1;
 var stream = undefined;
 var conn = undefined;
 var inVoice = false;
-var Player = /** @class */ (function () {
-    function Player() {
-    }
-    Player.prototype.ChangeVolume = function (amount) {
+class Player {
+    ChangeVolume(amount) {
         changeVolume(amount);
-    };
-    Player.prototype.Play = function () { };
-    Player.prototype.Join = function (message) {
+    }
+    Play() { }
+    Join(message) {
         joinVoice(message);
-    };
-    Player.prototype.Leave = function (message) {
+    }
+    Leave(message) {
         leaveVoice(message);
-    };
-    return Player;
-}());
+    }
+}
 function changeVolume(amount) {
     volume += amount;
     if (volume > maxVolume)
@@ -32,13 +29,13 @@ function changeVolume(amount) {
         stream.setVolume(volume);
 }
 function joinVoice(message) {
-    var vc = message.member.voiceChannel;
+    const vc = message.member.voiceChannel;
     if (!vc)
-        Style_1.QuickEmbed("you're not in a voice channel");
+        Style_1.QuickEmbed(message, `you're not in a voice channel`);
     else if (!vc.joinable)
-        Style_1.QuickEmbed("Cant join this voice channel");
+        Style_1.QuickEmbed(message, `Cant join this voice channel`);
     else {
-        message.member.voiceChannel.join().then(function (connection) {
+        message.member.voiceChannel.join().then(connection => {
             conn = connection;
             inVoice = true;
         });

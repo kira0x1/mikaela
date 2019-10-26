@@ -1,5 +1,4 @@
-import { RichEmbed } from "discord.js";
-import { GetMessage } from "../util/MessageHandler";
+import { RichEmbed, Message } from "discord.js";
 
 // export const embedColor = embedColor
 export const embedColor = 0xf70a51;
@@ -18,9 +17,9 @@ export function wrap(content: string[] | string, wrap: string): string {
     .join(" ");
 }
 
-export function QuickEmbed(content: string) {
+export function QuickEmbed(message: Message, content: string) {
   const embed = new RichEmbed().setTitle(content);
-  GetMessage().channel.send(embed);
+  message.channel.send(embed);
 }
 
 export function createEmptyField(inline?: boolean | false) {
@@ -28,6 +27,7 @@ export function createEmptyField(inline?: boolean | false) {
 }
 
 export function ListEmbed(
+  message: Message,
   title?: string,
   description?: string,
   fields?: Array<{
@@ -43,7 +43,7 @@ export function ListEmbed(
   if (description !== undefined) embed.setDescription(description);
   if (fields !== undefined) fields.map(field => embed.addField(field.title, field.content, field.inline));
 
-  GetMessage().channel.send(embed);
+  message.channel.send(embed);
 }
 export function createField(name: string | "\u200b", content?: string | "\u200b", inline?: boolean | false) {
   const field = { name: name, value: content, inline: inline };

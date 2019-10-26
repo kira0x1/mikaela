@@ -1,4 +1,4 @@
-import { RichEmbed } from "discord.js";
+import { RichEmbed, Message } from 'discord.js';
 import { Command } from "../objects/command";
 import { embedColor, QuickEmbed } from "../util/Style";
 import { Player } from "../objects/song";
@@ -15,8 +15,8 @@ const subcmd: Command[] = [
   {
     name: "skip",
     aliases: ["next", "fs"],
-    execute() {
-      player.Skip();
+    execute(message: Message) {
+      player.Skip(message);
     }
   },
   {
@@ -25,15 +25,15 @@ const subcmd: Command[] = [
     execute(message, args: string[]) {
       if (args) {
         let pos = args.shift();
-        if (Number(pos)) player.RemoveSong(Number(pos));
+        if (Number(pos)) player.RemoveSong(message, Number(pos));
       }
     }
   },
   {
     name: "list",
     aliases: ["q", "ls"],
-    execute() {
-      player.ListQueue();
+    execute(message, args) {
+      player.ListQueue(message);
     }
   },
   {
@@ -41,7 +41,7 @@ const subcmd: Command[] = [
     aliases: ["np", "c"],
     execute(message, args) {
       const currentSong = player.queue.currentSong;
-      if (!currentSong) return QuickEmbed(`No song currently playing`);
+      if (!currentSong) return QuickEmbed(message, `No song currently playing`);
 
       let embed = new RichEmbed()
         .setTitle(`currently playing **${currentSong.title}**`)
@@ -54,6 +54,7 @@ const subcmd: Command[] = [
 ];
 
 export var player = new Player();
+
 export const command: Command = {
   name: "music",
   description: "Plays music",
@@ -64,7 +65,7 @@ export const command: Command = {
 
   execute(message, args) {
     let query = args.join();
-    if (query === "") return QuickEmbed(`${prefix}${this.usage}`);
+    if (query === "") return QuickEmbed(message, `${prefix}${this.usage}`);
     player.AddSong(query, message);
   }
 };
