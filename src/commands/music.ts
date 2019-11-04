@@ -1,8 +1,8 @@
-import { RichEmbed, Message } from 'discord.js';
-import { Command } from "../objects/command";
-import { embedColor, QuickEmbed } from "../util/Style";
-import { Player } from "../objects/song";
+import { Message, RichEmbed } from 'discord.js';
 import { prefix } from "../config";
+import { Command } from "../objects/command";
+import { Player } from "../objects/song";
+import { embedColor, QuickEmbed } from "../util/Style";
 
 const subcmd: Command[] = [
   {

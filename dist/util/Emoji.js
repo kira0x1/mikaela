@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const dbFavorites_1 = require("../db/dbFavorites");
 const ms = require("ms");
-const reactionDuration = ms(`5m`);
+const reactionDuration = ms(`2h`);
 //Emojis in collection
 let emojis = new discord_js_1.Collection();
 exports.sweat = "😰";

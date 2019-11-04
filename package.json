@@ -8,6 +8,7 @@
   "author": "kira",
   "license": "MIT",
   "dependencies": {
+    "@types/chalk": "^2.2.0",
     "discord.js": "^11.5.1",
     "mongoose": "^5.6.11",
     "ms": "^2.1.2",

@@ -1,9 +1,9 @@
 import { Schema } from "mongoose";
-import { QuickEmbed } from "../util/Style";
+import { QuickEmbed, embedColor } from '../util/Style';
 import { conn } from "./dbSetup";
 import { ISong } from "./dbSong";
 import { FindOrCreate, IUser, users } from "./dbUser";
-import { Message } from "discord.js";
+import { Message, RichEmbed } from 'discord.js';
 
 export const UserSongSchema = new Schema({
   userId: { type: String, unique: false, required: true },
@@ -73,6 +73,13 @@ export async function RemoveSong(message: Message, userId: string, songIndex: nu
 
   await userSongsModel.deleteOne({ userId: userId, songId: song.id });
   users.get(userId).favorites.splice(songIndex, 1);
+
+  const embed = new RichEmbed()
+    .setTitle(`Deleted song: ${song.title} from your favorites`)
+    .setAuthor(`user: ${user.tag}`)
+    .setColor(embedColor)
+
+  message.channel.send(embed)
 }
 
 export async function initUserSongs() {

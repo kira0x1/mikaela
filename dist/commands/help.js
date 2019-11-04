@@ -57,7 +57,6 @@ function insertFlags(embed, children) {
     //Get amound of rows for flags
     const rows = Math.ceil(children.length / 3);
     let flagIndex = 0;
-    console.log(`about to enter for loop`);
     //Add command flags
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < 3; col++) {

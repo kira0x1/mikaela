@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 // export const embedColor = embedColor
-exports.embedColor = 0xf70a51;
+exports.embedColor = 0xcf274e;
 function darken(...content) {
     const tag = `\``;
     return wrap(content, tag);
@@ -18,7 +18,8 @@ function wrap(content, wrap) {
 }
 exports.wrap = wrap;
 function QuickEmbed(message, content) {
-    const embed = new discord_js_1.RichEmbed().setTitle(content);
+    const embed = new discord_js_1.RichEmbed().setTitle(content)
+        .setColor(exports.embedColor);
     message.channel.send(embed);
 }
 exports.QuickEmbed = QuickEmbed;

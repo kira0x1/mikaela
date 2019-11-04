@@ -43,6 +43,7 @@ class Player {
     constructor() {
         this.inVoice = false;
         this.isPlaying = false;
+        this.volume = 4;
         //Queue
         this.queue = new Queue();
     }
@@ -92,7 +93,8 @@ class Player {
                 yield this.JoinVoice(message);
             if (this.queue.currentSong !== undefined) {
                 this.isPlaying = true;
-                this.stream = yield this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }));
+                this.stream = yield this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }), { passes: 4 });
+                this.stream.setVolumeLogarithmic(this.volume / 5);
                 this.stream.on("end", reason => this.OnSongEnd(message, reason));
             }
             else {

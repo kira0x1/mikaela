@@ -3,7 +3,7 @@ import { ISong } from "../db/dbSong";
 import { AddUserSong } from "../db/dbFavorites";
 const ms = require("ms");
 
-const reactionDuration = ms(`5m`);
+const reactionDuration = ms(`2h`);
 
 //Emojis in collection
 let emojis: Collection<string, Emoji> = new Collection();

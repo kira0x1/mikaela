@@ -200,7 +200,6 @@ function Shuffle(message, args) {
                 }
             });
         }
-        console.log(`Looking for user: ${args.join(" ")}`);
         const target = yield getTarget(message, args.join(" "));
         if (!target)
             return Style_1.QuickEmbed(message, "User not found");
@@ -283,7 +282,7 @@ function ListFavorites(message, args) {
         const filter = (reaction, user) => {
             return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
         };
-        const collector = msg.createReactionCollector(filter, { time: ms("15m") });
+        const collector = msg.createReactionCollector(filter, { time: ms("2h") });
         collector.on("collect", (r) => __awaiter(this, void 0, void 0, function* () {
             if (r.emoji.name === "➡") {
                 currentPage++;

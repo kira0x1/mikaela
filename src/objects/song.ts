@@ -38,6 +38,7 @@ export class Player {
   voiceChannel: VoiceChannel | undefined;
   inVoice: boolean = false;
   isPlaying: boolean = false;
+  volume: number = 4;
 
   //Queue
   queue: Queue = new Queue();
@@ -89,7 +90,8 @@ export class Player {
 
     if (this.queue.currentSong !== undefined) {
       this.isPlaying = true;
-      this.stream = await this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }));
+      this.stream = await this.connection.playStream(ytdl(this.queue.currentSong.url, { filter: "audioonly" }), { passes: 4 });
+      this.stream.setVolumeLogarithmic(this.volume / 5);
       this.stream.on("end", reason => this.OnSongEnd(message, reason));
     } else {
       console.error(`no song left to play`);

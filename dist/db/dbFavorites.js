@@ -12,6 +12,7 @@ const mongoose_1 = require("mongoose");
 const Style_1 = require("../util/Style");
 const dbSetup_1 = require("./dbSetup");
 const dbUser_1 = require("./dbUser");
+const discord_js_1 = require("discord.js");
 exports.UserSongSchema = new mongoose_1.Schema({
     userId: { type: String, unique: false, required: true },
     song: {
@@ -81,6 +82,11 @@ function RemoveSong(message, userId, songIndex) {
             return Style_1.QuickEmbed(message, `Couldnt find a song at that position`);
         yield userSongsModel.deleteOne({ userId: userId, songId: song.id });
         dbUser_1.users.get(userId).favorites.splice(songIndex, 1);
+        const embed = new discord_js_1.RichEmbed()
+            .setTitle(`Deleted song: ${song.title} from your favorites`)
+            .setAuthor(`user: ${user.tag}`)
+            .setColor(Style_1.embedColor);
+        message.channel.send(embed);
     });
 }
 exports.RemoveSong = RemoveSong;

@@ -1,7 +1,7 @@
 import { RichEmbed, Message } from "discord.js";
 
 // export const embedColor = embedColor
-export const embedColor = 0xf70a51;
+export const embedColor = 0xcf274e;
 
 export function darken(...content: string[]): string {
   const tag = `\``;
@@ -18,7 +18,8 @@ export function wrap(content: string[] | string, wrap: string): string {
 }
 
 export function QuickEmbed(message: Message, content: string) {
-  const embed = new RichEmbed().setTitle(content);
+  const embed = new RichEmbed().setTitle(content)
+    .setColor(embedColor)
   message.channel.send(embed);
 }
 

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const Style_1 = require("../util/Style");
-const song_1 = require("../objects/song");
 const config_1 = require("../config");
+const song_1 = require("../objects/song");
+const Style_1 = require("../util/Style");
 const subcmd = [
     {
         name: "stop",

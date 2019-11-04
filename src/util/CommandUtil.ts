@@ -1,8 +1,9 @@
 import { Collection } from "discord.js";
-import { readdirSync } from "fs";
+import { readdirSync, chmod } from "fs";
 import { flagPrefix } from "../config";
 import { Command, Flag } from "../objects/command";
 import { playerInit } from "../commands/music";
+import chalk from 'chalk'
 import path from "path";
 
 const commands: Array<Command> = [];
@@ -13,20 +14,28 @@ export function Init() {
     .filter(file => file.endsWith("js"))
     .forEach(file => {
       const cmd = require(path.join(__dirname, "..", "commands", file));
-      commands.push(cmd.command);
+      commands.push(cmd.command)
     });
 }
 
 export class CommandUtil {
   public static GetCommand(name: string): Command | undefined {
+    console.log(`Get command called for ${name}`)
+
     //Look for command
     const cmd = commands.find(cmd => cmd.name === name || (cmd.aliases && cmd.aliases.includes(name)));
+    if (cmd) console.log(`Found command ${cmd.name}`)
     if (cmd) return cmd;
     //If no command found, then Check subcommands
+
     let subCmd = undefined;
     commands.find(c => {
       if (c.subCmd) subCmd = c.subCmd.find(subC => subC.name === name || (subC.aliases && subC.aliases.includes(name)));
     });
+
+    if (!subCmd) return undefined
+
+    console.log(`subcommand: ${subCmd.name}`)
 
     //Return subcommand
     return subCmd;

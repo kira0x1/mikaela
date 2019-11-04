@@ -200,7 +200,6 @@ async function Shuffle(message: Message, args: string[]) {
     });
   }
 
-  console.log(`Looking for user: ${args.join(" ")}`)
   const target = await getTarget(message, args.join(" "))
 
   if (!target) return QuickEmbed(message, "User not found")
@@ -302,7 +301,8 @@ async function ListFavorites(message: Message, args: string[]) {
     return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
   };
 
-  const collector = msg.createReactionCollector(filter, { time: ms("15m") });
+  const collector = msg.createReactionCollector(filter, { time: ms("2h") });
+
   collector.on("collect", async r => {
     if (r.emoji.name === "➡") {
       currentPage++;

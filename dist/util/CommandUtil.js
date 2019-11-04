@@ -21,8 +21,11 @@ function Init() {
 exports.Init = Init;
 class CommandUtil {
     static GetCommand(name) {
+        console.log(`Get command called for ${name}`);
         //Look for command
         const cmd = commands.find(cmd => cmd.name === name || (cmd.aliases && cmd.aliases.includes(name)));
+        if (cmd)
+            console.log(`Found command ${cmd.name}`);
         if (cmd)
             return cmd;
         //If no command found, then Check subcommands
@@ -31,6 +34,9 @@ class CommandUtil {
             if (c.subCmd)
                 subCmd = c.subCmd.find(subC => subC.name === name || (subC.aliases && subC.aliases.includes(name)));
         });
+        if (!subCmd)
+            return undefined;
+        console.log(`subcommand: ${subCmd.name}`);
         //Return subcommand
         return subCmd;
     }
