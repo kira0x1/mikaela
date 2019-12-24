@@ -13,3 +13,4 @@ ecosystem.config.js
 src/
 node_modules
 dist/config.js
+dist/config.js
