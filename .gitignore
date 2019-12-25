@@ -2,6 +2,8 @@ customRoles.json
 usersongs.json
 config.*
 
+out/
+
 # Logs
 logs
 *.log
