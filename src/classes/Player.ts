@@ -20,6 +20,7 @@ export class Player {
     currentlyPlaying: ISong | undefined
     isPaused: boolean = false
     client: Client
+    lastPlayed: ISong | undefined
 
     constructor(guild: Guild, client: Client) {
         this.guild = guild;
@@ -87,6 +88,7 @@ export class Player {
     }
 
     async playNext() {
+        this.lastPlayed = this.currentlyPlaying
         this.currentlyPlaying = this.queue.getNext()
         if (this.currentlyPlaying) {
             if (this.currentlyPlaying)
@@ -111,6 +113,10 @@ export class Player {
             this.voiceChannel = vc
             this.startStream(song)
         }
+    }
+
+    getLastPlayed() {
+        return this.lastPlayed;
     }
 
     startStream(song: ISong) {
