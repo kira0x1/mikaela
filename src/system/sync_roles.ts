@@ -1,4 +1,4 @@
-import { Client, TextChannel, Emoji, ReactionEmoji, MessageReaction, User, Message, Role } from 'discord.js';
+import { Client, TextChannel, Emoji, ReactionEmoji, MessageReaction, User, Message, Role, RichEmbed } from 'discord.js';
 import { coders_club_id } from '../config';
 
 const customRoles = require('../../customRoles.json')

@@ -11,8 +11,6 @@ import { embedColor, QuickEmbed, wrap } from './util/style';
 import { InitGuilds } from './db/dbGuild';
 
 
-
-
 //FIXME REMEMBER TO CHANGE PREFIX AND DB IN CONFIG BACK TO PRODUCTION SETTINGS
 //FIXME REMEMBER TO CHANGE 'TESTING' BACK TO FALL BEFORE UPLOADING
 

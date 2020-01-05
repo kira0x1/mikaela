@@ -1,7 +1,5 @@
 import { Client, Collection, GuildMember, User } from 'discord.js';
-import { writeFileSync } from 'fs';
 import { model, Schema } from 'mongoose';
-import path from 'path';
 import { ISong } from '../classes/Player';
 import { conn } from "./database";
 
@@ -54,75 +52,75 @@ export function CreateUser(user: IUser | GuildMember) {
     }
 }
 
-const usersJson = require('../../usersongs.json')
-export async function InitUsers(client: Client) {
-    usersJson.users.map(user => {
-        CreateUser(user)
-    })
-}
+// const usersJson = require('../../usersongs.json')
+// export async function InitUsers(client: Client) {
+//     usersJson.users.map(user => {
+//         CreateUser(user)
+//     })
+// }
 
-async function writeUsersToJSON(client: Client) {
-    const collections = await conn.db.collections()
-    const usersongs = collections.find(col => col.collectionName === "usersongs")
-    const users = collections.find(col => col.collectionName === "users")
+// async function writeUsersToJSON(client: Client) {
+//     const collections = await conn.db.collections()
+//     const usersongs = collections.find(col => col.collectionName === "usersongs")
+//     const users = collections.find(col => col.collectionName === "users")
 
-    if (!users || !usersongs) return
+//     if (!users || !usersongs) return
 
-    let usersFound: IUser[] = []
-    let userIds: string[] = []
+//     let usersFound: IUser[] = []
+//     let userIds: string[] = []
 
-    await users.find().forEach(userData => {
-        userIds.push(userData.id)
-    })
+//     await users.find().forEach(userData => {
+//         userIds.push(userData.id)
+//     })
 
-    userIds.map(async id => {
-        const user = client.users.find(usr => usr.id === id)
-        if (user) {
-            let iuser: IUser = {
-                username: user.username,
-                id: user.id,
-                tag: user.tag,
-                roles: [],
-                favorites: []
-            }
-            usersFound.push(iuser)
-        }
-    })
+//     userIds.map(async id => {
+//         const user = client.users.find(usr => usr.id === id)
+//         if (user) {
+//             let iuser: IUser = {
+//                 username: user.username,
+//                 id: user.id,
+//                 tag: user.tag,
+//                 roles: [],
+//                 favorites: []
+//             }
+//             usersFound.push(iuser)
+//         }
+//     })
 
 
-    let songsJson = `{"users": [`
+//     let songsJson = `{"users": [`
 
-    for (let i = 0; i < usersFound.length; i++) {
-        const userFound = usersFound[i]
-        const user = mapUser(userFound.id, client)
-        if (user) {
-            songsJson += `{"username": "${userFound.username}",`
-            songsJson += `"id": "${userFound.id}",`
-            songsJson += `"tag": "${userFound.tag}",`
-            songsJson += `"roles": [],`
-            songsJson += `"favorites":[`
-            await usersongs.find({ userId: userFound.id }).toArray().then(songs => {
-                songs.map((data, index) => {
-                    const song = data.song
-                    const isong: ISong = {
-                        title: song.title,
-                        id: song.id,
-                        url: song.url,
-                        duration: song.duration
-                    }
+//     for (let i = 0; i < usersFound.length; i++) {
+//         const userFound = usersFound[i]
+//         const user = mapUser(userFound.id, client)
+//         if (user) {
+//             songsJson += `{"username": "${userFound.username}",`
+//             songsJson += `"id": "${userFound.id}",`
+//             songsJson += `"tag": "${userFound.tag}",`
+//             songsJson += `"roles": [],`
+//             songsJson += `"favorites":[`
+//             await usersongs.find({ userId: userFound.id }).toArray().then(songs => {
+//                 songs.map((data, index) => {
+//                     const song = data.song
+//                     const isong: ISong = {
+//                         title: song.title,
+//                         id: song.id,
+//                         url: song.url,
+//                         duration: song.duration
+//                     }
 
-                    songsJson += JSON.stringify(isong)
-                    if (index < songs.length - 1) songsJson += ","
-                })
-            })
-            songsJson += `]}`
-            if (i < usersFound.length - 1)
-                songsJson += ","
-        }
-    }
-    songsJson += `]}`
-    writeFileSync(path.join(__dirname, `..`, `..`, `usersongs.json`), songsJson)
-}
+//                     songsJson += JSON.stringify(isong)
+//                     if (index < songs.length - 1) songsJson += ","
+//                 })
+//             })
+//             songsJson += `]}`
+//             if (i < usersFound.length - 1)
+//                 songsJson += ","
+//         }
+//     }
+//     songsJson += `]}`
+//     writeFileSync(path.join(__dirname, `..`, `..`, `usersongs.json`), songsJson)
+// }
 
 function mapUser(id: string, client: Client): User | undefined {
     return client.users.find(user => user.id === id)
