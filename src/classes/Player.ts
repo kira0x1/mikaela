@@ -3,15 +3,14 @@ import ytdl from 'ytdl-core';
 import chalk from 'chalk'
 import { QuickEmbed } from '../util/style';
 
-const passes: number = 5
-
-const minVolume: number = 0.5
-const maxVolume: number = 8
+const passes: number = 4
+const minVolume: number = 0.1
+const maxVolume: number = 10
 
 export class Player {
     guild: Guild
     queue: Queue
-    volume: number = 5
+    volume: number = 2.4
     isPlaying: boolean = false
     inVoice: boolean = false
     stream: StreamDispatcher | undefined
