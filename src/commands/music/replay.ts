@@ -6,7 +6,6 @@ import { embedColor, QuickEmbed } from '../../util/style';
 export const command: ICommand = {
     name: "Replay",
     description: "Replay last song played",
-    aliases: ["r"],
     args: false,
 
     async execute(message, args) {
