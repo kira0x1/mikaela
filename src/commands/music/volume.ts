@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
-import { QuickEmbed } from '../../util/Style';
+import { QuickEmbed } from '../../util/style';
 
 export const command: ICommand = {
     name: "volume",

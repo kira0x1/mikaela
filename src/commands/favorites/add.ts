@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { getUser, updateUser } from '../../db/userController';
 import { GetSong } from '../../util/API';
-import { QuickEmbed } from '../../util/Style';
+import { QuickEmbed } from '../../util/style';
 import { Message } from 'discord.js';
 import { IUser, CreateUser } from '../../db/dbUser';
 import { ISong } from '../../classes/Player';

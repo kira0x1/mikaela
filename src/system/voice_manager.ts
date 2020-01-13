@@ -1,4 +1,4 @@
-import { Client, VoiceChannel } from 'discord.js';
+import { Client, VoiceChannel, GuildMember, VoiceReceiver } from 'discord.js';
 import { coders_club_id } from '../config';
 
 export async function initVoiceManager(client: Client) {

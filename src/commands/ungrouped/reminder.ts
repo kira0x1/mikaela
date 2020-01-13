@@ -2,7 +2,7 @@ import { RichEmbed } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { GetUsage } from '../../util/commandUtil';
-import { embedColor, QuickEmbed, wrap } from '../../util/Style';
+import { embedColor, QuickEmbed, wrap } from '../../util/style';
 
 export const command: ICommand = {
     name: "Reminder",

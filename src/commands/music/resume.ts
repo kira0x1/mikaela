@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
 import { RichEmbed } from 'discord.js';
-import { embedColor, QuickEmbed } from '../../util/Style';
+import { embedColor, QuickEmbed } from '../../util/style';
 
 export const command: ICommand = {
     name: 'Resume',

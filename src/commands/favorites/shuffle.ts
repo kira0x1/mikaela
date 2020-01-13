@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { getTarget } from '../../util/FavoritesUtil';
 import { getUser } from '../../db/userController';
-import { QuickEmbed, embedColor } from '../../util/Style';
+import { QuickEmbed, embedColor } from '../../util/style';
 import { RichEmbed } from 'discord.js';
 import { getPlayer } from '../../app';
 

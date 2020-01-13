@@ -1,7 +1,7 @@
 import { Collection, Message, RichEmbed } from 'discord.js';
 import { getPlayer } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { embedColor } from '../../util/Style';
+import { embedColor } from '../../util/style';
 
 
 export const queueCalls: Collection<string, Message> = new Collection();

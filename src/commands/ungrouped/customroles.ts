@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { Message, RichEmbed, Emoji, VoiceChannel, TextChannel, MessageReaction, User, Role } from 'discord.js';
 import chalk from 'chalk';
-import { embedColor } from '../../util/Style';
+import { embedColor } from '../../util/style';
 const customRoles = require('../../../customRoles.json')
 
 export const command: ICommand = {

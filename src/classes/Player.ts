@@ -1,7 +1,7 @@
 import { Guild, Message, VoiceChannel, StreamDispatcher, VoiceConnection, Client } from 'discord.js';
 import ytdl from 'ytdl-core';
 import chalk from 'chalk'
-import { QuickEmbed } from '../util/Style';
+import { QuickEmbed } from '../util/style';
 
 const passes: number = 5
 const minVolume: number = 0.2
@@ -87,7 +87,6 @@ export class Player {
     async playNext() {
         this.lastPlayed = this.currentlyPlaying
         this.currentlyPlaying = this.queue.getNext()
-
         if (this.currentlyPlaying) {
             if (this.currentlyPlaying)
                 this.startStream(this.currentlyPlaying)
@@ -124,14 +123,11 @@ export class Player {
             return console.log("No Voicechannel")
         }
 
-
         this.voiceChannel.join().then(vc => {
-            console.log("Starting stream")
             this.stream = vc.playStream(ytdl(song.url, { filter: "audioonly" }), { passes: passes })
             this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)))
             this.stream.setVolumeLogarithmic(this.volume / 5)
             this.stream.on('end', () => {
-                console.log("Stream ended")
                 this.playNext()
             })
         })
