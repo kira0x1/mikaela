@@ -80,7 +80,7 @@ export class Player {
     }
 
     clearQueue() {
-        console.log(chalk.bgRed.bold("Clearing Queue"))
+        // console.log(chalk.bgRed.bold("Clearing Queue"))
         this.queue.clear()
     }
 
@@ -99,8 +99,6 @@ export class Player {
     skipSong() {
         if (this.stream) {
             this.stream.end()
-        } else {
-            console.log("No Stream!")
         }
     }
 
@@ -118,7 +116,6 @@ export class Player {
     }
 
     startStream(song: ISong) {
-        console.log("starting stream")
 
         if (!this.voiceChannel) {
             return console.log("No Voicechannel")
@@ -126,12 +123,10 @@ export class Player {
 
 
         this.voiceChannel.join().then(vc => {
-            console.log("Starting stream")
             this.stream = vc.playStream(ytdl(song.url, { filter: "audioonly" }), { passes: passes })
             this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)))
             this.stream.setVolumeLogarithmic(this.volume / 5)
             this.stream.on('end', () => {
-                console.log("Stream ended")
                 this.playNext()
             })
         })
