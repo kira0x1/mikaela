@@ -5,7 +5,7 @@ import { ISong } from '../../classes/Player';
 import { IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
 import { getTarget } from '../../util/FavoritesUtil';
-import { embedColor, QuickEmbed } from '../../util/style';
+import { embedColor, QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {
     name: "list",

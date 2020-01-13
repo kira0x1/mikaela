@@ -4,7 +4,7 @@ import path from 'path';
 import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
-import { wrap } from './style';
+import { wrap } from './Style';
 
 export const commands: Collection<string, ICommand> = new Collection()
 export const commandGroups: Collection<string, ICommand[]> = new Collection();

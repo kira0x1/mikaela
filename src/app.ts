@@ -7,9 +7,7 @@ import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { commandGroups, FindCommand, FindCommandGroup, InitCommands } from './util/commandUtil';
-import { embedColor, QuickEmbed, wrap } from './util/style';
-import { InitGuilds } from './db/dbGuild';
-
+import { embedColor, wrap, QuickEmbed } from './util/Style';
 
 //FIXME REMEMBER TO CHANGE PREFIX AND DB IN CONFIG BACK TO PRODUCTION SETTINGS
 //FIXME REMEMBER TO CHANGE 'TESTING' BACK TO FALL BEFORE UPLOADING

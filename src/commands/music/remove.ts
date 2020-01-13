@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
-import { QuickEmbed, embedColor } from '../../util/style';
+import { QuickEmbed, embedColor } from '../../util/Style';
 import { RichEmbed } from 'discord.js';
 import { queueCalls, getQueue } from './queue';
 import chalk from 'chalk';

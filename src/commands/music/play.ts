@@ -1,14 +1,14 @@
-import { Message, RichEmbed, Emoji, Client, MessageReaction, User } from 'discord.js';
+import { Client, Emoji, Message, MessageReaction, RichEmbed, User } from 'discord.js';
+import ms from 'ms';
 import { getPlayer } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
-import { GetSong } from '../../util/API';
-import { embedColor, QuickEmbed } from '../../util/style';
 import { coders_club_id } from '../../config';
+import { IUser } from '../../db/dbUser';
+import { addUser, getUser } from '../../db/userController';
+import { GetSong } from '../../util/API';
+import { embedColor, QuickEmbed } from '../../util/Style';
 import { AddFavorite } from '../favorites/add';
-import { getUser, addUser } from '../../db/userController';
-import ms from 'ms';
-import { CreateUser, IUser } from '../../db/dbUser';
 
 
 let heartEmoji: Emoji
@@ -37,7 +37,6 @@ export const command: ICommand = {
 
         //Search for song
         GetSong(query).then(song => {
-
             //Play song
             PlaySong(message, song)
         }).catch(err => {

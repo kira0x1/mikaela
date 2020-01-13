@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
 import { RichEmbed } from 'discord.js';
-import { embedColor, QuickEmbed } from '../../util/style';
+import { embedColor, QuickEmbed } from '../../util/Style';
 export const command: ICommand = {
     name: 'Pause',
     description: 'Pause the currently playing song',

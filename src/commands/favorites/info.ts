@@ -1,7 +1,7 @@
 import { ICommand } from "../../classes/Command";
 import { findFavorite } from "./play";
 import { RichEmbed } from 'discord.js';
-import { embedColor } from '../../util/style';
+import { embedColor } from '../../util/Style';
 
 export const command: ICommand = {
     name: "info",
@@ -13,7 +13,7 @@ export const command: ICommand = {
     async execute(message, args) {
         const song = await findFavorite(message, args)
         if (!song) return console.log("song not found")
-        
+
         const embed = new RichEmbed()
             .setColor(embedColor)
             .setTitle(song.title)
