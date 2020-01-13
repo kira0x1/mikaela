@@ -3,14 +3,14 @@ import ytdl from 'ytdl-core';
 import chalk from 'chalk'
 import { QuickEmbed } from '../util/style';
 
-const passes: number = 4
-const minVolume: number = 0.1
+const passes: number = 5
+const minVolume: number = 0.2
 const maxVolume: number = 10
 
 export class Player {
     guild: Guild
     queue: Queue
-    volume: number = 2.4
+    volume: number = 2.2
     isPlaying: boolean = false
     inVoice: boolean = false
     stream: StreamDispatcher | undefined
@@ -54,8 +54,6 @@ export class Player {
         if (this.stream) {
             this.stream.setVolumeLogarithmic(this.volume / 5)
         }
-
-
 
         if (message) {
             QuickEmbed(message, `volume set to ${this.volume}`)
@@ -119,12 +117,15 @@ export class Player {
     }
 
     startStream(song: ISong) {
+        console.log("starting stream")
+
         if (!this.voiceChannel) {
             return console.log("No Voicechannel")
         }
 
         this.voiceChannel.join().then(vc => {
             this.stream = vc.playStream(ytdl(song.url, { filter: "audioonly" }), { passes: passes })
+            this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)))
             this.stream.setVolumeLogarithmic(this.volume / 5)
             this.stream.on('end', () => {
                 this.playNext()
