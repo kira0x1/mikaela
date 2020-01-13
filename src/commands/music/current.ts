@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
 import { RichEmbed } from 'discord.js';
-import { embedColor } from '../../util/style';
+import { QuickEmbed, embedColor } from '../../util/Style';
 export const command: ICommand = {
     name: "CurrentSong",
     description: "Display the currently playing song",
@@ -64,6 +64,8 @@ export const command: ICommand = {
                 }
 
                 message.channel.send(embed)
+            } else {
+                QuickEmbed(message, "No song currently playing");
             }
         }
     }

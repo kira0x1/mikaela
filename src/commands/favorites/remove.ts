@@ -1,7 +1,8 @@
 import { ICommand } from '../../classes/Command';
-import { QuickEmbed } from '../../util/style';
+import { QuickEmbed } from '../../util/Style';
 import { getUser, updateUser } from '../../db/userController';
 import { CreateUser } from '../../db/dbUser';
+
 export const command: ICommand = {
     name: "remove",
     description: "Remove a song from your favorites",

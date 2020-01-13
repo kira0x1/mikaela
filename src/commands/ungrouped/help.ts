@@ -2,7 +2,7 @@ import { Message, RichEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
 import { commandGroups, commandInfos, FindCommand, FindCommandInfo, HasPerms } from '../../util/commandUtil';
-import { embedColor, QuickEmbed, wrap } from '../../util/style';
+import { embedColor, QuickEmbed, wrap } from '../../util/Style';
 
 export const command: ICommand = {
     name: "Help",

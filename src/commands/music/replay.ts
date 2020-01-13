@@ -1,7 +1,7 @@
 import { RichEmbed } from 'discord.js';
 import { getPlayer } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/style';
+import { embedColor, QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {
     name: "Replay",
