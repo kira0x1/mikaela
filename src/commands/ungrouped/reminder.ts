@@ -1,7 +1,7 @@
 import { RichEmbed } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
-import { GetUsage } from '../../util/commandUtil';
+import { GetUsage } from '../../util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from '../../util/Style';
 
 export const command: ICommand = {

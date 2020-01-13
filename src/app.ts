@@ -6,7 +6,7 @@ import { coders_club_id, prefix, token } from './config';
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-import { commandGroups, FindCommand, FindCommandGroup, InitCommands } from './util/commandUtil';
+import { commandGroups, FindCommand, FindCommandGroup, InitCommands } from './util/CommandUtil';
 import { embedColor, wrap, QuickEmbed } from './util/Style';
 
 //FIXME REMEMBER TO CHANGE PREFIX AND DB IN CONFIG BACK TO PRODUCTION SETTINGS

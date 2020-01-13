@@ -1,7 +1,7 @@
 import { Message, RichEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
-import { commandGroups, commandInfos, FindCommand, FindCommandInfo, HasPerms } from '../../util/commandUtil';
+import { commandGroups, commandInfos, FindCommand, FindCommandInfo, HasPerms } from '../../util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from '../../util/Style';
 
 export const command: ICommand = {

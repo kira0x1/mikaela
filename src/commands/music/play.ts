@@ -6,7 +6,7 @@ import { ISong } from '../../classes/Player';
 import { coders_club_id } from '../../config';
 import { IUser } from '../../db/dbUser';
 import { addUser, getUser } from '../../db/userController';
-import { GetSong } from '../../util/API';
+import { GetSong } from '../../util/Api';
 import { embedColor, QuickEmbed } from '../../util/Style';
 import { AddFavorite } from '../favorites/add';
 

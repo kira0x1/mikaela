@@ -1,6 +1,6 @@
 import { ICommand } from "../../classes/Command";
 import { getPlayer } from '../../app';
-import { GetSong } from '../../util/API';
+import { GetSong } from '../../util/Api';
 import { QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {

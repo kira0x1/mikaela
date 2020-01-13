@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { getUser, updateUser } from '../../db/userController';
-import { GetSong } from '../../util/API';
+import { GetSong } from '../../util/Api';
 import { QuickEmbed } from '../../util/Style';
 import { Message } from 'discord.js';
 import { IUser, CreateUser } from '../../db/dbUser';
