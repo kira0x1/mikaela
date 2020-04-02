@@ -9,8 +9,5 @@
 ### Music
 >**Description**: Plays music via links or youtube searches
 
-### Reddit
->**Description**: Post from subreddits
-
-### Define  
-> **Description**: Post definitions
+### Favorites
+> **Description**: Saves a list of user's favorite songs, and can shuffle through them.
