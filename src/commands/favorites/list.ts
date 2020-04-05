@@ -18,7 +18,7 @@ export const command: ICommand = {
 
     if (target) {
       getUser(target.id)
-        .then(user => {
+        .then((user) => {
           console.log(`Found user: ${user.tag}`);
           if (user.favorites) {
             ListFavorites(message, target, user);
@@ -26,11 +26,12 @@ export const command: ICommand = {
             QuickEmbed(message, "You dont have any favorites");
           }
         })
-        .catch(err => {
+        .catch((err) => {
+          QuickEmbed(message, "You dont have any favorites");
           console.log(err);
         });
     }
-  }
+  },
 };
 
 async function ListFavorites(message: Message, target: User, user: IUser) {
@@ -96,7 +97,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
   let currentPage = 0;
 
-  collector.on("collect", async r => {
+  collector.on("collect", async (r) => {
     if (r.emoji.name === "➡") {
       currentPage++;
       if (currentPage >= pages.size) currentPage = 0;
@@ -111,10 +112,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
     title += `\nSongs **${user.favorites.length}**`;
     title += "\n\u200b";
 
-    const newEmbed = new RichEmbed()
-      .setThumbnail(target.avatarURL)
-      .setTitle(title)
-      .setColor(embedColor);
+    const newEmbed = new RichEmbed().setThumbnail(target.avatarURL).setTitle(title).setColor(embedColor);
 
     const page = pages.get(currentPage);
     if (!page) return;
