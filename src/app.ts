@@ -9,9 +9,6 @@ import { initVoiceManager } from "./system/voice_manager";
 import { commandGroups, FindCommand, FindCommandGroup, InitCommands } from "./util/CommandUtil";
 import { embedColor, wrap, QuickEmbed } from "./util/Style";
 
-//FIXME REMEMBER TO CHANGE PREFIX AND DB IN CONFIG BACK TO PRODUCTION SETTINGS
-//FIXME REMEMBER TO CHANGE 'TESTING' BACK TO FALL BEFORE UPLOADING
-
 const IS_TESTING = false;
 
 const client = new Client();
