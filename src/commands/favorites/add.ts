@@ -40,9 +40,9 @@ export const command: ICommand = {
 
 export function AddFavorite(user: IUser, song: ISong, message: Message) {
    if (user.favorites && user.favorites.find((fav) => fav.id === song.id)) {
-      return QuickEmbed(message, `Sorry ${message.member.nickname} You already have this song as a favorite`);
+      return QuickEmbed(message, `Sorry **${user.username}** You already have this song as a favorite`);
    } else {
-      QuickEmbed(message, `${message.member.nickname} added song **${song.title}** to their favorites!`);
+      QuickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`);
       user.favorites.push(song);
       updateUser(message.member.user.id, user);
    }
