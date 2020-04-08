@@ -87,6 +87,9 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       return;
    }
 
+   //If there are only 1 or none pages then dont add the next, previous page emojis / collector
+   if (pages.size <= 1) return;
+
    msg.react("⬅").then(() => msg.react("➡"));
 
    const filter = (reaction: MessageReaction, user: User) => {
