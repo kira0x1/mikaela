@@ -149,6 +149,9 @@ client.on("message", (message) => {
 });
 
 export function getPlayer(message: Message) {
+   const playerFound = players.get(message.guild.id);
+   if (!playerFound) players.set(message.guild.id, new Player(message.guild, client));
+   
    return players.get(message.guild.id);
 }
 
