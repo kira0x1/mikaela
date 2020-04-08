@@ -6,7 +6,7 @@ import { QuickEmbed } from "../../util/Style";
 export const command: ICommand = {
    name: "Translate",
    description: "Translates words to the specified language",
-   aliases: ["read"],
+   aliases: ["read", "tl", "t"],
    args: true,
 
    async execute(message, args) {
