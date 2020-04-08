@@ -4,6 +4,7 @@ import { ConvertDuration } from "./musicUtil";
 import { getInfo } from "ytdl-core";
 import { ISong } from "../classes/Player";
 import ytdl from "ytdl-core";
+import { request } from "http";
 
 export function Get(url: string, options?: any) {
    if (!options)
@@ -52,7 +53,55 @@ export async function GetSong(query: string): Promise<ISong> {
    });
 }
 
-const options = {
+export async function detectLanguage(
+   query: string
+): Promise<{ confidence: number; isReliable: boolean; language: string }> {
+   return new Promise((resolve, reject) => {
+      const options = {
+         method: "POST",
+         url: "https://google-translate1.p.rapidapi.com/language/translate/v2/detect",
+         headers: {
+            "x-rapidapi-host": "google-translate1.p.rapidapi.com",
+            "x-rapidapi-key": "ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de",
+            "content-type": "application/x-www-form-urlencoded",
+         },
+         form: { q: query },
+      };
+
+      rp(options, (error, response, body) => {
+         if (error) return reject(error);
+         else return resolve(JSON.parse(body).data.detections[0]);
+      });
+   });
+}
+
+export async function translateLanguage(
+   query: string,
+   target: string = "en",
+   source?: string
+): Promise<{ translatedText: string; detectedSourceLanguage: string }> {
+   return new Promise((resolve, reject) => {
+      const options = {
+         method: "POST",
+         url: "https://google-translate1.p.rapidapi.com/language/translate/v2",
+         headers: {
+            "x-rapidapi-host": "google-translate1.p.rapidapi.com",
+            "x-rapidapi-key": "ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de",
+            "content-type": "application/x-www-form-urlencoded",
+         },
+         form: { q: query, target: target },
+      };
+
+      if (target) options.form.target = target;
+
+      rp(options, (error, response, body) => {
+         if (error) return reject(error);
+         else return resolve(JSON.parse(body).data.translations[0]);
+      });
+   });
+}
+
+const youtubeOptions = {
    part: "snippet",
    maxResults: 1,
    order: "relevance",
@@ -61,7 +110,7 @@ const options = {
 
 export class Youtube {
    public static async Get(query: string) {
-      const url = `https://www.googleapis.com/youtube/v3/search?key=${options.key}&part=${options.part}&maxResults=${options.maxResults}&order=${options.order}&q=${query}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?key=${youtubeOptions.key}&part=${youtubeOptions.part}&maxResults=${youtubeOptions.maxResults}&order=${youtubeOptions.order}&q=${query}`;
 
       let song: ISong | undefined = undefined;
       let id: string | undefined = undefined;
