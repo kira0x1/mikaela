@@ -86,11 +86,12 @@ export async function PlaySong(message: Message, song: ISong) {
                id: user.id,
                favorites: [],
                roles: [],
+               sourcesGroups: []
             };
 
             await CreateUser(iuser);
             // await addUser(iuser);
-            
+
             dbUser = iuser;
          }
 
