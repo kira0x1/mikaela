@@ -37,8 +37,8 @@ export const command: ICommand = {
       translateLanguage(query, target)
          .then((body) => {
             let content = `\`\`\`yaml
-source language: ${body.detectedSourceLanguage},
-translated text: ${body.translatedText}\`\`\``;
+source_language: ${body.detectedSourceLanguage},
+translated_text: ${body.translatedText}\`\`\``;
             message.channel.send(content);
          })
          .catch((err) => {

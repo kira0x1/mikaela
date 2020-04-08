@@ -25,7 +25,7 @@ export const command: ICommand = {
             let content = `\`\`\`yaml
 Language: ${language},
 Confidence: ${confidence},
-Is Reliable: ${isReliable}\`\`\``;
+Is_Reliable: ${isReliable}\`\`\``;
 
             message.channel.send(content);
          })
