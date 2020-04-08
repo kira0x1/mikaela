@@ -74,6 +74,7 @@ export const command: ICommand = {
    description: "Translates words to the specified language",
    aliases: ["read", "tl", "t"],
    args: true,
+   usage: "-target [language name | language code], -source: optional [language name | language code]",
 
    async execute(message, args) {
       const argumentsFound: Array<string> = [];
@@ -127,7 +128,7 @@ source_language: ${sourceLang.name},
 translated_text: ${translations.translatedText}`;
             if (target) content += `\ntarget_language: ${result?.name}\`\`\``;
             else content += `\`\`\``;
-            
+
             //Send to discord channel
             message.channel.send(content);
          })
