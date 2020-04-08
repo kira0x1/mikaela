@@ -1,10 +1,8 @@
 import rp from "request-promise";
+import ytdl, { getInfo } from "ytdl-core";
+import { ISong } from "../classes/Player";
 import { youTubeKey } from "../config";
 import { ConvertDuration } from "./musicUtil";
-import { getInfo } from "ytdl-core";
-import { ISong } from "../classes/Player";
-import ytdl from "ytdl-core";
-import { request } from "http";
 
 export function Get(url: string, options?: any) {
    if (!options)
