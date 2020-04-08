@@ -8,10 +8,13 @@
 ## Commands
 
 ### Help
->**Description**: lists all commands
+>**Description**: lists all commands.
  
 ### Music
->**Description**: Plays music via links or youtube searches
+>**Description**: Plays music via links or youtube searches.
 
 ### Favorites
 > **Description**: Saves a list of user's favorite songs, and can shuffle through them.
+
+### Language
+> **Description**: Can translate, and or detect strings.
