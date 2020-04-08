@@ -118,10 +118,12 @@ export const command: ICommand = {
 
             //Get Results
             const translations = data.translations[0];
+            let sourceLang = translations.detectedSourceLanguage;
+            sourceLang = LANGUAGE_CODES.find((lang) => lang.code === sourceLang);
 
             //Create the message
             let content = `\`\`\`yaml
-source_language: ${translations.detectedSourceLanguage},
+source_language: ${sourceLang.name},
 translated_text: ${translations.translatedText}`;
             if (target) content += `\ntarget_language: ${result?.name}\`\`\``;
             //Send to discord channel
