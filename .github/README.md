@@ -18,3 +18,9 @@
 
 ### Language
 > **Description**: Can translate, and or detect strings.
+
+### Vote
+> **Description**: Create a strawpoll.
+
+### Reminder
+> **Description**: Set a reminder.
