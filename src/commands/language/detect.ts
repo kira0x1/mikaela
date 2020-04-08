@@ -1,5 +1,4 @@
 import { ICommand } from "../../classes/Command";
-import chalk from "chalk";
 import { detectLanguage } from "../../util/Api";
 import { QuickEmbed } from "../../util/Style";
 
