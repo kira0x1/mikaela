@@ -4,7 +4,7 @@ import { getPlayer } from "../../app";
 import { ICommand } from "../../classes/Command";
 import { ISong } from "../../classes/Player";
 import { coders_club_id } from "../../config";
-import { IUser } from "../../db/dbUser";
+import { IUser, CreateUser } from "../../db/dbUser";
 import { addUser, getUser } from "../../db/userController";
 import { GetSong } from "../../util/Api";
 import { embedColor, QuickEmbed } from "../../util/Style";
@@ -78,6 +78,7 @@ export async function PlaySong(message: Message, song: ISong) {
       collector.on("collect", async (reaction, reactionCollector) => {
          const user = reaction.users.last();
          let dbUser = await getUser(user.id);
+
          if (!dbUser) {
             const iuser: IUser = {
                username: user.username,
@@ -87,9 +88,12 @@ export async function PlaySong(message: Message, song: ISong) {
                roles: [],
             };
 
-            await addUser(iuser);
+            await CreateUser(iuser);
+            // await addUser(iuser);
+            
             dbUser = iuser;
          }
+
          AddFavorite(dbUser, song, message);
       });
 
