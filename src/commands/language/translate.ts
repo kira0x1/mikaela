@@ -126,6 +126,8 @@ export const command: ICommand = {
 source_language: ${sourceLang.name},
 translated_text: ${translations.translatedText}`;
             if (target) content += `\ntarget_language: ${result?.name}\`\`\``;
+            else content += `\`\`\``;
+            
             //Send to discord channel
             message.channel.send(content);
          })
