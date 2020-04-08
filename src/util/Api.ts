@@ -73,11 +73,7 @@ export async function detectLanguage(
    });
 }
 
-export async function translateLanguage(
-   query: string,
-   target: string = "en",
-   source?: string
-): Promise<{ translatedText: string; detectedSourceLanguage: string }> {
+export async function translateLanguage(query: string, target: string = "en", source?: string): Promise<any> {
    return new Promise((resolve, reject) => {
       const options = {
          method: "POST",
@@ -94,7 +90,7 @@ export async function translateLanguage(
 
       rp(options, (error, response, body) => {
          if (error) return reject(error);
-         else return resolve(JSON.parse(body).data.translations[0]);
+         else return resolve(body);
       });
    });
 }
