@@ -16,7 +16,7 @@ const voteEmojis = [
 
 
 export const command: ICommand = {
-    name: "vote",
+    name: "Vote",
     description: "Create a strawpoll",
     usage: "[option1, option2, ...etc] [optional: -title]",
     aliases: ["strawpoll"],
