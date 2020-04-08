@@ -22,8 +22,6 @@ export const command: ICommand = {
             const isReliable = result.isReliable;
             const language = result.language;
 
-            console.dir(body);
-
             let content = `\`\`\`yaml
 Language: ${language},
 Confidence: ${confidence},
