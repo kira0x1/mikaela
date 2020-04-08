@@ -16,6 +16,9 @@
 ### Favorites
 > **Description**: Saves a list of user's favorite songs, and can shuffle through them.
 
+### Sources
+> **Description**: Organize and store sources.
+
 ### Language
 > **Description**: Can translate, and or detect the language of a given string.
 
