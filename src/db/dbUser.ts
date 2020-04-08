@@ -1,55 +1,71 @@
-import { Client, Collection, GuildMember, User } from 'discord.js';
-import { model, Schema } from 'mongoose';
-import { ISong } from '../classes/Player';
+import { Client, Collection, GuildMember, User } from "discord.js";
+import { model, Schema } from "mongoose";
+import { ISong } from "../classes/Player";
 import { conn } from "./database";
 
-export var users: Collection<string, IUser> = new Collection()
+export var users: Collection<string, IUser> = new Collection();
 
 export interface IRole {
-    name: string,
-    id: string,
+   name: string;
+   id: string;
 }
 
+export interface ISource {
+   title: string;
+   url: string;
+   group: string;
+}
+
+export interface ISourceGroup {
+   name: string;
+   sources: Array<ISource>;
+}
+
+export interface IUserSources {
+   groups: Array<ISourceGroup>;
+   sources: Array<ISource>;
+}
 
 export interface IUser {
-    username: string,
-    id: string,
-    tag: string,
-    roles: IRole[],
-    favorites: ISong[]
+   username: string;
+   id: string;
+   tag: string;
+   roles: IRole[];
+   favorites: ISong[];
+   sourcesGroups: ISourceGroup[];
 }
 
-
 export const UserSchema = new Schema({
-    username: { type: String, required: true },
-    id: { type: String, required: true },
-    tag: { type: String, required: true },
-    roles: { type: [{ name: String, id: String }], required: true },
-    favorites: { type: Array<ISong>(), required: false },
-    createdAt: Date
-})
+   username: { type: String, required: true },
+   id: { type: String, required: true },
+   tag: { type: String, required: true },
+   roles: { type: [{ name: String, id: String }], required: true },
+   favorites: { type: Array<ISong>(), required: false },
+   sourcesGroups: { type: Array<ISourceGroup>(), required: false },
+   createdAt: Date,
+});
 
-export const userModel = model("users", UserSchema)
-
+export const userModel = model("users", UserSchema);
 
 //Create a UserModel and insert it into the database, returns an error if the user already exists
 export function CreateUser(user: IUser | GuildMember) {
-    var usersModel = conn.model("users", UserSchema);
+   var usersModel = conn.model("users", UserSchema);
 
-    if (user instanceof GuildMember) {
-        const memberUser: IUser = {
-            username: user.user.username,
-            tag: user.user.tag,
-            id: user.id,
-            favorites: [],
-            roles: []
-        }
-        console.log(`creating user: ${memberUser.username}`);
-        return userModel.create(memberUser)
-    } else {
-        console.log(`creating user: ${user.username}`);
-        return usersModel.create(user);
-    }
+   if (user instanceof GuildMember) {
+      const memberUser: IUser = {
+         username: user.user.username,
+         tag: user.user.tag,
+         id: user.id,
+         favorites: [],
+         roles: [],
+         sourcesGroups: [],
+      };
+      console.log(`creating user: ${memberUser.username}`);
+      return userModel.create(memberUser);
+   } else {
+      console.log(`creating user: ${user.username}`);
+      return usersModel.create(user);
+   }
 }
 
 // const usersJson = require('../../usersongs.json')
@@ -87,7 +103,6 @@ export function CreateUser(user: IUser | GuildMember) {
 //         }
 //     })
 
-
 //     let songsJson = `{"users": [`
 
 //     for (let i = 0; i < usersFound.length; i++) {
@@ -123,5 +138,5 @@ export function CreateUser(user: IUser | GuildMember) {
 // }
 
 function mapUser(id: string, client: Client): User | undefined {
-    return client.users.find(user => user.id === id)
+   return client.users.find((user) => user.id === id);
 }
