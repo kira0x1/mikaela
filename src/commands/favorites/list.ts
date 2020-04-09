@@ -19,7 +19,7 @@ export const command: ICommand = {
       if (target) {
          getUser(target.id)
             .then((user) => {
-               console.log(`Found user: ${user.tag}`);
+               // console.log(`Found user: ${user.tag}`);
                if (user.favorites && user.favorites.length > 0) {
                   ListFavorites(message, target, user);
                } else {
@@ -64,7 +64,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
    embed.setColor(embedColor);
    embed.setThumbnail(target.avatarURL);
 
-   let title = `**Favorites**\nPage **${pageAt + 1}**`;
+   let title = `**Favorites**\nPage **${pageAt + 1} / ${pages.size}**`;
    title += `\nSongs **${user.favorites.length}**`;
    title += "\n\u200b";
 
@@ -111,7 +111,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
       r.remove(r.users.last());
 
-      let title = `**Favorites**\nPage **${currentPage + 1}**`;
+      let title = `**Favorites**\nPage **${currentPage + 1} / ${pages.size}**`;
       title += `\nSongs **${user.favorites.length}**`;
       title += "\n\u200b";
 
@@ -121,7 +121,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       if (!page) return;
 
       page.map((song, index) => {
-         const num = `**${currentPage * 5 + (index + 1)}**`;
+         const num = `**${currentPage * songsPerPage + (index + 1)}**`;
          let content = "Duration: " + song.duration.duration;
          content += `  ${song.url}`;
 
