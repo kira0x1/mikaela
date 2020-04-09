@@ -1,13 +1,13 @@
-import chalk from "chalk";
-import { Client, Collection, Message, RichEmbed, TextChannel } from "discord.js";
-import { Player } from "./classes/Player";
-import { initEmoji } from "./commands/music/play";
-import { coders_club_id, prefix, token } from "./config";
-import { dbInit } from "./db/database";
-import { syncRoles } from "./system/sync_roles";
-import { initVoiceManager } from "./system/voice_manager";
-import { commandGroups, FindCommand, FindCommandGroup, InitCommands } from "./util/CommandUtil";
-import { embedColor, wrap, QuickEmbed } from "./util/Style";
+import chalk from 'chalk';
+import { Client, Collection, Message, RichEmbed, TextChannel } from 'discord.js';
+import { Player } from './classes/Player';
+import { initEmoji } from './commands/music/play';
+import { coders_club_id, prefix, token } from './config';
+import { dbInit } from './db/database';
+import { syncRoles } from './system/sync_roles';
+import { initVoiceManager } from './system/voice_manager';
+import { commandGroups, FindCommand, FindCommandGroup, GetCommandOverride, InitCommands } from './util/CommandUtil';
+import { embedColor, QuickEmbed, wrap } from './util/Style';
 
 const IS_TESTING = false;
 
@@ -19,7 +19,7 @@ async function init() {
    client.login(token);
 }
 
-client.on("ready", () => {
+client.on('ready', () => {
    //Save heart emoji to use for favorites
    initEmoji(client);
 
@@ -45,7 +45,7 @@ client.on("ready", () => {
 });
 
 //Called when a member joins a server
-client.on("guildMemberAdd", (member) => {
+client.on('guildMemberAdd', (member) => {
    //Check if is testing
    if (IS_TESTING) return;
 
@@ -58,22 +58,22 @@ client.on("guildMemberAdd", (member) => {
 
    //get codersclub
    const guild = client.guilds.get(coders_club_id);
-   if (!guild) return console.log("guild not found");
+   if (!guild) return console.log('guild not found');
 
    //get welcome channel
-   let channel = guild.channels.get("647099246436286494");
+   let channel = guild.channels.get('647099246436286494');
    if (!channel) return;
 
    //send welcome message
-   if (((channel): channel is TextChannel => channel.type === "text")(channel)) {
+   if (((channel): channel is TextChannel => channel.type === 'text')(channel)) {
       channel.send(content);
    } else {
-      console.log("channel problem");
+      console.log('channel problem');
    }
 });
 
 //OnMessage
-client.on("message", (message) => {
+client.on('message', (message) => {
    //Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || !message.content.startsWith(prefix)) {
       return;
@@ -99,23 +99,21 @@ client.on("message", (message) => {
    if (!command) {
       const grp = FindCommandGroup(commandName);
       if (grp) {
-         commandName = args.shift();
-         if (!commandName) return;
-         command = grp.find(
-            (cmd) =>
-               cmd.name.toLowerCase() === commandName || (cmd.aliases && cmd.aliases.find((al) => al === commandName))
-         );
+         command = grp.find((cmd) => cmd.name.toLowerCase() === commandName || (cmd.aliases && cmd.aliases.find((al) => al === commandName)));
+         if (!command) {
+            command = GetCommandOverride(commandName);
+         }
       }
    }
 
    //If command not found send a message
-   if (!command) return QuickEmbed(message, `command ${wrap(commandName || "")} not found`);
+   if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
 
    let canUseCommand = true;
-   if (message.guild.id === "413059339138629632") {
-      if (message.channel.id === "595870992476274688") {
+   if (message.guild.id === '413059339138629632') {
+      if (message.channel.id === '595870992476274688') {
          commandGroups
-            .find((commands, key) => key === "music")
+            .find((commands, key) => key === 'music')
             .map((cmd) => {
                if (command && command.name === cmd.name) canUseCommand = false;
             });
@@ -127,17 +125,17 @@ client.on("message", (message) => {
    }
 
    if (command.args && args.length === 0) {
-      let usageString = "Arguments required";
+      let usageString = 'Arguments required';
 
       const embed = new RichEmbed();
       embed.setColor(embedColor);
 
       if (command.usage) {
-         usageString = command.name + " ";
-         usageString += wrap(command.usage, "`");
+         usageString = command.name + ' ';
+         usageString += wrap(command.usage, '`');
       }
 
-      embed.addField("Arguments Required", usageString);
+      embed.addField('Arguments Required', usageString);
       return message.channel.send(embed);
    }
 
@@ -151,7 +149,7 @@ client.on("message", (message) => {
 export function getPlayer(message: Message) {
    const playerFound = players.get(message.guild.id);
    if (!playerFound) players.set(message.guild.id, new Player(message.guild, client));
-   
+
    return players.get(message.guild.id);
 }
 
