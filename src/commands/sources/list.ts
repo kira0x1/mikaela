@@ -1,36 +1,53 @@
-import { ICommand } from "../../classes/Command";
-import { getTarget } from "../../util/FavoritesUtil";
-import { getUser } from "../../db/userController";
-import { QuickEmbed, embedColor } from "../../util/Style";
-import { Collection, Message, User, RichEmbed, MessageReaction } from "discord.js";
-import { ISource, IUser, ISourceGroup } from "../../db/dbUser";
-import chalk from "chalk";
+import { ICommand } from '../../classes/Command';
+import { getTarget } from '../../util/FavoritesUtil';
+import { getUser } from '../../db/userController';
+import { QuickEmbed, embedColor } from '../../util/Style';
+import { Collection, Message, User, RichEmbed, MessageReaction } from 'discord.js';
+import { ISource, IUser, ISourceGroup } from '../../db/dbUser';
+import chalk from 'chalk';
+import { isNumber } from 'util';
 
 export const command: ICommand = {
-   name: "List",
-   description: "List Sources",
-   isSubCommand: true,
+   name: 'List',
+   description: 'List Sources',
    args: false,
+   aliases: ['ls'],
+   isSubCommand: true,
 
    async execute(message, args) {
-      let group = "";
+      let group = '';
 
       args.find((arg, i) => {
-         if (arg && arg.startsWith("-") && arg.length > 1) {
+         if (arg && (arg === '-group' || arg === '-g' || arg === '-grp') && arg.length > 1) {
             args.splice(i, 1);
-            group = args.slice(i, 1).join(" ");
+            group = args.splice(i, i + 1).join(' ');
+            // console.log(`found group: ${group}`);
          }
       });
 
-      const target = await getTarget(message, args.join(" "));
+      const query = args.join(' ');
+      // console.log(`query: ${query}`);
+
+      const target = await getTarget(message, query);
 
       if (target) {
          getUser(target.id)
             .then((user) => {
-               console.log(`Found user: ${user.tag}`);
+               // console.log(`Found user: ${user.tag}`);
                if (user.sourcesGroups && user.sourcesGroups.length > 0) {
-                  if (group === "") ListGroups(message, target, user);
-                  else ListSources(message, target, user, group);
+                  if (group === '') {
+                     // console.log(`Listing groups`);
+                     ListGroups(message, target, user);
+                  } else {
+                     let grpIndex = Number(group);
+                     if (isNumber(grpIndex) && grpIndex <= user.sourcesGroups.length) {
+                        // console.log(`group is number: ${Number(group)}`);
+                        group = user.sourcesGroups[grpIndex - 1].name;
+                     }
+
+                     // console.log(`Listing sources from group ${group}`);
+                     ListSources(message, target, user, group);
+                  }
                } else {
                   QuickEmbed(message, `${target.username} doesn't have any sources`);
                }
@@ -45,6 +62,7 @@ export const command: ICommand = {
 
 async function ListSources(message: Message, target: User, user: IUser, group: string) {
    const groupFound = user.sourcesGroups.find((grp) => grp.name === group);
+
    if (!groupFound) return QuickEmbed(message, `Group **${group}** not found in **${target.username}'s** Source's`);
 
    const sources = groupFound.sources;
@@ -66,7 +84,7 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
       if (pageSources) {
          pageSources.push(sources[i]);
       } else {
-         console.log(chalk.bgRed.bold("Page Sources undefined"));
+         console.log(chalk.bgRed.bold('Page Sources undefined'));
       }
 
       count++;
@@ -77,9 +95,9 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
    embed.setColor(embedColor);
    embed.setThumbnail(target.avatarURL);
 
-   let title = `**${groupFound.name}**\nPage **${pageAt + 1}**`;
+   let title = `**${groupFound.name}**\nPage **${pageAt + 1} / ${pages.size}**`;
    title += `\nSources **${sources.length}**`;
-   title += "\n\u200b";
+   title += '\n\u200b';
 
    embed.setTitle(title);
 
@@ -88,10 +106,10 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
       page.map((source, index) => {
          const num = `**${index + 1}**  `;
 
-         let content = `URL: ${source.url}`;
+         let content = source.url + '\n\u200b';
 
          let title = `${num} `;
-         if (source.title !== "") title += `  **${source.title}**`;
+         if (source.title !== '') title += `  **${source.title}**`;
 
          embed.addField(title, content);
       });
@@ -105,45 +123,42 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
    //If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) return;
 
-   msg.react("⬅").then(() => msg.react("➡"));
+   msg.react('⬅').then(() => msg.react('➡'));
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
+      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;
    };
 
    const collector = msg.createReactionCollector(filter);
 
    let currentPage = 0;
 
-   collector.on("collect", async (r) => {
-      if (r.emoji.name === "➡") {
+   collector.on('collect', async (r) => {
+      if (r.emoji.name === '➡') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (r.emoji.name === "⬅") {
+      } else if (r.emoji.name === '⬅') {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
 
       r.remove(r.users.last());
 
-      let title = `**${groupFound.name}**\nPage **${pageAt + 1}**`;
+      let title = `**${groupFound.name}**\nPage **${currentPage + 1} / ${pages.size}**`;
       title += `\nSources **${sources.length}**`;
-      title += "\n\u200b";
+      title += '\n\u200b';
 
       const newEmbed = new RichEmbed().setThumbnail(target.avatarURL).setTitle(title).setColor(embedColor);
 
       const page = pages.get(currentPage);
-      if (!page) return;
+      if (!page) return console.log(`Page not found`);
 
       page.map((source, index) => {
-         const num = `**${index + 1}**  `;
-
-         let content = `URL: ${source.url}`;
-
+         const num = `**${currentPage * sourcesPerPage + (index + 1)}**`;
+         let content = source.url;
          let title = `${num} `;
-         if (source.title !== "") title += `  **${source.title}**`;
-
-         embed.addField(title, content);
+         if (source.title !== '') title += `  **${source.title}**`;
+         newEmbed.addField(title, content + '\n\u200b');
       });
 
       msg.edit(newEmbed);
@@ -152,7 +167,7 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
 
 async function ListGroups(message: Message, target: User, user: IUser) {
    const sources = user.sourcesGroups;
-   const sourcesPerPage = 5;
+   const sourcesPerPage = 10;
    const pages: Collection<number, ISourceGroup[]> = new Collection();
 
    let count = 0;
@@ -169,7 +184,7 @@ async function ListGroups(message: Message, target: User, user: IUser) {
       if (pageSources) {
          pageSources.push(sources[i]);
       } else {
-         console.log(chalk.bgRed.bold("Page Sources undefined"));
+         console.log(chalk.bgRed.bold('Page Sources undefined'));
       }
 
       count++;
@@ -180,9 +195,9 @@ async function ListGroups(message: Message, target: User, user: IUser) {
    embed.setColor(embedColor);
    embed.setThumbnail(target.avatarURL);
 
-   let title = `**Sources**\nPage **${pageAt + 1}**`;
+   let title = `**Sources**\nPage **${pageAt + 1}** / ${pages.size}`;
    title += `\nGroups **${user.sourcesGroups.length}**`;
-   title += "\n\u200b";
+   title += '\n\u200b';
 
    embed.setTitle(title);
 
@@ -206,30 +221,30 @@ async function ListGroups(message: Message, target: User, user: IUser) {
    //If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) return;
 
-   msg.react("⬅").then(() => msg.react("➡"));
+   msg.react('⬅').then(() => msg.react('➡'));
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return (reaction.emoji.name === "➡" || reaction.emoji.name === "⬅") && !user.bot;
+      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;
    };
 
    const collector = msg.createReactionCollector(filter);
 
    let currentPage = 0;
 
-   collector.on("collect", async (r) => {
-      if (r.emoji.name === "➡") {
+   collector.on('collect', async (r) => {
+      if (r.emoji.name === '➡') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (r.emoji.name === "⬅") {
+      } else if (r.emoji.name === '⬅') {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
 
       r.remove(r.users.last());
 
-      let title = `**Sources**\nPage **${currentPage + 1}**`;
+      let title = `**Sources**\nPage **${currentPage + 1} / ${pages.size}**`;
       title += `\nAmount **${user.sourcesGroups.length}**`;
-      title += "\n\u200b";
+      title += '\n\u200b';
 
       const newEmbed = new RichEmbed().setThumbnail(target.avatarURL).setTitle(title).setColor(embedColor);
 
@@ -237,12 +252,12 @@ async function ListGroups(message: Message, target: User, user: IUser) {
       if (!page) return;
 
       page.map((source, index) => {
-         const num = `**${index + 1}**  `;
+         const num = `**${currentPage * sourcesPerPage + (index + 1)}**`;
 
          let content = `Sources: ${source.sources.length}`;
          let title = `${num} **${source.name}**`;
 
-         embed.addField(title, content);
+         newEmbed.addField(title, content);
       });
 
       msg.edit(newEmbed);
