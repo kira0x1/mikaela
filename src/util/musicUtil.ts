@@ -1,4 +1,5 @@
 import { IDuration } from '../classes/Player';
+
 export function ConvertDuration(duration_seconds: number | string) {
    let minutes: number = Math.floor(Number(duration_seconds) / 60);
    let seconds: number | string = Math.floor(Number(duration_seconds) - minutes * 60);
