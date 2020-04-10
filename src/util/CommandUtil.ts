@@ -5,7 +5,6 @@ import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
 import { wrap } from './Style';
-import { info } from '../commands/info/admin';
 
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
@@ -76,12 +75,9 @@ export function GetCommandOverride(query: string): ICommand | undefined {
 export function FindCommandGroup(query: string) {
    let grp = commandGroups.get(query);
    if (!grp) {
-      let infoFound = commandInfos.find((info) => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase()));
-      if (infoFound) {
-         grp = commandGroups.get(infoFound.name.toLowerCase());
-      }
+      const info = commandInfos.find((info) => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase()));
+      grp = info.commands;
    }
-
    return grp;
 }
 
