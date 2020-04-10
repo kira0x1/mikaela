@@ -20,51 +20,48 @@ async function init() {
 }
 
 client.on('ready', () => {
-   /// Save heart emoji to use for favorites
+   // Save heart emoji to use for favorites
    initEmoji(client);
 
-   /// Add event listener to add/remove voice role
+   // Add event listener to add/remove voice role
    initVoiceManager(client);
 
-   /// Add event listeners to #roles
+   // Add event listeners to #roles
    syncRoles(client);
 
-   /// Read command files and set it to a array
+   // Read command files and set it to a array
    InitCommands();
-
-   /// FIXME REMOVE AFTER SETUP
-   /// InitGuilds(client)
 
    console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
 
-   /// Setup players
+   // Setup players
    client.guilds.map((guild) => {
       console.log(chalk.bgBlue.bold(`${guild.name}`));
       players.set(guild.id, new Player(guild, client));
    });
 });
 
-/// Called when a member joins a server
+// Called when a member joins a server
 client.on('guildMemberAdd', (member) => {
-   /// Check if is testing
+   // Check if is testing
    if (IS_TESTING) return;
 
-   /// Check if member is from coders club
+   // Check if member is from coders club
    if (member.guild.id !== coders_club_id) return;
 
-   /// setup content message
+   // setup content message
    let content = `>>> Welcome **${member.toString()}**`;
    content += `\nYou can pick out some roles from **<#618438576119742464>**`;
 
-   /// get codersclub
+   // get codersclub
    const guild = client.guilds.get(coders_club_id);
    if (!guild) return console.log('guild not found');
 
-   /// get welcome channel
+   // get welcome channel
    let channel = guild.channels.get('647099246436286494');
    if (!channel) return;
 
-   /// send welcome message
+   // send welcome message
    if (((channel): channel is TextChannel => channel.type === 'text')(channel)) {
       channel.send(content);
    } else {
@@ -72,30 +69,30 @@ client.on('guildMemberAdd', (member) => {
    }
 });
 
-/// OnMessage
+// OnMessage
 client.on('message', (message) => {
-   /// Check if message is from a bot and that the message starts with the prefix
+   // Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || !message.content.startsWith(prefix)) {
       return;
    }
 
-   /// Check if is testing and not in coders club
+   // Check if is testing and not in coders club
    if (IS_TESTING && message.guild.id !== coders_club_id) return;
 
-   /// Split up message into an array and remove the prefix
+   // Split up message into an array and remove the prefix
    let args = message.content.slice(prefix.length).split(/ +/);
 
-   /// Remove the first element from the args array ( this is the command name )
+   // Remove the first element from the args array ( this is the command name )
    let commandName = args.shift();
    if (!commandName || commandName.includes(prefix) || commandName === prefix) return;
 
-   /// Set commandName to lowercase
+   // Set commandName to lowercase
    commandName = commandName.toLowerCase();
 
-   /// Search for the command
+   // Search for the command
    let command = FindCommand(commandName);
 
-   /// If the command wasnt found check if its in a commandgroup
+   // If the command wasnt found check if its in a commandgroup
    if (!command) {
       const grp = FindCommandGroup(commandName);
       if (grp) {
@@ -106,12 +103,12 @@ client.on('message', (message) => {
       }
    }
 
-   /// If command not found send a message
+   // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
 
    let canUseCommand = true;
 
-   /// Check if the message was sent in 'discord done left'
+   // Check if the message was sent in 'discord done left'
    if (message.guild.id === discord_done_left_id) {
       if (message.channel.id === '595870992476274688') {
          commandGroups
