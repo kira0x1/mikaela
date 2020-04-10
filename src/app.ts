@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection, Message, RichEmbed, TextChannel } from 'discord.js';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
-import { coders_club_id, prefix, token, discord_done_left_id } from './config';
+import { coders_club_id, prefix, token, discord_done_left_id, ddl_general_channel_id } from './config';
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
@@ -98,7 +98,7 @@ client.on('message', (message) => {
 
       if (grp) {
          //Get the sub-command input given by the user
-         const subCmdName = args.shift();
+         const subCmdName = args[0];
 
          //Check if the command-group contains the command
          command = grp.find(
@@ -109,17 +109,21 @@ client.on('message', (message) => {
          //If the command-group doesnt contain the command then check if the command-group has it set as an override
          if (!command) {
             command = GetCommandOverride(commandName);
+         } else {
+            //? If the command is not an overdrive command then remove the first argument, since its a subcommand
+            args.shift();
          }
       }
    }
 
    // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
+
    let canUseCommand = true;
 
    // Check if the message was sent in 'discord done left'
    if (message.guild.id === discord_done_left_id) {
-      if (message.channel.id === '595870992476274688') {
+      if (message.channel.id === ddl_general_channel_id) {
          commandGroups
             .find((commands, key) => key === 'music')
             .map((cmd) => {
@@ -128,6 +132,7 @@ client.on('message', (message) => {
       }
    }
 
+   //! Check if the user is allowed to use the command in DiscordDoneLeft - General Chat
    if (!canUseCommand) {
       return message.member.send(`You cant use music commands in general`);
    }

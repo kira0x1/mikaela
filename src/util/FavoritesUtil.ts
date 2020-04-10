@@ -1,5 +1,5 @@
-import { Message, User } from "discord.js";
-import { addUser, getUser } from "../db/userController";
+import { Message, User } from 'discord.js';
+import { addUser, getUser } from '../db/userController';
 
 export async function getTarget(message: Message, username: string) {
    let user: undefined | User = undefined;
@@ -24,7 +24,6 @@ export async function getTarget(message: Message, username: string) {
    let userDb = await getUser(user.id)
       .then(() => {})
       .catch((err) => {
-         console.log(`not found in db`);
          if (!user) return console.log(`user undefined`);
          addUser({
             tag: user.tag,
