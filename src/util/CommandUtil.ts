@@ -76,7 +76,7 @@ export function FindCommandGroup(query: string) {
    let grp = commandGroups.get(query);
    if (!grp) {
       const info = commandInfos.find((info) => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase()));
-      grp = info.commands;
+      if (info) grp = info.commands;
    }
    return grp;
 }
