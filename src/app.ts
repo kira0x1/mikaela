@@ -95,8 +95,18 @@ client.on('message', (message) => {
    // If the command wasnt found check if its in a commandgroup
    if (!command) {
       const grp = FindCommandGroup(commandName);
+
       if (grp) {
-         command = grp.find((cmd) => cmd.name.toLowerCase() === commandName || (cmd.aliases && cmd.aliases.find((al) => al === commandName)));
+         //Get the sub-command input given by the user
+         const subCmdName = args.shift();
+
+         //Check if the command-group contains the command
+         command = grp.find(
+            (cmd) =>
+               cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find((al) => al.toLowerCase() === subCmdName?.toLowerCase()))
+         );
+
+         //If the command-group doesnt contain the command then check if the command-group has it set as an override
          if (!command) {
             command = GetCommandOverride(commandName);
          }
@@ -105,7 +115,6 @@ client.on('message', (message) => {
 
    // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
-
    let canUseCommand = true;
 
    // Check if the message was sent in 'discord done left'
