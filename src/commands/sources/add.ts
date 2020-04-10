@@ -13,24 +13,8 @@ export const command: ICommand = {
    isSubCommand: true,
 
    async execute(message, args) {
-      let title: string = '';
-      let group: string = '';
-
-      args.find((arg, i) => {
-         if (arg)
-            if (arg.toLowerCase() === '-group' || arg === '-grp' || arg === '-g') {
-               group = args.splice(i + 1, 1).join(' ');
-               args.splice(i, 1);
-            }
-      });
-
-      args.find((arg, i) => {
-         if (arg)
-            if (arg.toLowerCase() === '-title' || arg === '-name') {
-               title = args.splice(i + 1, 1).join(' ');
-               args.splice(i, 1);
-            }
-      });
+      let title: string = getArg(args, ['title', 'name', 't']);
+      let group: string = getArg(args, ['group', 'grp', 'g']);
 
       const query = args.join(' ');
 
@@ -88,4 +72,23 @@ async function AddSource(message: Message, user: IUser, query: string, title: st
 
    //Update the user on the database
    updateUser(message.member.id, user);
+}
+
+function getArg(args: string[], query: string[], prefix = '-') {
+   let result = '';
+
+   for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+      if (arg && arg.startsWith(prefix) && arg.length > 1 && arg[i + 1] !== prefix) {
+         if (query.includes(arg.substr(prefix.length, arg.length).toLowerCase())) {
+            console.log(`Found arg... ${arg}`);
+            args.splice(i, 1);
+            result = args.splice(i, 1).join(' ');
+            console.log(`Result: ${result}`);
+            break;
+         }
+      }
+   }
+
+   return result;
 }
