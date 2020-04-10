@@ -17,40 +17,36 @@ export const command: ICommand = {
       let group: string = '';
 
       args.find((arg, i) => {
-         if (arg)
-            if (arg.toLowerCase() === '-group' || arg === '-grp' || arg === '-g') {
-               group = args.splice(i + 1, 1).join(' ');
+         if (arg && arg.startsWith('-') && arg.length > 1 && arg[i + 1] !== '-') {
+            if (arg === '-title' || arg === '-name') {
                args.splice(i, 1);
-            }
-      });
-
-      args.find((arg, i) => {
-         if (arg)
-            if (arg.toLowerCase() === '-title' || arg === '-name') {
-               title = args.splice(i + 1, 1).join(' ');
+               title = args.splice(i, 1).join(' ');
+               console.log(chalk.bgRed.bold(`Name argument given: ${title}`));
+            } else if (arg === '-group' || arg === '-grp') {
                args.splice(i, 1);
+               group = args.splice(i, 1).join(' ');
+               console.log(chalk.bgRed.bold(`Group argument given: ${group}`));
             }
+         }
       });
 
       const query = args.join(' ');
+      console.log(`query: ${query}`);
 
       getUser(message.member.user.id)
          .then((user) => {
             AddSource(message, user, query, title, group);
          })
          .catch(async (err) => {
-            const member = message.member;
-
             //If user was not found create them
-            await CreateUser(member);
+            await CreateUser(message.member);
 
             //Add favorite to the newly created user
-            getUser(member.id)
+            getUser(message.member.user.id)
                .then((user) => {
                   AddSource(message, user, query, title, group);
                })
                .catch((err) => {
-                  console.log(chalk.bgRed.bold(`Error While adding Sources, LINE: 43 , add.ts`));
                   console.log(err);
                });
          });
@@ -59,33 +55,14 @@ export const command: ICommand = {
 
 async function AddSource(message: Message, user: IUser, query: string, title: string = '', group: string = '') {
    if (!user) return QuickEmbed(message, `Error finding user`);
-
-   //If no group specified then set it the ungrouped group
-   if (group === '') {
-      group = 'Ungrouped';
+   if (group !== '') {
+      const groupFound = user.sourcesGroups.find((grp) => grp.name === group);
+      if (!groupFound) user.sourcesGroups.push({ name: group, sources: [] });
+      user.sourcesGroups.find((grp) => {
+         if (grp.name === group) {
+            grp.sources.push({ title: title, url: query, group: group });
+         }
+      });
    }
-
-   //Get the Sources Group
-   const groupFound = user.sourcesGroups.find((grp) => grp.name === group);
-
-   //Create a group if the one specified doesnt exist
-   if (!groupFound) user.sourcesGroups.push({ name: group, sources: [] });
-
-   //! Insert the Source to the Group
-   user.sourcesGroups.find((grp) => {
-      if (grp.name === group) {
-         grp.sources.push({ title: title, url: query, group: group });
-      }
-   });
-
-   //? Create the feedback text
-   let replyMessage = 'Added source ';
-   if (title !== '') replyMessage += `"***${title}***" `;
-   replyMessage += `*${query}* to group *"${group}"*`;
-
-   //Send Feedback to the user
-   QuickEmbed(message, replyMessage);
-
-   //Update the user on the database
    updateUser(message.member.id, user);
 }
