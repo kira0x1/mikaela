@@ -19,7 +19,6 @@ export const command: ICommand = {
       if (target) {
          getUser(target.id)
             .then((user) => {
-               // console.log(`Found user: ${user.tag}`);
                if (user.favorites && user.favorites.length > 0) {
                   ListFavorites(message, target, user);
                } else {
@@ -28,7 +27,6 @@ export const command: ICommand = {
             })
             .catch((err) => {
                QuickEmbed(message, `${target.username} doesn't have any favorites`);
-               console.log(err);
             });
       }
    },
