@@ -6,7 +6,7 @@ import { coders_club_id, prefix, token, discord_done_left_id, ddl_general_channe
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-import { commandGroups, findCommand, findCommandGroup, getCommandOverride, initCommands } from './util/CommandUtil';
+import { commandGroups, findCommand, findCommandGroup, getCommandOverride, initCommands, hasPerms } from './util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from './util/Style';
 
 const IS_TESTING = false;
@@ -35,14 +35,14 @@ client.on('ready', () => {
    console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
 
    // Setup players
-   client.guilds.map((guild) => {
+   client.guilds.map(guild => {
       console.log(chalk.bgBlue.bold(`${guild.name}`));
       players.set(guild.id, new Player(guild, client));
    });
 });
 
 // Called when a member joins a server
-client.on('guildMemberAdd', (member) => {
+client.on('guildMemberAdd', member => {
    // Check if is testing
    if (IS_TESTING) return;
 
@@ -70,7 +70,7 @@ client.on('guildMemberAdd', (member) => {
 });
 
 // OnMessage
-client.on('message', (message) => {
+client.on('message', message => {
    // Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || !message.content.startsWith(prefix)) {
       return;
@@ -102,8 +102,8 @@ client.on('message', (message) => {
 
          //Check if the command-group contains the command
          command = grp.find(
-            (cmd) =>
-               cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find((al) => al.toLowerCase() === subCmdName?.toLowerCase()))
+            cmd =>
+               cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
          );
 
          //If the command-group doesnt contain the command then check if the command-group has it set as an override
@@ -118,6 +118,7 @@ client.on('message', (message) => {
 
    // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
+   if (!hasPerms(message.author.id, commandName)) return message.author.send(`You do not have permission to use command ${wrap(commandName)}`);
 
    let canUseCommand = true;
 
@@ -126,7 +127,7 @@ client.on('message', (message) => {
       if (message.channel.id === ddl_general_channel_id) {
          commandGroups
             .find((commands, key) => key === 'music')
-            .map((cmd) => {
+            .map(cmd => {
                if (command && command.name === cmd.name) canUseCommand = false;
             });
       }
