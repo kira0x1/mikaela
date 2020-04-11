@@ -110,5 +110,11 @@ export function hasPerms(userId: string, query: string): boolean {
    //If none set then this command does not require permissions to use
    if (!permsFound || permsFound.length === 0) return true;
 
-   return permsFound.includes(userId);
+   for (let i = 0; i < permsFound.length; i++) {
+      const permName = permsFound[i].toLowerCase();
+      const perm = perms.find(p => p.name.toLowerCase() === permName);
+      if (perm?.users.includes(userId)) return true;
+   }
+
+   return false;
 }
