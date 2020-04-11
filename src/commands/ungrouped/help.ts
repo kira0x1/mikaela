@@ -1,123 +1,120 @@
 import { Message, RichEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
-import { commandGroups, commandInfos, FindCommand, FindCommandInfo, HasPerms } from '../../util/CommandUtil';
+import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from '../../util/Style';
 
 export const command: ICommand = {
-    name: "Help",
-    description: "Lists all commands",
-    aliases: ["h"],
+   name: 'Help',
+   description: 'Lists all commands',
+   aliases: ['h'],
 
-    execute(message, args) {
-        const query = args.join(" ")
-        if (!query) {
-            displayAll(message)
-        } else {
-            displayOne(message, query)
-        }
-    }
-}
+   execute(message, args) {
+      const query = args.join(' ');
+      if (!query) {
+         displayAll(message);
+      } else {
+         displayOne(message, query);
+      }
+   },
+};
 
 function displayAll(message: Message) {
-    const grouped: ICommand[] = []
+   const grouped: ICommand[] = [];
 
-    //Add all grouped commands to the grouped array so we can cross
-    //reference this later to check for ungrouped commands
-    commandGroups.map(grp => {
-        grp.map(cmd => {
-            if (HasPerms(message.author.id, cmd.name) && !cmd.hidden)
-                grouped.push(cmd)
-        })
-    })
+   //Add all grouped commands to the grouped array so we can cross
+   //reference this later to check for ungrouped commands
+   commandGroups.map((grp) => {
+      grp.map((cmd) => {
+         if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) grouped.push(cmd);
+      });
+   });
 
-    //Create embed
-    const embed = new RichEmbed()
-    embed.setTitle("Commands")
-    embed.setColor(embedColor)
+   //Create embed
+   const embed = new RichEmbed();
+   embed.setTitle('Commands');
+   embed.setColor(embedColor);
 
-    //Add all ungrouped commands to the embed
-    const ungrouped = commandGroups.get("ungrouped")
-    if (ungrouped) {
-        ungrouped.map(cmd => {
-            if (HasPerms(message.author.id, cmd.name) && !cmd.hidden)
-                embed.addField(cmd.name, cmd.description)
-        })
-    }
+   //Add all ungrouped commands to the embed
+   const ungrouped = commandGroups.get('ungrouped');
+   if (ungrouped) {
+      ungrouped.map((cmd) => {
+         if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) embed.addField(cmd.name, cmd.description);
+      });
+   }
 
-    //Add all group commands info to the embed
-    commandInfos.map(info => {
-        if (HasPerms(message.author.id, info.name))
-            embed.addField(info.name, info.description)
-    })
+   //Add all group commands info to the embed
+   commandInfos.map((info) => {
+      if (hasPerms(message.author.id, info.name)) embed.addField(info.name, info.description);
+   });
 
-    message.channel.send(embed)
+   message.channel.send(embed);
 }
 
 function displayOne(message: Message, query: string) {
-    const command = FindCommand(query)
-    let info = FindCommandInfo(query)
+   //Look for Command
+   const command = findCommand(query);
 
-    if ((!command && !info) || !HasPerms(message.author.id, query)) {
-        QuickEmbed(message, "Command not found")
-    } else {
+   //Get command info
+   const info = findCommandInfo(query);
 
-        //Create embed
-        const embed = new RichEmbed()
-        embed.setColor(embedColor)
+   //If command was not found or if the user doesnt have permission then respond with Command not found
+   if ((!command && !info) || !hasPerms(message.author.id, query)) return QuickEmbed(message, 'Command not found');
 
-        if (command) {
-            InsertCommandEmbed(embed, command)
-        } else if (info) {
+   //Create embed
+   const embed = new RichEmbed().setColor(embedColor);
 
-            if (info.commands) {
+   //If we have the command
+   if (command) return InsertCommandEmbed(embed, command);
 
-                //Loop through all the commands in the CommandInfo class
-                info.commands.map(cmd => {
-                    let desc = cmd.description
+   //? If we dont have the command, then it must be an info group
 
-                    //Add aliases to the description
-                    if (cmd.aliases) {
-                        desc += `\naliases: ${wrap(cmd.aliases, "`")}`
-                    }
+   //If the info group doesnt have any commands then exit out
+   if (!info.commands) return;
 
-                    if (cmd.usage) {
-                        let usage = ``
-                        if (cmd.isSubCommand) {
-                            let cmdGroup = ""
-                            commandGroups.map((commands, group) => {
-                                if (commands.includes(cmd)) cmdGroup = group
-                            })
+   //Loop through all the commands in the CommandInfo class
+   info.commands.map((cmd) => {
+      let desc = cmd.description;
 
-                            usage = wrap(`${prefix}${cmdGroup} ${cmd.name} ${cmd.usage}`, "`")
-                        } else {
-                            usage = wrap(`${prefix}${cmd.name} ${cmd.usage}`, "`")
-                        }
-                        desc += `\n${usage}`
-                    }
+      //Add aliases to the description
+      if (cmd.aliases) {
+         desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
+      }
 
-                    //Add command to the embed
-                    embed.addField(cmd.name.toLowerCase(), desc)
-                })
-            }
-        }
+      if (cmd.usage) {
+         let usage = ``;
+         if (cmd.isSubCommand) {
+            let cmdGroup = '';
+            commandGroups.map((commands, group) => {
+               if (commands.includes(cmd)) cmdGroup = group;
+            });
 
-        //Send embed
-        message.channel.send(embed)
-    }
+            usage = wrap(`${prefix}${cmdGroup} ${cmd.name} ${cmd.usage}`, '`');
+         } else {
+            usage = wrap(`${prefix}${cmd.name} ${cmd.usage}`, '`');
+         }
+         desc += `\n${usage}`;
+      }
+
+      //Add command to the embed
+      embed.addField(cmd.name.toLowerCase(), desc);
+   });
+
+   //Send embed
+   message.channel.send(embed);
 }
 
 function InsertCommandEmbed(embed: RichEmbed, command: ICommand) {
-    embed.setTitle(command.name)
-    embed.setDescription(command.description)
+   embed.setTitle(command.name);
+   embed.setDescription(command.description);
 
-    if (command.usage) {
-        embed.addField("Usage", wrap(command.usage, "`"))
-    }
+   if (command.usage) {
+      embed.addField('Usage', wrap(command.usage, '`'));
+   }
 
-    if (command.aliases) {
-        const aliasesString = wrap(command.aliases, "`")
-        embed.addField("aliases: ", aliasesString)
-    }
-    return embed
+   if (command.aliases) {
+      const aliasesString = wrap(command.aliases, '`');
+      embed.addField('aliases: ', aliasesString);
+   }
+   return embed;
 }

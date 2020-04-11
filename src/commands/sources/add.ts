@@ -34,7 +34,7 @@ export const command: ICommand = {
                   AddSource(message, user, query, title, group);
                })
                .catch((err) => {
-                  console.log(chalk.bgRed.bold(`Error While adding Sources, LINE: 43 , add.ts`));
+                  console.log(chalk.bgRed.bold(`Error While adding Sources, LINE: 37 , favorites/add.ts`));
                   console.log(err);
                });
          });

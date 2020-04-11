@@ -6,7 +6,7 @@ import { coders_club_id, prefix, token, discord_done_left_id, ddl_general_channe
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-import { commandGroups, FindCommand, FindCommandGroup, GetCommandOverride, InitCommands } from './util/CommandUtil';
+import { commandGroups, findCommand, findCommandGroup, getCommandOverride, initCommands } from './util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from './util/Style';
 
 const IS_TESTING = false;
@@ -30,7 +30,7 @@ client.on('ready', () => {
    syncRoles(client);
 
    // Read command files and set it to a array
-   InitCommands();
+   initCommands();
 
    console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
 
@@ -90,11 +90,11 @@ client.on('message', (message) => {
    commandName = commandName.toLowerCase();
 
    // Search for the command
-   let command = FindCommand(commandName);
+   let command = findCommand(commandName);
 
    // If the command wasnt found check if its in a commandgroup
    if (!command) {
-      const grp = FindCommandGroup(commandName);
+      const grp = findCommandGroup(commandName);
 
       if (grp) {
          //Get the sub-command input given by the user
@@ -108,7 +108,7 @@ client.on('message', (message) => {
 
          //If the command-group doesnt contain the command then check if the command-group has it set as an override
          if (!command) {
-            command = GetCommandOverride(commandName);
+            command = getCommandOverride(commandName);
          } else {
             //? If the command is not an overdrive command then remove the first argument, since its a subcommand
             args.shift();

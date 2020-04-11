@@ -1,7 +1,7 @@
 import { RichEmbed } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
-import { GetUsage } from '../../util/CommandUtil';
+import { getUsage } from '../../util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from '../../util/Style';
 
 export const command: ICommand = {
@@ -19,7 +19,7 @@ export const command: ICommand = {
         if (timeArg) {
             time = ms(timeArg)
         } else {
-            const usage = GetUsage(this.name)
+            const usage = getUsage(this.name)
             if (usage) {
                 return QuickEmbed(message, usage)
             }
@@ -30,7 +30,7 @@ export const command: ICommand = {
 
         //If user didnt give a message then tell the user the usage of the command
         if (!content) {
-            const usage = GetUsage(this.name)
+            const usage = getUsage(this.name)
             if (usage) {
                 QuickEmbed(message, usage)
             }
