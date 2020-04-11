@@ -24,8 +24,8 @@ function displayAll(message: Message) {
 
    //Add all grouped commands to the grouped array so we can cross
    //reference this later to check for ungrouped commands
-   commandGroups.map((grp) => {
-      grp.map((cmd) => {
+   commandGroups.map(grp => {
+      grp.map(cmd => {
          if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) grouped.push(cmd);
       });
    });
@@ -38,13 +38,13 @@ function displayAll(message: Message) {
    //Add all ungrouped commands to the embed
    const ungrouped = commandGroups.get('ungrouped');
    if (ungrouped) {
-      ungrouped.map((cmd) => {
+      ungrouped.map(cmd => {
          if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) embed.addField(cmd.name, cmd.description);
       });
    }
 
    //Add all group commands info to the embed
-   commandInfos.map((info) => {
+   commandInfos.map(info => {
       if (hasPerms(message.author.id, info.name)) embed.addField(info.name, info.description);
    });
 
@@ -65,15 +65,17 @@ function displayOne(message: Message, query: string) {
    const embed = new RichEmbed().setColor(embedColor);
 
    //If we have the command
-   if (command) return InsertCommandEmbed(embed, command);
+   if (command) {
+      InsertCommandEmbed(embed, command);
+      return message.channel.send(embed);
+   }
 
    //? If we dont have the command, then it must be an info group
-
    //If the info group doesnt have any commands then exit out
    if (!info.commands) return;
 
    //Loop through all the commands in the CommandInfo class
-   info.commands.map((cmd) => {
+   info.commands.map(cmd => {
       let desc = cmd.description;
 
       //Add aliases to the description
