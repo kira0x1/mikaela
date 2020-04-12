@@ -32,7 +32,7 @@ export const command: ICommand = {
 
       if (target) {
          getUser(target.id)
-            .then((user) => {
+            .then(user => {
                // console.log(`Found user: ${user.tag}`);
                if (user.sourcesGroups && user.sourcesGroups.length > 0) {
                   if (group === '') {
@@ -52,7 +52,7 @@ export const command: ICommand = {
                   QuickEmbed(message, `${target.username} doesn't have any sources`);
                }
             })
-            .catch((err) => {
+            .catch(err => {
                QuickEmbed(message, `${target.username} doesn't have any sources`);
                console.log(err);
             });
@@ -61,7 +61,7 @@ export const command: ICommand = {
 };
 
 async function ListSources(message: Message, target: User, user: IUser, group: string) {
-   const groupFound = user.sourcesGroups.find((grp) => grp.name === group);
+   const groupFound = user.sourcesGroups.find(grp => grp.name === group);
 
    if (!groupFound) return QuickEmbed(message, `Group **${group}** not found in **${target.username}'s** Source's`);
 
@@ -133,7 +133,7 @@ async function ListSources(message: Message, target: User, user: IUser, group: s
 
    let currentPage = 0;
 
-   collector.on('collect', async (r) => {
+   collector.on('collect', async r => {
       if (r.emoji.name === '➡') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
@@ -231,7 +231,7 @@ async function ListGroups(message: Message, target: User, user: IUser) {
 
    let currentPage = 0;
 
-   collector.on('collect', async (r) => {
+   collector.on('collect', async r => {
       if (r.emoji.name === '➡') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
