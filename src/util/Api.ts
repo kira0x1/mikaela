@@ -22,7 +22,7 @@ export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
 
-export async function GetSong(query: string): Promise<ISong> {
+export async function getSong(query: string): Promise<ISong> {
    return new Promise((resolve, reject) => {
       ytdl
          .getInfo(query)
