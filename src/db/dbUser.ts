@@ -1,7 +1,6 @@
-import { Client, Collection, GuildMember, User } from 'discord.js';
+import { Collection, GuildMember } from 'discord.js';
 import { model, Schema } from 'mongoose';
 import { ISong } from '../classes/Player';
-import { conn } from './database';
 import { addUser } from './userController';
 
 export var users: Collection<string, IUser> = new Collection();
@@ -50,8 +49,6 @@ export const userModel = model('users', UserSchema);
 
 //Create a UserModel and insert it into the database, returns an error if the user already exists
 export function CreateUser(user: IUser | GuildMember) {
-   var usersModel = conn.model('users', UserSchema);
-
    if (user instanceof GuildMember) {
       const memberUser: IUser = {
          username: user.user.username,
@@ -61,6 +58,7 @@ export function CreateUser(user: IUser | GuildMember) {
          roles: [],
          sourcesGroups: [],
       };
+
       return addUser(memberUser);
    } else {
       return addUser(user);

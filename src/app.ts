@@ -103,7 +103,8 @@ client.on('message', message => {
          //Check if the command-group contains the command
          command = grp.find(
             cmd =>
-               cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
+               cmd.name.toLowerCase() === subCmdName?.toLowerCase() ||
+               (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
          );
 
          //If the command-group doesnt contain the command then check if the command-group has it set as an override
@@ -118,7 +119,8 @@ client.on('message', message => {
 
    // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
-   if (!hasPerms(message.author.id, commandName)) return message.author.send(`You do not have permission to use command ${wrap(commandName)}`);
+   if (!hasPerms(message.author.id, commandName))
+      return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
    let canUseCommand = true;
 

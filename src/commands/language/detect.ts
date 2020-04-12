@@ -1,20 +1,20 @@
-import { ICommand } from "../../classes/Command";
-import { detectLanguage } from "../../util/Api";
-import { QuickEmbed } from "../../util/Style";
+import { ICommand } from '../../classes/Command';
+import { detectLanguage } from '../../util/Api';
+import { QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {
-   name: "Detect",
-   description: "Detects the language of the given string",
-   aliases: ["dt"],
+   name: 'Detect',
+   description: 'Detects the language of the given string',
+   aliases: ['dt'],
    args: true,
 
    async execute(message, args) {
       //Get query
-      const query = args.join(" ");
+      const query = args.join(' ');
 
       //Send to API and display result
       detectLanguage(query)
-         .then((body) => {
+         .then(body => {
             const result = body[0];
 
             const confidence = result.confidence;
@@ -28,7 +28,7 @@ Is_Reliable: ${isReliable}\`\`\``;
 
             message.channel.send(content);
          })
-         .catch((err) => {
+         .catch(err => {
             QuickEmbed(message, `Error: ${err.message}`);
          });
    },

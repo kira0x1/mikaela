@@ -11,7 +11,7 @@ export async function getTarget(message: Message, username: string) {
    } else {
       if (message.mentions.users.size > 0) user = message.mentions.members.first().user;
       else {
-         let member = message.guild.members.find((m) => m.displayName.toLowerCase() === userName);
+         let member = message.guild.members.find(m => m.displayName.toLowerCase() === userName);
          if (member) user = member.user;
       }
    }
@@ -23,7 +23,7 @@ export async function getTarget(message: Message, username: string) {
 
    let userDb = await getUser(user.id)
       .then(() => {})
-      .catch((err) => {
+      .catch(err => {
          if (!user) return console.log(`user undefined`);
          addUser({
             tag: user.tag,
@@ -33,8 +33,8 @@ export async function getTarget(message: Message, username: string) {
             roles: [],
             sourcesGroups: [],
          })
-            .then((user) => {})
-            .catch((err) => console.log(err));
+            .then(user => {})
+            .catch(err => console.log(err));
       });
 
    return user;

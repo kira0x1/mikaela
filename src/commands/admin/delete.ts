@@ -10,7 +10,6 @@ export const command: ICommand = {
    hidden: true,
 
    async execute(message, args) {
-
       if (message.author.id !== '177016697117474816') {
          message.author.send('You do not have permission to use this command');
          return;

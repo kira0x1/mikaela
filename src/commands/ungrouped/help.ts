@@ -59,7 +59,9 @@ function displayOne(message: Message, query: string) {
    const info = findCommandInfo(query);
 
    //If command was not found or if the user doesnt have permission then respond with Command not found
-   if ((!command && !info) || !hasPerms(message.author.id, query)) return QuickEmbed(message, 'Command not found');
+   if (!command && !info) return QuickEmbed(message, `Command ${wrap(query)} not found`);
+   if (!hasPerms(message.author.id, query))
+      return message.author.send(`You do not have permission to use ${wrap(command?.name || info?.name)}`);
 
    //Create embed
    const embed = new RichEmbed().setColor(embedColor);

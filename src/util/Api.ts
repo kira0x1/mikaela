@@ -1,20 +1,20 @@
-import rp from "request-promise";
-import ytdl, { getInfo } from "ytdl-core";
-import { ISong } from "../classes/Player";
-import { youTubeKey } from "../config";
-import { ConvertDuration } from "./musicUtil";
+import rp from 'request-promise';
+import ytdl, { getInfo } from 'ytdl-core';
+import { ISong } from '../classes/Player';
+import { youTubeKey } from '../config';
+import { ConvertDuration } from './musicUtil';
 
 export function Get(url: string, options?: any) {
    if (!options)
       options = {
-         method: "GET",
+         method: 'GET',
          json: true,
       };
 
    return new Promise((resolve, reject) => {
       rp(url, options)
-         .then((body) => resolve(body))
-         .catch((err) => reject(err));
+         .then(body => resolve(body))
+         .catch(err => reject(err));
    });
 }
 
@@ -26,7 +26,7 @@ export async function GetSong(query: string): Promise<ISong> {
    return new Promise((resolve, reject) => {
       ytdl
          .getInfo(query)
-         .then((info) => {
+         .then(info => {
             let songResult: ISong = {
                title: info.title,
                id: info.video_id,
@@ -36,32 +36,30 @@ export async function GetSong(query: string): Promise<ISong> {
 
             return resolve(songResult);
          })
-         .catch((err) => {
+         .catch(err => {
             Youtube.Get(query)
-               .then((songResult) => {
+               .then(songResult => {
                   if (songResult) return resolve(songResult);
                   else {
                      return reject(undefined);
                   }
                })
-               .catch((err) => {
+               .catch(err => {
                   return reject(undefined);
                });
          });
    });
 }
 
-export async function detectLanguage(
-   query: string
-): Promise<{ confidence: number; isReliable: boolean; language: string }> {
+export async function detectLanguage(query: string): Promise<{ confidence: number; isReliable: boolean; language: string }> {
    return new Promise((resolve, reject) => {
       const options = {
-         method: "POST",
-         url: "https://google-translate1.p.rapidapi.com/language/translate/v2/detect",
+         method: 'POST',
+         url: 'https://google-translate1.p.rapidapi.com/language/translate/v2/detect',
          headers: {
-            "x-rapidapi-host": "google-translate1.p.rapidapi.com",
-            "x-rapidapi-key": "ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de",
-            "content-type": "application/x-www-form-urlencoded",
+            'x-rapidapi-host': 'google-translate1.p.rapidapi.com',
+            'x-rapidapi-key': 'ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de',
+            'content-type': 'application/x-www-form-urlencoded',
          },
          form: { q: query },
       };
@@ -73,15 +71,15 @@ export async function detectLanguage(
    });
 }
 
-export async function translateLanguage(query: string, target: string = "en", source?: string): Promise<any> {
+export async function translateLanguage(query: string, target: string = 'en', source?: string): Promise<any> {
    return new Promise((resolve, reject) => {
       const options = {
-         method: "POST",
-         url: "https://google-translate1.p.rapidapi.com/language/translate/v2",
+         method: 'POST',
+         url: 'https://google-translate1.p.rapidapi.com/language/translate/v2',
          headers: {
-            "x-rapidapi-host": "google-translate1.p.rapidapi.com",
-            "x-rapidapi-key": "ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de",
-            "content-type": "application/x-www-form-urlencoded",
+            'x-rapidapi-host': 'google-translate1.p.rapidapi.com',
+            'x-rapidapi-key': 'ea1fcb97bdmsh914f2e9187653a2p1bc40ejsn5e971619e6de',
+            'content-type': 'application/x-www-form-urlencoded',
          },
          form: { q: query, target: target },
       };
@@ -96,9 +94,9 @@ export async function translateLanguage(query: string, target: string = "en", so
 }
 
 const youtubeOptions = {
-   part: "snippet",
+   part: 'snippet',
    maxResults: 1,
-   order: "relevance",
+   order: 'relevance',
    key: youTubeKey,
 };
 
@@ -110,11 +108,11 @@ export class Youtube {
       let id: string | undefined = undefined;
 
       await rp(url)
-         .then((data) => {
+         .then(data => {
             let body: ISongSearch = JSON.parse(data);
             id = body.items[0].id.videoId;
          })
-         .catch((err) => console.log("couldnt find id"));
+         .catch(err => console.log('couldnt find id'));
 
       if (id) {
          let res = await getInfo(`https://www.youtube.com/watch?v=${id}`);
