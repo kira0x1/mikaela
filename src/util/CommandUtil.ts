@@ -1,10 +1,10 @@
-import { Collection } from 'discord.js';
+import { Collection, Message } from 'discord.js';
 import { readdirSync } from 'fs';
 import path from 'path';
 import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
-import { wrap } from './Style';
+import { wrap, QuickEmbed } from './Style';
 
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
@@ -70,7 +70,9 @@ export function findCommand(query: string): ICommand | undefined {
 }
 
 export function getCommandOverride(query: string): ICommand | undefined {
-   const info = commandInfos.find(cmd_info => cmd_info.name.toLowerCase() === query || cmd_info.aliases.includes(query.toLowerCase()));
+   const info = commandInfos.find(
+      cmd_info => cmd_info.name.toLowerCase() === query || cmd_info.aliases.includes(query.toLowerCase())
+   );
 
    if (info) {
       if (!info.override) return;
@@ -82,14 +84,18 @@ export function getCommandOverride(query: string): ICommand | undefined {
 export function findCommandGroup(query: string) {
    let grp = commandGroups.get(query);
    if (!grp) {
-      const info = commandInfos.find(info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase()));
+      const info = commandInfos.find(
+         info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
+      );
       if (info) grp = info.commands;
    }
    return grp;
 }
 
 export function findCommandInfo(query: string) {
-   let infoFound = commandInfos.find(info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase()));
+   let infoFound = commandInfos.find(
+      info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
+   );
    return infoFound;
 }
 
@@ -117,4 +123,8 @@ export function hasPerms(userId: string, query: string): boolean {
    }
 
    return false;
+}
+
+export function sendUsage(message: Message, commandName: string, fallbackUsage: string = 'Error: Please check your arguments') {
+   QuickEmbed(message, getUsage(commandName) || fallbackUsage);
 }

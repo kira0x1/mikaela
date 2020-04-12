@@ -1,55 +1,37 @@
-import { RichEmbed } from 'discord.js';
+import { Message, RichEmbed } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
-import { getUsage } from '../../util/CommandUtil';
-import { embedColor, QuickEmbed, wrap } from '../../util/Style';
+import { sendUsage } from '../../util/CommandUtil';
+import { embedColor, wrap } from '../../util/Style';
 
 export const command: ICommand = {
-    name: "Reminder",
-    description: "Set a reminder",
-    aliases: ["remind"],
-    args: true,
-    usage: "[time: 2m] [message: take a break]",
+   name: 'Reminder',
+   description: 'Set a reminder',
+   aliases: ['remind', 'rm'],
+   args: true,
+   usage: '[time: 2m] [message: take a break]',
 
-    async execute(message, args) {
-        const timeArg = args.shift()
-        let time
+   async execute(message, args) {
+      const timeArg = args.shift();
+      setReminder(message, timeArg || '', args.join(' '));
+   },
+};
 
-        //Get the time to wait
-        if (timeArg) {
-            time = ms(timeArg)
-        } else {
-            const usage = getUsage(this.name)
-            if (usage) {
-                return QuickEmbed(message, usage)
-            }
-        }
+export function setReminder(message: Message, time: string, content: string) {
+   //If user didnt give a message then tell the user the usage of the command
+   if (!content || !time) return sendUsage(message, command.name, 'Error setting reminder');
 
-        //Get the users message
-        let content = args.join(" ")
+   //Create embed
+   const embed = new RichEmbed()
+      .setColor(embedColor)
+      .setTitle('Reminder set')
+      .setDescription(`remind ${message.author.username} to ${content} in ${time}`);
 
-        //If user didnt give a message then tell the user the usage of the command
-        if (!content) {
-            const usage = getUsage(this.name)
-            if (usage) {
-                QuickEmbed(message, usage)
-            }
-            return
-        }
+   //Send embed telling the user that the reminder was created
+   message.channel.send(embed);
 
-        //Create embed
-        const embed = new RichEmbed()
-            .setColor(embedColor)
-            .setTitle("Reminder set")
-            .setDescription(`remind ${message.author.username} to ${content} in ${timeArg}`)
-
-
-        //Send embed telling the user that the reminder was created
-        message.channel.send(embed)
-
-        //Create reminder time out
-        setTimeout(() => {
-            if (content) { message.channel.send(`Reminder to ${wrap(content, "`")}`, { reply: message.author }) }
-        }, time)
-    }
+   //Create reminder time out
+   setTimeout(() => {
+      message.channel.send(`Reminder to ${wrap(content, '`')}`, { reply: message.author });
+   }, ms(time));
 }

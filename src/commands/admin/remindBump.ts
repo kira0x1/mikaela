@@ -1,4 +1,5 @@
 import { ICommand } from '../../classes/Command';
+import { setReminder } from '../ungrouped/reminder';
 
 export const command: ICommand = {
    name: 'RemindBump',
@@ -6,5 +7,7 @@ export const command: ICommand = {
    aliases: ['rb'],
    perms: ['kira'],
 
-   async execute(message, args) {},
+   async execute(message, args) {
+      setReminder(message, '2h', 'Bump');
+   },
 };
