@@ -119,8 +119,7 @@ client.on('message', message => {
 
    // If command not found send a message
    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
-   if (!hasPerms(message.author.id, commandName))
-      return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
+   if (!hasPerms(message.author.id, commandName)) return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
    let canUseCommand = true;
 
