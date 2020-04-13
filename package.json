@@ -1,26 +1,26 @@
 {
-   "name": "mikaela",
-   "version": "3.1.0",
-   "main": "out/app.js",
-   "license": "MIT",
-   "scripts": {
-      "start": "node ."
-   },
-   "dependencies": {
-      "@discordjs/uws": "^10.149.0",
-      "chalk": "^2.4.2",
-      "discord-ytdl-core": "^1.0.2",
-      "discord.js": "^11.5.1",
-      "mongoose": "^5.7.8",
-      "ms": "^2.1.2",
-      "node-opus": "^0.3.3",
-      "request": "^2.88.2",
-      "request-promise": "^4.2.5"
-   },
-   "devDependencies": {
-      "@types/mongoose": "^5.5.29",
-      "@types/ms": "^0.7.31",
-      "@types/node": "^12.12.6",
-      "@types/request-promise": "^4.1.44"
-   }
+  "name": "mikaela",
+  "version": "3.1.0",
+  "main": "out/app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "@discordjs/uws": "^10.149.0",
+    "chalk": "^2.4.2",
+    "discord-ytdl-core": "^1.0.2",
+    "discord.js": "^11.5.1",
+    "mongoose": "^5.7.8",
+    "ms": "^2.1.2",
+    "node-opus": "^0.3.3",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
+  },
+  "devDependencies": {
+    "@types/mongoose": "^5.5.29",
+    "@types/ms": "^0.7.31",
+    "@types/node": "^12.12.6",
+    "@types/request-promise": "^4.1.44"
+  }
 }
