@@ -4,6 +4,14 @@
   "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
   "main": "out/app.js",
   "license": "MIT",
+  "private": true,
+  "keywords": [
+    "discord",
+    "music",
+    "debate",
+    "typescript",
+    "bot"
+  ],
   "homepage": "https://github.com/lil-kira/MikaelaBot#readme",
   "repository": {
     "type": "git",
