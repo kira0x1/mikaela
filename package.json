@@ -1,21 +1,31 @@
 {
   "name": "mikaela",
-  "version": "3.1.0",
+  "version": "4.0.0",
+  "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
   "main": "out/app.js",
   "license": "MIT",
+  "homepage": "https://github.com/lil-kira/MikaelaBot#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lil-kira/MikaelaBot/"
+  },
+  "bugs": {
+    "url": "https://github.com/lil-kira/MikaelaBot/issues",
+    "email": "lil.kira@outlook.com"
+  },
   "scripts": {
     "start": "node ."
   },
   "dependencies": {
     "@discordjs/uws": "^10.149.0",
     "chalk": "^2.4.2",
-    "discord-ytdl-core": "^1.0.2",
     "discord.js": "^11.5.1",
     "mongoose": "^5.7.8",
     "ms": "^2.1.2",
     "node-opus": "^0.3.3",
     "request": "^2.88.2",
-    "request-promise": "^4.2.5"
+    "request-promise": "^4.2.5",
+    "ytdl-core-discord": "^1.2.0"
   },
   "devDependencies": {
     "@types/mongoose": "^5.5.29",
