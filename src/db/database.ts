@@ -1,7 +1,8 @@
 import { Connection, createConnection } from 'mongoose';
+
 import { dbURI } from '../config';
 
-export var conn: Connection
+export var conn: Connection;
 
 export async function dbInit() {
     conn = await createConnection(dbURI, {
@@ -9,8 +10,8 @@ export async function dbInit() {
         useCreateIndex: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
-        keepAlive: true
-    })
+        keepAlive: true,
+    });
 
-    console.log("Connected to mongodb")
+    console.log('Connected to mongodb');
 }

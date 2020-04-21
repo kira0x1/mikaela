@@ -1,42 +1,44 @@
-import { RichEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
+
 import { getPlayer } from '../../app';
 import { ICommand } from '../../classes/Command';
-import ms = require('ms');
+import { QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {
-   name: 'GetDuration',
-   description: 'Display the stream time',
+    name: 'GetDuration',
+    description: 'Display the stream time',
 
-   aliases: ['gd', 'time', 'elapsed'],
+    aliases: ['gd', 'time', 'elapsed'],
 
-   execute(message, args) {
-      const player = getPlayer(message);
+    async execute(message, args) {
+        const player = getPlayer(message);
 
-      if (!player) return;
+        if (!player) return;
 
-      const stream = player.getStream();
+        const stream = player.getStream();
 
-      if (stream && player.currentlyPlaying) {
-         const streamTime = stream.time / 1000;
+        if (!(stream && player.currentlyPlaying)) return QuickEmbed(message, 'No song currently playing');
 
-         const minutes = Math.floor(streamTime / 60);
-         const seconds = streamTime - minutes * 60;
+        const streamTime = stream.streamTime / 1000;
 
-         const duration = player.currentlyPlaying.duration;
+        const minutes = Math.floor(streamTime / 60);
+        const seconds = streamTime - minutes * 60;
 
-         let prettyTime = seconds.toFixed(0) + 's';
+        const duration = player.currentlyPlaying.duration;
 
-         if (minutes > 0) {
+        let prettyTime = seconds.toFixed(0) + 's';
+
+        if (minutes > 0) {
             prettyTime = minutes.toFixed(0) + ':' + seconds.toFixed(0) + 'm';
-         }
+        }
 
-         const minutesLeft = Number(duration.minutes) - minutes;
-         const secondsLeft = Number(duration.seconds) - seconds;
+        const minutesLeft = Number(duration.minutes) - minutes;
+        const secondsLeft = Number(duration.seconds) - seconds;
 
-         const embed = new RichEmbed();
-         embed.setTitle(`Time left: ${minutesLeft.toFixed(0)}:${secondsLeft.toFixed(0)}`);
-         embed.setDescription(`${prettyTime} / ${duration.duration}`);
-         message.channel.send(embed);
-      }
-   },
+        const embed = new MessageEmbed()
+            .setTitle(`Time left: ${minutesLeft.toFixed(0)}:${secondsLeft.toFixed(0)}`)
+            .setDescription(`${prettyTime} / ${duration.duration}`);
+
+        message.channel.send(embed);
+    },
 };

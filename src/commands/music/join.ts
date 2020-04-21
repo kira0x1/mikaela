@@ -1,16 +1,17 @@
-import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../app';
+import { ICommand } from '../../classes/Command';
+
 export const command: ICommand = {
     name: 'join',
-    description: "Joins voice",
+    description: 'Joins voice',
 
     execute(message, args) {
         //Get the guilds player
-        const player = getPlayer(message)
+        const player = getPlayer(message);
 
         if (player) {
             //Join the VoiceChannel
-            player.join(message)
+            player.join(message);
         }
-    }
-}
+    },
+};

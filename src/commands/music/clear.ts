@@ -1,22 +1,22 @@
-import { ICommand } from "../../classes/Command";
+import { MessageEmbed } from 'discord.js';
+
 import { getPlayer } from '../../app';
-import { RichEmbed } from 'discord.js';
-import { embedColor } from "../../util/Style";
+import { ICommand } from '../../classes/Command';
+import { embedColor } from '../../util/Style';
 
 export const command: ICommand = {
-    name: "clear",
-    description: "Clears the queue",
+    name: 'clear',
+    description: 'Clears the queue',
 
     async execute(message, args) {
-        const player = getPlayer(message)
-        if (!player) return console.log(`player not found for guild ${message.guild.name}`)
+        const player = getPlayer(message);
+        if (!player) return console.log(`player not found for guild ${message.guild.name}`);
 
-        player.clearQueue()
-        const embed = new RichEmbed()
-            .setAuthor(message.author.username, message.author.avatarURL)
-        embed.setColor(embedColor)
-        embed.setTitle(`Queue cleared by ${message.author.username}`)
+        player.clearQueue();
+        const embed = new MessageEmbed().setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }));
+        embed.setColor(embedColor);
+        embed.setTitle(`Queue cleared by ${message.author.username}`);
 
-        message.channel.send(embed)
-    }
-}
+        message.channel.send(embed);
+    },
+};
