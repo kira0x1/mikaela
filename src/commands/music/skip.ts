@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { getPlayer } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { embedColor } from '../../util/Style';
+import { embedColor, QuickEmbed } from '../../util/Style';
 
 export const command: ICommand = {
     name: 'Skip',
@@ -12,23 +12,20 @@ export const command: ICommand = {
     execute(message, args) {
         //Get the guilds player
         const player = getPlayer(message);
+        if (!player) return;
 
-        if (player) {
-            //Get the current playing song
-            const currentSong = player.currentlyPlaying;
+        //Get the current playing song
+        const currentSong = player.currentlyPlaying;
+        if (!currentSong) return QuickEmbed(message, `No song currently playing`);
 
-            if (currentSong) {
-                //Create an embed with the information of the song to be skipped
-                const embed = new MessageEmbed();
-                embed
-                    .setColor(embedColor)
-                    .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
-                    .setTitle(`Skipped Song: ${currentSong.title}`)
-                    .setDescription(currentSong.url);
+        //Create an embed with the information of the song to be skipped
+        const embed = new MessageEmbed()
+            .setColor(embedColor)
+            .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+            .setTitle(`Skipped Song: ${currentSong.title}`)
+            .setDescription(currentSong.url);
 
-                message.channel.send(embed);
-            }
-            player.skipSong();
-        }
+        message.channel.send(embed);
+        player.skipSong();
     },
 };

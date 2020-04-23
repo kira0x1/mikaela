@@ -18,7 +18,6 @@ export class Player {
     voiceChannel: VoiceChannel | undefined;
     connection: VoiceConnection | undefined;
     currentlyPlaying: ISong | undefined;
-    isPaused: boolean = false;
     client: Client;
     lastPlayed: ISong | undefined;
 
@@ -99,9 +98,8 @@ export class Player {
     }
 
     skipSong() {
-        if (this.stream) {
-            this.stream.end();
-        }
+        if (!this.stream) return;
+        this.stream.end();
     }
 
     play(song: ISong, message: Message) {
@@ -126,7 +124,7 @@ export class Player {
             this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus', highWaterMark: 50 });
             this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)));
             this.stream.setVolumeLogarithmic(this.volume / 5);
-            this.stream.on('end', () => {
+            this.stream.on('finish', () => {
                 this.playNext();
             });
         });
@@ -138,31 +136,13 @@ export class Player {
     }
 
     pause() {
-        if (this.currentlyPlaying && this.stream) {
-            try {
-                this.stream.pause();
-                this.isPaused = true;
-                return true;
-            } catch (err) {
-                this.isPaused = false;
-                console.log(chalk.bgRed.bold(err));
-                return false;
-            }
-        }
+        if (!(this.currentlyPlaying && this.stream)) return;
+        if (!this.stream.paused) this.stream.pause(true);
     }
 
-    unpause(): boolean {
-        if (this.currentlyPlaying && this.stream) {
-            try {
-                this.stream.resume();
-                this.isPaused = false;
-                return true;
-            } catch (err) {
-                console.log(chalk.bgRed.bold(err));
-                return false;
-            }
-        }
-        return false;
+    unpause() {
+        if (!(this.currentlyPlaying && this.stream)) return;
+        if (this.stream.paused) this.stream.resume();
     }
 
     getStream() {
