@@ -20,7 +20,7 @@ export const command: ICommand = {
 
         if (!(stream && player.currentlyPlaying)) return QuickEmbed(message, 'No song currently playing');
 
-        const streamTime = stream.streamTime / 1000;
+        const streamTime = (stream.streamTime - stream.pausedTime) / 1000;
         const minutes = Math.floor(streamTime / 60);
 
         let seconds: number | string = streamTime - minutes * 60;
