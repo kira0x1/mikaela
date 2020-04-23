@@ -45,9 +45,9 @@
     "devDependencies": {
         "@types/mongoose": "^5.7.12",
         "@types/ms": "^0.7.31",
-        "@types/node": "^13.13.1",
+        "@types/node": "^13.13.2",
         "@types/request-promise": "^4.1.46",
-        "prettier": "^2.0.4"
+        "prettier": "^2.0.5"
     },
     "nodemonConfig": {
         "events": {
