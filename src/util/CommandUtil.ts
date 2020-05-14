@@ -126,6 +126,10 @@ export function hasPerms(userId: string, query: string): boolean {
     return false;
 }
 
-export function sendUsage(message: Message, commandName: string, fallbackUsage: string = 'Error: Please check your arguments') {
+export function sendUsage(
+    message: Message,
+    commandName: string,
+    fallbackUsage: string = 'Error: Please check your arguments'
+) {
     QuickEmbed(message, getUsage(commandName) || fallbackUsage);
 }

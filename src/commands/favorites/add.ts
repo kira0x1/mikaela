@@ -34,18 +34,6 @@ export const command: ICommand = {
                         console.log(err);
                     });
             });
-
-        //If user was not found create them
-        await CreateUser(message.member);
-
-        //Add favorite to the newly created user
-        getUser(message.member.user.id)
-            .then(user => {
-                AddFavorite(user, song, message);
-            })
-            .catch(err => {
-                console.log(err);
-            });
     },
 };
 

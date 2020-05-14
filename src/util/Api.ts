@@ -1,6 +1,4 @@
 import rp from 'request-promise';
-
-// import ytdl, { getInfo } from 'ytdl-core'
 import { ISong } from '../classes/Player';
 import { youTubeKey } from '../config';
 import { ConvertDuration } from './musicUtil';
@@ -54,7 +52,9 @@ export async function getSong(query: string): Promise<ISong> {
     });
 }
 
-export async function detectLanguage(query: string): Promise<{ confidence: number; isReliable: boolean; language: string }> {
+export async function detectLanguage(
+    query: string
+): Promise<{ confidence: number; isReliable: boolean; language: string }> {
     return new Promise((resolve, reject) => {
         const options = {
             method: 'POST',

@@ -69,6 +69,12 @@ const LANGUAGE_CODES = [
     { name: 'Yiddish', code: 'yi' },
 ];
 
+function decodeAscii(str: string): string {
+    return str.replace(/&#(\d+);/g, function (match, dec) {
+        return String.fromCharCode(dec);
+    });
+}
+
 export const command: ICommand = {
     name: 'Translate',
     description: 'Translates words to the specified language',
@@ -114,7 +120,8 @@ export const command: ICommand = {
                 let data = JSON.parse(body).data;
 
                 //Make sure its not an error
-                if (!body || !data || !data.translations) return QuickEmbed(message, `Error: Incorrect Target Language Code`);
+                if (!body || !data || !data.translations)
+                    return QuickEmbed(message, `Error: Incorrect Target Language Code`);
 
                 //Get Results
                 const translations = data.translations[0];
@@ -124,7 +131,7 @@ export const command: ICommand = {
                 //Create the message
                 let content = `\`\`\`yaml
 source_language: ${sourceLang.name},
-translated_text: ${translations.translatedText}`;
+translated_text: ${decodeAscii(translations.translatedText)}`;
                 if (target) content += `\ntarget_language: ${result?.name}\`\`\``;
                 else content += `\`\`\``;
 

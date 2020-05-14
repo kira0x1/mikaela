@@ -10,7 +10,8 @@ export async function syncRoles(client: Client) {
     const channel = guild.channels.cache.get('618438576119742464');
     if (!channel) return;
 
-    if (!((channel): channel is TextChannel => channel.type === 'text')(channel)) return console.log('Couldnt find channel');
+    if (!((channel): channel is TextChannel => channel.type === 'text')(channel))
+        return console.log('Couldnt find channel');
 
     channel.messages.fetch({ limit: 100 }).then(messages => {
         messages.map(msg => {
@@ -23,7 +24,11 @@ export async function syncRoles(client: Client) {
     });
 
     client.on('messageReactionRemove', (reaction, user) => {
-        if (customRoles.sections.map(section => section.roles.find(role => role.reactionName === reaction.emoji.name)) === false)
+        if (
+            customRoles.sections.map(section =>
+                section.roles.find(role => role.reactionName === reaction.emoji.name)
+            ) === false
+        )
             return;
 
         if (user.bot) return;

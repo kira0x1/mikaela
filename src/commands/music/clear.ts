@@ -13,7 +13,10 @@ export const command: ICommand = {
         if (!player) return console.log(`player not found for guild ${message.guild.name}`);
 
         player.clearQueue();
-        const embed = new MessageEmbed().setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }));
+        const embed = new MessageEmbed().setAuthor(
+            message.author.username,
+            message.author.avatarURL({ dynamic: true })
+        );
         embed.setColor(embedColor);
         embed.setTitle(`Queue cleared by ${message.author.username}`);
 

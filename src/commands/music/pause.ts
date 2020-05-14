@@ -17,7 +17,8 @@ export const command: ICommand = {
         if (!player) return;
 
         //If theres no song playing or if the stream dispatcher is undefined exit out
-        if (!player.currentlyPlaying || !player.getStream()) return QuickEmbed(message, `No song currently playing to pause`);
+        if (!player.currentlyPlaying || !player.getStream())
+            return QuickEmbed(message, `No song currently playing to pause`);
 
         //If the stream is already paused exit out
         if (player.stream.paused) return QuickEmbed(message, `Player is already paused`);

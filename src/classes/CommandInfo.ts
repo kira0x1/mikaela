@@ -10,7 +10,14 @@ export class CommandInfo {
     requiresPrefix?: boolean;
     override: string = '';
 
-    constructor(name: string, description: string, aliases: string[], commands: ICommand[], override?: string, perms?: string[]) {
+    constructor(
+        name: string,
+        description: string,
+        aliases: string[],
+        commands: ICommand[],
+        override?: string,
+        perms?: string[]
+    ) {
         this.name = name;
         this.description = description;
         this.commands = commands;

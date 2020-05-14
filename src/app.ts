@@ -6,8 +6,15 @@ import { coders_club_id, ddl_general_channel_id, discord_done_left_id, prefix, t
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-import { commandGroups, findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from './util/Style';
+import {
+    commandGroups,
+    findCommand,
+    findCommandGroup,
+    getCommandOverride,
+    hasPerms,
+    initCommands,
+} from './util/CommandUtil';
 
 // const environment = process.env.NODE_ENV;
 // console.log(chalk.bgGreen(`Environment: ${environment}`));
@@ -25,10 +32,12 @@ async function init() {
 }
 
 process.on('unhandledRejection', error => {
-    console.error('Unhandled promise rejection:', error);
+    console.error('!Error! Unhandled promise rejection:', error);
 });
 
 client.on('ready', () => {
+    // client.on('debug', console.log);
+
     // Save heart emoji to use for favorites
     initEmoji(client);
 
