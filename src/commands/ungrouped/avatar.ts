@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 
 export const command: ICommand = {
     name: 'avatar',
-    description: 'Lists all commands',
+    description: 'Shows the avatar of a user',
     aliases: ['av'],
 
     execute(message, _) {
