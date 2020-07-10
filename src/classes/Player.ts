@@ -122,7 +122,7 @@ export class Player {
         }
 
         this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus', highWaterMark: 450 });
+            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus' });
             this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)));
             this.stream.setVolumeLogarithmic(this.volume / 5);
             this.stream.on('finish', () => {
