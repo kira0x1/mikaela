@@ -1,5 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, User } from 'discord.js';
 
 export const command: ICommand = {
     name: 'avatar',
@@ -8,24 +8,22 @@ export const command: ICommand = {
 
     execute(message, _) {
         if (message.mentions.users.size > 1) {
-            console.log("too many mentions");
+            throw "Too many mentions in command \'" + this.name +
+            "\', expected 1, was " + message.mentions.users.size + '.';
         }
 
-        let user = null;
+        let user: User = message.mentions.users.first() || message.author;
 
-        if (message.mentions.users.size == 0) {
-            user = message.author;
-        } else {
-            user = message.mentions.users.first();
-        }
-
-        const embed = new MessageEmbed();
+        const embed: MessageEmbed = new MessageEmbed();
 
         embed.setTitle('Avatar');
         embed.setDescription(`Avatar of ${user}`);
 
         embed.setImage(user.avatarURL({'size': 4096}))
 
+        embed.setTimestamp(new Date());
+        embed.setFooter('test');
+
         message.channel.send(embed);
-    },
+    }
 };
