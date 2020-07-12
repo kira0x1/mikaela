@@ -6,7 +6,8 @@ import { coders_club_id, ddl_general_channel_id, discord_done_left_id, prefix, t
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-import { embedColor, QuickEmbed, wrap } from './util/Style';
+import { embedColor, ErrorEmbed, QuickEmbed, wrap } from './util/Style';
+import { CommandError } from './classes/CommandError';
 import {
     commandGroups,
     findCommand,
@@ -175,6 +176,10 @@ client.on('message', message => {
     try {
         command.execute(message, args);
     } catch (err) {
+        if (err instanceof CommandError) {
+            message.channel.send(ErrorEmbed(err));
+        }
+
         console.error(err);
     }
 });
