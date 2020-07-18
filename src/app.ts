@@ -23,7 +23,7 @@ import {
 const IS_TESTING = false;
 
 // const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
-const client = new Client();
+export const client = new Client();
 const players: Collection<string, Player> = new Collection();
 
 async function init() {
