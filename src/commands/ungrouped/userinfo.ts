@@ -23,7 +23,7 @@ export const command: ICommand = {
 
         let member = message.guild.member(user);
 
-        if (message.guild.member(user)) {
+        if (member) {
             embed.addField('Joined at', member.joinedAt.toUTCString());
         }
 
