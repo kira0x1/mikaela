@@ -7,7 +7,8 @@ import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
-import { embedColor, QuickEmbed, wrap } from './util/Style';
+import { createErrorEmbed, embedColor, QuickEmbed, wrap } from './util/Style';
+import { CommandError } from './classes/CommandError';
 
 const client = new Client();
 
