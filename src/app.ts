@@ -6,25 +6,8 @@ import { prefix, token } from './config';
 import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
-
-import { createErrorEmbed, embedColor, QuickEmbed, wrap } from './util/Style';
-import { CommandError } from './classes/CommandError';
-import {
-    commandGroups,
-    findCommand,
-    findCommandGroup,
-    getCommandOverride,
-    hasPerms,
-    initCommands,
-} from './util/CommandUtil';
-
-// const environment = process.env.NODE_ENV;
-// console.log(chalk.bgGreen(`Environment: ${environment}`));
-
-//! SET TO FALSE ON PRODUCTION
-const IS_TESTING = false;
-
-// const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
+import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
+import { embedColor, QuickEmbed, wrap } from './util/Style';
 
 const client = new Client();
 
