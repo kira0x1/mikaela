@@ -9,12 +9,6 @@ import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from './util/Style';
 
-// const environment = process.env.NODE_ENV;
-// console.log(chalk.bgGreen(`Environment: ${environment}`));
-
-//! SET TO FALSE ON PRODUCTION
-const IS_TESTING = false;
-
 // const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
 export const client = new Client();
 
