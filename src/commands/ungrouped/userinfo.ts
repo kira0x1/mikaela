@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { User } from 'discord.js';
 import { parseUser } from '../../util/parser';
-import { simpleEmbed } from '../../util/Style';
+import { createFooter } from '../../util/Style';
 
 export const command: ICommand = {
     name: 'userinfo',
@@ -9,9 +9,9 @@ export const command: ICommand = {
     aliases: ['av'],
 
     async execute(message, args) {
-        let user: User = await parseUser(args[0]) || message.author;
+        let user: User = (await parseUser(args[0], message.client)) || message.author;
 
-        const embed = simpleEmbed();
+        const embed = createFooter(message.client);
 
         embed.setTitle('User info');
         embed.setDescription(`User info for ${user}`);
@@ -28,5 +28,5 @@ export const command: ICommand = {
         }
 
         await message.channel.send(embed);
-    }
+    },
 };

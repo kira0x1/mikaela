@@ -9,8 +9,7 @@ import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
 import { embedColor, QuickEmbed, wrap } from './util/Style';
 
-// const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
-export const client = new Client();
+const client = new Client();
 
 const players: Collection<string, Player> = new Collection();
 
@@ -20,8 +19,6 @@ async function init() {
 }
 
 client.on('ready', () => {
-    // client.on('debug', console.log);
-
     // Save heart emoji to use for favorites
     initEmoji(client);
 
