@@ -16,7 +16,6 @@ export const command: ICommand = {
         let description: string = guild.description || `Server info for ${message.guild}`;
         embed.setDescription(description);
 
-
         embed.setThumbnail(guild.iconURL({ size: 1024 }));
 
         embed.addField('Server ID', `\`${guild.id}\``);
