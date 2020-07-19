@@ -13,15 +13,15 @@ export const command: ICommand = {
 
         embed.setTitle('Server info');
 
-        let description: string = guild.description || `Server info for ${message.guild}`;
+        let description: string = guild.description || `Server info for ${guild}`;
         embed.setDescription(description);
 
         embed.setThumbnail(guild.iconURL({ size: 1024 }));
 
         embed.addField('Server ID', `\`${guild.id}\``);
-        embed.addField('Member count', guild.memberCount);
         embed.addField('Created at', guild.createdAt.toUTCString());
         embed.addField('Owner', guild.owner, true);
+        embed.addField('Members', guild.memberCount, true);
         embed.addField('Region', guild.region, true);
 
         message.channel.send(embed);
