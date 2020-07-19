@@ -13,10 +13,12 @@ export const commandInfos: Collection<string, CommandInfo> = new Collection();
 
 export function initCommands() {
     const infos: CommandInfo[] = [];
-    readdirSync(path.join(__dirname, '..', 'commands', 'info')).map(file => {
-        const { info } = require(path.join(__dirname, '..', 'commands', 'info', file));
-        infos.push(info);
-    });
+    readdirSync(path.join(__dirname, '..', 'commands', 'info'))
+        .filter(file => file.endsWith('js'))
+        .map(file => {
+            const { info } = require(path.join(__dirname, '..', 'commands', 'info', file));
+            infos.push(info);
+        });
 
     readdirSync(path.join(__dirname, '..', 'commands'))
         .filter(file => file.endsWith('js'))
@@ -28,18 +30,21 @@ export function initCommands() {
 
     readdirSync(path.join(__dirname, '..', 'commands'))
         .filter(folder => folder !== 'info')
-        .filter(file => file.endsWith('.js') === false)
+        .filter(file => file.endsWith('.js') === false && !file.endsWith('.map'))
         .map(folder => {
             const folderCommands: ICommand[] = [];
-            readdirSync(path.join(__dirname, '..', 'commands', folder)).map(file => {
-                const { command } = require(path.join(__dirname, '..', 'commands', folder, file));
-                const cmd: ICommand = command;
-                folderCommands.push(cmd);
+            readdirSync(path.join(__dirname, '..', 'commands', folder))
+                .filter(file => file.endsWith('.map') == false)
+                .map(file => {
+                    const { command } = require(path.join(__dirname, '..', 'commands', folder, file));
 
-                if (!cmd.isSubCommand) {
-                    commands.set(cmd.name.toLowerCase(), cmd);
-                }
-            });
+                    const cmd: ICommand = command;
+                    folderCommands.push(cmd);
+
+                    if (!cmd.isSubCommand) {
+                        commands.set(cmd.name.toLowerCase(), cmd);
+                    }
+                });
 
             if (folder) {
                 commandGroups.set(folder, folderCommands);
