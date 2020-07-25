@@ -1,4 +1,5 @@
-import { Message, MessageEmbed, Client } from 'discord.js';
+import { Client, Message, MessageEmbed } from 'discord.js';
+import { CommandError } from '../classes/CommandError';
 
 const redColor = 0xcf274e;
 const blueColor = 0x4e74e6;
@@ -20,6 +21,15 @@ export function wrap(content: string[] | string, wrap: string = '`'): string {
         .join(' ');
 }
 
+export function createErrorEmbed(client: Client, error: CommandError): MessageEmbed {
+    let embed: MessageEmbed = createFooter(client);
+
+    embed.setTitle('Error');
+    embed.setDescription(error.message);
+
+    return embed;
+}
+
 export function createFooter(client: Client): MessageEmbed {
     const embed = new MessageEmbed();
 
@@ -32,7 +42,10 @@ export function createFooter(client: Client): MessageEmbed {
 }
 
 export function QuickEmbed(message: Message, content: string) {
-    const embed = new MessageEmbed().setTitle(content).setColor(embedColor);
+    const embed = new MessageEmbed();
+
+    embed.setTitle(content);
+    embed.setColor(embedColor);
 
     message.channel.send(embed);
 }
