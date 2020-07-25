@@ -22,31 +22,24 @@ export function wrap(content: string[] | string, wrap: string = '`'): string {
 }
 
 export function createErrorEmbed(client: Client, error: CommandError): MessageEmbed {
-    let embed: MessageEmbed = createFooter(client);
-
-    embed.setTitle('Error');
-    embed.setDescription(error.message);
+    let embed: MessageEmbed = createFooter(client)
+        .setTitle('Error')
+        .setDescription(error.message);
 
     return embed;
 }
 
 export function createFooter(client: Client): MessageEmbed {
-    const embed = new MessageEmbed();
-
-    embed.setColor(embedColor);
-
-    embed.setFooter(client.user.username, client.user.avatarURL());
-    embed.setTimestamp(Date.now());
+    const embed = new MessageEmbed()
+        .setColor(embedColor)
+        .setFooter(client.user.username, client.user.avatarURL())
+        .setTimestamp(Date.now());
 
     return embed;
 }
 
 export function QuickEmbed(message: Message, content: string) {
-    const embed = new MessageEmbed();
-
-    embed.setTitle(content);
-    embed.setColor(embedColor);
-
+    const embed = new MessageEmbed().setTitle(content).setColor(embedColor);
     message.channel.send(embed);
 }
 
