@@ -1,6 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import { Channel, Client, DMChannel, GuildChannel, MessageEmbed } from 'discord.js';
-import { getUsage } from '../../util/CommandUtil';
+import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
 import { createFooter } from '../../util/Style';
 
 export const command: ICommand = {
@@ -9,11 +8,6 @@ export const command: ICommand = {
     aliases: ['channel'],
 
     async execute(message, args) {
-        if (args.length > 1) {
-            // TODO: Wrap in CommandError once #154 is resolved
-            throw `Usage: ${getUsage(name)}`;
-        }
-
         let channel: Channel = fetchChannel(message.client, args[0]) || message.channel;
 
         let embed: MessageEmbed = createFooter(message.client);
@@ -40,7 +34,7 @@ function fetchChannel(client: Client, arg: string): Channel {
     client.channels.fetch(arg).then(a => {
         return a
     }).catch(e => {
-        console.log("ERROR: " + e);
+        console.log(e);
     })
 
     return null;
