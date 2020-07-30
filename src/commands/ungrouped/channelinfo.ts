@@ -11,17 +11,12 @@ export const command: ICommand = {
     async execute(message, args) {
         let channel;
 
-        console.log("args: " + args.length);
-
         if (args.length == 0) {
-            console.log("no args");
-
             channel = message.channel;
         } else {
             channel = await fetchChannel(message.client, args[0]);
-
             if (!channel) {
-                await sendErrorEmbed(message,`Could not find channel \`${args[0]}\``);
+                return await sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
             }
         }
 
@@ -33,8 +28,10 @@ export const command: ICommand = {
         embed.addField('Channel ID', `\`${channel.id}\``);
         embed.addField('Created at', channel.createdAt.toUTCString());
 
+        embed.addField('Position', channel.position, true);
+
         if (channel instanceof GuildChannel) {
-            embed.addField('Members', channel.members.size);
+            embed.addField('Members', channel.members.size, true);
         }
 
         await message.channel.send(embed);
@@ -42,11 +39,10 @@ export const command: ICommand = {
 };
 
 async function fetchChannel(client: Client, arg: string): Promise<Channel | CommandError> {
-    arg = arg.replace(/<#|>/g, '')
+    // Remove mention
+    arg = arg.replace(/<#|>/g, '');
 
-    console.log("arg: " + arg);
-
-    return await client.channels.fetch(arg).catch(_ => {
+    return client.channels.fetch(arg).catch(_ => {
         return null;
     });
 }
