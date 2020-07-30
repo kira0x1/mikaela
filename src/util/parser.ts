@@ -8,6 +8,8 @@ export async function parseUser(userString: string, client: Client): Promise<Use
     }
 
     let user = userString.replace(USER_MENTION_PATTERN, '');
-    return await client.users.fetch(user);
-}
 
+    return await client.users.fetch(user).catch(_ => {
+        return null;
+    });
+}
