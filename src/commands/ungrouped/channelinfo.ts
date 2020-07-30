@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
-import { Channel, Client, GuildChannel, Message, MessageEmbed } from 'discord.js';
-import { createErrorEmbed, createFooter, sendErrorEmbed } from '../../util/Style';
+import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
+import { createFooter, sendErrorEmbed } from '../../util/Style';
 import { CommandError } from '../../classes/CommandError';
 
 export const command: ICommand = {
