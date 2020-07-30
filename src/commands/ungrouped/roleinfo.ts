@@ -1,16 +1,20 @@
 import { ICommand } from '../../classes/Command';
-import { parseRole } from '../../util/parser';
-import { createFooter } from '../../util/Style';
-import { MessageEmbed, Role } from 'discord.js';
+import { createFooter, sendErrorEmbed } from '../../util/Style';
+import { Guild, MessageEmbed, Role } from 'discord.js';
 
 export const command: ICommand = {
     name: 'roleinfo',
     description: 'Shows info about a role',
     aliases: ['role'],
+    args: true,
 
     async execute(message, args) {
         let embed: MessageEmbed = createFooter(message.client);
         let role: Role = await parseRole(args[0], message.guild);
+
+        if (!role) {
+            return await sendErrorEmbed(message, `Cannot find role ${role}`);
+        }
 
         embed.setTitle('Role info');
         embed.setDescription(`Role info for ${role}`);
@@ -27,3 +31,13 @@ export const command: ICommand = {
         await message.channel.send(embed);
     },
 };
+
+const ROLE_MENTION_PATTERN = /<@&|>/g;
+
+async function parseRole(roleStr: string, guild: Guild): Promise<Role> {
+    let parsedStr: string = roleStr.replace(ROLE_MENTION_PATTERN, '');
+
+    return await guild.roles.fetch(parsedStr).catch(_ => {
+        return null;
+    });
+}
