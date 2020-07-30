@@ -19,6 +19,7 @@ export const command: ICommand = {
         embed.setTitle('Avatar');
         embed.setDescription(`Avatar of ${user}`);
 
+
         embed.setImage(user.avatarURL({'size': 4096}))
 
         embed.setTimestamp(new Date());
