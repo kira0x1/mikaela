@@ -30,7 +30,10 @@ async function sendEmbed(message: Message, role: Role) {
     embed.setColor(role.color);
 
     embed.addField('Role ID', `\`${role.id}\``);
-    embed.addField('Created at', role.createdAt.toUTCString());
+
+    let createdAt: string = role.createdAt.toUTCString();
+
+    embed.addField('Created at', createdAt);
     embed.addField('Hoist', role.hoist, true);
     embed.addField('Mentionable', role.mentionable, true);
     embed.addField('Position', role.position, true);
