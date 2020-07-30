@@ -10,3 +10,4 @@ export async function parseUser(userString: string, client: Client): Promise<Use
     let user = userString.replace(USER_MENTION_PATTERN, '');
     return await client.users.fetch(user);
 }
+
