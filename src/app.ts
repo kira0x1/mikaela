@@ -7,7 +7,7 @@ import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
-import { createErrorEmbed, embedColor, QuickEmbed, wrap } from './util/Style';
+import { createErrorEmbed, embedColor, QuickEmbed, sendErrorEmbed, wrap } from './util/Style';
 import { CommandError } from './classes/CommandError';
 
 const client = new Client();
@@ -109,7 +109,7 @@ client.on('message', message => {
         command.execute(message, args);
     } catch (err) {
         if (err instanceof CommandError) {
-            message.channel.send(createErrorEmbed(message.client, err));
+            message.channel.send(createErrorEmbed(message.client, err.message));
         }
 
         console.error(err);
