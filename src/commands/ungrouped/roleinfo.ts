@@ -29,19 +29,18 @@ async function sendEmbed(message: Message, role: Role) {
 
     embed.setColor(role.color);
 
+    addFields(embed, role)
+
+    await message.channel.send(embed);
+}
+
+async function addFields(embed: MessageEmbed, role: Role) {
     embed.addField('Role ID', `\`${role.id}\``);
-
-    let createdAt: string = role.createdAt.toUTCString();
-
-    embed.addField('Created at', createdAt);
+    embed.addField('Created at', role.createdAt.toUTCString());
     embed.addField('Hoist', role.hoist, true);
     embed.addField('Mentionable', role.mentionable, true);
     embed.addField('Position', role.position, true);
     embed.addField('Members with role', role.members.size, true);
-
-    let channel = message.channel;
-
-    await channel.send(embed);
 }
 
 const ROLE_MENTION_PATTERN = /<@&|>/g;
