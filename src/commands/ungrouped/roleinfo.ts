@@ -39,7 +39,9 @@ async function sendEmbed(message: Message, role: Role) {
     embed.addField('Position', role.position, true);
     embed.addField('Members with role', role.members.size, true);
 
-    await message.channel.send(embed);
+    let channel = message.channel;
+
+    await channel.send(embed);
 }
 
 const ROLE_MENTION_PATTERN = /<@&|>/g;
