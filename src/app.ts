@@ -109,7 +109,7 @@ client.on('message', message => {
         command.execute(message, args);
     } catch (err) {
         if (err instanceof CommandError) {
-            message.channel.send(createErrorEmbed(message.client, err));
+            message.channel.send(createErrorEmbed(message.client, err.message));
         }
 
         console.error(err);
