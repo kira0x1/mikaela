@@ -1,29 +1,37 @@
 import { ICommand } from '../../classes/Command';
-import { MessageEmbed, User } from 'discord.js';
+import { Message, MessageEmbed, User } from 'discord.js';
+import { parseUser } from '../../util/parser';
+import { createFooter, sendErrorEmbed } from '../../util/Style';
 
 export const command: ICommand = {
     name: 'avatar',
     description: 'Shows the avatar of a user',
     aliases: ['av'],
 
-    execute(message, _) {
-        if (message.mentions.users.size > 1) {
-            throw "Too many mentions in command \'" + this.name +
-            "\', expected 1, was " + message.mentions.users.size + '.';
+    async execute(message, args) {
+        let user: User = null;
+
+        if (!args) {
+            user = message.author;
+        } else {
+            user = await parseUser(args[0], message.client);
+
+            if (!user) {
+                return await sendErrorEmbed(message, `Cannot find user ${args[0]}`);
+            }
         }
 
-        let user: User = message.mentions.users.first() || message.author;
-
-        const embed: MessageEmbed = new MessageEmbed();
-
-        embed.setTitle('Avatar');
-        embed.setDescription(`Avatar of ${user}`);
-
-        embed.setImage(user.avatarURL({'size': 4096}))
-
-        embed.setTimestamp(new Date());
-        embed.setFooter('test');
-
-        message.channel.send(embed);
-    }
+        await sendEmbed(message, user);
+    },
 };
+
+async function sendEmbed(message: Message, user: User) {
+    const embed: MessageEmbed = createFooter(message.client);
+
+    embed.setTitle('Avatar');
+    embed.setDescription(`Avatar of ${user}`);
+
+    embed.setImage(user.avatarURL({ size: 4096 }));
+
+    await message.channel.send(embed);
+}
