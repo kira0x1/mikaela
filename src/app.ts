@@ -1,5 +1,6 @@
 import chalk from 'chalk';
-import { Client, Collection, Message, MessageEmbed } from 'discord.js';
+import { Client, Collection, GuildMember, Message, MessageEmbed } from 'discord.js';
+import { CommandError } from './classes/CommandError';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
 import { prefix, token } from './config';
@@ -8,7 +9,6 @@ import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
 import { createErrorEmbed, embedColor, QuickEmbed, wrap } from './util/Style';
-import { CommandError } from './classes/CommandError';
 
 const client = new Client();
 
@@ -105,6 +105,21 @@ client.on('message', message => {
         return message.channel.send(embed);
     }
 
+    if (command.requireUser) {
+        const embed = new MessageEmbed();
+        const member = checkIfHasMember(message, args);
+
+        if (member !== undefined) {
+            embed.setTitle(`Member Found ${member.displayName}`);
+            embed.setImage(member.user.avatarURL());
+        } else {
+            embed.setTitle('Member required, and none given.');
+        }
+
+        message.channel.send(embed);
+        return;
+    }
+
     try {
         command.execute(message, args);
     } catch (err) {
@@ -115,6 +130,37 @@ client.on('message', message => {
         console.error(err);
     }
 });
+
+function checkIfHasMember(message: Message, args: string[]): undefined | GuildMember {
+    let member: GuildMember | undefined = undefined;
+
+    if (message.mentions.users.size > 0) member = message.mentions.members.first();
+    if (member) {
+        console.log(`mentions ${member.displayName}`);
+        return member;
+    }
+
+    for (let i = 0; i < args.length; i++) {
+        let query = args[i].toLowerCase();
+
+        member = message.guild.members.cache.find(
+            member => member.displayName.toLowerCase() === query || member.id === query
+        );
+
+        if (member !== undefined) {
+            console.log(`found user ${member.displayName}`);
+            break;
+        }
+    }
+
+    return member;
+}
+
+export function getUserByString(query: string, message: Message) {
+    return message.guild.members.cache.find(
+        member => member.id === query || member.displayName.toLowerCase() === query.toLowerCase()
+    );
+}
 
 export function getPlayer(message: Message) {
     const playerFound = players.get(message.guild.id);
