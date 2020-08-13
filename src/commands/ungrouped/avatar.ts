@@ -11,7 +11,7 @@ export const command: ICommand = {
     async execute(message, args) {
         let user: User = null;
 
-        if (!args) {
+        if (args.length == 0) {
             user = message.author;
         } else {
             user = await parseUser(args[0], message.client);
@@ -31,7 +31,8 @@ async function sendEmbed(message: Message, user: User) {
     embed.setTitle('Avatar');
     embed.setDescription(`Avatar of ${user}`);
 
-    embed.setImage(user.avatarURL({ size: 4096 }));
+    let avatar: string = user.avatar ? user.avatarURL({ size: 4096 }) : user.defaultAvatarURL;
+    embed.setImage(avatar);
 
     await message.channel.send(embed);
 }
