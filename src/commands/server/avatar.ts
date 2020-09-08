@@ -31,7 +31,7 @@ async function sendEmbed(message: Message, user: User) {
     embed.setTitle('Avatar');
     embed.setDescription(`Avatar of ${user}`);
 
-    embed.setImage(user.avatarURL({ size: 4096 }));
+    embed.setImage(user.avatarURL({ size: 4096, dynamic: true }));
 
     await message.channel.send(embed);
 }

@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
 import { ICommand } from '../../classes/Command';
+import { TextChannel, GuildChannel } from 'discord.js';
 
 export const command: ICommand = {
     name: 'delete',
@@ -22,6 +23,9 @@ export const command: ICommand = {
                 amount = Number(arg) + 1;
             }
         });
+
+        //If the channel is not a text channel then we cant bulkdelete so return
+        if (message.channel.type !== "text") return;
 
         message.channel
             .bulkDelete(amount)

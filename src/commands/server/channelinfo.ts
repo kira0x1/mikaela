@@ -1,7 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
 import { createFooter, sendErrorEmbed } from '../../util/Style';
-import { CommandError } from '../../classes/CommandError';
 
 export const command: ICommand = {
     name: 'channelinfo',
@@ -9,16 +8,8 @@ export const command: ICommand = {
     aliases: ['channel'],
 
     async execute(message, args) {
-        let channel;
-
-        if (args.length == 0) {
-            channel = message.channel;
-        } else {
-            channel = await fetchChannel(message.client, args[0]);
-            if (!channel) {
-                return await sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
-            }
-        }
+        let channel: Channel = fetchChannel(message.client, args[0]);
+        if (channel === undefined) return sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
 
         let embed: MessageEmbed = createFooter(message.client);
 
@@ -28,7 +19,7 @@ export const command: ICommand = {
         embed.addField('Channel ID', `\`${channel.id}\``);
         embed.addField('Created at', channel.createdAt.toUTCString());
 
-        embed.addField('Position', channel.position, true);
+        // embed.addField('Position', channel.position, true);
 
         if (channel instanceof GuildChannel) {
             embed.addField('Members', channel.members.size, true);
@@ -38,11 +29,8 @@ export const command: ICommand = {
     },
 };
 
-async function fetchChannel(client: Client, arg: string): Promise<Channel | CommandError> {
+function fetchChannel(client: Client, arg: string): Channel {
     // Remove mention
     arg = arg.replace(/<#|>/g, '');
-
-    return client.channels.fetch(arg).catch(_ => {
-        return null;
-    });
+    return client.channels.cache.get(arg);
 }

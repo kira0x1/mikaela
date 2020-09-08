@@ -5,7 +5,7 @@ import { MessageEmbed } from 'discord.js';
 export const command: ICommand = {
     name: 'serverinfo',
     description: 'Shows info of the current server',
-    aliases: ['srvinfo', 'server', 'guild'],
+    aliases: ['srvinfo', 'guild'],
 
     execute(message, _) {
         let guild = message.guild;
