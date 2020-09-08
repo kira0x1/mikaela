@@ -1,9 +1,7 @@
 import chalk from 'chalk';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js';
 import { QuickEmbed } from '../util/Style';
-
-
-const ytdl = require('ytdl-core-discord');
+import ytdl from 'ytdl-core-discord';
 
 const minVolume: number = 0;
 const maxVolume: number = 5;
@@ -122,7 +120,7 @@ export class Player {
         }
 
         this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus', highWaterMark: 4 });
+            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 25 }), { type: 'opus', highWaterMark: 1 << 25 });
             this.stream.on('error', error => {
                 this.playNext();
                 console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`))
