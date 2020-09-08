@@ -6,7 +6,7 @@ import { QuickEmbed } from '../util/Style';
 const ytdl = require('ytdl-core-discord');
 
 const minVolume: number = 0;
-const maxVolume: number = 6;
+const maxVolume: number = 5;
 
 export class Player {
     guild: Guild;
@@ -122,12 +122,15 @@ export class Player {
         }
 
         this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus', highWaterMark: 1 << 25 });
-            this.stream.on('error', error => console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`)));
-            this.stream.setVolumeLogarithmic(this.volume / 5);
+            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly' }), { type: 'opus', highWaterMark: 4 });
+            this.stream.on('error', error => {
+                this.playNext();
+                console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`))
+            });
+            this.stream.setVolumeLogarithmic(this.volume / 10);
             this.stream.on('finish', () => {
                 this.playNext();
-            });
+            })
         });
     }
 
