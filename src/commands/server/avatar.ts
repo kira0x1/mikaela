@@ -1,7 +1,7 @@
-import { ICommand } from '../../classes/Command';
 import { Message, MessageEmbed, User } from 'discord.js';
-import { parseUser } from '../../util/parser';
-import { createFooter, sendErrorEmbed } from '../../util/Style';
+import { ICommand } from '../../classes/Command';
+import { getTarget } from '../../util/FavoritesUtil';
+import { createFooter } from '../../util/Style';
 
 export const command: ICommand = {
     name: 'avatar',
@@ -9,29 +9,17 @@ export const command: ICommand = {
     aliases: ['av'],
 
     async execute(message, args) {
-        let user: User = null;
 
-        if (!args) {
-            user = message.author;
-        } else {
-            user = await parseUser(args[0], message.client);
-
-            if (!user) {
-                return await sendErrorEmbed(message, `Cannot find user ${args[0]}`);
-            }
-        }
-
-        await sendEmbed(message, user);
+        const target = await getTarget(message, args.join(' '));
+        sendEmbed(message, target);
     },
 };
 
-async function sendEmbed(message: Message, user: User) {
-    const embed: MessageEmbed = createFooter(message.client);
+function sendEmbed(message: Message, user: User) {
+    const embed: MessageEmbed = createFooter(message.client)
+        .setTitle('Avatar')
+        .setDescription(`Avatar of ${user}`)
+        .setImage(user.avatarURL({ size: 4096, dynamic: true }));
 
-    embed.setTitle('Avatar');
-    embed.setDescription(`Avatar of ${user}`);
-
-    embed.setImage(user.avatarURL({ size: 4096, dynamic: true }));
-
-    await message.channel.send(embed);
+    message.channel.send(embed);
 }
