@@ -1,6 +1,7 @@
 import chalk from 'chalk';
-import { Client, Collection, GuildMember, Message, MessageEmbed } from 'discord.js';
-import { CommandError } from './classes/CommandError';
+import { Client, Collection, Message, MessageEmbed } from 'discord.js';
+
+import { ICommand } from './classes/Command';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
 import { prefix, token } from './config';
@@ -8,7 +9,8 @@ import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
-import { createErrorEmbed, embedColor, QuickEmbed, wrap } from './util/Style';
+import { embedColor, QuickEmbed, wrap } from './util/Style';
+import { initGreeter } from './util/serverGreeter';
 
 const client = new Client();
 
@@ -19,7 +21,7 @@ async function init() {
     client.login(token);
 }
 
-client.on('ready', () => {
+client.once('ready', () => {
     // Save heart emoji to use for favorites
     initEmoji(client);
 
@@ -28,6 +30,9 @@ client.on('ready', () => {
 
     // Add event listeners to #roles
     syncRoles(client);
+
+    //Add event listener to welcome new members
+    initGreeter(client);
 
     // Read command files and set it to a array
     initCommands();
@@ -91,75 +96,26 @@ client.on('message', message => {
     if (!hasPerms(message.author.id, commandName))
         return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
-    if (command.args && args.length === 0) {
-        let usageString = 'Arguments required';
-
-        const embed = new MessageEmbed().setColor(embedColor);
-
-        if (command.usage) {
-            usageString = command.name + ' ';
-            usageString += wrap(command.usage, '`');
-        }
-
-        embed.addField('Arguments Required', usageString);
-        return message.channel.send(embed);
-    }
-
-    if (command.requireUser) {
-        const embed = new MessageEmbed();
-        const member = checkIfHasMember(message, args);
-
-        if (member !== undefined) {
-            embed.setTitle(`Member Found ${member.displayName}`);
-            embed.setImage(member.user.avatarURL());
-        } else {
-            embed.setTitle('Member required, and none given.');
-        }
-
-        message.channel.send(embed);
-        return;
-    }
+    if (command.args && args.length === 0) return sendArgsError(command, message);
 
     try {
         command.execute(message, args);
     } catch (err) {
-        if (err instanceof CommandError) {
-            message.channel.send(createErrorEmbed(message.client, err.message));
-        }
-
         console.error(err);
     }
 });
 
-function checkIfHasMember(message: Message, args: string[]): undefined | GuildMember {
-    let member: GuildMember | undefined = undefined;
+function sendArgsError(command: ICommand, message: Message) {
+    let usageString = 'Arguments required';
+    const embed = new MessageEmbed().setColor(embedColor);
 
-    if (message.mentions.users.size > 0) member = message.mentions.members.first();
-    if (member) {
-        console.log(`mentions ${member.displayName}`);
-        return member;
+    if (command.usage) {
+        usageString = command.name + ' ';
+        usageString += wrap(command.usage, '`');
     }
 
-    for (let i = 0; i < args.length; i++) {
-        let query = args[i].toLowerCase();
-
-        member = message.guild.members.cache.find(
-            member => member.displayName.toLowerCase() === query || member.id === query
-        );
-
-        if (member !== undefined) {
-            console.log(`found user ${member.displayName}`);
-            break;
-        }
-    }
-
-    return member;
-}
-
-export function getUserByString(query: string, message: Message) {
-    return message.guild.members.cache.find(
-        member => member.id === query || member.displayName.toLowerCase() === query.toLowerCase()
-    );
+    embed.addField('Arguments Required', usageString);
+    return message.channel.send(embed);
 }
 
 export function getPlayer(message: Message) {
