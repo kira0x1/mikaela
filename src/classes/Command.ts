@@ -9,7 +9,6 @@ export interface ICommand {
     hidden?: boolean;
     perms?: string[];
     isSubCommand?: boolean;
-    requireUser?: boolean;
 
     execute(message: Message, args: string[]): void;
 }
