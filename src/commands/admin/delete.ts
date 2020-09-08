@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 
 import { ICommand } from '../../classes/Command';
-import { TextChannel, GuildChannel } from 'discord.js';
 
 export const command: ICommand = {
     name: 'delete',
