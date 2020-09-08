@@ -32,22 +32,22 @@
     "dependencies": {
         "@discordjs/opus": "^0.3.2",
         "chalk": "^4.1.0",
-        "discord.js": "^12.2.0",
-        "ffmpeg-static": "^4.2.6",
-        "mongoose": "^5.9.27",
+        "discord.js": "^12.3.1",
+        "ffmpeg-static": "^4.2.7",
+        "mongoose": "^5.10.3",
         "ms": "^2.1.2",
         "request": "^2.88.2",
         "request-promise": "^4.2.6",
         "sodium": "^3.0.2",
-        "tslib": "^2.0.0",
+        "tslib": "^2.0.1",
         "ytdl-core-discord": "^1.2.1"
     },
     "devDependencies": {
-        "@types/mongoose": "^5.7.34",
+        "@types/mongoose": "^5.7.36",
         "@types/ms": "^0.7.31",
-        "@types/node": "^14.0.27",
+        "@types/node": "^14.6.4",
         "@types/request-promise": "^4.1.46",
-        "prettier": "^2.0.5"
+        "prettier": "^2.1.1"
     },
     "nodemonConfig": {
         "events": {
