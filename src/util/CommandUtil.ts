@@ -99,7 +99,7 @@ export function findCommandGroup(query: string) {
 }
 
 export function findCommandInfo(query: string) {
-    let infoFound = commandInfos.find(
+    const infoFound = commandInfos.find(
         info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
     );
     return infoFound;
