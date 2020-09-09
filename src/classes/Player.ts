@@ -120,7 +120,7 @@ export class Player {
         }
 
         this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 25 }), { type: 'opus', highWaterMark: 1 << 25 });
+            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 18 }), { type: 'opus', highWaterMark: 1 << 18 });
             this.stream.on('error', error => {
                 this.playNext();
                 console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`))
