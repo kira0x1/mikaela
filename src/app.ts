@@ -9,8 +9,8 @@ import { dbInit } from './db/database';
 import { syncRoles } from './system/sync_roles';
 import { initVoiceManager } from './system/voice_manager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
-import { embedColor, QuickEmbed, wrap } from './util/Style';
 import { initGreeter } from './util/serverGreeter';
+import { embedColor, wrap } from './util/Style';
 
 const client = new Client();
 
@@ -22,6 +22,14 @@ async function init() {
 }
 
 client.once('ready', () => {
+    // Setup players
+    players.clear();
+    client.guilds.cache.map(async guild => {
+        const guildResolved = await client.guilds.fetch(guild.id)
+        console.log(chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
+        players.set(guildResolved.id, new Player(guildResolved, client));
+    });
+
     // Save heart emoji to use for favorites
     initEmoji(client);
 
@@ -38,18 +46,23 @@ client.once('ready', () => {
     initCommands();
 
     console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
-
-    // Setup players
-    client.guilds.cache.map(guild => {
-        console.log(chalk.bgBlue.bold(`${guild.name}`));
-        players.set(guild.id, new Player(guild, client));
-    });
 });
 
 // OnMessage
 client.on('message', message => {
     // Check if message is from a bot and that the message starts with the prefix
     if (message.author.bot || !message.content.startsWith(prefix)) {
+        return;
+    }
+
+    //TODO Make a blacklist
+    //Dont let weler use the command :p
+    if (message.author.id === "604159316852736010") return;
+
+    const firstCharacter = message.content.charAt(1);
+    //Make sure the first character is not a number since people could just be writing decimals I.E .001
+    if (firstCharacter === '.' || !isNaN(Number(firstCharacter))) {
+        // console.log(chalk.bgRed.bold(`Start with a number: "${firstCharacter}"\n\t${message.content}`))
         return;
     }
 
@@ -92,7 +105,12 @@ client.on('message', message => {
     }
 
     // If command not found send a message
-    if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
+    if (!command) {
+        message.author.send(`command ${wrap(commandName || '')} not found`)
+        return;
+    }
+
+    // if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
     if (!hasPerms(message.author.id, commandName))
         return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
@@ -118,11 +136,29 @@ function sendArgsError(command: ICommand, message: Message) {
     return message.channel.send(embed);
 }
 
-export function getPlayer(message: Message) {
-    const playerFound = players.get(message.guild.id);
-    if (!playerFound) players.set(message.guild.id, new Player(message.guild, client));
+function setNewPlayer(guildId: string) {
+    client.guilds.fetch(guildId).then(guild => {
+        players.set(guild.id, new Player(guild, client));
+    }).catch(err => console.error(chalk.bgRed.bold(`Error Setting New Player for GuildID: ${guildId} at app.ts ln: 143\n${err}`)))
 
-    return players.get(message.guild.id);
+}
+
+function findPlayer(guildId: string): Player {
+    return players.get(guildId);
+}
+
+export function getPlayer(message: Message) {
+    const guildId = message.guild.id;
+    let playerFound = findPlayer(guildId)
+
+    if (playerFound === null || playerFound === undefined) {
+        setNewPlayer(guildId)
+        console.log(chalk.bgRed.bold(`Player for guild ${message.guild.name} not found. ID: ${guildId}`))
+        // players.set(guildId, new Player(message.guild, client));
+        playerFound = findPlayer(guildId);
+    }
+
+    return playerFound
 }
 
 init();
