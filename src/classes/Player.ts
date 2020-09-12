@@ -4,12 +4,12 @@ import { QuickEmbed } from '../util/Style';
 import ytdl from 'ytdl-core-discord';
 
 const minVolume: number = 0;
-const maxVolume: number = 5;
+const maxVolume: number = 7;
 
 export class Player {
     guild: Guild;
     queue: Queue;
-    volume: number = 3;
+    volume: number = 3.3;
     isPlaying: boolean = false;
     inVoice: boolean = false;
     stream: StreamDispatcher | undefined;
@@ -53,7 +53,7 @@ export class Player {
         this.volume = amount;
 
         if (this.stream) {
-            this.stream.setVolumeLogarithmic(this.volume / 5);
+            this.stream.setVolumeLogarithmic(this.volume / 10);
         }
 
         if (message) {
@@ -85,7 +85,7 @@ export class Player {
         this.queue.clear();
     }
 
-    async playNext() {
+    playNext() {
         this.lastPlayed = this.currentlyPlaying;
         this.currentlyPlaying = this.queue.getNext();
 
@@ -97,8 +97,9 @@ export class Player {
     }
 
     skipSong() {
-        if (!this.stream) return;
-        this.stream.end();
+        this.playNext();
+        // if (!this.stream) return;
+        // this.stream.end();
     }
 
     play(song: ISong, message: Message) {
@@ -120,7 +121,7 @@ export class Player {
         }
 
         this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 18 }), { type: 'opus', highWaterMark: 1 << 18 });
+            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 10 }), { type: 'opus', highWaterMark: 1 << 22 });
             this.stream.on('error', error => {
                 this.playNext();
                 console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`))
