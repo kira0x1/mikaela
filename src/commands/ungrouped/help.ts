@@ -3,7 +3,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
 import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/CommandUtil';
-import { embedColor, QuickEmbed, wrap } from '../../util/Style';
+import { embedColor, wrap } from '../../util/Style';
 
 export const command: ICommand = {
     name: 'Help',
@@ -60,7 +60,11 @@ function displayOne(message: Message, query: string) {
     const info = findCommandInfo(query);
 
     //If command was not found or if the user doesnt have permission then respond with Command not found
-    if (!command && !info) return QuickEmbed(message, `Command ${wrap(query)} not found`);
+    if (!command && !info) {
+        message.author.send(`Command ${wrap(query)} not found`)
+        return;
+    }
+
     if (!hasPerms(message.author.id, query))
         return message.author.send(`You do not have permission to use ${wrap(command?.name || info?.name)}`);
 
