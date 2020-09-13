@@ -6,11 +6,12 @@ import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
 import { prefix, token } from './config';
 import { dbInit } from './db/database';
-import { syncRoles } from './system/sync_roles';
-import { initVoiceManager } from './system/voice_manager';
-import { findCommand, findCommandGroup, getCommandOverride, hasPerms, initCommands } from './util/CommandUtil';
-import { initGreeter } from './util/serverGreeter';
-import { embedColor, wrap } from './util/Style';
+import { syncRoles } from './system/syncRoles';
+import { initVoiceManager } from './system/voiceManager';
+import { findCommand, findCommandGroup, getCommandOverride, hasPerms } from './util/commandUtil';
+import { initCommands } from './system/commandLoader';
+import { initGreeter } from './system/serverGreeter';
+import { embedColor, wrap } from './util/styleUtil';
 
 const client = new Client();
 
@@ -25,7 +26,7 @@ client.once('ready', () => {
     // Setup players
     players.clear();
     client.guilds.cache.map(async guild => {
-        const guildResolved = await client.guilds.fetch(guild.id)
+        const guildResolved = await client.guilds.fetch(guild.id);
         console.log(chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
         players.set(guildResolved.id, new Player(guildResolved, client));
     });
@@ -57,7 +58,7 @@ client.on('message', message => {
 
     //TODO Make a blacklist
     //Dont let weler use the command :p
-    if (message.author.id === "604159316852736010") return;
+    if (message.author.id === '604159316852736010') return;
 
     const firstCharacter = message.content.charAt(1);
     //Make sure the first character is not a number since people could just be writing decimals I.E .001
@@ -106,7 +107,7 @@ client.on('message', message => {
 
     // If command not found send a message
     if (!command) {
-        message.author.send(`command ${wrap(commandName || '')} not found`)
+        message.author.send(`command ${wrap(commandName || '')} not found`);
         return;
     }
 
@@ -136,29 +137,21 @@ function sendArgsError(command: ICommand, message: Message) {
     return message.channel.send(embed);
 }
 
-function setNewPlayer(guildId: string) {
-    client.guilds.fetch(guildId).then(guild => {
-        players.set(guild.id, new Player(guild, client));
-    }).catch(err => console.error(chalk.bgRed.bold(`Error Setting New Player for GuildID: ${guildId} at app.ts ln: 143\n${err}`)))
-
+export function setNewPlayer(guildId: string) {
+    client.guilds
+        .fetch(guildId)
+        .then(guild => {
+            players.set(guild.id, new Player(guild, client));
+        })
+        .catch(err =>
+            console.error(
+                chalk.bgRed.bold(`Error Setting New Player for GuildID: ${guildId} at app.ts ln: 143\n${err}`)
+            )
+        );
 }
 
-function findPlayer(guildId: string): Player {
+export function findPlayer(guildId: string): Player {
     return players.get(guildId);
-}
-
-export function getPlayer(message: Message) {
-    const guildId = message.guild.id;
-    let playerFound = findPlayer(guildId)
-
-    if (playerFound === null || playerFound === undefined) {
-        setNewPlayer(guildId)
-        console.log(chalk.bgRed.bold(`Player for guild ${message.guild.name} not found. ID: ${guildId}`))
-        // players.set(guildId, new Player(message.guild, client));
-        playerFound = findPlayer(guildId);
-    }
-
-    return playerFound
 }
 
 init();

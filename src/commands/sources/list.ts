@@ -5,8 +5,8 @@ import { isNumber } from 'util';
 import { ICommand } from '../../classes/Command';
 import { ISource, ISourceGroup, IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
-import { getTarget } from '../../util/FavoritesUtil';
-import { embedColor, QuickEmbed } from '../../util/Style';
+import { getTarget } from '../../util/musicUtil';
+import { embedColor, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'List',

@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 
-import { getPlayer } from '../../app';
+import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 
 export const command: ICommand = {

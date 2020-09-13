@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { Message, MessageEmbed } from 'discord.js';
-import { createFooter } from '../../util/Style';
+import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'latency',

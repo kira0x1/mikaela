@@ -2,8 +2,8 @@ import { Message, MessageEmbed } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
-import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/CommandUtil';
-import { embedColor, wrap } from '../../util/Style';
+import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/commandUtil';
+import { embedColor, wrap } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Help',
@@ -61,7 +61,7 @@ function displayOne(message: Message, query: string) {
 
     //If command was not found or if the user doesnt have permission then respond with Command not found
     if (!command && !info) {
-        message.author.send(`Command ${wrap(query)} not found`)
+        message.author.send(`Command ${wrap(query)} not found`);
         return;
     }
 

@@ -1,5 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import { createFooter } from '../../util/Style';
+import { createFooter } from '../../util/styleUtil';
 import { MessageEmbed } from 'discord.js';
 
 export const command: ICommand = {

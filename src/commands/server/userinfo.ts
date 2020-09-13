@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { User } from 'discord.js';
 import { parseUser } from '../../util/parser';
-import { createFooter } from '../../util/Style';
+import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'userinfo',

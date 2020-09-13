@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { getTarget } from '../../util/FavoritesUtil';
-import { createFooter } from '../../util/Style';
+import { getTarget } from '../../util/musicUtil';
+import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'avatar',
@@ -9,7 +9,6 @@ export const command: ICommand = {
     aliases: ['av'],
 
     async execute(message, args) {
-
         const target = await getTarget(message, args.join(' '));
         sendEmbed(message, target);
     },

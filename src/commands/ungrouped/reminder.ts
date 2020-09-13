@@ -2,8 +2,8 @@ import { Message, MessageEmbed } from 'discord.js';
 import ms from 'ms';
 
 import { ICommand } from '../../classes/Command';
-import { sendUsage } from '../../util/CommandUtil';
-import { embedColor, wrap } from '../../util/Style';
+import { sendUsage } from '../../util/commandUtil';
+import { embedColor, wrap } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Reminder',

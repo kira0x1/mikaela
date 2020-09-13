@@ -4,8 +4,8 @@ import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { CreateUser, IUser } from '../../db/dbUser';
 import { getUser, updateUser } from '../../db/userController';
-import { getSong } from '../../util/Api';
-import { QuickEmbed } from '../../util/Style';
+import { getSong } from '../../util/apiUtil';
+import { QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'add',

@@ -1,69 +1,13 @@
 import { Collection, Message } from 'discord.js';
-import { readdirSync } from 'fs';
-import path from 'path';
 
 import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
-import { QuickEmbed, wrap } from './Style';
+import { QuickEmbed, wrap } from './styleUtil';
 
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
 export const commandInfos: Collection<string, CommandInfo> = new Collection();
-
-export function initCommands() {
-    const infos: CommandInfo[] = [];
-    readdirSync(path.join(__dirname, '..', 'commands', 'info'))
-        .filter(file => file.endsWith('js'))
-        .map(file => {
-            const { info } = require(path.join(__dirname, '..', 'commands', 'info', file));
-            infos.push(info);
-        });
-
-    readdirSync(path.join(__dirname, '..', 'commands'))
-        .filter(file => file.endsWith('js'))
-        .map(file => {
-            const { command } = require(path.join(__dirname, '..', 'commands', file));
-            const cmd: ICommand = command;
-            commands.set(cmd.name, cmd);
-        });
-
-    readdirSync(path.join(__dirname, '..', 'commands'))
-        .filter(folder => folder !== 'info')
-        .filter(file => file.endsWith('.js') === false && !file.endsWith('.map'))
-        .map(folder => {
-            const folderCommands: ICommand[] = [];
-            readdirSync(path.join(__dirname, '..', 'commands', folder))
-                .filter(file => file.endsWith('.map') == false)
-                .map(file => {
-                    const { command } = require(path.join(__dirname, '..', 'commands', folder, file));
-
-                    const cmd: ICommand = command;
-                    folderCommands.push(cmd);
-
-                    if (!cmd.isSubCommand) {
-                        commands.set(cmd.name.toLowerCase(), cmd);
-                    }
-                });
-
-            if (folder) {
-                commandGroups.set(folder, folderCommands);
-            }
-
-            const info = infos.find(cmd => cmd.name.toLowerCase() === folder);
-            if (info) {
-                const newInfo = new CommandInfo(
-                    info.name,
-                    info.description,
-                    info.aliases,
-                    commandGroups.get(info.name.toLowerCase()) || [],
-                    info.override,
-                    info.perms
-                );
-                commandInfos.set(newInfo.name.toLowerCase(), newInfo);
-            }
-        });
-}
 
 export function findCommand(query: string): ICommand | undefined {
     let command = commands.get(query.toLowerCase());

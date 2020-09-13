@@ -24,7 +24,7 @@ export const command: ICommand = {
         });
 
         //If the channel is not a text channel then we cant bulkdelete so return
-        if (message.channel.type !== "text") return;
+        if (message.channel.type !== 'text') return;
 
         message.channel
             .bulkDelete(amount)

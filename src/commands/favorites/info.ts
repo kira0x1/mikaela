@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
-import { embedColor } from '../../util/Style';
+import { embedColor } from '../../util/styleUtil';
 import { findFavorite } from './play';
 
 export const command: ICommand = {

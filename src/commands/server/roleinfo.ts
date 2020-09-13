@@ -1,5 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import { createFooter, sendErrorEmbed } from '../../util/Style';
+import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
 import { Guild, Message, MessageEmbed, Role } from 'discord.js';
 
 export const command: ICommand = {
@@ -29,7 +29,7 @@ async function sendEmbed(message: Message, role: Role) {
 
     embed.setColor(role.color);
 
-    addFields(embed, role)
+    addFields(embed, role);
 
     await message.channel.send(embed);
 }

@@ -1,14 +1,14 @@
 import { Client, Emoji, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
 
-import { getPlayer } from '../../app';
+import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { coders_club_id } from '../../config';
 import { CreateUser, IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
-import { getSong } from '../../util/Api';
-import { embedColor, QuickEmbed } from '../../util/Style';
+import { getSong } from '../../util/apiUtil';
+import { embedColor, QuickEmbed } from '../../util/styleUtil';
 import { AddFavorite } from '../favorites/add';
 
 let heartEmoji: Emoji;

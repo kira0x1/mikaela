@@ -6,5 +6,7 @@ export const command: ICommand = {
     aliases: ['aq'],
     args: false,
 
-    async execute(message, args) {},
+    async execute(message, args) {
+        //TODO
+    },
 };

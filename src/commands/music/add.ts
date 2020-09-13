@@ -1,7 +1,7 @@
-import { getPlayer } from '../../app';
+import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { getSong } from '../../util/Api';
-import { QuickEmbed } from '../../util/Style';
+import { getSong } from '../../util/apiUtil';
+import { QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Add',

@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import { MessageEmbed } from 'discord.js';
-import { getPlayer } from '../../app';
+import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { msToTime } from '../../util/musicUtil';
-import { embedColor, QuickEmbed } from '../../util/Style';
+import { embedColor, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'CurrentSong',

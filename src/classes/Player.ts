@@ -1,7 +1,6 @@
-import chalk from 'chalk';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js';
-import { QuickEmbed } from '../util/Style';
 import ytdl from 'ytdl-core-discord';
+import { QuickEmbed } from '../util/styleUtil';
 
 const minVolume: number = 0;
 const maxVolume: number = 7;
@@ -53,7 +52,7 @@ export class Player {
         this.volume = amount;
 
         if (this.stream) {
-            this.stream.setVolumeLogarithmic(this.volume / 10);
+            this.stream.setVolumeLogarithmic(this.volume / 6);
         }
 
         if (message) {
@@ -89,11 +88,9 @@ export class Player {
         this.lastPlayed = this.currentlyPlaying;
         this.currentlyPlaying = this.queue.getNext();
 
-        if (this.currentlyPlaying) {
-            if (this.currentlyPlaying) this.startStream(this.currentlyPlaying);
-        } else {
-            this.leave();
-        }
+        if (!this.currentlyPlaying) return this.leave();
+
+        this.startStream(this.currentlyPlaying);
     }
 
     skipSong() {
@@ -115,25 +112,30 @@ export class Player {
         return this.lastPlayed;
     }
 
-    startStream(song: ISong) {
-        if (!this.voiceChannel) {
-            return console.log('No Voicechannel');
-        }
+    async startStream(song: ISong) {
+        if (!this.voiceChannel) return console.log('No Voicechannel');
 
-        this.voiceChannel.join().then(async vc => {
-            this.stream = vc.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 10 }), { type: 'opus', highWaterMark: 1 << 22 });
-            this.stream.on('error', error => {
-                this.playNext();
-                console.log(chalk.bgRed.bold(`STREAM ERROR\n${error}`))
-            });
-            this.stream.setVolumeLogarithmic(this.volume / 10);
-            this.stream.on('finish', () => {
-                this.playNext();
-            })
-        });
+        const vc: VoiceConnection = await this.voiceChannel.join();
+        if (!vc) return console.error(`error trying to connect to voice channel`);
+
+        const dispatcher = vc.play(
+            await ytdl(song.url, {
+                filter: 'audioonly',
+                highWaterMark: 1 << 32,
+            }),
+            {
+                type: 'opus',
+                highWaterMark: 3,
+            }
+        );
+
+        dispatcher.setVolumeLogarithmic(this.volume / 6);
+        dispatcher.on('close', this.playNext);
+
+        this.stream = dispatcher;
     }
 
-    async addSong(song: ISong, message: Message) {
+    addSong(song: ISong, message: Message) {
         this.queue.addSong(song);
         this.play(song, message);
     }

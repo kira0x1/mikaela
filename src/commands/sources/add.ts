@@ -4,7 +4,7 @@ import { Message } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { CreateUser, IUser } from '../../db/dbUser';
 import { getUser, updateUser } from '../../db/userController';
-import { QuickEmbed } from '../../util/Style';
+import { QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Add',

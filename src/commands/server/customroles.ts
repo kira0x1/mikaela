@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Emoji, Message, MessageEmbed, MessageReaction, PartialUser, Role, User } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
-import { embedColor } from '../../util/Style';
+import { embedColor } from '../../util/styleUtil';
 
 const customRoles = require('../../../customRoles.json');
 

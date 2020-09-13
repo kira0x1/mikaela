@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/Style';
+import { embedColor, QuickEmbed } from '../../util/styleUtil';
 
 const voteEmojis = [
     { name: 'one' },

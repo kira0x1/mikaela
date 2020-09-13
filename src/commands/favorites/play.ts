@@ -1,10 +1,10 @@
 import { Message } from 'discord.js';
-import { getPlayer } from '../../app';
+import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { getUser } from '../../db/userController';
-import { getTarget } from '../../util/FavoritesUtil';
-import { QuickEmbed } from '../../util/Style';
+import { getTarget } from '../../util/musicUtil';
+import { QuickEmbed } from '../../util/styleUtil';
 import { playSong } from '../music/play';
 
 export const command: ICommand = {

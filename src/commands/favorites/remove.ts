@@ -1,7 +1,7 @@
 import { ICommand } from '../../classes/Command';
 import { CreateUser } from '../../db/dbUser';
 import { getUser, updateUser } from '../../db/userController';
-import { QuickEmbed } from '../../util/Style';
+import { QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'remove',
