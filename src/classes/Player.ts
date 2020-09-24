@@ -120,16 +120,17 @@ export class Player {
         const dispatcher = vc.play(
             await ytdl(song.url, {
                 filter: 'audioonly',
-                highWaterMark: 1 << 26,
+                highWaterMark: 1 << 32,
             }),
             {
                 type: 'opus',
-                highWaterMark: 8,
+                highWaterMark: 28,
             }
         );
 
         dispatcher.setVolumeLogarithmic(this.volume / 10);
         dispatcher.on('close', this.playNext);
+        dispatcher.on('finish', this.playNext);
 
         this.stream = dispatcher;
     }
