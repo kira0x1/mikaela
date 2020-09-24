@@ -19,6 +19,9 @@
 ### Sources
 > **Description**: Organize and store sources.
 
+### Fun
+> **Description**: A few fun commands
+
 ### Vote
 > **Description**: Create a strawpoll.
 
