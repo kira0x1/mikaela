@@ -3,7 +3,7 @@ import ytdl from 'ytdl-core-discord';
 import { QuickEmbed } from '../util/styleUtil';
 
 const minVolume: number = 0;
-const maxVolume: number = 7;
+const maxVolume: number = 10;
 
 export class Player {
     guild: Guild;
@@ -52,7 +52,7 @@ export class Player {
         this.volume = amount;
 
         if (this.stream) {
-            this.stream.setVolumeLogarithmic(this.volume / 6);
+            this.stream.setVolumeLogarithmic(this.volume / 10);
         }
 
         if (message) {
@@ -84,19 +84,18 @@ export class Player {
         this.queue.clear();
     }
 
-    playNext() {
+    async playNext() {
         this.lastPlayed = this.currentlyPlaying;
         this.currentlyPlaying = this.queue.getNext();
 
         if (!this.currentlyPlaying) return this.leave();
-
         this.startStream(this.currentlyPlaying);
     }
 
     skipSong() {
-        this.playNext();
-        // if (!this.stream) return;
-        // this.stream.end();
+        // this.playNext();
+        if (!this.stream) return;
+        this.stream.end();
     }
 
     play(song: ISong, message: Message) {
@@ -129,7 +128,7 @@ export class Player {
             }
         );
 
-        dispatcher.setVolumeLogarithmic(this.volume / 6);
+        dispatcher.setVolumeLogarithmic(this.volume / 10);
         dispatcher.on('close', this.playNext);
 
         this.stream = dispatcher;
