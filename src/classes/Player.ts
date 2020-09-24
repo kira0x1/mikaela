@@ -1,216 +1,217 @@
-import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js';
-import ytdl from 'ytdl-core-discord';
-import { QuickEmbed } from '../util/styleUtil';
+import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js'
+import ytdl from 'ytdl-core-discord'
+import { QuickEmbed } from '../util/styleUtil'
 
-const minVolume: number = 0;
-const maxVolume: number = 7;
+const minVolume: number = 0
+const maxVolume: number = 7
 
 export class Player {
-    guild: Guild;
-    queue: Queue;
-    volume: number = 3.3;
-    isPlaying: boolean = false;
-    inVoice: boolean = false;
-    stream: StreamDispatcher | undefined;
-    voiceChannel: VoiceChannel | undefined;
-    connection: VoiceConnection | undefined;
-    currentlyPlaying: ISong | undefined;
-    client: Client;
-    lastPlayed: ISong | undefined;
+  guild: Guild
+  queue: Queue
+  volume: number = 3.3
+  isPlaying: boolean = false
+  inVoice: boolean = false
+  stream: StreamDispatcher | undefined
+  voiceChannel: VoiceChannel | undefined
+  connection: VoiceConnection | undefined
+  currentlyPlaying: ISong | undefined
+  client: Client
+  lastPlayed: ISong | undefined
 
-    constructor(guild: Guild, client: Client) {
-        this.guild = guild;
-        this.client = client;
-        this.queue = new Queue();
+  constructor(guild: Guild, client: Client) {
+    this.guild = guild
+    this.client = client
+    this.queue = new Queue()
+  }
+
+  async join(message: Message) {
+    const vc = message.member.voice.channel
+    if (!vc) return console.error('User not in voice')
+
+    vc.join()
+      .then(conn => {
+        conn.on('debug', console.log)
+        this.connection = conn
+        this.inVoice = true
+        this.voiceChannel = vc
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
+  changeVolume(amount: number, message?: Message) {
+    if (!(amount < minVolume || amount > maxVolume)) {
+      const embedContent =
+        amount < minVolume
+          ? `Cannot go below minimum volume ( **${minVolume}** )`
+          : `Cannot exceed maximum volume ( **${maxVolume}** )`
+
+      return QuickEmbed(message, embedContent)
     }
 
-    async join(message: Message) {
-        const vc = message.member.voice.channel;
-        if (!vc) return console.error('User not in voice');
+    this.volume = amount
 
-        vc.join()
-            .then(conn => {
-                conn.on('debug', console.log);
-                this.connection = conn;
-                this.inVoice = true;
-                this.voiceChannel = vc;
-            })
-            .catch(err => {
-                console.error(err);
-            });
+    if (this.stream) {
+      this.stream.setVolumeLogarithmic(this.volume / 6)
     }
 
-    changeVolume(amount: number, message?: Message) {
-        if (amount < minVolume || amount > maxVolume) {
-            if (message && amount < minVolume) {
-                return QuickEmbed(message, `Cannot go below minimum volume ( **${minVolume}** )`);
-            } else if (message && amount > maxVolume) {
-                return QuickEmbed(message, `Cannot exceed maximum volume ( **${maxVolume}** )`);
-            }
+    if (message) {
+      QuickEmbed(message, `volume set to ${this.volume}`)
+    }
+  }
+
+  leave() {
+    if (!this.inVoice) {
+      const bot = this.guild.members.cache.get(this.client.user.id)
+      if (bot) {
+        if (bot.voice.channel) {
+          bot.voice.channel.leave()
         }
-
-        this.volume = amount;
-
-        if (this.stream) {
-            this.stream.setVolumeLogarithmic(this.volume / 6);
-        }
-
-        if (message) {
-            QuickEmbed(message, `volume set to ${this.volume}`);
-        }
+      }
+    } else {
+      if (this.voiceChannel) {
+        this.unpause()
+        this.voiceChannel.leave()
+      }
     }
+    this.clearQueue()
+    this.currentlyPlaying = undefined
+    this.inVoice = false
+  }
 
-    leave() {
-        if (!this.inVoice) {
-            const bot = this.guild.members.cache.get(this.client.user.id);
-            if (bot) {
-                if (bot.voice.channel) {
-                    bot.voice.channel.leave();
-                }
-            }
-        } else {
-            if (this.voiceChannel) {
-                this.unpause();
-                this.voiceChannel.leave();
-            }
-        }
-        this.clearQueue();
-        this.currentlyPlaying = undefined;
-        this.inVoice = false;
+  clearQueue() {
+    // console.log(chalk.bgRed.bold("Clearing Queue"))
+    this.queue.clear()
+  }
+
+  playNext() {
+    this.lastPlayed = this.currentlyPlaying
+    this.currentlyPlaying = this.queue.getNext()
+
+    if (!this.currentlyPlaying) return this.leave()
+
+    this.startStream(this.currentlyPlaying)
+  }
+
+  skipSong() {
+    this.playNext()
+    // if (!this.stream) return;
+    // this.stream.end();
+  }
+
+  play(song: ISong, message: Message) {
+    if (!this.currentlyPlaying) {
+      this.currentlyPlaying = this.queue.getNext()
+      const vc = message.member.voice.channel
+      this.voiceChannel = vc
+      this.startStream(song)
     }
+  }
 
-    clearQueue() {
-        // console.log(chalk.bgRed.bold("Clearing Queue"))
-        this.queue.clear();
-    }
+  getLastPlayed() {
+    return this.lastPlayed
+  }
 
-    playNext() {
-        this.lastPlayed = this.currentlyPlaying;
-        this.currentlyPlaying = this.queue.getNext();
+  async startStream(song: ISong) {
+    if (!this.voiceChannel) return console.log('No Voicechannel')
 
-        if (!this.currentlyPlaying) return this.leave();
+    const vc: VoiceConnection = await this.voiceChannel.join()
+    if (!vc) return console.error(`error trying to connect to voice channel`)
 
-        this.startStream(this.currentlyPlaying);
-    }
+    const dispatcher = vc.play(
+      await ytdl(song.url, {
+        filter: 'audioonly',
+        highWaterMark: 1 << 26,
+      }),
+      {
+        type: 'opus',
+        highWaterMark: 8,
+      }
+    )
 
-    skipSong() {
-        this.playNext();
-        // if (!this.stream) return;
-        // this.stream.end();
-    }
+    dispatcher.setVolumeLogarithmic(this.volume / 6)
+    dispatcher.on('close', this.playNext)
 
-    play(song: ISong, message: Message) {
-        if (!this.currentlyPlaying) {
-            this.currentlyPlaying = this.queue.getNext();
-            const vc = message.member.voice.channel;
-            this.voiceChannel = vc;
-            this.startStream(song);
-        }
-    }
+    this.stream = dispatcher
+  }
 
-    getLastPlayed() {
-        return this.lastPlayed;
-    }
+  addSong(song: ISong, message: Message) {
+    this.queue.addSong(song)
+    this.play(song, message)
+  }
 
-    async startStream(song: ISong) {
-        if (!this.voiceChannel) return console.log('No Voicechannel');
+  pause() {
+    if (!(this.currentlyPlaying && this.stream)) return
+    if (!this.stream.paused) this.stream.pause(true)
+  }
 
-        const vc: VoiceConnection = await this.voiceChannel.join();
-        if (!vc) return console.error(`error trying to connect to voice channel`);
+  unpause() {
+    if (!(this.currentlyPlaying && this.stream)) return
+    if (this.stream.paused) this.stream.resume()
+  }
 
-        const dispatcher = vc.play(
-            await ytdl(song.url, {
-                filter: 'audioonly',
-                highWaterMark: 1 << 32,
-            }),
-            {
-                type: 'opus',
-                highWaterMark: 3,
-            }
-        );
-
-        dispatcher.setVolumeLogarithmic(this.volume / 6);
-        dispatcher.on('close', this.playNext);
-
-        this.stream = dispatcher;
-    }
-
-    addSong(song: ISong, message: Message) {
-        this.queue.addSong(song);
-        this.play(song, message);
-    }
-
-    pause() {
-        if (!(this.currentlyPlaying && this.stream)) return;
-        if (!this.stream.paused) this.stream.pause(true);
-    }
-
-    unpause() {
-        if (!(this.currentlyPlaying && this.stream)) return;
-        if (this.stream.paused) this.stream.resume();
-    }
-
-    getStream() {
-        return this.stream;
-    }
+  getStream() {
+    return this.stream
+  }
 }
 
 export class Queue {
-    songs: Array<ISong> = [];
+  songs: Array<ISong> = []
 
-    constructor(songs?: Array<ISong>) {
-        if (songs) {
-            this.songs = songs;
-        } else {
-            this.songs = [];
-        }
+  constructor(songs?: Array<ISong>) {
+    if (songs) {
+      this.songs = songs
+    } else {
+      this.songs = []
     }
+  }
 
-    addSong(song: ISong) {
-        this.songs.push(song);
+  addSong(song: ISong) {
+    this.songs.push(song)
+  }
+
+  getNext(): ISong | undefined {
+    return this.songs.shift()
+  }
+
+  clear() {
+    this.songs = []
+  }
+
+  removeAt(index: number) {
+    return this.songs.splice(index, 1)
+  }
+
+  shuffle() {
+    let currentIndex = this.songs.length,
+      tempValue,
+      randomIndex
+
+    //While there are still elements to shuffle
+    while (0 !== currentIndex) {
+      //Pick a remaining element
+      randomIndex = Math.floor(Math.random() * currentIndex)
+      currentIndex -= 1
+
+      //Swap it with the current element;
+      tempValue = this.songs[currentIndex]
+      this.songs[currentIndex] = this.songs[randomIndex]
+      this.songs[randomIndex] = tempValue
     }
-
-    getNext(): ISong | undefined {
-        return this.songs.shift();
-    }
-
-    clear() {
-        this.songs = [];
-    }
-
-    removeAt(index: number) {
-        return this.songs.splice(index, 1);
-    }
-
-    shuffle() {
-        let currentIndex = this.songs.length,
-            tempValue,
-            randomIndex;
-
-        //While there are still elements to shuffle
-        while (0 !== currentIndex) {
-            //Pick a remaining element
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
-
-            //Swap it with the current element;
-            tempValue = this.songs[currentIndex];
-            this.songs[currentIndex] = this.songs[randomIndex];
-            this.songs[randomIndex] = tempValue;
-        }
-    }
+  }
 }
 
 export interface ISong {
-    title: string;
-    id: string;
-    url: string;
-    duration: IDuration;
+  title: string
+  id: string
+  url: string
+  duration: IDuration
 }
 
 export interface IDuration {
-    seconds: string;
-    minutes: string;
-    hours: string;
-    duration: string;
+  seconds: string
+  minutes: string
+  hours: string
+  duration: string
 }
