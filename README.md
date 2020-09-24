@@ -19,9 +19,6 @@
 ### Sources
 > **Description**: Organize and store sources.
 
-### Language
-> **Description**: Can translate, and or detect the language of a given string.
-
 ### Vote
 > **Description**: Create a strawpoll.
 
