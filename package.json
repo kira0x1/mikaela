@@ -34,7 +34,7 @@
         "chalk": "^4.1.0",
         "discord.js": "^12.3.1",
         "ffmpeg-static": "^4.2.7",
-        "mongoose": "^5.10.6",
+        "mongoose": "^5.10.7",
         "ms": "^2.1.2",
         "request": "^2.88.2",
         "request-promise": "^4.2.6",
