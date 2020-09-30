@@ -43,7 +43,7 @@ client.once('ready', () => {
    //Add event listener to welcome new members
    initGreeter(client);
 
-   // Read command files and set it to a array
+   // Read command files and create a collection for the commands
    initCommands();
 
    console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
