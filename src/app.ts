@@ -43,8 +43,8 @@ client.once('ready', () => {
     //Add event listener to welcome new members
     initGreeter(client);
 
-   // Read command files and create a collection for the commands
-   initCommands();
+    // Read command files and create a collection for the commands
+    initCommands();
 
     console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
 });
@@ -152,4 +152,6 @@ export function setNewPlayer(guildId: string) {
 
 export function findPlayer(guildId: string): Player {
     return players.get(guildId);
-ayers.get(guildId);
+}
+
+init();
