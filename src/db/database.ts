@@ -1,4 +1,4 @@
-import { Connection, createConnection, connection, connect } from 'mongoose';
+import { Connection, createConnection } from 'mongoose';
 
 import { dbURI } from '../config';
 
