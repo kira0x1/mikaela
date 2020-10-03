@@ -1,0 +1,98 @@
+{
+    "sections": [
+        {
+            "name": "Language",
+            "id": "618437660750381071",
+            "roles": [
+                {
+                    "name": "C#",
+                    "roleId": "618437034897309696",
+                    "reactionName": "csharp"
+                },
+                {
+                    "name": "Javascript",
+                    "roleId": "605510163490799616",
+                    "reactionName": "javascript"
+                },
+                {
+                    "name": "Java",
+                    "roleId": "618407582394089482",
+                    "reactionName": "java"
+                },
+                {
+                    "name": "Python",
+                    "roleId": "605509432029216778",
+                    "reactionName": "python"
+                }
+            ]
+        },
+        {
+            "name": "Software",
+            "id": "618437902216462356",
+            "roles": [
+                {
+                    "name": "NodeJS",
+                    "roleId": "618434847743934474",
+                    "reactionName": "nodejs"
+                },
+                {
+                    "name": "Docker",
+                    "roleId": "618434847743934474",
+                    "reactionName": "docker2"
+                },
+                {
+                    "name": "Unity",
+                    "roleId": "610556863955730491",
+                    "reactionName": "unity"
+                },
+                {
+                    "name": "UE4",
+                    "roleId": "618438021955584012",
+                    "reactionName": "ue4"
+                }
+            ]
+        },
+        {
+            "name": "Interests",
+            "id": "618437289260875807",
+            "roles": [
+                {
+                    "name": "Bot Programming",
+                    "roleId": "618435921510924288",
+                    "reactionName": "discordbots"
+                },
+                {
+                    "name": "Modding",
+                    "roleId": "618436338122752020",
+                    "reactionName": "modding"
+                },
+                {
+                    "name": "Machine Learning",
+                    "roleId": "618435386053492747",
+                    "reactionName": "machinelearning"
+                }
+            ]
+        },
+        {
+            "name": "Activities",
+            "id": "642733393389289482",
+            "roles": [
+                {
+                    "name": "Movies",
+                    "roleId": "642731160824315905",
+                    "reactionName": "movies"
+                },
+                {
+                    "name": "Tabletop Simulator",
+                    "roleId": "642732394344087572",
+                    "reactionName": "dice"
+                },
+                {
+                    "name": "Garry's Mod",
+                    "roleId": "663389389002637332",
+                    "reactionName": "gmod"
+                }
+            ]
+        }
+    ]
+}
