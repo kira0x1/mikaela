@@ -28,11 +28,12 @@ export async function getSong(query: string): Promise<ISong> {
     return new Promise((resolve, reject) => {
         ytdl.getInfo(query)
             .then(info => {
+                const details = info.videoDetails
                 let songResult: ISong = {
-                    title: info.title,
-                    id: info.video_id,
-                    url: info.video_url,
-                    duration: ConvertDuration(info.length_seconds),
+                    title: details.title,
+                    id: details.videoId,
+                    url: details.video_url,
+                    duration: ConvertDuration(details.lengthSeconds),
                 };
 
                 return resolve(songResult);
