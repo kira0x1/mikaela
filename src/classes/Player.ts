@@ -61,6 +61,10 @@ export class Player {
       }
    }
 
+   getQueueCount(): number {
+      return this.queue.songs.length;
+   }
+
    leave() {
       if (!this.inVoice) {
          const bot = this.guild.members.cache.get(this.client.user.id);
