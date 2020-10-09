@@ -1,7 +1,8 @@
 import rp from 'request-promise';
+import ytsr from 'ytsr';
+
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
-import { Youtube } from '../classes/Youtube';
 
 const ytdl = require('ytdl-core-discord');
 
@@ -24,33 +25,39 @@ export function rand(max: number) {
 }
 
 //todo Change error return to make it compatable with QuickEmbed
-export async function getSong(query: string): Promise<ISong> {
+export function getSong(query: string): Promise<ISong> {
     return new Promise((resolve, reject) => {
-        ytdl.getInfo(query)
-            .then(info => {
+        ytsr(query, { limit: 1 }).then(async searchResult => {
+            const res = searchResult.items[0]
+            if (res.type === 'video') {
+                const info = await ytdl.getInfo(res.link)
                 const details = info.videoDetails
-                let songResult: ISong = {
+
+                let songRes: ISong = {
                     title: details.title,
                     id: details.videoId,
                     url: details.video_url,
-                    duration: ConvertDuration(details.lengthSeconds),
+                    duration: ConvertDuration(details.lengthSeconds)
                 };
 
-                return resolve(songResult);
-            })
-            .catch(err => {
-                Youtube.Get(query)
-                    .then(songResult => {
-                        if (songResult) return resolve(songResult);
-                        else {
-                            return reject(undefined);
-                        }
-                    })
-                    .catch(err => {
-                        return reject(undefined);
-                    });
-            });
-    });
+                return resolve(songRes)
+            }
+        }).catch(() => {
+            ytdl.getInfo(query)
+                .then(info => {
+                    const details = info.videoDetails
+                    let songResult: ISong = {
+                        title: details.title,
+                        id: details.videoId,
+                        url: details.video_url,
+                        duration: ConvertDuration(details.lengthSeconds),
+                    };
+
+                    if (songResult)
+                        return resolve(songResult);
+                })
+        })
+    })
 }
 
 export interface ISongSearch {
