@@ -24,7 +24,6 @@ async function init() {
 
 client.once('ready', () => {
     // Setup players
-    players.clear();
     client.guilds.cache.map(async guild => {
         const guildResolved = await client.guilds.fetch(guild.id);
         console.log(chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
