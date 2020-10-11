@@ -6,6 +6,6 @@ export const command: ICommand = {
     aliases: ['git', 'code'],
 
     async execute(message, args) {
-        message.channel.send(`> **Mikaela's Github**\nhttps://github.com/lil-kira/MikaelaBot/`);
+        message.channel.send(`> **Mikaela's Github**\nhttps://github.com/kira0x1/MikaelaBot`);
     },
 };
