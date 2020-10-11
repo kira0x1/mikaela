@@ -57,8 +57,6 @@ client.on('message', message => {
     }
 
     //TODO Make a blacklist
-    //Dont let weler use the command :p
-    if (message.author.id === '604159316852736010') return;
 
     const firstCharacter = message.content.charAt(1);
     //Make sure the first character is not a number since people could just be writing decimals I.E .001
