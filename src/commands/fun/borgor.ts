@@ -2,7 +2,7 @@ import { ICommand } from '../../classes/Command';
 
 export const command: ICommand = {
     name: 'Borgor',
-    aliases: ['burger', 'borgar', 'burgers', 'burgerking'],
+    aliases: ['burger', 'borgar', 'burgers', 'burgerking', 'jess', 'jessica'],
     description: 'Posts a video made by Jessica singing about burger king ❤',
 
     async execute(message, args) {
