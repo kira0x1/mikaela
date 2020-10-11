@@ -143,7 +143,7 @@ export function setNewPlayer(guildId: string) {
         })
         .catch(err =>
             console.error(
-                chalk.bgRed.bold(`Error Setting New Player for GuildID: ${guildId} at app.ts ln: 143\n${err}`)
+                chalk.bgRed.bold(`Error Setting New Player for GuildID: ${guildId}\n${err}`)
             )
         );
 }
