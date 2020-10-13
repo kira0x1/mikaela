@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import { Client, Collection, Message, MessageEmbed } from 'discord.js';
+
 import { ICommand } from './classes/Command';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
-import { prefix, token } from './config';
+import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { dbInit } from './db/database';
 import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
@@ -13,8 +14,14 @@ import { findCommand, findCommandGroup, getCommandOverride, hasPerms } from './u
 import { embedColor, wrap } from './util/styleUtil';
 
 
-const client = new Client();
+console.log('args: ', cmdArgs)
 
+const logging_on: boolean = cmdArgs['logcommands']
+
+if (isProduction) console.log('-------production-------')
+else console.log('-------development-------')
+
+const client = new Client();
 const players: Collection<string, Player> = new Collection();
 
 async function init() {
@@ -116,7 +123,8 @@ client.on('message', message => {
 
     try {
         command.execute(message, args);
-        console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
+        if (logging_on)
+            console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
     } catch (err) {
         console.error(err);
     }
