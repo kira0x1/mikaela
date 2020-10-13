@@ -15,25 +15,28 @@ export const command: ICommand = {
 
     async execute(message, args) {
         const query = args.join();
+        try {
+            const song = await getSong(query);
+            if (!song) return QuickEmbed(message, 'song not found');
 
-        const song = await getSong(query);
-        if (!song) return QuickEmbed(message, 'song not found');
+            getUser(message.member.user.id)
+                .then(user => AddFavorite(user, song, message))
+                .catch(async err => {
+                    //If user was not found create them
+                    await CreateUser(message.member);
 
-        getUser(message.member.user.id)
-            .then(user => AddFavorite(user, song, message))
-            .catch(async err => {
-                //If user was not found create them
-                await CreateUser(message.member);
-
-                //Add favorite to the newly created user
-                getUser(message.member.user.id)
-                    .then(user => {
-                        AddFavorite(user, song, message);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            });
+                    //Add favorite to the newly created user
+                    getUser(message.member.user.id)
+                        .then(user => {
+                            AddFavorite(user, song, message);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                });
+        } catch (err) {
+            console.error(err)
+        }
     },
 };
 
