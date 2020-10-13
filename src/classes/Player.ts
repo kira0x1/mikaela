@@ -68,7 +68,7 @@ export class Player {
       this.clearQueue();
       this.currentlyPlaying = undefined;
       this.inVoice = false;
-      this.connection?.disconnect()
+      this.voiceChannel?.leave()
    }
 
    clearQueue() {
@@ -86,7 +86,7 @@ export class Player {
          return
       }
 
-      this.connection?.disconnect()
+      this.leave()
    }
 
    skipSong() {
@@ -94,13 +94,13 @@ export class Player {
       this.stream.end();
    }
 
-   play(song: ISong, message: Message) {
-      if (!this.currentlyPlaying) {
-         this.currentlyPlaying = this.queue.getNext();
-         const vc = message.member.voice.channel;
-         this.voiceChannel = vc;
-         this.startStream(song);
-      }
+   async play(song: ISong, message: Message) {
+      if (this.currentlyPlaying) return
+
+      this.currentlyPlaying = this.queue.getNext();
+      const vc = message.member.voice.channel;
+      this.voiceChannel = vc;
+      return this.startStream(song);
    }
 
    getLastPlayed() {
@@ -131,18 +131,13 @@ export class Player {
             this.playNext();
          });
 
-         dispatcher.on('finish', () => {
-            this.leave();
-         })
-
-
          this.stream = dispatcher;
       } catch (err) {
          console.error(err)
       }
    }
 
-   addSong(song: ISong, message: Message) {
+   async addSong(song: ISong, message: Message) {
       this.queue.addSong(song);
       this.play(song, message);
    }
