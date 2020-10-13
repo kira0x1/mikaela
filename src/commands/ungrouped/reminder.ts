@@ -1,8 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import ms from 'ms';
-
+import { sendArgsError } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { sendUsage } from '../../util/commandUtil';
 import { embedColor, wrap } from '../../util/styleUtil';
 
 export const command: ICommand = {
@@ -20,7 +19,7 @@ export const command: ICommand = {
 
 export function setReminder(message: Message, time: string, content: string) {
     //If user didnt give a message then tell the user the usage of the command
-    if (!content || !time) return sendUsage(message, command.name, 'Error setting reminder');
+    if (!content || !time) return sendArgsError(command, message)
 
     //Create embed
     const embed = new MessageEmbed()
