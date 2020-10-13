@@ -1,9 +1,8 @@
-import { Collection, Message } from 'discord.js';
-
+import { Collection } from 'discord.js';
 import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
-import { QuickEmbed, wrap } from './styleUtil';
+
 
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
@@ -49,19 +48,7 @@ export function findCommandInfo(query: string) {
   return infoFound;
 }
 
-export function getUsage(query: string | ICommand) {
 
-  let command: ICommand | undefined
-  if (typeof query === 'string') command = findCommand(query)
-  else command = query
-
-  if (!command) return console.log(`command: ${query} not found`);
-
-  if (command.usage) {
-    const usage = wrap(command.usage, '`');
-    return usage;
-  }
-}
 
 export function hasPerms(userId: string, query: string): boolean {
   //Get ID's
@@ -77,12 +64,4 @@ export function hasPerms(userId: string, query: string): boolean {
   }
 
   return false;
-}
-
-export function sendUsage(
-  message: Message,
-  commandName: string | ICommand,
-  fallbackUsage: string = 'Error: Please check your arguments'
-) {
-  QuickEmbed(message, getUsage(commandName) || fallbackUsage);
 }
