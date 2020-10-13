@@ -1,15 +1,15 @@
 import { Client, Emoji, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
-
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { coders_club_id } from '../../config';
 import { CreateUser, IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
 import { getSong } from '../../util/apiUtil';
+import { getPlayer } from '../../util/musicUtil';
 import { embedColor, QuickEmbed } from '../../util/styleUtil';
 import { AddFavorite } from '../favorites/add';
+
 
 let heartEmoji: Emoji;
 
@@ -34,16 +34,19 @@ export const command: ICommand = {
         //Get the users query
         let query = args.join(' ');
 
+        //Make sure the user is in voice
+        if (!message.member.voice.channel) {
+            return QuickEmbed(message, `You must be in a voice channel to play music`);
+        }
+
         //Search for song
-        getSong(query)
-            .then(song => {
-                //Play song
-                playSong(message, song);
-            })
-            .catch(err => {
-                //If song not found, tell the user.
-                QuickEmbed(message, 'Song not found');
-            });
+        const song = await getSong(query)
+
+        //If song not found, tell the user.
+        if (!song) return QuickEmbed(message, 'Song not found');
+
+        //Otherwise play the song
+        playSong(message, song);
     },
 };
 
@@ -91,8 +94,6 @@ export async function playSong(message: Message, song: ISong) {
                 };
 
                 await CreateUser(iuser);
-                // await addUser(iuser);
-
                 dbUser = iuser;
             }
 
