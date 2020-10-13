@@ -1,90 +1,84 @@
 import { Message } from 'discord.js';
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { getUser } from '../../db/userController';
-import { getTarget } from '../../util/musicUtil';
+import { getPlayer, getTarget } from '../../util/musicUtil';
 import { QuickEmbed } from '../../util/styleUtil';
 import { playSong } from '../music/play';
 
 export const command: ICommand = {
-    name: 'play',
-    description: 'Play a song from yours or someone elses favorites',
-    aliases: ['p'],
-    args: true,
-    usage: '[song index | startIndex - endIndex (To Select Multiple Songs) ]',
+   name: 'play',
+   description: 'Play a song from yours or someone elses favorites',
+   aliases: ['p'],
+   args: true,
+   usage: '[song index | startIndex - endIndex (To Select Multiple Songs) ]',
 
-    async execute(message, args) {
-        const player = getPlayer(message);
-        if (!player) return;
+   async execute(message, args) {
+      const player = getPlayer(message);
+      if (!player) return;
 
-        if (!player.inVoice && !message.member.voice.channel)
-            return QuickEmbed(message, `You must be in a voice channel to play music`);
+      if (!player.inVoice && !message.member.voice.channel)
+         return QuickEmbed(message, `You must be in a voice channel to play music`);
 
-        findFavorite(message, args)
-            .then(res => {
-                if (res instanceof Array) res.map(song => playSong(message, song));
-                else playSong(message, res);
-            })
-            .catch(err => QuickEmbed(message, err));
-    },
+      try {
+         const res = await findFavorite(message, args)
+         if (res instanceof Array) res.map(song => playSong(message, song));
+         else playSong(message, res);
+      } catch (err) {
+         QuickEmbed(message, err)
+      }
+   },
 };
 
 export async function findFavorite(message: Message, args: string[]): Promise<ISong | ISong[]> {
-    return new Promise(async (resolve, reject) => {
-        let songArg = '';
-        let songIndex: number | undefined = undefined;
+   let songArg = '';
+   let songIndex: number | undefined = undefined;
 
-        const songIndexes: number[] = [];
-        const indexesToDelete: number[] = [];
+   const songIndexes: number[] = [];
+   const indexesToDelete: number[] = [];
 
-        for (let i = 0; i < args.length; i++) {
-            const arg = args[i];
+   for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
 
-            if (typeof Number(arg) !== 'number') continue;
+      if (isNaN(Number(arg))) {
+         continue
+      }
+      songArg = arg;
+      songIndex = Number(arg);
 
-            songArg = arg;
-            songIndex = Number(arg);
-            if (songIndex) songIndexes.push(songIndex);
+      if (songIndex) songIndexes.push(songIndex);
+      indexesToDelete.push(i);
+   }
 
-            // console.log(`ArgIndex: ${i}`);
-            indexesToDelete.push(i);
+   indexesToDelete.map(i => {
+      args.splice(i, 1);
+   });
 
-            //todo Try using splice, and replacing array
-            // args.splice(i, 1);
-        }
+   //? Get User
+   const targetQuery = args.join(' ');
+   const target = await getTarget(message, targetQuery) || message.author;
 
-        indexesToDelete.map(i => {
-            // console.log(chalk.bgMagenta.bold(`DELETING ARG AT INDEX: ${i}, ARG: ${args[i]}`));
-            args.splice(i, 1);
-        });
+   if (!target) throw (`Target "${targetQuery}" not found`)
+   if (songIndex === undefined) throw (`no song index given`);
 
-        //? Get User
-        const targetQuery = args.join(' ');
-        const target = await getTarget(message, targetQuery);
+   const userResult = await getUser(target.id);
+   const fav = userResult.favorites;
 
-        if (!target) return reject(`Target "${targetQuery}" not found`);
-        if (songIndex === undefined) return reject(`no song index given`);
+   if (songIndexes.length === 2) {
+      const startRange = songIndexes[0] - 1;
+      const endRange = songIndexes[1]--;
 
-        const userResult = await getUser(target.id);
-        const fav = userResult.favorites;
+      const startValid = startRange < fav.length && startRange >= 0;
+      const endValid = endRange <= fav.length && endRange > 0;
 
-        if (songIndexes.length === 2) {
-            const startRange = songIndexes[0] - 1;
-            const endRange = songIndexes[1]--;
+      if (!startValid || !endValid) throw (`This user doesnt have songs in that range`);
 
-            // console.log(`Start: ${startRange}, End: ${endRange}`);
-            const startValid = startRange < fav.length && startRange >= 0;
-            const endValid = endRange <= fav.length && endRange > 0;
+      const songs = fav.slice(startRange, endRange);
+      return songs
+   }
 
-            if (!startValid || !endValid) return reject(`This user doesnt have songs in that range`);
-            const songs = fav.slice(startRange, endRange);
-            return resolve(songs);
-        }
+   songIndex--;
+   if (fav.length < songIndex || !fav[songIndex]) throw (`song at index \"${songArg}\" not found`)
 
-        songIndex--;
-        if (fav.length < songIndex || !fav[songIndex]) return reject(`song at index \"${songArg}\" not found`);
-
-        return resolve(fav[songIndex]);
-    });
+   return fav[songIndex]
 }
