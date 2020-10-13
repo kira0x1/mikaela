@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
 import { embedColor, QuickEmbed } from '../../util/styleUtil';
@@ -48,21 +48,14 @@ export const command: ICommand = {
             embed.addField(vote, `${i + 1}`, true);
         }
 
-        //send the normal embed
-        message.channel.send(embed).then(async msg => {
-            // if (!((msg): msg is Message => msg instanceof Message)(msg)) return
-
-            const filter = (reaction: MessageReaction, user: User) => {
-                return !user.bot;
-            };
-
-            // const collector = msg.createReactionCollector(filter)
-            // collector.on('collect', async reaction => {})
-
+        try {
+            const messageSent = await message.channel.send(embed)
             for (let i = 0; i < votes.length; i++) {
-                const emoji = msg.client.emojis.cache.find(emoji => emoji.name === voteEmojis[i].name);
-                await msg.react(emoji.id);
+                const emoji = messageSent.client.emojis.cache.find(emoji => emoji.name === voteEmojis[i].name);
+                await messageSent.react(emoji.id);
             }
-        });
+        } catch (err) {
+            console.error(err)
+        }
     },
 };
