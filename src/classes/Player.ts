@@ -68,12 +68,7 @@ export class Player {
       this.clearQueue();
       this.currentlyPlaying = undefined;
       this.inVoice = false;
-
-      if (!this.inVoice) {
-         return;
-      }
-
-      if (this.stream) this.stream.destroy()
+      this.connection?.disconnect()
    }
 
    clearQueue() {
@@ -91,8 +86,7 @@ export class Player {
          return
       }
 
-      if (this.stream) this.stream.destroy()
-      else this.voiceChannel?.leave()
+      this.connection?.disconnect()
    }
 
    skipSong() {
@@ -136,6 +130,11 @@ export class Player {
          dispatcher.on('close', () => {
             this.playNext();
          });
+
+         dispatcher.on('finish', () => {
+            this.leave();
+         })
+
 
          this.stream = dispatcher;
       } catch (err) {
