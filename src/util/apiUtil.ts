@@ -1,9 +1,9 @@
 import rp from 'request-promise';
 import { getInfo, validateURL } from 'ytdl-core-discord';
 import ytsr from 'ytsr';
-
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
+
 
 export function Get(url: string, options?: any) {
     if (!options)
@@ -52,47 +52,4 @@ export async function getSong(query: string): Promise<ISong> {
     } catch (err) {
         console.error(err)
     }
-}
-
-/*
-
-    return new Promise((resolve, reject) => {
-        ytsr(query, { limit: 1 }).then(async searchResult => {
-            const res = searchResult.items[0]
-            if (res.type === 'video') {
-                const info = await ytdl.getInfo(res.link)
-                const details = info.videoDetails
-
-                let songRes: ISong = {
-                    title: details.title,
-                    id: details.videoId,
-                    url: details.video_url,
-                    duration: ConvertDuration(details.lengthSeconds)
-                };
-
-                return resolve(songRes)
-            }
-        }).catch(() => {
-            ytdl.getInfo(query)
-                .then(info => {
-                    const details = info.videoDetails
-                    let songResult: ISong = {
-                        title: details.title,
-                        id: details.videoId,
-                        url: details.video_url,
-                        duration: ConvertDuration(details.lengthSeconds),
-                    };
-
-                    if (songResult)
-                        return resolve(songResult);
-                })
-        })
-    })
-*/
-
-export interface ISongSearch {
-    items: Array<{
-        id: { videoId: string };
-        snippet: { title: string };
-    }>;
 }
