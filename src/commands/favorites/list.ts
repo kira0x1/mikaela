@@ -16,6 +16,7 @@ import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 export const command: ICommand = {
    name: 'list',
    description: 'Lists your favorites or someone elses',
+   aliases: ['ls'],
    usage: '[empty | user]',
    isSubCommand: true,
 
