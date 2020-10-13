@@ -14,6 +14,7 @@ export const command: ICommand = {
 
     async execute(message, args) {
         let amount = 1;
+
         args.find((arg, pos) => {
             if (Number(arg)) {
                 amount = Number(arg);
@@ -21,7 +22,7 @@ export const command: ICommand = {
             }
         });
 
-        let target = await getTarget(message, args.join(' '));
+        let target = await getTarget(message, args.join(' ')) || message.author;
         const user = await getUser(target.id);
 
         if (!user.favorites) {
@@ -46,7 +47,7 @@ export const command: ICommand = {
         }
 
         const firstSong = user.favorites[Math.floor(Math.random() * user.favorites.length)];
-        await player.addSong(firstSong, message);
+        player.addSong(firstSong, message)
 
         embed.setTitle(title);
         embed.setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
