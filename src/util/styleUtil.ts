@@ -1,8 +1,8 @@
 import { Client, Message, MessageEmbed } from 'discord.js';
 
 const redColor = 0xcf274e;
-const blueColor = 0x4e74e6;
-const oldBlueColor = 0x6788eb;
+// const blueColor = 0x4e74e6;
+// const oldBlueColor = 0x6788eb;
 
 export const embedColor = redColor;
 
