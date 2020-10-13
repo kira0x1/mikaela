@@ -1,10 +1,9 @@
 import rp from 'request-promise';
+import { getInfo, validateURL } from 'ytdl-core-discord';
 import ytsr from 'ytsr';
 
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
-
-const ytdl = require('ytdl-core-discord');
 
 export function Get(url: string, options?: any) {
     if (!options)
@@ -25,7 +24,38 @@ export function rand(max: number) {
 }
 
 //todo Change error return to make it compatable with QuickEmbed
-export function getSong(query: string): Promise<ISong> {
+export async function getSong(query: string): Promise<ISong> {
+    try {
+        if (validateURL(query)) {
+            const details = (await getInfo(query)).videoDetails
+            return {
+                title: details.title,
+                id: details.videoId,
+                url: details.video_url,
+                duration: ConvertDuration(details.lengthSeconds)
+            }
+        }
+
+        const songSearch = await ytsr(query, { limit: 1 })
+        if (!songSearch) return
+
+        const res = songSearch.items[0]
+        if (res.type !== 'video') return
+
+        const details = (await getInfo(res.link)).videoDetails
+        return {
+            title: details.title,
+            id: details.videoId,
+            url: details.video_url,
+            duration: ConvertDuration(details.lengthSeconds)
+        }
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+/*
+
     return new Promise((resolve, reject) => {
         ytsr(query, { limit: 1 }).then(async searchResult => {
             const res = searchResult.items[0]
@@ -58,7 +88,7 @@ export function getSong(query: string): Promise<ISong> {
                 })
         })
     })
-}
+*/
 
 export interface ISongSearch {
     items: Array<{
