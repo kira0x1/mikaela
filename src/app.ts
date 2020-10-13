@@ -1,17 +1,17 @@
 import chalk from 'chalk';
 import { Client, Collection, Message, MessageEmbed } from 'discord.js';
-
 import { ICommand } from './classes/Command';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
 import { prefix, token } from './config';
 import { dbInit } from './db/database';
+import { initCommands } from './system/commandLoader';
+import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms } from './util/commandUtil';
-import { initCommands } from './system/commandLoader';
-import { initGreeter } from './system/serverGreeter';
 import { embedColor, wrap } from './util/styleUtil';
+
 
 const client = new Client();
 
