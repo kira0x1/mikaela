@@ -14,18 +14,18 @@ export async function initVoiceManager(client: Client) {
         if (member.roles.cache.has(voice_role.id)) {
             member.roles
                 .remove(voice_role)
-                .then(() => {})
+                .then(() => { })
                 .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
         }
     });
 
     //Check if their are any people in voice, and add the voice role incase the bot was offline
-    coders_club.voiceStates.cache.map((voiceState, key) => {
+    coders_club.voiceStates.cache.map((voiceState) => {
         const member = voiceState.member;
 
         member.roles
             .add(voice_role)
-            .then(() => {})
+            .then(() => { })
             .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
     });
 
@@ -44,13 +44,13 @@ export async function initVoiceManager(client: Client) {
             //User joined a vc
             member.roles
                 .add(voice_role)
-                .then(() => {})
+                .then(() => { })
                 .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
         } else if (!newChannel) {
             //User left vc
             member.roles
                 .remove(voice_role)
-                .then(() => {})
+                .then(() => { })
                 .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
         }
     });
