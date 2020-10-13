@@ -93,17 +93,8 @@ function addCollector(message: Message, emoji: Emoji, role: Role, sectionRole: R
                 member.roles.remove(sectionRole);
                 console.log(chalk.bgMagenta.bold(`Removed role from user ${user.username}`));
             }
-
-            // if (member.roles.find(rl => rl.id === role.id)) {
-            // console.log(chalk.bgMagenta.bold(`Removed role from user ${user.username}`))
-            // member.removeRole(role)
-            // member.removeRole(sectionRole)
-            // }
         }
     });
-}
-function react(message: Message, emoji: Emoji) {
-    message.react(emoji.id);
 }
 
 function findRole(message: Message, id: string) {
