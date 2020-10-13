@@ -33,9 +33,9 @@ export function getPlayer(message: Message): Player {
 
 export async function getTarget(message: Message, username: string) {
   let userName = username.toLowerCase();
-  const mentions = message.mentions.users
 
-  if (mentions) return mentions.first();
+  const mention = message.mentions.users.first()
+  if (mention !== undefined) return mention;
 
   let member = message.guild.members.cache.find(m => m.displayName.toLowerCase() === userName);
   if (member) return member.user
