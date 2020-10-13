@@ -1,16 +1,19 @@
-import { Connection, createConnection } from 'mongoose';
+import { connect, Mongoose } from 'mongoose';
+import ms from 'ms';
 
 import { dbURI } from '../config';
 
-export var conn: Connection;
+export let conn: Mongoose
 
 export async function dbInit() {
-    conn = await createConnection(dbURI, {
+    conn = await connect(dbURI, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
         keepAlive: true,
+        autoIndex: false,
+        maxIdleTimeMS: ms('5m')
     });
 
     console.log('Connected to mongodb');
