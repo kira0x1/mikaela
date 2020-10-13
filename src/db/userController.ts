@@ -14,7 +14,7 @@ import { IUser, UserSchema } from './dbUser';
 // - GET - /user/{1} # returns user with id 1
 export async function getUser(id: string): Promise<IUser> {
     try {
-        var userModel = await conn.model('users', UserSchema);
+        var userModel = conn.model('users', UserSchema);
         const user: any = await userModel.findOne({ id: id })?.lean();
         return user
     } catch (err) {
@@ -56,23 +56,13 @@ export async function deleteUser(tag: string) {
 }
 
 export async function updateUser(id: string, user: IUser) {
-    return new Promise(async function (resolve, reject) {
-        var userModel = await conn.model('users', UserSchema);
-
-        userModel.updateOne({ id: id }, user, (err: any, res: any) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(user);
-            }
-        });
-
-        // userModel.findOneAndUpdate({ id: id }, user, (err: any, res: any) => {
-        //    if (err) {
-        //       reject(err);
-        //    } else {
-        //       resolve(user);
-        //    }
-        // });
-    });
+    try {
+        console.log('updating user...')
+        var userModel = conn.model('users', UserSchema);
+        const userUpdated = await userModel.updateOne({ id: id }, user)?.lean()
+        return userUpdated
+    }
+    catch (err) {
+        return err;
+    }
 }
