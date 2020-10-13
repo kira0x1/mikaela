@@ -94,13 +94,13 @@ export class Player {
       this.stream.end();
    }
 
-   async play(song: ISong, message: Message) {
+   play(song: ISong, message: Message) {
       if (this.currentlyPlaying) return
 
       this.currentlyPlaying = this.queue.getNext();
       const vc = message.member.voice.channel;
       this.voiceChannel = vc;
-      return this.startStream(song);
+      this.startStream(song);
    }
 
    getLastPlayed() {
@@ -120,9 +120,9 @@ export class Player {
             return console.error('Could not connect to the voice channel');
          }
 
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 60 }), {
+         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 100 }), {
             type: 'opus',
-            highWaterMark: 60
+            highWaterMark: 100
          });
 
          dispatcher.setVolumeLogarithmic(this.volume / 10);
