@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Client, VoiceChannel } from 'discord.js';
+import { Client } from 'discord.js';
 
 import { coders_club_id } from '../config';
 

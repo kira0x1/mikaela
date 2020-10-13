@@ -3,7 +3,6 @@ import { Message, User } from 'discord.js';
 
 import { findPlayer, setNewPlayer } from '../app';
 import { IDuration } from '../classes/Player';
-import { addUser, getUser } from '../db/userController';
 
 export function ConvertDuration(duration_seconds: number | string) {
     let minutes: number = Math.floor(Number(duration_seconds) / 60);
@@ -75,22 +74,6 @@ export async function getTarget(message: Message, username: string) {
         let member = await message.guild.members.fetch(message.author);
         user = member.user;
     }
-
-    let userDb = await getUser(user.id)
-        .then(() => {})
-        .catch(err => {
-            if (!user) return console.log(`user undefined`);
-            addUser({
-                tag: user.tag,
-                username: user.username,
-                favorites: [],
-                id: user.id,
-                roles: [],
-                sourcesGroups: [],
-            })
-                .then(user => {})
-                .catch(err => console.log(err));
-        });
 
     return user;
 }
