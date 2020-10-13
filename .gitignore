@@ -92,7 +92,6 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
-ecosystem.config.js
 
 # JetBrains IDE folder
 .idea/
