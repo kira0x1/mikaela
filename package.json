@@ -27,6 +27,7 @@
     },
     "scripts": {
         "start": "node .",
+        "start-prod": "node . --env=production",
         "pretty": "prettier --write \"./**/*.{ts,json}\""
     },
     "dependencies": {
@@ -34,6 +35,7 @@
         "chalk": "^4.1.0",
         "discord.js": "^12.3.1",
         "ffmpeg-static": "^4.2.7",
+        "minimist": "^1.2.5",
         "mongoose": "^5.10.9",
         "ms": "^2.1.2",
         "request": "^2.88.2",
