@@ -116,6 +116,7 @@ client.on('message', message => {
 
     try {
         command.execute(message, args);
+        console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
     } catch (err) {
         console.error(err);
     }
