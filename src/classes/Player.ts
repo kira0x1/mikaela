@@ -9,7 +9,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 2.8;
+   volume: number = 4;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -29,16 +29,15 @@ export class Player {
       const vc = message.member.voice.channel;
       if (!vc) return console.error('User not in voice');
 
-      vc.join()
-         .then(conn => {
-            conn.on('debug', console.log);
-            this.connection = conn;
-            this.inVoice = true;
-            this.voiceChannel = vc;
-         })
-         .catch(err => {
-            console.error(err);
-         });
+      try {
+         const conn = await vc.join()
+         if (!conn) return
+         this.connection = conn;
+         this.inVoice = true;
+         this.voiceChannel = vc
+      } catch (err) {
+         console.error(err)
+      }
    }
 
    changeVolume(amount: number, message?: Message) {
@@ -66,19 +65,15 @@ export class Player {
    }
 
    leave() {
-      if (!this.inVoice) {
-         const bot = this.guild.members.cache.get(this.client.user.id);
-         if (bot && bot.voice.channel) {
-            bot.voice.channel.leave();
-         }
-      } else if (this.voiceChannel) {
-         this.unpause();
-         this.voiceChannel.leave();
-      }
-
       this.clearQueue();
       this.currentlyPlaying = undefined;
       this.inVoice = false;
+
+      if (!this.inVoice) {
+         return;
+      }
+
+      if (this.stream) this.stream.destroy()
    }
 
    clearQueue() {
@@ -89,15 +84,18 @@ export class Player {
       this.lastPlayed = this.currentlyPlaying;
       this.currentlyPlaying = this.queue.getNext();
 
+      if (!this.lastPlayed) this.lastPlayed = this.currentlyPlaying
+
       if (this.currentlyPlaying) {
          this.startStream(this.currentlyPlaying);
-      } else {
-         this.leave();
+         return
       }
+
+      if (this.stream) this.stream.destroy()
+      else this.voiceChannel?.leave()
    }
 
    skipSong() {
-      // this.playNext();
       if (!this.stream) return;
       this.stream.end();
    }
@@ -121,22 +119,28 @@ export class Player {
          return;
       }
 
-      const connection: VoiceConnection = await this.voiceChannel.join();
-      if (!connection) {
-         return console.error('Could not connect to the voice channel');
+      try {
+         const connection: VoiceConnection = await this.voiceChannel.join();
+
+         if (!connection) {
+            return console.error('Could not connect to the voice channel');
+         }
+
+         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 60 }), {
+            type: 'opus',
+            highWaterMark: 60
+         });
+
+         dispatcher.setVolumeLogarithmic(this.volume / 10);
+
+         dispatcher.on('close', () => {
+            this.playNext();
+         });
+
+         this.stream = dispatcher;
+      } catch (err) {
+         console.error(err)
       }
-
-      const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 25 }), {
-         type: 'opus',
-      });
-
-      dispatcher.setVolumeLogarithmic(this.volume / 10);
-
-      dispatcher.on('close', () => {
-         this.playNext();
-      });
-
-      this.stream = dispatcher;
    }
 
    addSong(song: ISong, message: Message) {
