@@ -1,8 +1,8 @@
 import { MessageEmbed } from 'discord.js';
-
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
+import { getPlayer } from '../../util/musicUtil';
 import { QuickEmbed } from '../../util/styleUtil';
+
 
 export const command: ICommand = {
     name: 'GetDuration',
