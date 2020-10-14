@@ -79,10 +79,28 @@ client.on('message', message => {
 
   // If the command wasnt found check if its in a commandgroup
   if (!command) {
+    //Get the sub-command input given by the user
     const grp = findCommandGroup(commandName)
 
-    //Get the sub-command input given by the user
-    if (grp) command = findSubCommand(args, command, grp, commandName)
+    if (grp) {
+      //Get the sub-command input given by the user
+      const subCmdName = args[0]
+
+      //Check if the command-group contains the command
+      command = grp.find(
+        cmd =>
+          cmd.name.toLowerCase() === subCmdName?.toLowerCase() ||
+          (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
+      )
+
+      //If the command-group doesnt contain the command then check if the command-group has it set as an override
+      if (!command) {
+        command = getCommandOverride(commandName)
+      } else {
+        //? If the command is not an overdrive command then remove the first argument, since its a subcommand
+        args.shift()
+      }
+    }
   }
 
   // If command not found send a message
@@ -109,21 +127,6 @@ client.on('message', message => {
 
 function logCommand(message, command) {
   console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
-}
-
-function findSubCommand(args: string[], command: ICommand, grp: ICommand[], commandName: string) {
-  const subCmdName = args[0]
-
-  //? Check if the command-group contains the command
-  command = grp.find(cmd => cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase())))
-
-  //? If the command-group doesnt contain the command then check if the command-group has it set as an override
-  if (command) return getCommandOverride(commandName)
-
-  //? If the command is not an overdrive command then remove the first argument, since its a subcommand
-  args.shift()
-
-  return command
 }
 
 export function sendArgsError(command: ICommand, message: Message) {
