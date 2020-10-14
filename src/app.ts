@@ -81,47 +81,50 @@ client.on('message', message => {
   if (!command) {
     const grp = findCommandGroup(commandName)
 
-    if (grp) {
-      //Get the sub-command input given by the user
-      const subCmdName = args[0]
-
-      //Check if the command-group contains the command
-      command = grp.find(
-        cmd =>
-          cmd.name.toLowerCase() === subCmdName?.toLowerCase() ||
-          (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
-      )
-
-      //If the command-group doesnt contain the command then check if the command-group has it set as an override
-      if (!command) {
-        command = getCommandOverride(commandName)
-      } else {
-        //? If the command is not an overdrive command then remove the first argument, since its a subcommand
-        args.shift()
-      }
-    }
+    //Get the sub-command input given by the user
+    if (grp) command = findSubCommand(args, command, grp, commandName)
   }
 
   // If command not found send a message
-  if (!command) {
-    message.author.send(`command ${wrap(commandName || '')} not found`)
-    return
-  }
+  if (!command) return message.author.send(`command ${wrap(commandName || '')} not found`)
 
-  // if (!command) return QuickEmbed(message, `command ${wrap(commandName || '')} not found`);
   if (!hasPerms(message.author.id, commandName))
     return message.author.send(`You do not have permission to use ${wrap(command.name)}`)
 
+  //? If command arguments are required and not given send an error message
   if (command.args && args.length === 0) return sendArgsError(command, message)
+
+  //? Execute the command if everything is ok
 
   try {
     command.execute(message, args)
+
+    //? Log the output of who send the command and other information if logging is on
     if (logging_on)
-      console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
+      logCommand(message, command)
   } catch (err) {
     console.error(err)
   }
 })
+
+function logCommand(message, command) {
+  console.log(chalk.bgMagenta.bold(`\n-----command-----\nuser: ${message.author.tag}\nserver: ${message.guild.name}\ncommand: ${command.name}\nargs: ${command.args}\n-----------------\n`))
+}
+
+function findSubCommand(args: string[], command: ICommand, grp: ICommand[], commandName: string) {
+  const subCmdName = args[0]
+
+  //? Check if the command-group contains the command
+  command = grp.find(cmd => cmd.name.toLowerCase() === subCmdName?.toLowerCase() || (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase())))
+
+  //? If the command-group doesnt contain the command then check if the command-group has it set as an override
+  if (command) return getCommandOverride(commandName)
+
+  //? If the command is not an overdrive command then remove the first argument, since its a subcommand
+  args.shift()
+
+  return command
+}
 
 export function sendArgsError(command: ICommand, message: Message) {
   let usageString = 'Arguments required'
