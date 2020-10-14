@@ -31,12 +31,12 @@ export function getPlayer(message: Message): Player {
   return setNewPlayer(guildId)
 }
 
-export async function getTarget(message: Message, username: string) {
-  let userName = username.toLowerCase();
+export async function getTarget(message: Message, query: string) {
+  query = query.toLowerCase();
 
   const mention = message.mentions.users.first()
   if (mention !== undefined) return mention;
 
-  let member = message.guild.members.cache.find(m => m.displayName.toLowerCase() === userName);
+  let member = message.guild.members.cache.find(m => m.displayName.toLowerCase() === query || m.id === query);
   if (member) return member.user
 }
