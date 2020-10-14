@@ -2,6 +2,7 @@ import { Client, Emoji, Message, MessageReaction, ReactionEmoji, Role, TextChann
 import { coders_club_id } from '../config';
 
 
+
 const customRoles = require('../../customRoles.json');
 
 export async function syncRoles(client: Client) {
@@ -34,7 +35,7 @@ export async function syncRoles(client: Client) {
     if (user.bot) return;
 
     const member = guild.members.cache.get(user.id);
-    const section = customRoles.sections.find(sec => sec.roles.find(rl => rl.reactionName === reaction.emoji.name));
+    const section = getSection(reaction)
     if (!section) return;
     const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
     const role = guild.roles.cache.find(rl => rl.id === crole.roleId);
@@ -70,7 +71,8 @@ async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
   collector.on('collect', (reaction: MessageReaction, user: User) => {
     const member = msg.guild.members.cache.get(user.id);
 
-    const section = customRoles.sections.find(sec => sec.roles.find(rl => rl.reactionName === reaction.emoji.name));
+    const section = getSection(reaction)
+
     if (!section) return;
     const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
 
@@ -78,11 +80,17 @@ async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
     if (!crole) return console.log('couldnt find crole');
 
     const role = msg.guild.roles.cache.find(rl => rl.id === crole.roleId);
-    if (member) {
-      if (member.roles.cache.has(role.id) === false) {
-        member.roles.add(role);
-        if (member.roles.cache.has(section.id) === false) member.roles.add(section.id);
-      }
-    }
+    if (!member) return
+
+    if (member.roles.cache.has(role.id) === false)
+      member.roles.add(role);
+
+
+    if (member.roles.cache.has(section.id) === false)
+      member.roles.add(section.id);
   });
+}
+
+function getSection(reaction) {
+  return customRoles.sections.find(sec => sec.roles.find(rl => rl.reactionName === reaction.emoji.name));
 }
