@@ -33,21 +33,21 @@ export function getCommandOverride(query: string): ICommand | undefined {
 export function findCommandGroup(query: string) {
   let grp = commandGroups.get(query);
   if (!grp) {
-    const info = commandInfos.find(
-      info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
-    );
+    const info = getInfo(query)
     if (info) grp = info.commands;
   }
   return grp;
 }
 
 export function findCommandInfo(query: string) {
-  const infoFound = commandInfos.find(
-    info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
-  );
-  return infoFound;
+  return getInfo(query);
 }
 
+function getInfo(query: string): CommandInfo {
+  return commandInfos.find(info =>
+    info.name.toLowerCase() === query.toLowerCase()
+    || info.aliases.includes(query.toLowerCase()));
+}
 
 
 export function hasPerms(userId: string, query: string): boolean {
