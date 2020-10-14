@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Client } from 'discord.js';
+import { Client, GuildMember } from 'discord.js';
 
 import { coders_club_id } from '../config';
 
@@ -10,23 +10,14 @@ export async function initVoiceManager(client: Client) {
     const voice_role = coders_club.roles.cache.get('642540366935097365');
     if (!voice_role) return;
 
-    coders_club.members.cache.map(async member => {
-        if (member.roles.cache.has(voice_role.id)) {
-            member.roles
-                .remove(voice_role)
-                .then(() => { })
-                .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
-        }
+    coders_club.members.cache.map(member => {
+        if (member.roles.cache.has(voice_role.id)) removVoiceRole(member)
     });
 
     //Check if their are any people in voice, and add the voice role incase the bot was offline
-    coders_club.voiceStates.cache.map((voiceState) => {
+    coders_club.voiceStates.cache.map(voiceState => {
         const member = voiceState.member;
-
-        member.roles
-            .add(voice_role)
-            .then(() => { })
-            .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
+        addVoiceRole(member)
     });
 
     //Add's the voice role when user's joins a voice-channel and also removes the role when members leave a voice-channel
@@ -40,18 +31,26 @@ export async function initVoiceManager(client: Client) {
         const oldChannel = oldMember.channel;
         const newChannel = newMember.channel;
 
+        //User joined a vc
         if (!oldChannel && newChannel) {
-            //User joined a vc
-            member.roles
-                .add(voice_role)
-                .then(() => { })
-                .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
-        } else if (!newChannel) {
-            //User left vc
-            member.roles
-                .remove(voice_role)
-                .then(() => { })
-                .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
+            addVoiceRole(member)
+            return
         }
+
+        //User left vc
+        if (!newChannel) removVoiceRole(member)
+
     });
+
+    function removVoiceRole(member: GuildMember) {
+        member.roles
+            .remove(voice_role)
+            .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
+    }
+
+    function addVoiceRole(member: GuildMember) {
+        member.roles
+            .add(voice_role)
+            .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
+    }
 }
