@@ -36,7 +36,7 @@ export const command: ICommand = {
         player.queue.songs[songPos] = otherSong
 
         const embed = new MessageEmbed().setColor(embedColor)
-            .setTitle(`Moved song from ${songPos} to ${toPos}`)
+            .setTitle(`Moved song from ${songPos + 1} to ${toPos + 1}`)
             .setAuthor(message.author.username, message.author.avatarURL())
 
         message.channel.send(embed)
