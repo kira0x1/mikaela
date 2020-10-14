@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { getTarget } from '../../util/musicUtil';
-import { createFooter } from '../../util/styleUtil';
+import { createFooter, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'avatar',
@@ -9,7 +9,11 @@ export const command: ICommand = {
     aliases: ['av'],
 
     async execute(message, args) {
-        const target = await getTarget(message, args.join(' '));
+        let target = message.author
+        if (args.length > 0)
+            target = await getTarget(message, args.join(' '));
+
+        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
         sendEmbed(message, target);
     },
 };
