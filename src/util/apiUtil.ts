@@ -1,23 +1,8 @@
-import rp from 'request-promise';
 import { getInfo, validateURL } from 'ytdl-core-discord';
 import ytsr from 'ytsr';
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
 
-
-export function Get(url: string, options?: any) {
-    if (!options)
-        options = {
-            method: 'GET',
-            json: true,
-        };
-
-    return new Promise((resolve, reject) => {
-        rp(url, options)
-            .then(body => resolve(body))
-            .catch(err => reject(err));
-    });
-}
 
 export function rand(max: number) {
     return Math.floor(Math.random() * max);
