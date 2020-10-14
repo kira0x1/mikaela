@@ -12,7 +12,9 @@ export function rand(max: number) {
 export async function getSong(query: string): Promise<ISong> {
     try {
         if (validateURL(query)) {
-            const details = (await getInfo(query)).videoDetails
+            const details = await getSongDetails(query)
+            if (!details) return
+
             return {
                 title: details.title,
                 id: details.videoId,
@@ -25,9 +27,11 @@ export async function getSong(query: string): Promise<ISong> {
         if (!songSearch) return
 
         const res = songSearch.items[0]
-        if (res.type !== 'video') return
+        if (!res || res.type !== 'video') return
 
-        const details = (await getInfo(res.link)).videoDetails
+        const details = await getSongDetails(res.link)
+        if (!details) return
+
         return {
             title: details.title,
             id: details.videoId,
@@ -37,4 +41,10 @@ export async function getSong(query: string): Promise<ISong> {
     } catch (err) {
         console.error(err)
     }
+}
+
+async function getSongDetails(link) {
+    const info = await getInfo(link)
+    if (!info) return
+    return info.videoDetails
 }
