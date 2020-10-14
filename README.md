@@ -16,9 +16,6 @@
 ### Favorites
 > **Description**: Saves a list of user's favorite songs, and can shuffle through them.
 
-### Sources
-> **Description**: Organize and store sources.
-
 ### Fun
 > **Description**: A few fun commands
 
