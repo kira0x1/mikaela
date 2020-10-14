@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { getPlayer } from '../../util/musicUtil';
-import { QuickEmbed } from '../../util/styleUtil';
+import { embedColor, QuickEmbed } from '../../util/styleUtil';
 
 
 export const command: ICommand = {
@@ -37,7 +37,8 @@ export const command: ICommand = {
 
         const embed = new MessageEmbed()
             .setTitle(`Time left: ${minutesLeft.toFixed(0)}:${secondsLeft.toFixed(0)}`)
-            .setDescription(`${prettyTime} / ${duration.duration}`);
+            .setDescription(`${prettyTime} / ${duration.duration}`)
+            .setColor(embedColor)
 
         message.channel.send(embed);
     },
