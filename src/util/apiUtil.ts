@@ -39,7 +39,7 @@ export async function getSong(query: string): Promise<ISong> {
             duration: ConvertDuration(details.lengthSeconds)
         }
     } catch (err) {
-        console.error(err)
+        console.log(`Song not found: ${err}`)
     }
 }
 
