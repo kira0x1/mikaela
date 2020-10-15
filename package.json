@@ -25,7 +25,7 @@
     "url": "https://github.com/kira0x1/mikaela/issues"
   },
   "scripts": {
-    "start": "node .",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "start-prod": "node . --env=production",
     "pretty": "prettier --write \"./**/*.{ts,json}\""
   },
