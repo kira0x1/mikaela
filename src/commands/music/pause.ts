@@ -8,6 +8,8 @@ export const command: ICommand = {
     name: 'Pause',
     description: 'Pause the currently playing song',
     aliases: ['ps'],
+    hidden: true,
+    perms: ['kira'],
 
     async execute(message, args) {
         //Get the guilds player

@@ -7,11 +7,15 @@ export const command: ICommand = {
     description: 'Change the volume',
     aliases: ['v'],
     usage: '[- | + | number]\n\nDisplays the volume if no arguments given',
+    hidden: true,
+    perms: ['kira'],
 
     execute(message, args) {
+        if (!(args.find(arg => arg === '-f'))) return
+
         const arg = args.shift();
         const player = getPlayer(message);
-        if (!player) return;
+        if (!player) return console.log('no player found while using volume command');
 
         if (!arg) return QuickEmbed(message, `Volume is currently ${player.volume}`);
 
