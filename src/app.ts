@@ -22,7 +22,7 @@ console.log(chalk.bgRedBright.bold(envString))
 const client = new Client({
   presence: {
     activity: {
-      name: 'Catgirls', type: 'STREAMING', url: 'https://github.com/kira0x1/mikaela'
+      name: 'Catgirls', type: 'WATCHING', url: 'https://github.com/kira0x1/mikaela'
     }
   }
 })
