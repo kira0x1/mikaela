@@ -1,57 +1,56 @@
 {
-    "name": "mikaela",
-    "version": "4.0.0",
-    "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
-    "main": "out/app.js",
-    "license": "MIT",
-    "private": true,
-    "author": {
-        "name": "Kira",
-        "email": "lil.kira@outlook.com"
-    },
-    "keywords": [
-        "discord",
-        "music",
-        "debate",
-        "typescript",
-        "bot"
-    ],
-    "homepage": "https://github.com/lil-kira/MikaelaBot#readme",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/lil-kira/MikaelaBot/"
-    },
-    "bugs": {
-        "url": "https://github.com/lil-kira/MikaelaBot/issues",
-        "email": "lil.kira@outlook.com"
-    },
-    "scripts": {
-        "start": "node .",
-        "start-prod": "node . --env=production",
-        "pretty": "prettier --write \"./**/*.{ts,json}\""
-    },
-    "dependencies": {
-        "@discordjs/opus": "^0.3.2",
-        "chalk": "^4.1.0",
-        "discord.js": "^12.3.1",
-        "ffmpeg-static": "^4.2.7",
-        "minimist": "^1.2.5",
-        "mongoose": "^5.10.9",
-        "ms": "^2.1.2",
-        "sodium": "^3.0.2",
-        "tslib": "^2.0.3",
-        "ytdl-core-discord": "^1.2.3",
-        "ytsr": "^1.0.4"
-    },
-    "devDependencies": {
-        "@types/mongoose": "^5.7.36",
-        "@types/ms": "^0.7.31",
-        "@types/node": "^14.11.8",
-        "prettier": "^2.1.2"
-    },
-    "nodemonConfig": {
-        "events": {
-            "start": "cls || clear"
-        }
+  "name": "mikaela",
+  "version": "1.0.0",
+  "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
+  "main": "out/app.js",
+  "license": "MIT",
+  "author": {
+    "name": "Kira",
+    "email": "lil.kira@outlook.com"
+  },
+  "private": true,
+  "keywords": [
+    "discord",
+    "music",
+    "debate",
+    "typescript",
+    "bot"
+  ],
+  "homepage": "https://github.com/kira0x1/mikaela#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kira0x1/mikaela.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kira0x1/mikaela/issues"
+  },
+  "scripts": {
+    "start": "node .",
+    "start-prod": "node . --env=production",
+    "pretty": "prettier --write \"./**/*.{ts,json}\""
+  },
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "chalk": "^4.1.0",
+    "discord.js": "^12.3.1",
+    "ffmpeg-static": "^4.2.7",
+    "minimist": "^1.2.5",
+    "mongoose": "^5.10.9",
+    "ms": "^2.1.2",
+    "sodium": "^3.0.2",
+    "tslib": "^2.0.3",
+    "ytdl-core-discord": "^1.2.3",
+    "ytsr": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/mongoose": "^5.7.36",
+    "@types/ms": "^0.7.31",
+    "@types/node": "^14.11.8",
+    "prettier": "^2.1.2"
+  },
+  "nodemonConfig": {
+    "events": {
+      "start": "cls || clear"
     }
+  }
 }
