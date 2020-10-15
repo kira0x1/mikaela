@@ -19,7 +19,14 @@ const logging_on: boolean = cmdArgs['logcommands']
 const envString = isProduction ? '-------production-------' : '-------development-------'
 console.log(chalk.bgRedBright.bold(envString))
 
-const client = new Client()
+const client = new Client({
+  presence: {
+    activity: {
+      name: 'Catgirls', type: 'STREAMING', url: 'https://github.com/kira0x1/mikaela'
+    }
+  }
+})
+
 const players: Collection<string, Player> = new Collection()
 
 async function init() {
