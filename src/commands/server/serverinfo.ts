@@ -1,6 +1,7 @@
+import { MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
-import { MessageEmbed } from 'discord.js';
+
 
 export const command: ICommand = {
     name: 'serverinfo',
@@ -9,7 +10,7 @@ export const command: ICommand = {
 
     execute(message, _) {
         let guild = message.guild;
-        let embed: MessageEmbed = createFooter(message.client);
+        let embed: MessageEmbed = createFooter(message);
 
         embed.setTitle('Server info');
 

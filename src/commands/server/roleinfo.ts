@@ -22,7 +22,7 @@ export const command: ICommand = {
 };
 
 async function sendEmbed(message: Message, role: Role) {
-    let embed: MessageEmbed = createFooter(message.client);
+    let embed: MessageEmbed = createFooter(message);
 
     embed.setTitle('Role info');
     embed.setDescription(`Role info for ${role}`);

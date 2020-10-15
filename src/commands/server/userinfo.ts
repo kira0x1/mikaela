@@ -11,7 +11,7 @@ export const command: ICommand = {
     async execute(message, args) {
         let user: User = (await parseUser(args[0], message.client)) || message.author;
 
-        const embed = createFooter(message.client);
+        const embed = createFooter(message);
 
         embed.setTitle('User info');
         embed.setDescription(`User info for ${user}`);

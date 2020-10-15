@@ -1,6 +1,6 @@
+import { MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
-import { MessageEmbed } from 'discord.js';
 
 export const command: ICommand = {
     name: 'servericon',
@@ -9,7 +9,7 @@ export const command: ICommand = {
 
     execute(message, args) {
         const guild = message.guild;
-        let embed: MessageEmbed = createFooter(message.client)
+        let embed: MessageEmbed = createFooter(message)
             .setTitle('Server icon')
             .setDescription(`Server icon for ${guild}`)
             .setImage(guild.iconURL({ dynamic: true }));

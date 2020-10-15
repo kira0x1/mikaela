@@ -19,7 +19,7 @@ export const command: ICommand = {
 };
 
 function sendEmbed(message: Message, user: User) {
-    const embed: MessageEmbed = createFooter(message.client)
+    const embed: MessageEmbed = createFooter(message)
         .setTitle('Avatar')
         .setDescription(`Avatar of ${user}`)
         .setImage(user.avatarURL({ size: 4096, dynamic: true }));

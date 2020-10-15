@@ -1,5 +1,5 @@
-import { ICommand } from '../../classes/Command';
 import { Message, MessageEmbed } from 'discord.js';
+import { ICommand } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
@@ -8,7 +8,7 @@ export const command: ICommand = {
     aliases: ['ping'],
 
     async execute(message, _) {
-        let embed: MessageEmbed = createFooter(message.client);
+        let embed: MessageEmbed = createFooter(message);
 
         embed.setTitle('Pong!');
         embed.addField('Websocket', `${message.client.ws.ping} ms`, true);

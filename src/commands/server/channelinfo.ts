@@ -1,6 +1,7 @@
-import { ICommand } from '../../classes/Command';
 import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
+import { ICommand } from '../../classes/Command';
 import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
+
 
 export const command: ICommand = {
     name: 'channelinfo',
@@ -11,7 +12,7 @@ export const command: ICommand = {
         let channel: Channel = fetchChannel(message.client, args[0]);
         if (channel === undefined) return sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
 
-        let embed: MessageEmbed = createFooter(message.client);
+        let embed: MessageEmbed = createFooter(message);
 
         embed.setTitle('Channel info');
         embed.setDescription(`Channel info for ${channel}`);

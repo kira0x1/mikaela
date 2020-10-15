@@ -1,16 +1,11 @@
-import {
-   Collection,
-   Message,
-   MessageEmbed,
-   MessageReaction,
-   User
-} from 'discord.js';
+import { Collection, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
 import { getTarget } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+
 
 
 export const command: ICommand = {
@@ -32,7 +27,7 @@ export const command: ICommand = {
       const user = await getUser(target.id);
 
       if (!user || !user.favorites || user.favorites.length === 0) {
-         const embed: MessageEmbed = createFooter(message.client)
+         const embed: MessageEmbed = createFooter(message)
             .setTitle(target.username + '\n\u200b')
             .setThumbnail(target.avatarURL({ dynamic: true }))
             .setDescription('Favorites: none')
