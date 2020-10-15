@@ -23,7 +23,6 @@ export async function getSong(query: string): Promise<ISong> {
             }
         }
 
-        console.log(`query: ${query}`)
         const songSearch = await ytsr(query, { limit: 1 })
         if (!songSearch) return
 
