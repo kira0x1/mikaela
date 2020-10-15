@@ -69,39 +69,37 @@ export async function playSong(message: Message, song: ISong) {
         .setColor(embedColor);
 
     const msg = await message.channel.send(embed);
+    await msg.react(heartEmoji.id);
 
-    if (msg instanceof Message) {
-        await msg.react(heartEmoji.id);
+    const filter = (reaction: MessageReaction, user: User) => {
+        return reaction.emoji.name === heartEmoji.name && !user.bot;
+    };
 
-        const filter = (reaction: MessageReaction, user: User) => {
-            return reaction.emoji.name === heartEmoji.name && !user.bot;
-        };
+    const collector = msg.createReactionCollector(filter, { time: ms('1h') });
 
-        const collector = msg.createReactionCollector(filter, { time: ms('1h') });
+    collector.on('collect', async (reaction, reactionCollector) => {
+        const user = reaction.users.cache.last();
+        let dbUser = await getUser(user.id);
 
-        collector.on('collect', async (reaction, reactionCollector) => {
-            const user = reaction.users.cache.last();
-            let dbUser = await getUser(user.id);
+        if (!dbUser) {
+            const iuser: IUser = {
+                username: user.username,
+                tag: user.tag,
+                id: user.id,
+                favorites: [],
+                roles: [],
+                sourcesGroups: [],
+            };
 
-            if (!dbUser) {
-                const iuser: IUser = {
-                    username: user.username,
-                    tag: user.tag,
-                    id: user.id,
-                    favorites: [],
-                    roles: [],
-                    sourcesGroups: [],
-                };
+            await CreateUser(iuser);
+            dbUser = iuser;
+        }
 
-                await CreateUser(iuser);
-                dbUser = iuser;
-            }
+        AddFavorite(dbUser, song, message);
+    });
 
-            AddFavorite(dbUser, song, message);
-        });
+    collector.on('end', collected => {
+        msg.reactions.removeAll();
+    });
 
-        collector.on('end', collected => {
-            msg.reactions.removeAll();
-        });
-    }
 }
