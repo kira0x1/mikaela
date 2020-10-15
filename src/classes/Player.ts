@@ -9,7 +9,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 4;
+   volume: number = 5;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -41,6 +41,7 @@ export class Player {
    }
 
    changeVolume(amount: number, message?: Message) {
+      return
       if (amount < minVolume || amount > maxVolume) {
          if (message && amount < minVolume) {
             return QuickEmbed(message, `Cannot go below minimum volume ( **${minVolume}** )`);
@@ -120,14 +121,16 @@ export class Player {
             return console.error('Could not connect to the voice channel');
          }
 
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 28 }), {
+         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly' }), {
             type: 'opus',
-            highWaterMark: 1 << 16
+            highWaterMark: 1 << 10,
+            volume: false
          });
 
-         dispatcher.setVolumeLogarithmic(this.volume / 10);
+         //! Turning off volume to test performance difference in production
+         //dispatcher.setVolumeLogarithmic(this.volume / 10);
 
-         dispatcher.on('close', () => {
+         dispatcher.on('finish', () => {
             this.playNext();
          });
 
@@ -143,17 +146,31 @@ export class Player {
    }
 
    pause() {
+      return;
       if (!(this.currentlyPlaying && this.stream)) return;
       if (!this.stream.paused) this.stream.pause(true);
    }
 
    unpause() {
+      return
       if (!(this.currentlyPlaying && this.stream)) return;
       if (this.stream.paused) this.stream.resume();
    }
 
    getStream() {
       return this.stream;
+   }
+
+   getSongAt(position: number): ISong {
+      return this.queue.songs[position]
+   }
+
+   switchSongs(from: number, to: number) {
+      const fromSong = this.getSongAt(from)
+      const toSong = this.getSongAt(to)
+
+      this.queue.songs[from] = toSong
+      this.queue.songs[to] = fromSong
    }
 }
 
