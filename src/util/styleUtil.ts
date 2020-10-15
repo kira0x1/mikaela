@@ -1,4 +1,4 @@
-import { Client, Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 
 const redColor = 0xcf274e;
 // const blueColor = 0x4e74e6;
@@ -20,20 +20,18 @@ export function wrap(content: string[] | string, wrap: string = '`'): string {
         .join(' ');
 }
 
-export function createErrorEmbed(client: Client, message: string): MessageEmbed {
-    return createFooter(client).setTitle('Error').setDescription(message);
-}
-
 export async function sendErrorEmbed(message: Message, errorMessage: string) {
-    let embed: MessageEmbed = createFooter(message.client).setTitle('Error').setDescription(errorMessage);
+    let embed: MessageEmbed = createFooter(message).setTitle('Error').setDescription(errorMessage);
 
     await message.channel.send(embed);
 }
 
-export function createFooter(client: Client): MessageEmbed {
+export function createFooter(message: Message): MessageEmbed {
+    const author = message.author
+
     const embed = new MessageEmbed()
         .setColor(embedColor)
-        .setFooter(client.user.username, client.user.avatarURL())
+        .setFooter(author.username, author.avatarURL({ dynamic: true }))
         .setTimestamp(Date.now());
 
     return embed;
