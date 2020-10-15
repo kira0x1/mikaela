@@ -1,10 +1,8 @@
-import { MessageEmbed } from 'discord.js';
-
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { getUser } from '../../db/userController';
-import { getTarget } from '../../util/musicUtil';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { getPlayer, getTarget } from '../../util/musicUtil';
+import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+
 
 export const command: ICommand = {
     name: 'shuffle',
@@ -29,7 +27,7 @@ export const command: ICommand = {
             return QuickEmbed(message, 'You have no favorites to shuffle');
         }
 
-        const embed = new MessageEmbed();
+        const embed = createFooter(message);
         embed.setColor(embedColor);
 
         const player = getPlayer(message);
