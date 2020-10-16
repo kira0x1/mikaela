@@ -3,7 +3,6 @@ import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
 
-
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
 export const commandInfos: Collection<string, CommandInfo> = new Collection();
@@ -12,7 +11,9 @@ export function findCommand(query: string): ICommand | undefined {
   let command = commands.get(query.toLowerCase());
   if (!command) {
     const cmdArray = commands.array();
-    command = cmdArray.find(cmd => cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === query.toLowerCase()));
+    command = cmdArray.find(
+      cmd => cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === query.toLowerCase())
+    );
   }
 
   return command;
@@ -33,7 +34,7 @@ export function getCommandOverride(query: string): ICommand | undefined {
 export function findCommandGroup(query: string) {
   let grp = commandGroups.get(query);
   if (!grp) {
-    const info = getInfo(query)
+    const info = getInfo(query);
     if (info) grp = info.commands;
   }
   return grp;
@@ -44,11 +45,10 @@ export function findCommandInfo(query: string) {
 }
 
 function getInfo(query: string): CommandInfo {
-  return commandInfos.find(info =>
-    info.name.toLowerCase() === query.toLowerCase()
-    || info.aliases.includes(query.toLowerCase()));
+  return commandInfos.find(
+    info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
+  );
 }
-
 
 export function hasPerms(userId: string, query: string): boolean {
   //Get ID's
@@ -64,4 +64,13 @@ export function hasPerms(userId: string, query: string): boolean {
   }
 
   return false;
+}
+
+export function getUserPerms(userId: string) {
+  return perms.filter(p => p.users.includes(userId));
+}
+
+export function userHasPerm(userId: string, permName: string) {
+  const userPerms = getUserPerms(userId)
+  return userPerms.find(p => p.name === permName)
 }
