@@ -127,9 +127,6 @@ export class Player {
             volume: false
          })
 
-         console.log(`Writable highwatermark: ${dispatcher.writableHighWaterMark}`);
-
-
          //! Turning off volume to test performance difference in production
          //dispatcher.setVolumeLogarithmic(this.volume / 10);
 
