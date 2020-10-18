@@ -8,7 +8,8 @@ export interface ICommand {
     args?: boolean;
     hidden?: boolean;
     perms?: string[];
-    isSubCommand?: boolean;
+    isSubCommand?: boolean,
+    isDisabled?: boolean
 
     execute(message: Message, args: string[]): void;
 }

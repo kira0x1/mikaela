@@ -120,15 +120,18 @@ client.on('message', message => {
   // If command not found send a message
   if (!command) return message.author.send(`command ${wrap(commandName || '')} not found`);
 
+  // If the command is disabled then return
+  if (command.isDisabled) return
+
   if (!hasPerms(message.author.id, commandName))
     return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
   //? If command arguments are required and not given send an error message
   if (command.args && args.length === 0) return sendArgsError(command, message);
 
-  //? Execute the command if everything is ok
-
   try {
+
+    //? Execute the command if everything is ok
     command.execute(message, args);
 
     //? Log the output of who send the command and other information if logging is on

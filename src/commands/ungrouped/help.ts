@@ -27,7 +27,7 @@ function displayAll(message: Message) {
     //reference this later to check for ungrouped commands
     commandGroups.map(grp => {
         grp.map(cmd => {
-            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) grouped.push(cmd);
+            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden && !cmd.isDisabled) grouped.push(cmd);
         });
     });
 
@@ -73,7 +73,12 @@ function displayOne(message: Message, query: string) {
 
     //If we have the command
     if (command) {
-        InsertCommandEmbed(embed, command);
+        if (command.isDisabled) {
+            embed.setTitle('This command is disabled at the moment')
+        } else {
+            InsertCommandEmbed(embed, command);
+        }
+
         return message.channel.send(embed);
     }
 
@@ -90,7 +95,7 @@ function displayOne(message: Message, query: string) {
             desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
         }
 
-        if (cmd.usage) {
+        if (cmd.usage && !cmd.isDisabled) {
             let usage = ``;
             if (cmd.isSubCommand) {
                 let cmdGroup = '';

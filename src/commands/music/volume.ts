@@ -9,6 +9,7 @@ export const command: ICommand = {
     usage: '[- | + | number]\n\nDisplays the volume if no arguments given',
     hidden: true,
     perms: ['kira'],
+    isDisabled: true,
 
     execute(message, args) {
         if (!(args.find(arg => arg === '-f'))) return
