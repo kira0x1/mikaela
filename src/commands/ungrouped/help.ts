@@ -87,7 +87,7 @@ function displayOne(message: Message, query: string) {
     if (!info.commands) return;
 
     //Loop through all the commands in the CommandInfo class
-    info.commands.map(cmd => {
+    info.commands.filter(cmd => !cmd.isDisabled).map(cmd => {
         let desc = cmd.description;
 
         //Add aliases to the description
@@ -95,7 +95,7 @@ function displayOne(message: Message, query: string) {
             desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
         }
 
-        if (cmd.usage && !cmd.isDisabled) {
+        if (cmd.usage) {
             let usage = ``;
             if (cmd.isSubCommand) {
                 let cmdGroup = '';
@@ -107,6 +107,7 @@ function displayOne(message: Message, query: string) {
             } else {
                 usage = wrap(`${prefix}${cmd.name} ${cmd.usage}`, '`');
             }
+
             desc += `\n${usage}`;
         }
 
