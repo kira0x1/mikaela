@@ -121,11 +121,14 @@ export class Player {
             return console.error('Could not connect to the voice channel');
          }
 
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 32 }), {
+         const dispatcher = connection.play(await ytdl(song.url, { liveBuffer: 1 << 25, filter: 'audioonly', highWaterMark: 1 << 25 }), {
             type: 'opus',
-            highWaterMark: 1 << 32,
+            highWaterMark: 1 << 25,
             volume: false
-         });
+         })
+
+         console.log(`Writable highwatermark: ${dispatcher.writableHighWaterMark}`);
+
 
          //! Turning off volume to test performance difference in production
          //dispatcher.setVolumeLogarithmic(this.volume / 10);
