@@ -123,7 +123,7 @@ export class Player {
 
          const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 25 }), {
             type: 'opus',
-            highWaterMark: 1 << 25,
+            highWaterMark: 1 << 15,
             volume: false
          })
 
