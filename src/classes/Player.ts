@@ -146,13 +146,11 @@ export class Player {
    }
 
    pause() {
-      return;
       if (!(this.currentlyPlaying && this.stream)) return;
       if (!this.stream.paused) this.stream.pause(true);
    }
 
    unpause() {
-      return
       if (!(this.currentlyPlaying && this.stream)) return;
       if (this.stream.paused) this.stream.resume();
    }
