@@ -121,7 +121,7 @@ export class Player {
             return console.error('Could not connect to the voice channel');
          }
 
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 26 }), {
+         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 28 }), {
             type: 'opus',
             highWaterMark: 1 << 16,
             volume: false
