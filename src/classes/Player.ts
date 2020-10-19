@@ -122,10 +122,10 @@ export class Player {
             return console.error('Could not connect to the voice channel');
          }
 
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << 25 }), {
+         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 }), {
             type: 'opus',
             volume: false,
-            highWaterMark: 1
+            highWaterMark: 1 << 25
          })
 
          //! Check if volumeDisabled is false, if it is then set the volume
