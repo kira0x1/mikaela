@@ -17,6 +17,7 @@ export class Player {
    connection: VoiceConnection | undefined;
    currentlyPlaying: ISong | undefined;
    client: Client;
+   volumeDisabled: boolean = true;
    lastPlayed: ISong | undefined;
 
    constructor(guild: Guild, client: Client) {
@@ -41,7 +42,7 @@ export class Player {
    }
 
    changeVolume(amount: number, message?: Message) {
-      return
+      if (this.volumeDisabled) return
       if (amount < minVolume || amount > maxVolume) {
          if (message && amount < minVolume) {
             return QuickEmbed(message, `Cannot go below minimum volume ( **${minVolume}** )`);
@@ -124,11 +125,13 @@ export class Player {
          const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', quality: 'highestaudio' }), {
             type: 'opus',
             volume: false,
-            highWaterMark: 1024
+            highWaterMark: 2048
          })
 
-         //! Turning off volume to test performance difference in production
-         //dispatcher.setVolumeLogarithmic(this.volume / 10);
+         //! Check if volumeDisabled is false, if it is then set the volume
+         if (!this.volumeDisabled) {
+            dispatcher.setVolumeLogarithmic(this.volume / 10);
+         }
 
          dispatcher.on('finish', () => {
             this.playNext();
