@@ -10,7 +10,7 @@ import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, userHasPerm } from './util/commandUtil';
-import { embedColor, QuickEmbed, wrap } from './util/styleUtil';
+import { embedColor, wrap } from './util/styleUtil';
 
 
 const logging_on: boolean = cmdArgs['logcommands'];
@@ -70,7 +70,12 @@ client.on('message', message => {
 
   // Make sure this command wasnt given in a dm unless by an admin
   if (message.channel.type === 'dm' && !userHasPerm(message.author.id, 'admin')) {
-    QuickEmbed(message, `You do not have access to dm commands`)
+    return
+  }
+
+
+  // Check if we are able to send messages in this channel 
+  if (message.channel.type === 'text' && !message.channel.permissionsFor(client.user).has('SEND_MESSAGES')) {
     return
   }
 
