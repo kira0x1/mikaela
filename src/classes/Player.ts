@@ -133,7 +133,7 @@ export class Player {
             dispatcher.setVolumeLogarithmic(this.volume / 10);
          }
 
-         dispatcher.on('finish', () => {
+         dispatcher.on('close', () => {
             this.playNext();
          });
 
