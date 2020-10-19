@@ -41,7 +41,7 @@
     "sodium": "^3.0.2",
     "tslib": "^2.0.3",
     "ytdl-core-discord": "git+https://github.com/kira0x1/ytdl-core-discord#dependabot/npm_and_yarn/ytdl-core-3.4.1",
-    "ytsr": "git+https://github.com/kira0x1/node-ytsr#wip-api-adjustments"
+    "ytsr": "^1.0.4"
   },
   "devDependencies": {
     "@types/mongoose": "^5.7.36",
