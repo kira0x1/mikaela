@@ -40,7 +40,7 @@
     "pm2": "^4.5.0",
     "sodium": "^3.0.2",
     "tslib": "^2.0.3",
-    "ytdl-core-discord": "https://github.com/kira0x1/ytdl-core-discord",
+    "ytdl-core-discord": "https://github.com/kira0x1/ytdl-core-discord#dependabot/npm_and_yarn/ytdl-core-3.4.1",
     "ytsr": "git+https://github.com/kira0x1/node-ytsr#wip-api-adjustments"
   },
   "devDependencies": {
