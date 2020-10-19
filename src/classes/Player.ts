@@ -130,7 +130,7 @@ export class Player {
          //! Turning off volume to test performance difference in production
          //dispatcher.setVolumeLogarithmic(this.volume / 10);
 
-         dispatcher.on('finish', () => {
+         dispatcher.on('end', () => {
             this.playNext();
          });
 
