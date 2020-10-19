@@ -124,7 +124,7 @@ export class Player {
          const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', range: { start: 0 } }), {
             type: 'opus',
             volume: false,
-            highWaterMark: 1 << 26
+            highWaterMark: 1 << 25
          })
 
          //! Turning off volume to test performance difference in production
