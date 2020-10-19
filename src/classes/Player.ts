@@ -125,7 +125,7 @@ export class Player {
          const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', quality: 'highestaudio' }), {
             type: 'opus',
             volume: false,
-            highWaterMark: 2048
+            highWaterMark: 1 << 25
          })
 
          //! Check if volumeDisabled is false, if it is then set the volume
