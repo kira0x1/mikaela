@@ -13,9 +13,6 @@ import { findCommand, findCommandGroup, getCommandOverride, hasPerms, userHasPer
 import { embedColor, wrap } from './util/styleUtil';
 
 
-const logging_on: boolean = cmdArgs['logcommands'];
-const skipDB: boolean = cmdArgs['skipDB']
-
 const envString = isProduction ? '-------production-------' : '-------development-------';
 console.log(chalk.bgRedBright.bold(envString));
 
@@ -31,8 +28,11 @@ const client = new Client({
 
 const players: Collection<string, Player> = new Collection();
 
+
 async function init() {
+  const skipDB: boolean = cmdArgs['skipDB']
   if (!skipDB) await dbInit();
+
   client.login(token);
 }
 
@@ -116,7 +116,7 @@ client.on('message', message => {
       if (!command) {
         command = getCommandOverride(commandName);
       } else {
-        //? If the command is not an overdrive command then remove the first argument, since its a subcommand
+        // If the command is not an overdrive command then remove the first argument, since its a subcommand
         args.shift();
       }
     }
@@ -131,40 +131,18 @@ client.on('message', message => {
   if (!hasPerms(message.author.id, commandName))
     return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
-  //? If command arguments are required and not given send an error message
+  // If command arguments are required and not given send an error message
   if (command.args && args.length === 0) return sendArgsError(command, message);
 
+
+  // Finally if all checks have passed then try executing the command.
   try {
-
-    //? Execute the command if everything is ok
     command.execute(message, args);
-
-    //? Log the output of who send the command and other information if logging is on
-    if (logging_on) logCommand(message, command, args);
   } catch (err) {
     console.error(err);
   }
 });
 
-function logCommand(message: Message, command: ICommand, args: string[]) {
-  const userTag = message.author.tag;
-  const channel = message.channel;
-
-  let logContent = chalk`\n-----command-----\n{bold user}: {bgGreen ${userTag}}`;
-
-  if (channel.type !== 'dm') {
-    logContent += chalk`{bold server}: {bgRed.bold ${message.guild.name}}\n`
-    logContent += `\n-----------------\n`;
-    logContent += chalk`{bold channel}: {bgRed.bold ${channel.name}}\n`;
-  }
-
-  logContent += `\n-----------------\n`;
-  let argString = args.map(arg => chalk`{bgCyan.bold ${arg}}`).join(' ')
-  logContent += chalk`{bold command}: {bgMagenta.bold ${command.name}}, {bold args}: ${argString}`;
-  logContent += `\n-----------------\n`;
-
-  console.log(logContent);
-}
 
 export function sendArgsError(command: ICommand, message: Message) {
   let usageString = 'Arguments required';
