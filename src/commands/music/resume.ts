@@ -5,7 +5,7 @@ import { embedColor, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Resume',
-    description: 'Pause the currently playing song',
+    description: 'Resume the currently paused song',
     aliases: ['unpause', 'continue'],
     hidden: true,
 
