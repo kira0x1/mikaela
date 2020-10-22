@@ -59,7 +59,5 @@ export function initCommands() {
                 }
                 commandInfos.set(newInfo.name.toLowerCase(), newInfo);
             }
-
-            console.dir(info)
         });
 }
