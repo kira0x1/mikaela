@@ -4,6 +4,7 @@ export interface ICommand {
     name: string;
     description: string;
     aliases?: string[];
+    cooldown?: number,
     usage?: string;
     args?: boolean;
     hidden?: boolean;
