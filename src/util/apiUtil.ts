@@ -23,7 +23,7 @@ export async function getSong(query: string): Promise<ISong> {
             }
         }
 
-        const songSearch = await YouTube.search(query, { limit: 1, type: 'video' })
+        const songSearch = await YouTube.search(query, { limit: 1 })
         if (!songSearch) return
 
 
