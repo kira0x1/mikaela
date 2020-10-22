@@ -48,14 +48,15 @@ client.on('ready', () => {
   initEmoji(client);
 
   // Add event listener to add/remove voice role
-  initVoiceManager(client);
+  if (isProduction) {
+    initVoiceManager(client);
 
-  // Add event listeners to #roles
-  syncRoles(client);
+    // Add event listeners to #roles
+    syncRoles(client);
 
-  //Add event listener to welcome new members
-  initGreeter(client);
-
+    //Add event listener to welcome new members
+    initGreeter(client);
+  }
   // Read command files and create a collection for the commands
   initCommands();
 
