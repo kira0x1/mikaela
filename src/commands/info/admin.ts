@@ -1,3 +1,9 @@
 import { CommandInfo } from '../../classes/CommandInfo';
 
-export const info: CommandInfo = new CommandInfo('Admin', 'Admin Commands', ['sys'], [], undefined, ['admin']);
+export const info: CommandInfo = {
+    name: 'Admin',
+    description: 'Admin Commands',
+    aliases: ['sys'],
+    commands: [],
+    perms: ['admin']
+}

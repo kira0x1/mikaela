@@ -44,16 +44,22 @@ export function initCommands() {
             }
 
             const info = infos.find(cmd => cmd.name.toLowerCase() === folder);
+
             if (info) {
-                const newInfo = new CommandInfo(
-                    info.name,
-                    info.description,
-                    info.aliases,
-                    commandGroups.get(info.name.toLowerCase()) || [],
-                    info.override,
-                    info.perms
-                );
+                const commandsFound = commandGroups.get(info.name.toLowerCase()) || []
+                const newInfo: CommandInfo = {
+                    name: info.name,
+                    description: info.description,
+                    aliases: info.aliases,
+                    commands: commandsFound,
+                    perms: info.perms,
+                    hidden: info.hidden,
+                    override: info.override,
+                    requiresPrefix: info.requiresPrefix
+                }
                 commandInfos.set(newInfo.name.toLowerCase(), newInfo);
             }
+
+            console.dir(info)
         });
 }

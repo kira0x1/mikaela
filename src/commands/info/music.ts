@@ -1,3 +1,8 @@
 import { CommandInfo } from '../../classes/CommandInfo';
 
-export const info: CommandInfo = new CommandInfo('Music', 'Plays Music', [], []);
+export const info: CommandInfo = {
+    name: "Music",
+    description: "Plays Music",
+    aliases: [],
+    commands: []
+}
