@@ -3,12 +3,12 @@ import { getUser } from '../../db/userController';
 import { getPlayer, getTarget } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 
-
 export const command: ICommand = {
     name: 'shuffle',
     description: 'Shuffle songs from a favorites list',
     usage: '[amount: optional] [target: optional]',
     aliases: ['random', 'mix'],
+    cooldown: 1,
 
     async execute(message, args) {
         let amount = 1;
@@ -20,7 +20,7 @@ export const command: ICommand = {
             }
         });
 
-        let target = await getTarget(message, args.join(' ')) || message.author;
+        let target = (await getTarget(message, args.join(' '))) || message.author;
         const user = await getUser(target.id);
 
         if (!user.favorites) {
@@ -45,7 +45,7 @@ export const command: ICommand = {
         }
 
         const firstSong = user.favorites[Math.floor(Math.random() * user.favorites.length)];
-        player.addSong(firstSong, message)
+        player.addSong(firstSong, message);
 
         embed.setTitle(title);
         embed.setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);

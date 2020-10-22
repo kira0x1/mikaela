@@ -12,6 +12,7 @@ export const command: ICommand = {
     description: 'Add a song to your favorites',
     usage: '[search | url]',
     args: true,
+    cooldown: 1,
 
     async execute(message, args) {
         const query = args.join();
@@ -35,7 +36,7 @@ export const command: ICommand = {
                         });
                 });
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
     },
 };
