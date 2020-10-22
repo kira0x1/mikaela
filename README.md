@@ -5,6 +5,10 @@
 ## Link
 > https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=36964416&scope=bot
 
+## My Discord
+> https://discord.gg/shFC47a
+
+
 ## Commands
 
 ### Help
