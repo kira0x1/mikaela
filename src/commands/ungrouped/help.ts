@@ -95,21 +95,7 @@ function displayOne(message: Message, query: string) {
             desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
         }
 
-        if (cmd.usage) {
-            let usage = ``;
-            if (cmd.isSubCommand) {
-                let cmdGroup = '';
-                commandGroups.map((commands, group) => {
-                    if (commands.includes(cmd)) cmdGroup = group;
-                });
-
-                usage = wrap(`${prefix}${cmdGroup} ${cmd.name} ${cmd.usage}`, '`');
-            } else {
-                usage = wrap(`${prefix}${cmd.name} ${cmd.usage}`, '`');
-            }
-
-            desc += `\n${usage}`;
-        }
+        desc += `\n${getUsage(cmd)}`;
 
         //Add command to the embed
         embed.addField(cmd.name.toLowerCase(), desc);
@@ -117,6 +103,24 @@ function displayOne(message: Message, query: string) {
 
     //Send embed
     message.channel.send(embed);
+}
+
+function getUsage(command: ICommand): string {
+
+    let usage = ``;
+    if (command.isSubCommand) {
+        let cmdGroup = '';
+
+        commandGroups.map((commands, group) => {
+            if (commands.includes(command)) cmdGroup = group;
+        });
+
+        usage = wrap(`${prefix}${cmdGroup} ${command.name} ${command.usage}`, '`');
+    } else {
+        usage = wrap(`${prefix}${command.name} ${command.usage}`, '`');
+    }
+
+    return usage
 }
 
 function InsertCommandEmbed(embed: MessageEmbed, command: ICommand) {
