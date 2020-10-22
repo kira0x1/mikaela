@@ -1,7 +1,7 @@
 import { getInfo, validateURL } from 'ytdl-core-discord';
-import ytsr from 'ytsr';
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
+import YouTube from 'youtube-sr';
 
 
 export function rand(max: number) {
@@ -23,13 +23,10 @@ export async function getSong(query: string): Promise<ISong> {
             }
         }
 
-        const songSearch = await ytsr(query, { limit: 1 })
+        const songSearch = await YouTube.search(query, { limit: 1 })
         if (!songSearch) return
 
-        const res = songSearch.items[0]
-        if (!res || res.type !== 'video') return
-
-        const details = await getSongDetails(res.link)
+        const details = await getSongDetails(songSearch[0].url)
         if (!details) return
 
         return {
