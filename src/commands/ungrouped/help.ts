@@ -95,7 +95,7 @@ function displayOne(message: Message, query: string) {
             desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
         }
 
-        desc += `\n${getUsage(cmd)}`;
+        desc += `\n${getUsage(cmd) || ''}`;
 
         //Add command to the embed
         embed.addField(cmd.name.toLowerCase(), desc);
