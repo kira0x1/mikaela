@@ -40,7 +40,8 @@ function displayAll(message: Message) {
     const ungrouped = commandGroups.get('ungrouped');
     if (ungrouped) {
         ungrouped.map(cmd => {
-            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden) embed.addField(cmd.name, cmd.description);
+            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden)
+                embed.addField(cmd.name, cmd.description);
         });
     }
 
@@ -74,7 +75,7 @@ function displayOne(message: Message, query: string) {
     //If we have the command
     if (command) {
         if (command.isDisabled) {
-            embed.setTitle('This command is disabled at the moment')
+            embed.setTitle('This command is disabled at the moment');
         } else {
             InsertCommandEmbed(embed, command);
         }
@@ -87,26 +88,27 @@ function displayOne(message: Message, query: string) {
     if (!info.commands) return;
 
     //Loop through all the commands in the CommandInfo class
-    info.commands.filter(cmd => !cmd.isDisabled).map(cmd => {
-        let desc = cmd.description;
+    info.commands
+        .filter(cmd => !cmd.isDisabled)
+        .map(cmd => {
+            let desc = cmd.description;
 
-        //Add aliases to the description
-        if (cmd.aliases) {
-            desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
-        }
+            //Add aliases to the description
+            if (cmd.aliases) {
+                desc += `\naliases: ${wrap(cmd.aliases, '`')}`;
+            }
 
-        desc += `\n${getUsage(cmd) || ''}`;
+            desc += `\n${getUsage(cmd)}`;
 
-        //Add command to the embed
-        embed.addField(cmd.name.toLowerCase(), desc);
-    });
+            //Add command to the embed
+            embed.addField(cmd.name.toLowerCase(), desc);
+        });
 
     //Send embed
     message.channel.send(embed);
 }
 
 function getUsage(command: ICommand): string {
-
     let usage = ``;
     if (command.isSubCommand) {
         let cmdGroup = '';
@@ -116,11 +118,11 @@ function getUsage(command: ICommand): string {
         });
 
         usage = wrap(`${prefix}${cmdGroup} ${command.name} ${command.usage}`, '`');
-    } else {
+    } else if (command.usage) {
         usage = wrap(`${prefix}${command.name} ${command.usage}`, '`');
     }
 
-    return usage
+    return usage;
 }
 
 function InsertCommandEmbed(embed: MessageEmbed, command: ICommand) {
