@@ -8,6 +8,7 @@ export const command: ICommand = {
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],
     usage: '[Position | Search]',
+    cooldown: 1.5,
 
     async execute(message, args) {
         const index = Number(args.shift());
