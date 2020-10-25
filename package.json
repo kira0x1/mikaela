@@ -32,10 +32,10 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "chalk": "^4.1.0",
-    "discord.js": "^12.4.0",
+    "discord.js": "^12.4.1",
     "ffmpeg-static": "^4.2.7",
     "minimist": "^1.2.5",
-    "mongoose": "^5.10.9",
+    "mongoose": "^5.10.10",
     "ms": "^2.1.2",
     "pm2": "^4.5.0",
     "sodium": "^3.0.2",
