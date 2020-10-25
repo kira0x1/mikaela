@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { Client, Collection, Message, MessageEmbed } from 'discord.js';
+
 import { ICommand } from './classes/Command';
 import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
@@ -9,14 +10,7 @@ import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
-import {
-    checkCooldown,
-    findCommand,
-    findCommandGroup,
-    getCommandOverride,
-    hasPerms,
-    userHasPerm,
-} from './util/commandUtil';
+import { findCommand, findCommandGroup, getCommandOverride, hasPerms, userHasPerm } from './util/commandUtil';
 import { embedColor, wrap } from './util/styleUtil';
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
