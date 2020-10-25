@@ -30,7 +30,7 @@
     "pretty": "prettier --write \"./**/*.{ts,json}\""
   },
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
+    "@discordjs/opus": "^0.3.3",
     "chalk": "^4.1.0",
     "discord.js": "^12.4.1",
     "ffmpeg-static": "^4.2.7",
