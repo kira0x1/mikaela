@@ -9,18 +9,20 @@ export const command: ICommand = {
     description: 'Queue multiple songs at once',
     args: true,
     usage: 'song1, song2, song3....',
+    aliases: ['mq'],
 
-    execute(message, args) {
+    async execute(message, args) {
+        const content = args.join('').split(',');
+
         const songs: ISong[] = [];
 
-        args.map(async arg => {
-            try {
-                const res = await getSong(arg);
-                if (res) songs.push(res);
-            } catch (err) {}
+        await content.forEach(async arg => {
+            const res = await getSong(arg);
+            songs.push(res);
         });
 
         const embed = createFooter(message);
+
         if (songs.length === 0) {
             embed.setTitle('No songs were found');
             message.channel.send(embed);
