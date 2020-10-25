@@ -27,6 +27,7 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "start-prod": "node . --env=production",
+    "watch": "tsc --watch --noEmit --project tsconfig.json",
     "pretty": "prettier --write \"./**/*.{ts,json}\""
   },
   "dependencies": {
