@@ -143,7 +143,7 @@ client.on('message', message => {
     if (command.args && args.length === 0) return sendArgsError(command, message);
 
     //Check if the command is in cooldown
-    if (checkCooldown(command, message)) return;
+    // if (checkCooldown(command, message)) return;
 
     // Finally if all checks have passed then try executing the command.
     try {
