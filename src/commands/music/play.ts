@@ -5,9 +5,9 @@ import { ISong } from '../../classes/Player';
 import { coders_club_id } from '../../config';
 import { CreateUser, IUser } from '../../db/dbUser';
 import { getUser } from '../../db/userController';
-import { getSong } from '../../util/apiUtil';
+import { convertPlaylistToSongs, getSong, isPlaylist } from '../../util/apiUtil';
 import { getPlayer } from '../../util/musicUtil';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { AddFavorite } from '../favorites/add';
 
 
@@ -44,6 +44,26 @@ export const command: ICommand = {
 
         //If song not found, tell the user.
         if (!song) return QuickEmbed(message, 'Song not found');
+
+        if (isPlaylist(song)) {
+            const player = getPlayer(message)
+            const playlistSongs = await convertPlaylistToSongs(song)
+
+            const firstSong = playlistSongs[0]
+            player.addSong(firstSong, message)
+
+            const embed = createFooter(message)
+                .setTitle(`Playlist: ${song.title}\n${song.total_items} Songs`)
+                .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`)
+
+            for (let i = 1; i < playlistSongs.length && i < 20; i++) {
+                const psong = playlistSongs[i]
+                embed.addField(`${i + 1} ${psong.title}`, psong.url);
+                player.queue.addSong(psong)
+            }
+            message.channel.send(embed)
+            return
+        }
 
         //Otherwise play the song
         playSong(message, song);
