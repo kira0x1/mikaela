@@ -9,10 +9,9 @@ export function rand(max: number) {
     return Math.floor(Math.random() * max);
 }
 
-//todo Change error return to make it compatable with QuickEmbed
 export async function getSong(query: string): Promise<ISong | ytpl.result> {
     try {
-
+        // Check if the query is a link to a youtube video
         if (validateURL(query)) {
             const details = await getSongDetails(query)
             if (!details) return
@@ -20,6 +19,7 @@ export async function getSong(query: string): Promise<ISong | ytpl.result> {
             return convertDetailsToSong(details)
         }
 
+        // Check if the query is a link to a youtube playlist
         if (ytpl.validateID(query)) {
             const playlist = await ytpl(query)
             if (!playlist) return
@@ -27,28 +27,26 @@ export async function getSong(query: string): Promise<ISong | ytpl.result> {
         }
 
 
+        // Search for a youtube for the video
         const songSearch = await YouTube.search(query, { limit: 1 })
         if (!songSearch) return
 
-
+        //If a video is found then get details and convert it to ISong
         const details = await getSongDetails(songSearch[0].url)
         if (!details) return
 
         return convertDetailsToSong(details)
     } catch (err) {
+        console.error(err)
     }
 }
 
-// async function searchYoutube(query: string) {
-//     const res = await YouTube.search(query, { limit: 1 })
-//     if (!res) throw 'Song not found'
-//     const details = await getSongDetails(res[0].url);
-// }
-
+// Returns true if its a playlist
 export function isPlaylist(song: ISong | ytpl.result): song is ytpl.result {
     return (song as ytpl.result).items !== undefined
 }
 
+// Convertts the video details to ISong
 function convertDetailsToSong(details: MoreVideoDetails): ISong {
     return {
         title: details.title,
@@ -58,6 +56,7 @@ function convertDetailsToSong(details: MoreVideoDetails): ISong {
     }
 }
 
+// Converts a playlist retrieved from ytpl to an array of ISong
 export async function convertPlaylistToSongs(playlist: ytpl.result): Promise<ISong[]> {
     const res: ISong[] = []
 
@@ -70,7 +69,8 @@ export async function convertPlaylistToSongs(playlist: ytpl.result): Promise<ISo
     return res
 }
 
-async function getSongDetails(link) {
+// A helper function that gets info from a link
+async function getSongDetails(link: string) {
     const info = await getInfo(link)
     if (!info) return
     return info.videoDetails
