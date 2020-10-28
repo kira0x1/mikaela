@@ -132,6 +132,7 @@ export class Player {
             dispatcher.setVolumeLogarithmic(this.volume / 10);
          }
 
+         //When a song ends call the playnext ( This will be called on stop aswell but the playnext function wil check )
          dispatcher.on('close', () => {
             this.playNext();
          });
