@@ -2,6 +2,7 @@ import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection
 import { QuickEmbed } from '../util/styleUtil';
 
 import ytdl from 'ytdl-core-discord';
+import { playSong } from '../commands/music/play';
 
 const minVolume: number = 0;
 const maxVolume: number = 10;
@@ -107,6 +108,14 @@ export class Player {
 
    getLastPlayed() {
       return this.lastPlayed;
+   }
+
+   reload(message) {
+      const currentSong = this.currentlyPlaying;
+      const prevQueue = this.queue.songs
+      this.leave();
+      playSong(message, currentSong || prevQueue.shift());
+      this.queue.songs = prevQueue;
    }
 
    async startStream(song: ISong) {
