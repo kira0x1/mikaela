@@ -33,6 +33,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "chalk": "^4.1.0",
+    "discord-ytdl-core": "^4.1.2",
     "discord.js": "^12.4.1",
     "ffmpeg-static": "^4.2.7",
     "minimist": "^1.2.5",
@@ -42,7 +43,6 @@
     "sodium": "^3.0.2",
     "tslib": "^2.0.3",
     "youtube-sr": "^1.0.4",
-    "ytdl-core-discord": "^1.2.4",
     "ytpl": "^1.0.1"
   },
   "devDependencies": {
