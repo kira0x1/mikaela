@@ -131,7 +131,8 @@ export class Player {
 
       this.voiceChannel.join().then(conn => {
          this.stream = conn.play(opusStream, {
-            type: 'opus'
+            type: 'opus',
+            volume: false
          })
       })
    }
