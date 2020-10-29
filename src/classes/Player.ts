@@ -1,7 +1,7 @@
-import { Client, Guild, Message, StreamDispatcher, VoiceChannel, VoiceConnection } from 'discord.js';
-import ytdl from 'ytdl-core-discord';
-
+import ytdl from 'discord-ytdl-core';
+import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import { QuickEmbed } from '../util/styleUtil';
+
 
 const minVolume: number = 0;
 const maxVolume: number = 10;
@@ -14,7 +14,6 @@ export class Player {
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
    voiceChannel: VoiceChannel | undefined;
-   connection: VoiceConnection | undefined;
    currentlyPlaying: ISong | undefined;
    client: Client;
    volumeDisabled: boolean = true;
@@ -33,7 +32,6 @@ export class Player {
       try {
          const conn = await vc.join()
          if (!conn) return
-         this.connection = conn;
          this.inVoice = true;
          this.voiceChannel = vc
       } catch (err) {
@@ -101,6 +99,7 @@ export class Player {
 
       this.currentlyPlaying = this.queue.getNext();
       const vc = message.member.voice.channel;
+      if (!vc.joinable) return QuickEmbed(message, "I dont have permission to join that voice-channel")
       this.voiceChannel = vc;
       this.startStream(song);
    }
@@ -117,39 +116,26 @@ export class Player {
       this.queue.songs = prevQueue;
    }
 
-   async startStream(song: ISong) {
+   startStream(song: ISong) {
+
       if (!this.voiceChannel) {
          console.error('No Voicechannel');
          return;
       }
 
-      try {
-         const connection: VoiceConnection = await this.voiceChannel.join();
+      const opusStream = ytdl(song.url, {
+         filter: "audioonly",
+         opusEncoded: true,
+         highWaterMark: 100
+      }).on('debug', console.log)
 
-         if (!connection) {
-            return console.error('Could not connect to the voice channel');
-         }
-
-         const dispatcher = connection.play(await ytdl(song.url, { filter: 'audioonly', highWaterMark: 1 << 28 }), {
+      this.voiceChannel.join().then(conn => {
+         this.stream = conn.play(opusStream, {
             type: 'opus',
             volume: false,
-            highWaterMark: 1 << 26
-         })
-
-         //! Check if volumeDisabled is false, if it is then set the volume
-         if (!this.volumeDisabled) {
-            dispatcher.setVolumeLogarithmic(this.volume / 10);
-         }
-
-         //When a song ends call the playnext ( This will be called on stop aswell but the playnext function wil check )
-         dispatcher.on('close', () => {
-            this.playNext();
-         });
-
-         this.stream = dispatcher;
-      } catch (err) {
-         console.error(err)
-      }
+            highWaterMark: 100
+         }).on('close', () => this.playNext())
+      }).catch(console.error)
    }
 
    async addSong(song: ISong, message: Message) {
