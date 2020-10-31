@@ -126,7 +126,7 @@ export class Player {
       const opusStream = ytdl(song.url, {
          filter: "audioonly",
          opusEncoded: true,
-         highWaterMark: 1 << 28
+         highWaterMark: 1 << 25
       }).on('debug', console.log)
 
       this.voiceChannel.join().then(conn => {
