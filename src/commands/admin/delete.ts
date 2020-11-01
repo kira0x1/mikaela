@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
 import { ICommand } from '../../classes/Command';
+import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'delete',
@@ -29,7 +30,13 @@ export const command: ICommand = {
         message.channel
             .bulkDelete(amount)
             .then(deleted => {
-                console.log(chalk.bgMagenta.bold(`Deleted ${deleted.size} messages`));
+                const embed = createFooter(message)
+                    .setTitle(`${message.author.username} deleted ${deleted.size} messages`)
+                    .setDescription(`Server:\n\tName: ${message.guild.name}\n\tID:${message.guild.id}`);
+
+                deleted.map((del, i) => embed.addField(`${i}) From: ${del.author.username}`, del.content));
+
+                message.reply(embed);
             })
             .catch(err => {
                 console.error(chalk.bgRed.bold(err));
