@@ -1,6 +1,5 @@
 import chalk from 'chalk';
-import { Client, Message, MessageEmbed } from 'discord.js';
-import { ICommand } from './classes/Command';
+import { Client } from 'discord.js';
 import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { dbInit } from './db/database';
@@ -8,9 +7,10 @@ import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
-import { findCommand, findCommandGroup, getCommandOverride, hasPerms, userHasPerm } from './util/commandUtil';
+import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsError, userHasPerm } from './util/commandUtil';
 import { initPlayers } from './util/musicUtil';
-import { embedColor, wrap } from './util/styleUtil';
+import { wrap } from './util/styleUtil';
+
 
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
@@ -140,18 +140,5 @@ client.on('message', message => {
         console.error(err);
     }
 });
-
-export function sendArgsError(command: ICommand, message: Message) {
-    let usageString = 'Arguments required';
-    const embed = new MessageEmbed().setColor(embedColor);
-
-    if (command.usage) {
-        usageString = command.name + ' ';
-        usageString += wrap(command.usage, '`');
-    }
-
-    embed.addField('Arguments Required', usageString);
-    return message.channel.send(embed);
-}
 
 init();

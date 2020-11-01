@@ -1,7 +1,8 @@
-import { Collection, Message } from 'discord.js';
+import { Collection, Message, MessageEmbed } from 'discord.js';
 import { ICommand } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
+import { embedColor, wrap } from './styleUtil';
 
 export const commands: Collection<string, ICommand> = new Collection();
 export const commandGroups: Collection<string, ICommand[]> = new Collection();
@@ -92,8 +93,7 @@ export function checkCooldown(command: ICommand, message: Message): boolean {
             const timeLeft = (expirationTime - now) / 1000;
 
             author.send(
-                `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${
-                    command.name
+                `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name
                 }\` command.`
             );
 
@@ -105,4 +105,17 @@ export function checkCooldown(command: ICommand, message: Message): boolean {
     }
 
     return false;
+}
+
+export function sendArgsError(command: ICommand, message: Message) {
+    let usageString = 'Arguments required';
+    const embed = new MessageEmbed().setColor(embedColor);
+
+    if (command.usage) {
+        usageString = command.name + ' ';
+        usageString += wrap(command.usage, '`');
+    }
+
+    embed.addField('Arguments Required', usageString);
+    return message.channel.send(embed);
 }

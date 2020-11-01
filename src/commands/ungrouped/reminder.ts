@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import ms from 'ms';
-import { sendArgsError } from '../../app';
 import { ICommand } from '../../classes/Command';
+import { sendArgsError } from '../../util/commandUtil';
 import { embedColor, wrap } from '../../util/styleUtil';
 
 export const command: ICommand = {
