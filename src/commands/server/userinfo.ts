@@ -6,7 +6,7 @@ import { createFooter } from '../../util/styleUtil';
 export const command: ICommand = {
     name: 'userinfo',
     description: 'Shows information of a user',
-    aliases: ['av'],
+    aliases: ['info', 'user'],
 
     async execute(message, args) {
         let user: User = (await parseUser(args[0], message.client)) || message.author;
