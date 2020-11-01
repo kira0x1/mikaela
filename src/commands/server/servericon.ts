@@ -5,7 +5,7 @@ import { createFooter } from '../../util/styleUtil';
 export const command: ICommand = {
     name: 'servericon',
     description: 'Shows the icon of the current server',
-    aliases: ['icon', 'guildicon', 'srvicon'],
+    aliases: ['guildicon', 'srvicon'],
 
     execute(message, args) {
         const guild = message.guild;
