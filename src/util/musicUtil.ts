@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
+
 import { findPlayer, setNewPlayer } from '../app';
 import { IDuration, Player } from '../classes/Player';
-import { createFooter } from './styleUtil';
 
 
 export function ConvertDuration(duration_seconds: number | string) {
