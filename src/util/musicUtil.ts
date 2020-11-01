@@ -1,8 +1,8 @@
-import { Message } from 'discord.js';
-
-import { findPlayer, setNewPlayer } from '../app';
+import chalk from 'chalk';
+import { Client, Collection, Message } from 'discord.js';
 import { IDuration, Player } from '../classes/Player';
 
+const players: Collection<string, Player> = new Collection();
 
 export function ConvertDuration(duration_seconds: number | string) {
   let minutes: number = Math.floor(Number(duration_seconds) / 60);
@@ -21,6 +21,14 @@ export function ConvertDuration(duration_seconds: number | string) {
   return duration;
 }
 
+export function initPlayers(client: Client) {
+  client.guilds.cache.map(async guild => {
+    const guildResolved = await client.guilds.fetch(guild.id);
+    console.log(chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
+    players.set(guildResolved.id, new Player(guildResolved, client));
+  });
+}
+
 export function getPlayer(message: Message): Player {
   const guildId = message.guild.id;
   const playerFound = findPlayer(guildId)
@@ -29,7 +37,18 @@ export function getPlayer(message: Message): Player {
     return playerFound
   }
 
-  return setNewPlayer(guildId)
+  return setNewPlayer(message.client, guildId)
+}
+
+export function setNewPlayer(client: Client, guildId: string): Player {
+  const guild = client.guilds.cache.get(guildId);
+  const player = new Player(guild, client);
+  players.set(guild.id, player);
+  return player;
+}
+
+export function findPlayer(guildId: string): Player {
+  return players.get(guildId);
 }
 
 export async function getTarget(message: Message, query: string) {

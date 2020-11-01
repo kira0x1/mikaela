@@ -1,8 +1,6 @@
 import chalk from 'chalk';
-import { Client, Collection, Message, MessageEmbed } from 'discord.js';
-
+import { Client, Message, MessageEmbed } from 'discord.js';
 import { ICommand } from './classes/Command';
-import { Player } from './classes/Player';
 import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { dbInit } from './db/database';
@@ -11,7 +9,9 @@ import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, userHasPerm } from './util/commandUtil';
+import { initPlayers } from './util/musicUtil';
 import { embedColor, wrap } from './util/styleUtil';
+
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
 console.log(chalk.bgRedBright.bold(envString));
@@ -26,8 +26,6 @@ const client = new Client({
     },
 });
 
-const players: Collection<string, Player> = new Collection();
-
 async function init() {
     const skipDB: boolean = cmdArgs['skipDB'];
     if (!skipDB) await dbInit();
@@ -37,11 +35,7 @@ async function init() {
 
 client.on('ready', () => {
     // Setup players
-    client.guilds.cache.map(async guild => {
-        const guildResolved = await client.guilds.fetch(guild.id);
-        console.log(chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
-        players.set(guildResolved.id, new Player(guildResolved, client));
-    });
+    initPlayers(client)
 
     // Save heart emoji to use for favorites
     initEmoji(client);
@@ -158,17 +152,6 @@ export function sendArgsError(command: ICommand, message: Message) {
 
     embed.addField('Arguments Required', usageString);
     return message.channel.send(embed);
-}
-
-export function setNewPlayer(guildId: string): Player {
-    const guild = client.guilds.cache.get(guildId);
-    const player = new Player(guild, client);
-    players.set(guild.id, player);
-    return player;
-}
-
-export function findPlayer(guildId: string): Player {
-    return players.get(guildId);
 }
 
 init();
