@@ -1,7 +1,6 @@
 import { ICommand } from '../../classes/Command';
-import { User } from 'discord.js';
-import { parseUser } from '../../util/parser';
-import { createFooter } from '../../util/styleUtil';
+import { getTargetMember } from '../../util/musicUtil';
+import { createFooter, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'userinfo',
@@ -9,24 +8,20 @@ export const command: ICommand = {
     aliases: ['info', 'user'],
 
     async execute(message, args) {
-        let user: User = (await parseUser(args[0], message.client)) || message.author;
+        const target = args.length > 0 ?
+            await getTargetMember(message, args.join(' ')) :
+            message.member;
 
-        const embed = createFooter(message);
+        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
-        embed.setTitle('User info');
-        embed.setDescription(`User info for ${user}`);
+        const embed = createFooter(message)
+            .setTitle('User info')
+            .setDescription(`User info for ${target}`)
+            .setThumbnail(target.user.avatarURL({ dynamic: true, size: 4096 }))
+            .addField('User ID', `\`${target.id}\``)
+            .addField('Created at', target.user.createdAt.toUTCString())
+            .addField('Joined at', target.joinedAt.toUTCString());
 
-        embed.setThumbnail(user.avatarURL());
-
-        embed.addField('User ID', `\`${user.id}\``);
-        embed.addField('Created at', user.createdAt.toUTCString());
-
-        let member = message.guild.member(user);
-
-        if (member) {
-            embed.addField('Joined at', member.joinedAt.toUTCString());
-        }
-
-        await message.channel.send(embed);
-    },
+        message.channel.send(embed);
+    }
 };
