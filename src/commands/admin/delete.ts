@@ -1,7 +1,8 @@
-import chalk from 'chalk';
-
 import { ICommand } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
+
+
+
 
 export const command: ICommand = {
     name: 'delete',
@@ -26,20 +27,20 @@ export const command: ICommand = {
 
         //If the channel is not a text channel then we cant bulkdelete so return
         if (message.channel.type !== 'text') return;
+        const author = message.author
 
-        message.channel
-            .bulkDelete(amount)
-            .then(deleted => {
-                const embed = createFooter(message)
-                    .setTitle(`${message.author.username} deleted ${deleted.size} messages`)
-                    .setDescription(`Server:\n\tName: ${message.guild.name}\n\tID:${message.guild.id}`);
+        try {
+            const messagesDeleted = await message.channel.bulkDelete(amount)
+            if (!messagesDeleted) return
 
-                deleted.map((del, i) => embed.addField(`${i}) From: ${del.author.username}`, del.content));
+            const embed = createFooter(message)
+                .setTitle(`${author.username} deleted ${messagesDeleted.size} messages`)
+                .setDescription(`Server:\n\tName: ${message.guild.name}\n\tID:${message.guild.id}`);
 
-                message.reply(embed);
-            })
-            .catch(err => {
-                console.error(chalk.bgRed.bold(err));
-            });
-    },
+            messagesDeleted.map((del, i) => embed.addField(`${i}) From: ${del.author.username}`, del.content));
+            author.send(embed)
+        } catch (err) {
+            author.send(`Error deleting messages in  ${message.guild}, channel: ${message.channel.name}`)
+        }
+    }
 };
