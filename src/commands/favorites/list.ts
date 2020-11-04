@@ -15,12 +15,11 @@ export const command: ICommand = {
     cooldown: 1,
 
     async execute(message, args) {
-        let target = await getTarget(message, args.join(' '));
 
-        if (!target) {
-            if (args.length) return QuickEmbed(message, `Could not find user: \`${args.join(' ')}\``);
-            target = message.author;
-        }
+        let target = message.author
+        if (args.length > 0) target = await getTarget(message, args.join(' '));
+
+        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
         const user = await getUser(target.id);
 
