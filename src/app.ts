@@ -17,6 +17,9 @@ const envString = isProduction ? '-------production-------' : '-------developmen
 console.log(chalk.bgRedBright.bold(envString));
 
 const client = new Client({
+    ws: {
+        intents: ["GUILD_MEMBERS", 'GUILD_MESSAGE_REACTIONS', "GUILD_MESSAGES"]
+    },
     presence: {
         activity: {
             name: 'Catgirls',
