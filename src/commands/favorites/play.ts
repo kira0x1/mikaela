@@ -13,7 +13,7 @@ export const command: ICommand = {
     args: true,
     usage: '[song index | startIndex - endIndex (To Select Multiple Songs) ]',
     cooldown: 1,
-    
+
     async execute(message, args) {
         const player = getPlayer(message);
         if (!player) return;
@@ -56,10 +56,11 @@ export async function findFavorite(message: Message, args: string[]): Promise<IS
     });
 
     //? Get User
-    const targetQuery = args.join(' ');
-    const target = (await getTarget(message, targetQuery)) || message.author;
+    let target = message.author
+    if (args.length > 0) target = await getTarget(message, args.join(' '));
 
-    if (!target) throw `Target "${targetQuery}" not found`;
+    if (!target) throw `Could not find user \`${args.join(' ')}\``
+
     if (songIndex === undefined) throw `no song index given`;
 
     const userResult = await getUser(target.id);

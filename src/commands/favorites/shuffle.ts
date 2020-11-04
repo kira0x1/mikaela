@@ -20,7 +20,11 @@ export const command: ICommand = {
             }
         });
 
-        let target = (await getTarget(message, args.join(' '))) || message.author;
+        let target = message.author
+        if (args.length > 0) target = await getTarget(message, args.join(' '));
+
+        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
+
         const user = await getUser(target.id);
 
         if (!user.favorites) {
