@@ -35,25 +35,28 @@ export async function findFavorite(message: Message, args: string[]): Promise<IS
     let songArg = '';
     let songIndex: number | undefined = undefined;
 
-    const songIndexes: number[] = [];
-    const indexesToDelete: number[] = [];
+    const songRanges: number[] = []
 
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
-
-        if (isNaN(Number(arg))) {
-            continue;
-        }
-        songArg = arg;
-        songIndex = Number(arg);
-
-        if (songIndex) songIndexes.push(songIndex);
-        indexesToDelete.push(i);
+        if (arg !== "-") continue;
+        songRanges.push(Number(args[i - 1]))
+        songRanges.push(Number(args[i + 1]))
+        args.splice(i - 1, 3)
+        break;
     }
 
-    indexesToDelete.map(i => {
-        args.splice(i, 1);
-    });
+    if (songRanges.length !== 2) {
+        for (let i = 0; i < args.length; i++) {
+            const arg = args[i]
+            if (!Number(arg)) continue;
+
+            songIndex = Number(arg)
+            args.splice(i, 1)
+            break;
+        }
+    }
+
 
     //? Get User
     let target = message.author
@@ -61,14 +64,12 @@ export async function findFavorite(message: Message, args: string[]): Promise<IS
 
     if (!target) throw `Could not find user \`${args.join(' ')}\``
 
-    if (songIndex === undefined) throw `no song index given`;
-
     const userResult = await getUser(target.id);
     const fav = userResult.favorites;
 
-    if (songIndexes.length === 2) {
-        const startRange = songIndexes[0] - 1;
-        const endRange = songIndexes[1]--;
+    if (songRanges.length === 2) {
+        const startRange = songRanges[0] - 1;
+        const endRange = songRanges[1]--;
 
         const startValid = startRange < fav.length && startRange >= 0;
         const endValid = endRange <= fav.length && endRange > 0;
@@ -79,8 +80,9 @@ export async function findFavorite(message: Message, args: string[]): Promise<IS
         return songs;
     }
 
+    if (songIndex === undefined) throw `no song index given`;
+
     songIndex--;
     if (fav.length < songIndex || !fav[songIndex]) throw `song at index \"${songArg}\" not found`;
-
     return fav[songIndex];
 }
