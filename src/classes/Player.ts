@@ -133,7 +133,7 @@ export class Player {
          this.stream = conn.play(opusStream, {
             type: 'opus',
             volume: false,
-            highWaterMark: 1 << 18
+            highWaterMark: 1 << 16
          }).on('close', () => this.playNext())
       }).catch(console.error)
    }
