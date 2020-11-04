@@ -18,7 +18,7 @@ console.log(chalk.bgRedBright.bold(envString));
 
 const client = new Client({
     ws: {
-        intents: ["GUILD_MEMBERS", 'GUILD_MESSAGE_REACTIONS', "GUILD_MESSAGES"]
+        intents: ["GUILD_MEMBERS", 'GUILD_MESSAGE_REACTIONS', "GUILD_MESSAGES", "GUILDS", "GUILD_EMOJIS", "GUILD_VOICE_STATES"]
     },
     presence: {
         activity: {
