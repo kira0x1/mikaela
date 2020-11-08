@@ -33,11 +33,11 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "chalk": "^4.1.0",
-    "discord-ytdl-core": "^4.1.3",
+    "discord-ytdl-core": "^4.1.5",
     "discord.js": "^12.4.1",
     "ffmpeg-static": "^4.2.7",
     "minimist": "^1.2.5",
-    "mongoose": "^5.10.12",
+    "mongoose": "^5.10.13",
     "ms": "^2.1.2",
     "pm2": "^4.5.0",
     "sodium": "^3.0.2",
