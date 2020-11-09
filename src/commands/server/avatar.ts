@@ -7,7 +7,7 @@ import { createFooter, QuickEmbed } from '../../util/styleUtil';
 export const command: ICommand = {
     name: 'avatar',
     description: 'Shows the avatar of a user',
-    aliases: ['av', 'avi', 'pfp', 'pic', 'icon', 'usericon', 'img'],
+    aliases: ['av', 'avi', 'pfp', 'pic', 'icon', 'usericon', 'img', 'ava'],
 
     async execute(message, args) {
         // The avatar will be the user called the command by default unless the user gave
