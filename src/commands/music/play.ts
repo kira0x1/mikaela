@@ -11,7 +11,7 @@ import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { AddFavorite } from '../favorites/add';
 
 
-let heartEmoji: Emoji;
+export let heartEmoji: Emoji;
 
 export function initEmoji(client: Client) {
     const coders_club = client.guilds.cache.get(coders_club_id);
