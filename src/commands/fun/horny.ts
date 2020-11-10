@@ -12,6 +12,6 @@ export const command: ICommand = {
 
     execute(message, args) {
         const choice = Math.floor(Math.random() * links.length)
-        message.channel.send(choice);
+        message.channel.send(links[choice]);
     },
 };
