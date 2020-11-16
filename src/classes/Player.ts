@@ -9,7 +9,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 3.25;
+   volume: number = 0.7;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -132,9 +132,10 @@ export class Player {
       this.voiceChannel.join().then(conn => {
          this.stream = conn.play(opusStream, {
             type: 'opus',
-            volume: false,
+            volume: this.volume,
             highWaterMark: 1 << 17
          }).on('close', () => this.playNext())
+
       }).catch(console.error)
    }
 
