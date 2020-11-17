@@ -8,9 +8,11 @@ export interface ICommand {
     usage?: string;
     args?: boolean;
     hidden?: boolean;
-    perms?: string[];
+    perms?: permission[];
     isSubCommand?: boolean,
     isDisabled?: boolean
 
     execute(message: Message, args: string[]): void;
 }
+
+declare type permission = 'admin' | 'kira'
