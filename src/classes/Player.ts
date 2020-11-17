@@ -9,7 +9,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 0.6;
+   volume: number = 0.65;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -76,7 +76,7 @@ export class Player {
    }
 
    playNext() {
-      this.lastPlayed = this.currentlyPlaying;
+      if (this.currentlyPlaying) this.lastPlayed = this.currentlyPlaying;
       this.currentlyPlaying = this.queue.getNext();
 
       if (!this.lastPlayed) this.lastPlayed = this.currentlyPlaying
