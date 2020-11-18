@@ -42,11 +42,7 @@ export const command: ICommand = {
             amount = 15;
         }
 
-        let title = `Shuffling ${amount} song from ${user.username}`;
-
-        if (amount > 1) {
-            title = `Shuffling ${amount} songs from ${user.username}`;
-        }
+        const title = `Shuffling ${amount} ${amount > 1 ? 'songs' : 'song'} from ${user.username}`;
 
         const firstSong = user.favorites[Math.floor(Math.random() * user.favorites.length)];
         player.addSong(firstSong, message);
