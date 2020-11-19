@@ -1,9 +1,9 @@
-import { Message } from 'discord.js';
+import { Message, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { getUser } from '../../db/userController';
 import { getPlayer, getTarget } from '../../util/musicUtil';
-import { QuickEmbed } from '../../util/styleUtil';
+import { QuickEmbed, createFooter } from '../../util/styleUtil';
 import { playSong } from '../music/play';
 
 export const command: ICommand = {
@@ -23,15 +23,42 @@ export const command: ICommand = {
 
         try {
             const res = await findFavorite(message, args);
-            if (res instanceof Array) res.map(song => playSong(message, song));
-            else playSong(message, res);
+
+            if (!(res.song instanceof Array)) {
+                playSong(message, res.song);
+                return
+            }
+
+            const embed = createFooter(message)
+
+            let amount = res.song.length
+            if (amount > 15) {
+                embed.setFooter("Max Amount is 15!")
+                amount = 15
+            }
+
+            const firstSong = res.song.shift()
+            player.addSong(firstSong, message)
+
+            embed.setTitle(`Playing ${amount} ${amount > 1 ? 'songs' : 'song'} from ${res.target.username}`)
+                .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`)
+                .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+                .setThumbnail(res.target.avatarURL({ dynamic: true }))
+
+            for (let i = 0; i < amount - 1; i++) {
+                const song = res.song[i]
+                embed.addField(`${i + 1} ${song.title}`, song.url)
+                player.queue.addSong(song)
+            }
+
+            message.channel.send(embed)
         } catch (err) {
             QuickEmbed(message, err);
         }
     },
 };
 
-export async function findFavorite(message: Message, args: string[]): Promise<ISong | ISong[]> {
+export async function findFavorite(message: Message, args: string[]): Promise<{ target: User, song: ISong | ISong[] }> {
     let songArg = '';
     let songIndex: number | undefined = undefined;
 
@@ -77,12 +104,12 @@ export async function findFavorite(message: Message, args: string[]): Promise<IS
         if (!startValid || !endValid) throw `This user doesnt have songs in that range`;
 
         const songs = fav.slice(startRange, endRange);
-        return songs;
+        return { target: target, song: songs }
     }
 
     if (songIndex === undefined) throw `no song index given`;
 
     songIndex--;
     if (fav.length < songIndex || !fav[songIndex]) throw `song at index \"${songArg}\" not found`;
-    return fav[songIndex];
+    return { target: target, song: fav[songIndex] }
 }
