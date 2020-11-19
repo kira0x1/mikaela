@@ -45,13 +45,13 @@
     "tslib": "^2.0.3",
     "utf-8-validate": "^5.0.3",
     "ws": "^7.4.0",
-    "youtube-sr": "^1.0.7",
+    "youtube-sr": "^2.0.1",
     "ytpl": "^1.0.1"
   },
   "devDependencies": {
-    "@types/mongoose": "^5.10.0",
+    "@types/mongoose": "^5.10.1",
     "@types/ms": "^0.7.31",
-    "@types/node": "^14.14.7",
+    "@types/node": "^14.14.9",
     "prettier": "^2.1.2"
   },
   "nodemonConfig": {
