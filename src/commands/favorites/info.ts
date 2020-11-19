@@ -12,14 +12,15 @@ export const command: ICommand = {
     usage: '',
 
     async execute(message, args) {
-        const song = await findFavorite(message, args);
+        const favInfo = await findFavorite(message, args);
+        const song = favInfo.song
 
-        if (!song || song instanceof Array)
-            return QuickEmbed(message, `Song not found`)
+        if (!song || song instanceof Array) return QuickEmbed(message, `Song not found`)
 
         const embed = new MessageEmbed()
             .setColor(embedColor)
             .setTitle(song.title)
+            .setURL(song.url)
             .setDescription(`id: ${song.id}`)
             .addField('Duration', song.duration.duration)
             .setURL(song.url);
