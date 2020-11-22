@@ -133,11 +133,9 @@ export class Player {
       this.voiceChannel.join().then(conn => {
          this.stream = conn.play(opusStream, {
             type: 'opus',
+            volume: 0.29,
             highWaterMark: 1 << 17
          }).on('close', () => this.playNext())
-
-         this.stream.setVolume(0.35)
-         
       }).catch(console.error)
    }
 
