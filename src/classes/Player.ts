@@ -1,4 +1,4 @@
-import ytdl from 'discord-ytdl-core';
+import ytdl from 'ytdl-core-discord';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import { QuickEmbed } from '../util/styleUtil';
 
@@ -116,19 +116,18 @@ export class Player {
       this.queue.songs = prevQueue;
    }
 
-   startStream(song: ISong) {
+   async startStream(song: ISong) {
 
       if (!this.voiceChannel) {
          console.error('No Voicechannel');
          return;
       }
 
-      const opusStream = ytdl(song.url, {
+      const opusStream = await ytdl(song.url, {
          filter: "audioonly",
-         opusEncoded: true,
          highWaterMark: 1 << 25,
          dlChunkSize: 0
-      }).on('debug', console.log)
+      })
 
       this.voiceChannel.join().then(conn => {
          this.stream = conn.play(opusStream, {

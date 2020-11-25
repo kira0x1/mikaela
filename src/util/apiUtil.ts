@@ -1,6 +1,6 @@
 import YouTube from 'youtube-sr';
 import { MoreVideoDetails } from 'ytdl-core';
-import { getInfo, validateURL } from 'discord-ytdl-core';
+import { validateURL, getInfo } from 'ytdl-core-discord';
 import ytpl from 'ytpl';
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';

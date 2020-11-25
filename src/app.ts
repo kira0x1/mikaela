@@ -31,6 +31,7 @@ const client = new Client({
 
 async function init() {
     const skipDB: boolean = cmdArgs['skipDB'];
+    if (skipDB) console.log('dbskip')
     if (!skipDB) await dbInit();
 
     client.login(token);
