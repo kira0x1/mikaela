@@ -1,7 +1,6 @@
-import ytdl from 'ytdl-core-discord';
+import ytdl from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import { QuickEmbed } from '../util/styleUtil';
-
 
 const minVolume: number = 0;
 const maxVolume: number = 10;
@@ -30,22 +29,28 @@ export class Player {
       if (!vc) return console.error('User not in voice');
 
       try {
-         const conn = await vc.join()
-         if (!conn) return
+         const conn = await vc.join();
+         if (!conn) return;
          this.inVoice = true;
-         this.voiceChannel = vc
+         this.voiceChannel = vc;
       } catch (err) {
-         console.error(err)
+         console.error(err);
       }
    }
 
    changeVolume(amount: number, message?: Message) {
-      if (this.volumeDisabled) return
+      if (this.volumeDisabled) return;
       if (amount < minVolume || amount > maxVolume) {
          if (message && amount < minVolume) {
-            return QuickEmbed(message, `Cannot go below minimum volume ( **${minVolume}** )`);
+            return QuickEmbed(
+               message,
+               `Cannot go below minimum volume ( **${minVolume}** )`
+            );
          } else if (message && amount > maxVolume) {
-            return QuickEmbed(message, `Cannot exceed maximum volume ( **${maxVolume}** )`);
+            return QuickEmbed(
+               message,
+               `Cannot exceed maximum volume ( **${maxVolume}** )`
+            );
          }
       }
 
@@ -68,7 +73,7 @@ export class Player {
       this.clearQueue();
       this.currentlyPlaying = undefined;
       this.inVoice = false;
-      this.voiceChannel?.leave()
+      this.voiceChannel?.leave();
    }
 
    clearQueue() {
@@ -79,14 +84,14 @@ export class Player {
       if (this.currentlyPlaying) this.lastPlayed = this.currentlyPlaying;
       this.currentlyPlaying = this.queue.getNext();
 
-      if (!this.lastPlayed) this.lastPlayed = this.currentlyPlaying
+      if (!this.lastPlayed) this.lastPlayed = this.currentlyPlaying;
 
       if (this.currentlyPlaying) {
          this.startStream(this.currentlyPlaying);
-         return
+         return;
       }
 
-      this.leave()
+      this.leave();
    }
 
    skipSong() {
@@ -95,11 +100,12 @@ export class Player {
    }
 
    play(song: ISong, message: Message) {
-      if (this.currentlyPlaying) return
+      if (this.currentlyPlaying) return;
 
       this.currentlyPlaying = this.queue.getNext();
       const vc = message.member.voice.channel;
-      if (!vc.joinable) return QuickEmbed(message, "I dont have permission to join that voice-channel")
+      if (!vc.joinable)
+         return QuickEmbed(message, 'I dont have permission to join that voice-channel');
       this.voiceChannel = vc;
       this.startStream(song);
    }
@@ -110,32 +116,36 @@ export class Player {
 
    async reload(message) {
       const currentSong = this.currentlyPlaying;
-      const prevQueue = this.queue.songs
+      const prevQueue = this.queue.songs;
       await this.leave();
-      this.play(currentSong, message)
+      this.play(currentSong, message);
       this.queue.songs = prevQueue;
    }
 
    async startStream(song: ISong) {
-
       if (!this.voiceChannel) {
          console.error('No Voicechannel');
          return;
       }
 
-      const opusStream = await ytdl(song.url, {
-         filter: "audioonly",
+      const opusStream = ytdl(song.url, {
+         filter: 'audioonly',
          highWaterMark: 1 << 25,
-         dlChunkSize: 0
-      })
+         opusEncoded: true
+      });
 
-      this.voiceChannel.join().then(conn => {
-         this.stream = conn.play(opusStream, {
-            type: 'opus',
-            volume: 0.29,
-            highWaterMark: 1 << 17
-         }).on('close', () => this.playNext())
-      }).catch(console.error)
+      this.voiceChannel
+         .join()
+         .then(conn => {
+            this.stream = conn
+               .play(opusStream, {
+                  type: 'opus',
+                  volume: 0.25,
+                  highWaterMark: 1 << 17
+               })
+               .on('finish', () => this.playNext());
+         })
+         .catch(console.error);
    }
 
    async addSong(song: ISong, message: Message) {
@@ -158,15 +168,15 @@ export class Player {
    }
 
    getSongAt(position: number): ISong {
-      return this.queue.songs[position]
+      return this.queue.songs[position];
    }
 
    switchSongs(from: number, to: number) {
-      const fromSong = this.getSongAt(from)
-      const toSong = this.getSongAt(to)
+      const fromSong = this.getSongAt(from);
+      const toSong = this.getSongAt(to);
 
-      this.queue.songs[from] = toSong
-      this.queue.songs[to] = fromSong
+      this.queue.songs[from] = toSong;
+      this.queue.songs[to] = fromSong;
    }
 }
 
