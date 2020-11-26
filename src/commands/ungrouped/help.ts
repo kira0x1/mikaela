@@ -84,7 +84,7 @@ function displayOne(message: Message, query: string) {
     }
 
     //? If we dont have the command, then it must be an info group
-    //If the info group doesnt have any commands then exit out
+    //If the info group doesnt have any commands exit out
     if (!info.commands) return;
 
     //Loop through all the commands in the CommandInfo class
