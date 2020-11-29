@@ -38,7 +38,7 @@
     "discord.js": "^12.5.1",
     "ffmpeg-static": "^4.2.7",
     "minimist": "^1.2.5",
-    "mongoose": "^5.10.17",
+    "mongoose": "^5.10.18",
     "ms": "^2.1.2",
     "pm2": "^4.5.0",
     "sodium": "^3.0.2",
