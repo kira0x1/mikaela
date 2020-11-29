@@ -1,4 +1,5 @@
 import { Collection, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { IUser } from '../../db/dbUser';
@@ -89,7 +90,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
         return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
     };
 
-    const collector = msg.createReactionCollector(filter);
+    const collector = msg.createReactionCollector(filter, { time: ms('3h') });
 
     let currentPage = 0;
 
@@ -127,4 +128,8 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
         msg.edit(newEmbed);
     });
+
+    collector.on('end', collected => {
+        msg.reactions.removeAll();
+    })
 }
