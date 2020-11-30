@@ -46,7 +46,7 @@
     "utf-8-validate": "^5.0.3",
     "ws": "^7.4.0",
     "youtube-sr": "^2.0.4",
-    "ytdl-core": "^4.1.0",
+    "ytdl-core": "^4.1.1",
     "ytpl": "^1.0.1"
   },
   "devDependencies": {
