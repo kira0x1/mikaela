@@ -8,7 +8,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 2.9;
+   volume: number = 2.5;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -122,7 +122,7 @@ export class Player {
       this.queue.songs = prevQueue;
    }
 
-   async startStream(song: ISong) {
+   startStream(song: ISong) {
       if (!this.voiceChannel) {
          console.error('No Voicechannel');
          return;
@@ -130,22 +130,19 @@ export class Player {
 
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
-         highWaterMark: 1 << 25,
-         opusEncoded: true
+         highWaterMark: 1 << 27,
+         opusEncoded: true,
       });
 
-      this.voiceChannel
-         .join()
-         .then(conn => {
-            this.stream = conn
-               .play(opusStream, {
-                  type: 'opus',
-                  volume: 0.25,
-                  highWaterMark: 1 << 17
-               })
-               .on('finish', () => this.playNext());
-         })
-         .catch(console.error);
+      this.voiceChannel.join().then(conn => {
+
+         this.stream = conn.play(opusStream, {
+            type: 'opus',
+            volume: 0.2,
+            highWaterMark: 1 << 18
+         }).on('finish', () => this.playNext());
+
+      }).catch(console.error);
    }
 
    async addSong(song: ISong, message: Message) {
