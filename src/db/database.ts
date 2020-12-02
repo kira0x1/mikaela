@@ -1,20 +1,21 @@
-import { connect, Mongoose } from 'mongoose';
-import ms from 'ms';
-
+import { connect, ConnectOptions, Mongoose } from 'mongoose';
 import { dbURI } from '../config';
+
 
 export let conn: Mongoose
 
-export async function dbInit() {
-    conn = await connect(dbURI, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        keepAlive: true,
-        autoIndex: false,
-        maxIdleTimeMS: ms('5m')
-    });
+const connOptions: ConnectOptions = {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    socketTimeoutMS: 65000,
+}
 
-    console.log('Connected to mongodb');
+export async function dbInit() {
+    try {
+        conn = await connect(dbURI, connOptions);
+        console.log('Connected to mongodb');
+    } catch (error) {
+        console.error(error)
+    }
 }
