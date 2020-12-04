@@ -15,7 +15,7 @@ export class Player {
    voiceChannel: VoiceChannel | undefined;
    currentlyPlaying: ISong | undefined;
    client: Client;
-   volumeDisabled: boolean = true;
+   volumeDisabled: boolean = false;
    lastPlayed: ISong | undefined;
 
    constructor(guild: Guild, client: Client) {
@@ -40,6 +40,7 @@ export class Player {
 
    changeVolume(amount: number, message?: Message) {
       if (this.volumeDisabled) return;
+
       if (amount < minVolume || amount > maxVolume) {
          if (message && amount < minVolume) {
             return QuickEmbed(
@@ -104,8 +105,10 @@ export class Player {
 
       this.currentlyPlaying = this.queue.getNext();
       const vc = message.member.voice.channel;
-      if (!vc.joinable)
+
+      if (!vc?.joinable)
          return QuickEmbed(message, 'I dont have permission to join that voice-channel');
+
       this.voiceChannel = vc;
       this.startStream(song);
    }
@@ -122,7 +125,7 @@ export class Player {
       this.queue.songs = prevQueue;
    }
 
-   startStream(song: ISong) {
+   async startStream(song: ISong) {
       if (!this.voiceChannel) {
          console.error('No Voicechannel');
          return;
@@ -131,18 +134,23 @@ export class Player {
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
          highWaterMark: 1 << 27,
-         opusEncoded: true,
+         opusEncoded: true
       });
 
-      this.voiceChannel.join().then(conn => {
+      try {
+         const conn = await this.voiceChannel.join();
 
          this.stream = conn.play(opusStream, {
             type: 'opus',
             volume: 0.2,
             highWaterMark: 1 << 18
-         }).on('finish', () => this.playNext());
+         });
 
-      }).catch(console.error);
+         this.stream.on('finish', () => this.playNext());
+         this.stream.volume;
+      } catch (err) {
+         console.error(err);
+      }
    }
 
    async addSong(song: ISong, message: Message) {
