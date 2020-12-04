@@ -143,7 +143,7 @@ export class Player {
          this.stream = await conn.play(opusStream, {
             type: 'opus',
             volume: 0.2,
-            highWaterMark: 1 << 25
+            highWaterMark: 1 << 20
          });
 
          this.stream.on('finish', () => this.playNext());
