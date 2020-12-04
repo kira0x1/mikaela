@@ -19,7 +19,7 @@ export const command: ICommand = {
 
       const query = args.join(' ');
       const target = await getTarget(message, query);
-      if (!target.id) return QuickEmbed(message, `Member \"${query}\"`);
+      if (!target) return QuickEmbed(message, `Member \"${query}\"`);
 
       if (blockedUsers.includes(target.id))
          return QuickEmbed(message, `Member \"${target.tag}\" is already blocked`);
