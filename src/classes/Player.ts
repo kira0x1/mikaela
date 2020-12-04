@@ -133,17 +133,17 @@ export class Player {
 
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
-         highWaterMark: 1 << 27,
+         highWaterMark: 1 << 28,
          opusEncoded: true
       });
 
       try {
          const conn = await this.voiceChannel.join();
 
-         this.stream = conn.play(opusStream, {
+         this.stream = await conn.play(opusStream, {
             type: 'opus',
             volume: 0.2,
-            highWaterMark: 1 << 22
+            highWaterMark: 1 << 25
          });
 
          this.stream.on('finish', () => this.playNext());
