@@ -119,7 +119,7 @@ export async function playSong(message: Message, song: ISong) {
     });
 
     collector.on('end', collected => {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(console.error)
     });
 
 }
