@@ -1,19 +1,31 @@
-import { model, Schema } from 'mongoose';
+import chalk from 'chalk';
+import { Collection } from 'discord.js';
+import { model, Schema, Document } from 'mongoose';
 
 //A list of user id's
-export var blockedUsers: string[] = [];
+export const blockedUsers: Collection<string, string> = new Collection();
+
+export interface IBlocked extends Document {
+   name: string,
+   id: string
+}
 
 export const BlockedListSchema = new Schema({
-   id: { type: String, required: true },
+   name: { type: String },
+   id: { type: String, required: true, unique: true },
    createdAt: Date
 });
 
-export const blockedModel = model('blockedUsers', BlockedListSchema);
+export const blockedModel = model<IBlocked>('BlockedUsers', BlockedListSchema);
 
-export async function AddBlocked(id: string) {
+export async function AddBlocked(name: string, id: string) {
    try {
-      blockedUsers.push(id);
-      return await blockedModel.create({ id: id });
+      if (await blockedModel.findOne({ id: id })) {
+         return console.log(chalk.bgMagenta.bold('User already exists'))
+      }
+      console.log("adding blocked user")
+      blockedUsers.set(id, name);
+      return await new blockedModel({ name: name, id: id }).save();
    } catch (err) {
       console.error(err);
    }
@@ -21,9 +33,8 @@ export async function AddBlocked(id: string) {
 
 export async function CacheBlockedList() {
    try {
-      blockedUsers = [];
       const blist = await blockedModel.find();
-      blist.map(doc => blockedUsers.push(doc.id));
+      blist.map(doc => blockedUsers.set(doc.id, doc.name));
    } catch (err) {
       console.error(err);
    }
