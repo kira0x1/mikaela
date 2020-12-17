@@ -8,6 +8,7 @@ const connOptions: ConnectOptions = {
    useNewUrlParser: true,
    useFindAndModify: false,
    useUnifiedTopology: true,
+   useCreateIndex: true,
    socketTimeoutMS: 65000
 };
 
