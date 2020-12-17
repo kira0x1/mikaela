@@ -1,5 +1,5 @@
 import { conn } from './database';
-import { IUser, UserSchema } from './dbUser';
+import { IUser, userModel, UserSchema } from './dbUser';
 
 // - GET - /user/{1} # returns user with id 1
 export async function getUser(id: string): Promise<IUser> {
@@ -15,18 +15,14 @@ export async function getUser(id: string): Promise<IUser> {
 // - PUT - /user # inserts a new user into the table
 export async function addUser(user: IUser) {
     try {
-        var userModel = conn.model('users', UserSchema);
-
-        const userObject = {
+        return await new userModel({
             username: user.username,
             id: user.id,
             tag: user.tag,
             roles: user.roles,
             favorites: user.favorites,
-            sourcesGroups: user.sourcesGroups,
-        }
-
-        return await userModel.create(userObject)
+            sourcesGroups: user.sourcesGroups
+        }).save()
     }
     catch (err) {
         return err
