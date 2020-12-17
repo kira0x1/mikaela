@@ -92,7 +92,7 @@ client.on('message', message => {
       return;
    }
 
-   if (blockedUsers.includes(message.author.id))
+   if (blockedUsers.has(message.author.id))
       return message.author.send("Sorry you're blocked");
 
    const firstCharacter = message.content.charAt(1);
