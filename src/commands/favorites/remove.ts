@@ -64,10 +64,19 @@ async function RemoveBySearch(query: string, message: Message) {
         return QuickEmbed(message, `Song not found: "${query}"`)
     }
 
-    user.favorites.find((s, index) => {
-        if (s.id !== song.id) return QuickEmbed(message, `Could not find song "${song.title}" in your favorites`)
-        const songRemoved = user.favorites.splice(index - 1, 1).shift()
-        if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${index}`);
+    let hasRemovedSong = false
+
+    for (let i = 0; i < user.favorites.length; i++) {
+        const s = user.favorites[i]
+        if (s.id !== song.id) continue;
+
+        const songRemoved = user.favorites.splice(i, 1).shift()
+        if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${i}`);
+        updateUser(user.id, user);
+        hasRemovedSong = true;
+        break;
+    }
+
+    if (hasRemovedSong)
         QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
-    })
 }
