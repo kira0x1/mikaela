@@ -1,7 +1,11 @@
+import { Message } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { CreateUser } from '../../db/dbUser';
 import { getUser, updateUser } from '../../db/userController';
+import { getSong } from '../../util/apiUtil';
 import { QuickEmbed } from '../../util/styleUtil';
+
+const searchAliases = ["--search", "-search", "-s", "--s"]
 
 export const command: ICommand = {
     name: 'remove',
@@ -11,24 +15,59 @@ export const command: ICommand = {
     cooldown: 1.5,
 
     async execute(message, args) {
-        const index = Number(args.shift());
-        if (!index) return QuickEmbed(message, 'Invalid position');
-        const user = await getUser(message.member.user.id);
-        if (!user) {
-            CreateUser(message.member);
-            return QuickEmbed(message, 'You have no favorites');
-        } else {
-            if (index > user.favorites.length) {
-                return QuickEmbed(message, 'Invalid position');
-            } else {
-                const song = user.favorites.splice(index - 1, 1).shift();
-                updateUser(user.id, user);
-                if (!song) {
-                    return QuickEmbed(message, `Error while trying to remove song at ${index}`);
-                }
+        let firstArg = args[0]
 
-                QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
-            }
+        if (searchAliases.includes(firstArg)) {
+            args.shift()
+            RemoveBySearch(args.join(' '), message)
+        } else {
+            RemoveByIndex(args, message)
         }
     },
 };
+
+async function RemoveByIndex(args: string[], message: Message) {
+    const index = Number(args.shift());
+    if (!index) return QuickEmbed(message, 'Invalid position');
+
+    const user = await getUser(message.member.user.id);
+
+    if (!user) {
+        CreateUser(message.member);
+        return QuickEmbed(message, 'You have no favorites');
+    } else {
+        if (index > user.favorites.length) {
+            return QuickEmbed(message, 'Invalid position');
+        } else {
+            const song = user.favorites.splice(index - 1, 1).shift();
+            updateUser(user.id, user);
+            if (!song) {
+                return QuickEmbed(message, `Error while trying to remove song at ${index}`);
+            }
+
+            QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
+        }
+    }
+}
+
+
+async function RemoveBySearch(query: string, message: Message) {
+    const user = await getUser(message.member.user.id);
+    if (!user) {
+        CreateUser(message.member);
+        return QuickEmbed(message, 'You have no favorites');
+    }
+
+    const song = await getSong(query)
+
+    if (!song) {
+        return QuickEmbed(message, `Song not found: "${query}"`)
+    }
+
+    user.favorites.find((s, index) => {
+        if (s.id !== song.id) return QuickEmbed(message, `Could not find song "${song.title}" in your favorites`)
+        const songRemoved = user.favorites.splice(index - 1, 1).shift()
+        if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${index}`);
+        QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
+    })
+}
