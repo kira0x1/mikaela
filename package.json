@@ -25,7 +25,7 @@
     "url": "https://github.com/kira0x1/mikaela/issues"
   },
   "scripts": {
-    "start": "node . --prefix=,",
+    "start": "node . --prefix=!",
     "start-prod": "node . --env=production",
     "watch": "tsc --watch --noEmit --project tsconfig.json",
     "pretty": "prettier --write \"./**/*.{ts,json}\""
