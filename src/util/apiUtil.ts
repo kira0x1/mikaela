@@ -1,3 +1,4 @@
+import { Util } from 'discord.js';
 import YouTube from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
@@ -47,7 +48,7 @@ export function isPlaylist(song: ISong | ytpl.result): song is ytpl.result {
 // Convertts the video details to ISong
 function convertDetailsToSong(details: MoreVideoDetails): ISong {
    return {
-      title: details.title,
+      title: Util.escapeMarkdown(details.title),
       id: details.videoId,
       url: details.video_url,
       duration: ConvertDuration(details.lengthSeconds)
