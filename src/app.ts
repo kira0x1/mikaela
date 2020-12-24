@@ -20,7 +20,8 @@ import { initPlayers } from './util/musicUtil';
 import { wrap } from './util/styleUtil';
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
-console.log(chalk.bgRedBright.bold(envString));
+console.log(chalk.bgRed.bold(envString));
+console.log(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
 
 const client = new Client({
    ws: {
@@ -44,7 +45,7 @@ const client = new Client({
 
 async function init() {
    const skipDB: boolean = cmdArgs['skipDB'];
-   if (skipDB) console.log('dbskip');
+   if (skipDB) console.log(chalk.bgMagenta.bold('----SKIPPING DB----\n'));
    if (!skipDB) await dbInit();
 
    client.login(token);
