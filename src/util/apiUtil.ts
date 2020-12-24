@@ -9,7 +9,7 @@ export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
 
-export async function getSong(query: string): Promise<ISong | ytpl.result> {
+export async function getSong(query: string): Promise<ISong | ytpl.Result> {
    try {
       // Check if the query is a link to a youtube video
       if (validateURL(query)) {
@@ -41,8 +41,8 @@ export async function getSong(query: string): Promise<ISong | ytpl.result> {
 }
 
 // Returns true if its a playlist
-export function isPlaylist(song: ISong | ytpl.result): song is ytpl.result {
-   return (song as ytpl.result).items !== undefined;
+export function isPlaylist(song: ISong | ytpl.Result): song is ytpl.Result {
+   return (song as ytpl.Result).items !== undefined;
 }
 
 // Convertts the video details to ISong
@@ -56,12 +56,12 @@ function convertDetailsToSong(details: MoreVideoDetails): ISong {
 }
 
 // Converts a playlist retrieved from ytpl to an array of ISong
-export async function convertPlaylistToSongs(playlist: ytpl.result): Promise<ISong[]> {
+export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<ISong[]> {
    const res: ISong[] = [];
 
    for (let i = 0; i < playlist.items.length && i < 20; i++) {
       const item = playlist.items[i];
-      const info = await getInfo(item.url_simple);
+      const info = await getInfo(item.shortUrl);
       res.push(convertDetailsToSong(info.videoDetails));
    }
 
