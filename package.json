@@ -27,6 +27,7 @@
   "scripts": {
     "start": "node . --prefix=!",
     "start-prod": "node . --env=production",
+    "skipdb": "node . --prefix=! --skipDB",
     "watch": "tsc --watch --noEmit --project tsconfig.json",
     "pretty": "prettier --write \"./**/*.{ts,json}\""
   },
