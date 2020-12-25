@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
-import { dbInit } from './db/database';
+import { connectToDB } from './db/database';
 import { blockedUsers } from './db/dbBlocked';
 import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
@@ -46,7 +46,7 @@ const client = new Client({
 async function init() {
    const skipDB: boolean = cmdArgs['skipDB'];
    if (skipDB) console.log(chalk.bgMagenta.bold('----SKIPPING DB----\n'));
-   if (!skipDB) await dbInit();
+   if (!skipDB) await connectToDB();
 
    client.login(token);
 }
