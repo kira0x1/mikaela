@@ -1,23 +1,23 @@
-import chalk from 'chalk';
-import { connect, connection, ConnectOptions } from 'mongoose';
+import { connect, ConnectOptions, Mongoose } from 'mongoose';
 import { dbURI } from '../config';
 import { CacheBlockedList } from './dbBlocked';
 
-const mongooseOptions: ConnectOptions = {
+export let conn: Mongoose;
+
+const connOptions: ConnectOptions = {
    useNewUrlParser: true,
    useFindAndModify: false,
    useUnifiedTopology: true,
-   useCreateIndex: true
+   useCreateIndex: true,
+   socketTimeoutMS: 65000
 };
 
-export async function connectToDB() {
-   connect(dbURI, mongooseOptions);
+export async function dbInit() {
+   try {
+      conn = await connect(dbURI, connOptions);
+      CacheBlockedList();
+      console.log('Connected to mongodb');
+   } catch (error) {
+      console.error(error);
+   }
 }
-
-export const db = connection;
-
-db.on('error', console.error.bind(console, 'Connection Error:'));
-db.once('open', () => {
-   console.log(chalk.bgGreen.bold('Connected to MongoDB'));
-   CacheBlockedList();
-});
