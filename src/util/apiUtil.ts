@@ -2,6 +2,7 @@ import { Util } from 'discord.js';
 import YouTube from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
+import { logger } from '../app';
 import { ISong } from '../classes/Player';
 import { ConvertDuration } from './musicUtil';
 
@@ -36,7 +37,7 @@ export async function getSong(query: string): Promise<ISong | ytpl.Result> {
 
       return convertDetailsToSong(details);
    } catch (err) {
-      console.error(err);
+      logger.log('error', err);
    }
 }
 

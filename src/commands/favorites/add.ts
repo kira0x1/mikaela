@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { logger } from '../../app';
 
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
@@ -36,7 +37,7 @@ export const command: ICommand = {
                 AddFavorite(user, song, message)
             }
         } catch (err) {
-            console.error(err);
+            logger.log('error',err);
         }
     },
 };

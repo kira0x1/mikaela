@@ -1,5 +1,6 @@
 import ytdl from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
+import { logger } from '../app';
 import { QuickEmbed } from '../util/styleUtil';
 
 const minVolume: number = 0;
@@ -26,7 +27,7 @@ export class Player {
 
    async join(message: Message) {
       const vc = message.member.voice.channel;
-      if (!vc) return console.error('User not in voice');
+      if (!vc) return logger.log('error','User not in voice');
 
       try {
          const conn = await vc.join();
@@ -34,7 +35,7 @@ export class Player {
          this.inVoice = true;
          this.voiceChannel = vc;
       } catch (err) {
-         console.error(err);
+         logger.log('error',err);
       }
    }
 
@@ -127,7 +128,7 @@ export class Player {
 
    async startStream(song: ISong) {
       if (!this.voiceChannel) {
-         console.error('No Voicechannel');
+         logger.log('error', 'No Voicechannel');
          return;
       }
 
@@ -149,7 +150,7 @@ export class Player {
          this.stream.on('finish', () => this.playNext());
          this.stream.volume;
       } catch (err) {
-         console.error(err);
+         logger.log('error', err);
       }
    }
 

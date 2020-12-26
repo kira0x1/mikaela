@@ -1,4 +1,5 @@
 import { Client, Emoji, Message, MessageReaction, ReactionEmoji, Role, TextChannel, User } from 'discord.js';
+import { logger } from '../app';
 import { coders_club_id } from '../config';
 
 
@@ -12,7 +13,7 @@ export async function syncRoles(client: Client) {
   if (!channel) return;
 
   if (!((channel): channel is TextChannel => channel.type === 'text')(channel))
-    return console.log('Couldnt find channel');
+    return logger.log('info','Couldnt find channel');
 
   channel.messages.fetch({ limit: 100 }).then(messages => {
     messages.map(msg => {
@@ -40,7 +41,7 @@ export async function syncRoles(client: Client) {
     const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
     const role = guild.roles.cache.find(rl => rl.id === crole.roleId);
 
-    if (!member || !section || !role) return console.log('er');
+    if (!member || !section || !role) return logger.log('info','er');
 
     const rolesFound: Role[] = [];
 
@@ -76,8 +77,8 @@ async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
     if (!section) return;
     const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
 
-    if (!section) return console.log('couldnt find section');
-    if (!crole) return console.log('couldnt find crole');
+    if (!section) return logger.log('info','couldnt find section');
+    if (!crole) return logger.log('info','couldnt find crole');
 
     const role = msg.guild.roles.cache.find(rl => rl.id === crole.roleId);
     if (!member) return

@@ -1,3 +1,4 @@
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { getUser } from '../../db/userController';
 import { getPlayer, getTarget } from '../../util/musicUtil';
@@ -35,7 +36,7 @@ export const command: ICommand = {
         embed.setColor(embedColor);
 
         const player = getPlayer(message);
-        if (!player) return console.error(`Could not find player for guild ${message.guild.name}`);
+        if (!player) return logger.log('error',`Could not find player for guild ${message.guild.name}`);
 
         if (amount > 15) {
             embed.setFooter(`Max Amount is 15!`);
