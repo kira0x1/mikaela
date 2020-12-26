@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
+import { createLogger, format, transports } from 'winston';
 import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { connectToDB } from './db/database';
@@ -19,9 +20,14 @@ import {
 import { initPlayers } from './util/musicUtil';
 import { wrap } from './util/styleUtil';
 
+export const logger = createLogger({
+   transports: [new transports.Console()],
+   format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
+});
+
 const envString = isProduction ? '-------production-------' : '-------development-------';
-console.log(chalk.bgRed.bold(envString));
-console.log(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
+logger.log('info', chalk.bgRed.bold(envString));
+logger.log('info', chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
 
 const client = new Client({
    ws: {
@@ -45,7 +51,7 @@ const client = new Client({
 
 async function init() {
    const skipDB: boolean = cmdArgs['skipDB'];
-   if (skipDB) console.log(chalk.bgMagenta.bold('----SKIPPING DB----\n'));
+   if (skipDB) logger.log('info', chalk.bgMagenta.bold('----SKIPPING DB----\n'));
    if (!skipDB) await connectToDB();
 
    client.login(token);
@@ -71,7 +77,7 @@ client.on('ready', () => {
    // Read command files and create a collection for the commands
    initCommands();
 
-   console.log(chalk.bgCyan.bold(`${client.user.username} online!`));
+   logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
 client.on('message', message => {
@@ -162,7 +168,7 @@ client.on('message', message => {
    try {
       command.execute(message, args);
    } catch (err) {
-      console.error(err);
+      logger.log('error', err);
    }
 });
 
