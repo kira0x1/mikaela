@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { AddBlocked, blockedUsers } from '../../db/dbBlocked';
 import { getTarget } from '../../util/musicUtil';
@@ -24,20 +25,20 @@ export const command: ICommand = {
       if (blockedUsers.has(target.id))
          return QuickEmbed(message, `Member \"${target.tag}\" is already blocked`);
 
-      const blockedResponse = await AddBlocked(target.tag, target.id)
-      console.log(blockedResponse)
+      const blockedResponse = await AddBlocked(target.tag, target.id);
+      logger.log('info', blockedResponse);
 
       if (!blockedResponse) {
-         return message.author.send(`Error while blocking user: ${query}`)
+         return message.author.send(`Error while blocking user: ${query}`);
       }
 
       const embed = createFooter(message)
          .setTitle(`Blocked: \"${target.tag}\"`)
-         .setDescription(target.id)
+         .setDescription(target.id);
 
-      message.channel.send(embed)
+      message.channel.send(embed);
    }
-}
+};
 
 function listBlocked(message: Message) {
    const embed = createFooter(message);

@@ -1,5 +1,6 @@
 import { Client, Emoji, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { coders_club_id } from '../../config';
@@ -17,7 +18,7 @@ export function initEmoji(client: Client) {
    if (!coders_club) return;
 
    const emoji = coders_club.emojis.cache.find(em => em.name === 'heart');
-   if (!emoji) return console.log(`emoji not found`);
+   if (!emoji) return logger.log('warn', `emoji not found`);
 
    heartEmoji = emoji;
 }
@@ -73,7 +74,7 @@ export async function playSong(message: Message, song: ISong) {
    //Get the guilds player
    const player = getPlayer(message);
 
-   if (!player) return console.log('couldnt find player');
+   if (!player) return logger.log('warn', 'couldnt find player');
    if (!song) return message.channel.send('Couldnt find song');
 
    //Add the song to the player
@@ -118,6 +119,6 @@ export async function playSong(message: Message, song: ISong) {
    });
 
    collector.on('end', collected => {
-      msg.reactions.removeAll().catch(console.error);
+      msg.reactions.removeAll().catch(err => logger.log('error', err));
    });
 }

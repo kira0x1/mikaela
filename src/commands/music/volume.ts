@@ -1,6 +1,7 @@
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { QuickEmbed } from '../../util/styleUtil';
+import { logger } from '../../app';
 
 export const command: ICommand = {
    name: 'volume',
@@ -16,7 +17,7 @@ export const command: ICommand = {
 
       const arg = args.shift();
       const player = getPlayer(message);
-      if (!player) return console.log('no player found while using volume command');
+      if (!player) return logger.log('info','no player found while using volume command');
 
       if (!arg) return QuickEmbed(message, `Volume is currently ${player.volume}`);
 

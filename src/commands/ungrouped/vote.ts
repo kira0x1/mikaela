@@ -1,4 +1,5 @@
 import { MessageEmbed } from 'discord.js';
+import { logger } from '../../app';
 
 import { ICommand } from '../../classes/Command';
 import { embedColor, QuickEmbed } from '../../util/styleUtil';
@@ -56,7 +57,7 @@ export const command: ICommand = {
             await messageSent.react(emoji.id);
          }
       } catch (err) {
-         console.error(err);
+         logger.log('error', err);
       }
    }
 };

@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { Client, GuildMember } from 'discord.js';
+import { logger } from '../app';
 
 import { coders_club_id } from '../config';
 
@@ -45,12 +46,12 @@ export async function initVoiceManager(client: Client) {
     function removVoiceRole(member: GuildMember) {
         member.roles
             .remove(voice_role)
-            .catch(err => console.log(chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
+            .catch(err => logger.log('error',chalk.bgRed(`Failed to remove voice role`), `REASON: ${err}`));
     }
 
     function addVoiceRole(member: GuildMember) {
         member.roles
             .add(voice_role)
-            .catch(err => console.log(chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
+            .catch(err => logger.log('error',chalk.bgRed.bold(`Error trying to add vc role`), `REASON ${err}`));
     }
 }

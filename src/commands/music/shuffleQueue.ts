@@ -3,6 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
 import { embedColor } from '../../util/styleUtil';
+import { logger } from '../../app';
 
 export const command: ICommand = {
     name: 'shuffle queue',
@@ -11,7 +12,7 @@ export const command: ICommand = {
 
     async execute(message, args) {
         const player = getPlayer(message);
-        if (!player) return console.error(`Could not find player for guild ${message.guild.name}`);
+        if (!player) return logger.log('error',`Could not find player for guild ${message.guild.name}`);
 
         if (!player.queue.songs || player.queue.songs.length === 0) {
             const embed = new MessageEmbed()
