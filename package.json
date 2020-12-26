@@ -44,6 +44,7 @@
     "sodium": "^3.0.2",
     "tslib": "^2.0.3",
     "utf-8-validate": "^5.0.3",
+    "winston": "^3.3.3",
     "ws": "^7.4.1",
     "youtube-sr": "^2.0.5",
     "ytdl-core": "^4.2.1",
