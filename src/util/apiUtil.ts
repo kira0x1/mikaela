@@ -32,7 +32,8 @@ export async function getSong(query: string): Promise<ISong | ytpl.Result> {
       if (!songSearch) return;
 
       //If a video is found then get details and convert it to ISong
-      const details = await getSongDetails(songSearch[0].id);
+      if (!songSearch || songSearch.length === 0) return
+      const details = await getSongDetails(songSearch[0]?.id);
       if (!details) return;
 
       return convertDetailsToSong(details);
@@ -71,6 +72,7 @@ export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<ISo
 
 // A helper function that gets info from a link
 async function getSongDetails(link: string) {
+   if (!link) return
    const info = await getInfo(link);
    if (!info) return;
    return info.videoDetails;
