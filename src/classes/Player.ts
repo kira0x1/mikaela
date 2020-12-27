@@ -2,6 +2,7 @@ import ytdl from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import { logger } from '../app';
 import { QuickEmbed } from '../util/styleUtil';
+import { Queue } from './Queue';
 
 const minVolume: number = 0;
 const maxVolume: number = 10;
@@ -150,12 +151,10 @@ export class Player {
          })
 
          // this.stream.on('finish', () => this.playNext());
-         this.stream.on('speaking', speaking => {
-            if (!speaking) {
-               // logger.log('info', 'not speaking, so playing next')
-               this.playNext()
-            }
+         this.stream.on('speaking', (speaking) => {
+            if (!speaking) this.playNext()
          })
+
       } catch (err) {
          logger.log('warn', err);
       }
@@ -190,52 +189,6 @@ export class Player {
 
       this.queue.songs[from] = toSong;
       this.queue.songs[to] = fromSong;
-   }
-}
-
-export class Queue {
-   songs: Array<ISong> = [];
-
-   constructor(songs?: Array<ISong>) {
-      if (songs) {
-         this.songs = songs;
-      } else {
-         this.songs = [];
-      }
-   }
-
-   addSong(song: ISong) {
-      this.songs.push(song);
-   }
-
-   getNext(): ISong | undefined {
-      return this.songs.shift();
-   }
-
-   clear() {
-      this.songs = [];
-   }
-
-   removeAt(index: number) {
-      return this.songs.splice(index, 1);
-   }
-
-   shuffle() {
-      let currentIndex = this.songs.length,
-         tempValue,
-         randomIndex;
-
-      //While there are still elements to shuffle
-      while (0 !== currentIndex) {
-         //Pick a remaining element
-         randomIndex = Math.floor(Math.random() * currentIndex);
-         currentIndex -= 1;
-
-         //Swap it with the current element;
-         tempValue = this.songs[currentIndex];
-         this.songs[currentIndex] = this.songs[randomIndex];
-         this.songs[randomIndex] = tempValue;
-      }
    }
 }
 
