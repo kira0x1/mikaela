@@ -33,9 +33,8 @@ export async function getSong(query: string): Promise<ISong | ytpl.Result> {
 
       //If a video is found then get details and convert it to ISong
       if (!songSearch || songSearch.length === 0) return
-      const details = await getSongDetails(songSearch[0]?.id);
+      const details = await getSongDetails(songSearch[0].id);
       if (!details) return;
-
       return convertDetailsToSong(details);
    } catch (err) {
       logger.log('error', err);
