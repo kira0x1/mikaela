@@ -19,7 +19,8 @@ export const command: ICommand = {
       }
 
       let member: GuildMember =
-         message.mentions.members?.first() || message.guild.members.cache.get(args[0]);
+         message.mentions.members?.first() ||
+         (await message.guild.members.fetch(args[0]).catch(_ => null));
 
       if (!member) {
          return sendErrorEmbed(message, `Could not find member ${args[0]}`);

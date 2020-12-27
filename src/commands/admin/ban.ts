@@ -20,9 +20,7 @@ export const command: ICommand = {
 
       let user: User =
          message.mentions.users?.first() ||
-         (await message.client.users.fetch(args[0]).catch(_ => {
-            return null;
-         }));
+         (await message.client.users.fetch(args[0]).catch(_ => null));
 
       if (!user) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
