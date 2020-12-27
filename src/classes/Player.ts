@@ -27,7 +27,7 @@ export class Player {
 
    async join(message: Message) {
       const vc = message.member.voice.channel;
-      if (!vc) return logger.log('error','User not in voice');
+      if (!vc) return logger.log('error', 'User not in voice');
 
       try {
          const conn = await vc.join();
@@ -35,7 +35,7 @@ export class Player {
          this.inVoice = true;
          this.voiceChannel = vc;
       } catch (err) {
-         logger.log('error',err);
+         logger.log('error', err);
       }
    }
 
@@ -134,7 +134,7 @@ export class Player {
 
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
-         highWaterMark: 1 << 26,
+         highWaterMark: 1 << 25,
          opusEncoded: true
       });
 
@@ -144,7 +144,7 @@ export class Player {
          this.stream = await conn.play(opusStream, {
             type: 'opus',
             volume: 0.2,
-            highWaterMark: 1 << 18
+            highWaterMark: 1 << 16
          });
 
          this.stream.on('finish', () => this.playNext());
