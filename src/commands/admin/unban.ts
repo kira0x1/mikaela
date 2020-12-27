@@ -28,7 +28,7 @@ export const command: ICommand = {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
       }
 
-      let banInfo: { user: User; reason?: string } = await message.guild
+      const banInfo: { user: User; reason?: string } = await message.guild
          .fetchBan(user)
          .catch(_ => {
             return null;
@@ -46,7 +46,6 @@ export const command: ICommand = {
          type: UserEventType.Unban,
          issuer: message.author,
          receiver: user,
-         timestamp: new Date(),
          reason: reason
       };
 

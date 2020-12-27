@@ -18,9 +18,8 @@ export const command: ICommand = {
          );
       }
 
-      let user: User | GuildMember =
-         message.mentions.members?.first() ||
-         message.guild.member(args[0]) ||
+      let user: User =
+         message.mentions.users?.first() ||
          (await message.client.users.fetch(args[0]).catch(_ => {
             return null;
          }));
@@ -33,8 +32,14 @@ export const command: ICommand = {
          return sendErrorEmbed(message, `Cannot kick ${user}`);
       }
 
-      const deleteMessageDays = +args[1] || 0;
-      const reason = args.slice(2).join(' ');
+      const banInfo = await message.guild.fetchBan(user).catch(_ => {
+         return null;
+      });
+      if (banInfo) {
+         return sendErrorEmbed(message, `${user} is already banned`);
+      }
+
+      const deleteMessageDays = +args.slice(-1) || 0;
 
       if (deleteMessageDays < 0 || deleteMessageDays > 7) {
          return sendErrorEmbed(
@@ -43,20 +48,19 @@ export const command: ICommand = {
          );
       }
 
+      const reason = args.slice(1, -1).join(' ');
+
       await message.guild.members.ban(user, {
          reason: reason,
          days: deleteMessageDays
       });
 
-      let a = user instanceof User ? user : user.user;
-
       let eventInfo: UserEventInfo = {
          type: UserEventType.Ban,
          issuer: message.author,
-         receiver: a,
-         timestamp: new Date(),
-         reason: reason,
-         deleteMessageDays: deleteMessageDays
+         receiver: user,
+         deleteMessageDays: deleteMessageDays,
+         reason: reason
       };
 
       await message.channel.send(toEmbed(message, eventInfo));

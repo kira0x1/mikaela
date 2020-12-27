@@ -36,7 +36,6 @@ export const command: ICommand = {
          type: UserEventType.Kick,
          issuer: message.author,
          receiver: member.user,
-         timestamp: new Date(),
          reason: reason
       };
 
