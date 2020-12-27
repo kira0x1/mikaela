@@ -46,7 +46,8 @@ const client = new Client({
          type: 'WATCHING',
          url: 'https://github.com/kira0x1/mikaela'
       }
-   }
+   },
+   disableMentions: 'everyone'
 });
 
 async function init() {
