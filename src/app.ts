@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { connectToDB } from './db/database';
 import { blockedUsers } from './db/dbBlocked';
@@ -61,9 +60,6 @@ async function init() {
 client.on('ready', () => {
    // Setup players
    initPlayers(client);
-
-   // Save heart emoji to use for favorites
-   initEmoji(client);
 
    // Add event listener to add/remove voice role
    if (isProduction) {
