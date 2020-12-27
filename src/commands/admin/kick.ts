@@ -1,0 +1,45 @@
+import { ICommand } from '../../classes/Command';
+import { GuildMember } from 'discord.js';
+import { sendErrorEmbed } from '../../util/styleUtil';
+import { toEmbed, UserEventInfo, UserEventType } from '../../classes/UserEventInfo';
+
+export const command: ICommand = {
+   name: 'kick',
+   description: 'Kick a user',
+   aliases: ['kick'],
+   perms: [],
+   args: true,
+
+   async execute(message, args) {
+      if (!message.member?.hasPermission('KICK_MEMBERS')) {
+         return sendErrorEmbed(
+            message,
+            `Sorry ${message.member}, you are not allowed to kick members`
+         );
+      }
+
+      let member: GuildMember =
+         message.mentions.members?.first() || message.guild.members.cache.get(args[0]);
+
+      if (!member) {
+         return sendErrorEmbed(message, `Could not find member ${args[0]}`);
+      }
+      if (!member.kickable) {
+         return sendErrorEmbed(message, `Cannot kick ${member}`);
+      }
+
+      const reason = args.slice(1).join(' ');
+
+      await member.kick(reason);
+
+      let eventInfo: UserEventInfo = {
+         type: UserEventType.Kick,
+         issuer: message.author,
+         receiver: member.user,
+         timestamp: new Date(),
+         reason: reason
+      };
+
+      await message.channel.send(toEmbed(message, eventInfo));
+   }
+};
