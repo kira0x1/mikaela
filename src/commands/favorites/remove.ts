@@ -1,7 +1,6 @@
 import { Message } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { CreateUser } from '../../db/dbUser';
-import { getUser, updateUser } from '../../db/userController';
+import { findOrCreate } from '../../db/userController';
 import { getSong } from '../../util/apiUtil';
 import { QuickEmbed } from '../../util/styleUtil';
 
@@ -30,34 +29,25 @@ async function RemoveByIndex(args: string[], message: Message) {
     const index = Number(args.shift());
     if (!index) return QuickEmbed(message, 'Invalid position');
 
-    const user = await getUser(message.member.user.id);
+    const user = await findOrCreate(message.author);
 
-    if (!user) {
-        CreateUser(message.member);
-        return QuickEmbed(message, 'You have no favorites');
-    } else {
-        if (index > user.favorites.length) {
-            return QuickEmbed(message, 'Invalid position');
-        } else {
-            const song = user.favorites.splice(index - 1, 1).shift();
-            updateUser(user.id, user);
-            if (!song) {
-                return QuickEmbed(message, `Error while trying to remove song at ${index}`);
-            }
-
-            QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
-        }
+    if (index > user.favorites.length) {
+        return QuickEmbed(message, 'Invalid position');
     }
+
+    const song = user.favorites.splice(index - 1, 1).shift();
+    user.save()
+
+    if (!song) {
+        return QuickEmbed(message, `Error while trying to remove song at ${index}`);
+    }
+
+    QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
 }
 
 
 async function RemoveBySearch(query: string, message: Message) {
-    const user = await getUser(message.member.user.id);
-    if (!user) {
-        CreateUser(message.member);
-        return QuickEmbed(message, 'You have no favorites');
-    }
-
+    const user = await findOrCreate(message.author);
     const song = await getSong(query)
 
     if (!song) {
@@ -72,7 +62,7 @@ async function RemoveBySearch(query: string, message: Message) {
 
         const songRemoved = user.favorites.splice(i, 1).shift()
         if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${i}`);
-        updateUser(user.id, user);
+        user.save()
         hasRemovedSong = true;
         break;
     }
