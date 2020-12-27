@@ -17,7 +17,7 @@ import {
    userHasPerm
 } from './util/commandUtil';
 import { initPlayers } from './util/musicUtil';
-import { wrap } from './util/styleUtil';
+import { sendErrorEmbed, wrap } from './util/styleUtil';
 
 export const logger = createLogger({
    transports: [new transports.Console()],
@@ -160,6 +160,18 @@ client.on('message', message => {
 
    //Check if the command is in cooldown
    // if (checkCooldown(command, message)) return;
+
+   if (message.guild) {
+      // Check bot permissions
+      if (command.botPerms && !message.guild.me.hasPermission(command.botPerms)) {
+         return sendErrorEmbed(message, 'I don\'t have permissions for that');
+      }
+
+      // Check user permissions
+      if (command.userPerms && !message.member.hasPermission(command.userPerms)) {
+         return sendErrorEmbed(message, `You don\'t have permission to do that`);
+      }
+   }
 
    // Finally if all checks have passed then try executing the command.
    try {
