@@ -1,8 +1,8 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { sendArgsError } from '../../util/commandUtil';
-import { embedColor, wrap } from '../../util/styleUtil';
+import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Reminder',
@@ -22,8 +22,7 @@ export function setReminder(message: Message, time: string, content: string) {
     if (!content || !time) return sendArgsError(command, message)
 
     //Create embed
-    const embed = new MessageEmbed()
-        .setColor(embedColor)
+    const embed = createFooter(message)
         .setTitle('Reminder set')
         .setDescription(`remind ${message.author.username} to ${content} in ${time}`);
 
@@ -31,7 +30,9 @@ export function setReminder(message: Message, time: string, content: string) {
     message.channel.send(embed);
 
     //Create reminder time out
-    setTimeout(() => {
-        message.channel.send(`Reminder to ${wrap(content, '`')}`, { reply: message.author });
-    }, ms(time));
+    setTimeout(() => onReminder(message, content), ms(time));
+}
+
+function onReminder(message: Message, content: string) {
+    message.reply(`Reminder to ${content}`)
 }
