@@ -121,7 +121,7 @@ export class Player {
    async reload(message) {
       const currentSong = this.currentlyPlaying;
       const prevQueue = this.queue.songs;
-      await this.leave();
+      this.leave();
       this.play(currentSong, message);
       this.queue.songs = prevQueue;
    }
@@ -134,23 +134,30 @@ export class Player {
 
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
+         opusEncoded: true,
          highWaterMark: 1 << 25,
-         opusEncoded: true
-      });
+         dlChunkSize: 0,
+         encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+      })
 
       try {
          const conn = await this.voiceChannel.join();
 
-         this.stream = await conn.play(opusStream, {
+         this.stream = conn.play(opusStream, {
+            highWaterMark: 1 << 15,
             type: 'opus',
-            volume: 0.2,
-            highWaterMark: 1 << 16
-         });
+            volume: 0.2
+         })
 
-         this.stream.on('finish', () => this.playNext());
-         this.stream.volume;
+         // this.stream.on('finish', () => this.playNext());
+         this.stream.on('speaking', speaking => {
+            if (!speaking) {
+               // logger.log('info', 'not speaking, so playing next')
+               this.playNext()
+            }
+         })
       } catch (err) {
-         logger.log('error', err);
+         logger.log('warn', err);
       }
    }
 
