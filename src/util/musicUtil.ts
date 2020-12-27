@@ -1,7 +1,10 @@
 import chalk from 'chalk';
-import { Client, Collection, Message, MessageEmbed, StreamDispatcher } from 'discord.js';
+import { Client, Collection, Emoji, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
+import ms from 'ms';
 import { logger } from '../app';
-import { IDuration, Player } from '../classes/Player';
+import { IDuration, ISong, Player } from '../classes/Player';
+import { coders_club_id } from '../config';
+import { addFavoriteToUser } from '../db/userController';
 import { embedColor } from './styleUtil';
 
 const players: Collection<string, Player> = new Collection();
@@ -23,7 +26,20 @@ export function ConvertDuration(duration_seconds: number | string) {
    return duration;
 }
 
+export let heartEmoji: Emoji;
+
+export function initEmoji(client: Client) {
+   const coders_club = client.guilds.cache.get(coders_club_id);
+   if (!coders_club) return;
+
+   const emoji = coders_club.emojis.cache.find(em => em.name === 'heart');
+   if (!emoji) return logger.log('warn', `emoji not found`);
+
+   heartEmoji = emoji;
+}
+
 export function initPlayers(client: Client) {
+   initEmoji(client)
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
       logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
@@ -116,5 +132,21 @@ export function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Pl
       .addField(`Duration`, `${prettyTime} / ${duration.duration}`);
 }
 
-//Attaches the heart emoji, that when clicked will add the song as a favorite
-export async function AttachFavoriteEmoji(message: Message) {}
+export async function createFavoriteCollector(song: ISong, message: Message) {
+   await message.react(heartEmoji.id);
+
+   const filter = (reaction: MessageReaction, user: User) => {
+      return reaction.emoji.name === heartEmoji.name && !user.bot;
+   };
+
+   const collector = message.createReactionCollector(filter, { time: ms('1h') });
+
+   collector.on('collect', async (reaction, reactionCollector) => {
+      const user = reaction.users.cache.last();
+      addFavoriteToUser(user, song, message)
+   });
+
+   collector.on('end', collected => {
+      message.reactions.removeAll().catch(err => logger.log('error', err));
+   });
+}
