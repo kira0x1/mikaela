@@ -1,27 +1,10 @@
-import { Client, Emoji, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
-import ms from 'ms';
+import { Message, MessageEmbed } from 'discord.js';
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
-import { coders_club_id } from '../../config';
-import { CreateUser, IUser } from '../../db/dbUser';
-import { getUser } from '../../db/userController';
 import { convertPlaylistToSongs, getSong, isPlaylist } from '../../util/apiUtil';
-import { getPlayer } from '../../util/musicUtil';
+import { createFavoriteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
-import { AddFavorite } from '../favorites/add';
-
-export let heartEmoji: Emoji;
-
-export function initEmoji(client: Client) {
-   const coders_club = client.guilds.cache.get(coders_club_id);
-   if (!coders_club) return;
-
-   const emoji = coders_club.emojis.cache.find(em => em.name === 'heart');
-   if (!emoji) return logger.log('warn', `emoji not found`);
-
-   heartEmoji = emoji;
-}
 
 export const command: ICommand = {
    name: 'play',
@@ -89,36 +72,5 @@ export async function playSong(message: Message, song: ISong) {
       .setColor(embedColor);
 
    const msg = await message.channel.send(embed);
-   await msg.react(heartEmoji.id);
-
-   const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === heartEmoji.name && !user.bot;
-   };
-
-   const collector = msg.createReactionCollector(filter, { time: ms('1h') });
-
-   collector.on('collect', async (reaction, reactionCollector) => {
-      const user = reaction.users.cache.last();
-      let dbUser = await getUser(user.id);
-
-      if (!dbUser) {
-         const iuser: IUser = {
-            username: user.username,
-            tag: user.tag,
-            id: user.id,
-            favorites: [],
-            roles: [],
-            sourcesGroups: []
-         };
-
-         await CreateUser(iuser);
-         dbUser = iuser;
-      }
-
-      AddFavorite(dbUser, song, message);
-   });
-
-   collector.on('end', collected => {
-      msg.reactions.removeAll().catch(err => logger.log('error', err));
-   });
+   createFavoriteCollector(song, msg)
 }
