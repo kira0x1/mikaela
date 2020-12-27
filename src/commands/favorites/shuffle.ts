@@ -1,6 +1,6 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { getUser } from '../../db/userController';
+import { findOrCreate } from '../../db/userController';
 import { getPlayer, getTarget } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 
@@ -26,7 +26,7 @@ export const command: ICommand = {
 
         if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
-        const user = await getUser(target.id);
+        const user = await findOrCreate(target);
 
         if (!user.favorites) {
             return QuickEmbed(message, 'You have no favorites to shuffle');
@@ -36,7 +36,7 @@ export const command: ICommand = {
         embed.setColor(embedColor);
 
         const player = getPlayer(message);
-        if (!player) return logger.log('error',`Could not find player for guild ${message.guild.name}`);
+        if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
         if (amount > 15) {
             embed.setFooter(`Max Amount is 15!`);

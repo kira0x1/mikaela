@@ -1,9 +1,9 @@
 import { Message, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
-import { getUser } from '../../db/userController';
+import { findOrCreate } from '../../db/userController';
 import { getPlayer, getTarget } from '../../util/musicUtil';
-import { QuickEmbed, createFooter } from '../../util/styleUtil';
+import { createFooter, QuickEmbed } from '../../util/styleUtil';
 import { playSong } from '../music/play';
 
 export const command: ICommand = {
@@ -91,7 +91,7 @@ export async function findFavorite(message: Message, args: string[]): Promise<{ 
 
     if (!target) throw `Could not find user \`${args.join(' ')}\``
 
-    const userResult = await getUser(target.id);
+    const userResult = await findOrCreate(target);
     const fav = userResult.favorites;
 
     if (songRanges.length === 2) {

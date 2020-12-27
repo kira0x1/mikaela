@@ -3,7 +3,7 @@ import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { IUser } from '../../db/dbUser';
-import { getUser } from '../../db/userController';
+import { findOrCreate } from '../../db/userController';
 import { getTarget } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 
@@ -22,7 +22,7 @@ export const command: ICommand = {
 
         if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
-        const user = await getUser(target.id);
+        const user = await findOrCreate(target);
 
         if (!user || !user.favorites || user.favorites.length === 0) {
             const embed: MessageEmbed = createFooter(message)
