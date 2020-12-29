@@ -1,8 +1,6 @@
-import { Collection, GuildMember } from 'discord.js';
-import { model, Schema } from 'mongoose';
-
+import { Collection } from 'discord.js';
+import { Document, model, Schema } from 'mongoose';
 import { ISong } from '../classes/Player';
-import { addUser } from './userController';
 
 export var users: Collection<string, IUser> = new Collection();
 
@@ -27,13 +25,12 @@ export interface IUserSources {
    sources: Array<ISource>;
 }
 
-export interface IUser {
+export interface IUser extends Document {
    username: string;
    id: string;
    tag: string;
    roles: IRole[];
    favorites: ISong[];
-   sourcesGroups: ISourceGroup[];
 }
 
 export const UserSchema = new Schema({
@@ -42,26 +39,7 @@ export const UserSchema = new Schema({
    tag: { type: String, required: true },
    roles: { type: [{ name: String, id: String }], required: true },
    favorites: { type: Array<ISong>(), required: false },
-   sourcesGroups: { type: Array<ISourceGroup>(), required: false },
    createdAt: Date
 });
 
-export const userModel = model('users', UserSchema);
-
-//Create a UserModel and insert it into the database, returns an error if the user already exists
-export function CreateUser(user: IUser | GuildMember) {
-   if (user instanceof GuildMember) {
-      const memberUser: IUser = {
-         username: user.user.username,
-         tag: user.user.tag,
-         id: user.id,
-         favorites: [],
-         roles: [],
-         sourcesGroups: []
-      };
-
-      return addUser(memberUser);
-   } else {
-      return addUser(user);
-   }
-}
+export const User = model<IUser>('users', UserSchema);

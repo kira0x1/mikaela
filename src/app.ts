@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-import { initEmoji } from './commands/music/play';
 import { args as cmdArgs, isProduction, prefix, token } from './config';
 import { connectToDB } from './db/database';
 import { blockedUsers } from './db/dbBlocked';
@@ -18,7 +17,7 @@ import {
    userHasPerm
 } from './util/commandUtil';
 import { initPlayers } from './util/musicUtil';
-import { wrap } from './util/styleUtil';
+import { sendErrorEmbed, wrap } from './util/styleUtil';
 
 export const logger = createLogger({
    transports: [new transports.Console()],
@@ -46,7 +45,8 @@ const client = new Client({
          type: 'WATCHING',
          url: 'https://github.com/kira0x1/mikaela'
       }
-   }
+   },
+   disableMentions: 'everyone'
 });
 
 async function init() {
@@ -60,9 +60,6 @@ async function init() {
 client.on('ready', () => {
    // Setup players
    initPlayers(client);
-
-   // Save heart emoji to use for favorites
-   initEmoji(client);
 
    // Add event listener to add/remove voice role
    if (isProduction) {
@@ -163,6 +160,18 @@ client.on('message', message => {
 
    //Check if the command is in cooldown
    // if (checkCooldown(command, message)) return;
+
+   if (message.guild) {
+      // Check bot permissions
+      if (command.botPerms && !message.guild.me.hasPermission(command.botPerms)) {
+         return sendErrorEmbed(message, 'I don\'t have permissions for that');
+      }
+
+      // Check user permissions
+      if (command.userPerms && !message.member.hasPermission(command.userPerms)) {
+         return sendErrorEmbed(message, `You don\'t have permission to do that`);
+      }
+   }
 
    // Finally if all checks have passed then try executing the command.
    try {

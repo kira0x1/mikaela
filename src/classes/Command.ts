@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, PermissionResolvable } from 'discord.js';
 
 export interface ICommand {
     name: string;
@@ -10,7 +10,9 @@ export interface ICommand {
     hidden?: boolean;
     perms?: permission[];
     isSubCommand?: boolean,
-    isDisabled?: boolean
+    isDisabled?: boolean,
+    userPerms?: PermissionResolvable,
+    botPerms?: PermissionResolvable
 
     execute(message: Message, args: string[]): void;
 }

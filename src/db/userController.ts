@@ -1,39 +1,53 @@
-import { db } from './database';
-import { IUser, userModel, UserSchema } from './dbUser';
+import { Message, User as DiscordUser } from 'discord.js';
+import { logger } from '../app';
+import { ISong } from '../classes/Player';
+import { QuickEmbed } from '../util/styleUtil';
+import { IUser, User } from './dbUser';
 
-// - GET - /user/{1} # returns user with id 1
-export async function getUser(id: string): Promise<IUser> {
+export async function findUser(id: string): Promise<IUser> {
    try {
-      var userModel = db.model('users', UserSchema);
-      const user: any = await userModel.findOne({ id: id })?.lean();
-      return user;
-   } catch (err) {
-      return err;
+      const user = await User.findOne({ id: id })
+      return user
+   } catch (error) {
+      logger.log('error', error)
    }
 }
 
-// - PUT - /user # inserts a new user into the table
-export async function addUser(user: IUser) {
+export async function createUser(user: IUser | DiscordUser) {
    try {
-      return await new userModel({
-         username: user.username,
-         id: user.id,
-         tag: user.tag,
-         roles: user.roles,
-         favorites: user.favorites,
-         sourcesGroups: user.sourcesGroups
-      }).save();
-   } catch (err) {
-      return err;
+      if (user instanceof DiscordUser) return await new User(converUserToIUser(user)).save()
+      return await new User(user).save()
+   }
+   catch (error) {
+      logger.log('error', error)
    }
 }
 
-export async function updateUser(id: string, user: IUser) {
-   try {
-      var userModel = db.model('users', UserSchema);
-      const userUpdated = await userModel.updateOne({ id: id }, user)?.lean();
-      return userUpdated;
-   } catch (err) {
-      return err;
+export async function findOrCreate(user: DiscordUser) {
+   let dbUser = await findUser(user.id)
+   if (!dbUser) dbUser = await createUser(user)
+   return dbUser
+}
+
+function converUserToIUser(user: DiscordUser) {
+   return {
+      username: user.username,
+      discordId: user.id,
+      tag: user.tag,
+      roles: [],
+      favorites: []
    }
+}
+
+export async function addFavoriteToUser(member: DiscordUser, song: ISong, message: Message) {
+   const user = await findOrCreate(member)
+
+   if (user.favorites && user.favorites.find(fav => fav.id === song.id)) {
+      return QuickEmbed(message, `Sorry **${user.username}** You already have this song as a favorite`);
+   }
+
+   QuickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`);
+
+   user.favorites.push(song)
+   return await user.save()
 }

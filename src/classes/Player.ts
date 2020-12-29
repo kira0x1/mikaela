@@ -2,6 +2,7 @@ import ytdl from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import { logger } from '../app';
 import { QuickEmbed } from '../util/styleUtil';
+import { Queue } from './Queue';
 
 const minVolume: number = 0;
 const maxVolume: number = 10;
@@ -27,7 +28,7 @@ export class Player {
 
    async join(message: Message) {
       const vc = message.member.voice.channel;
-      if (!vc) return logger.log('error','User not in voice');
+      if (!vc) return logger.log('error', 'User not in voice');
 
       try {
          const conn = await vc.join();
@@ -35,7 +36,7 @@ export class Player {
          this.inVoice = true;
          this.voiceChannel = vc;
       } catch (err) {
-         logger.log('error',err);
+         logger.log('error', err);
       }
    }
 
@@ -121,7 +122,7 @@ export class Player {
    async reload(message) {
       const currentSong = this.currentlyPlaying;
       const prevQueue = this.queue.songs;
-      await this.leave();
+      this.leave();
       this.play(currentSong, message);
       this.queue.songs = prevQueue;
    }
@@ -134,23 +135,28 @@ export class Player {
 
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
-         highWaterMark: 1 << 26,
-         opusEncoded: true
-      });
+         opusEncoded: true,
+         highWaterMark: 1 << 25,
+         dlChunkSize: 0,
+         encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+      })
 
       try {
          const conn = await this.voiceChannel.join();
 
-         this.stream = await conn.play(opusStream, {
+         this.stream = conn.play(opusStream, {
+            highWaterMark: 1 << 15,
             type: 'opus',
-            volume: 0.2,
-            highWaterMark: 1 << 18
-         });
+            volume: 0.2
+         })
 
-         this.stream.on('finish', () => this.playNext());
-         this.stream.volume;
+         // this.stream.on('finish', () => this.playNext());
+         this.stream.on('speaking', (speaking) => {
+            if (!speaking) this.playNext()
+         })
+
       } catch (err) {
-         logger.log('error', err);
+         logger.log('warn', err);
       }
    }
 
@@ -183,52 +189,6 @@ export class Player {
 
       this.queue.songs[from] = toSong;
       this.queue.songs[to] = fromSong;
-   }
-}
-
-export class Queue {
-   songs: Array<ISong> = [];
-
-   constructor(songs?: Array<ISong>) {
-      if (songs) {
-         this.songs = songs;
-      } else {
-         this.songs = [];
-      }
-   }
-
-   addSong(song: ISong) {
-      this.songs.push(song);
-   }
-
-   getNext(): ISong | undefined {
-      return this.songs.shift();
-   }
-
-   clear() {
-      this.songs = [];
-   }
-
-   removeAt(index: number) {
-      return this.songs.splice(index, 1);
-   }
-
-   shuffle() {
-      let currentIndex = this.songs.length,
-         tempValue,
-         randomIndex;
-
-      //While there are still elements to shuffle
-      while (0 !== currentIndex) {
-         //Pick a remaining element
-         randomIndex = Math.floor(Math.random() * currentIndex);
-         currentIndex -= 1;
-
-         //Swap it with the current element;
-         tempValue = this.songs[currentIndex];
-         this.songs[currentIndex] = this.songs[randomIndex];
-         this.songs[randomIndex] = tempValue;
-      }
    }
 }
 
