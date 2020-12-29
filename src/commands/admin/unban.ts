@@ -15,7 +15,7 @@ export const command: ICommand = {
    async execute(message, args) {
       let user: User =
          message.mentions.users?.first() ||
-         (await message.client.users.fetch(args[0]).catch(_ => null));
+         (await message.client.users.fetch(args[0]).catch(() => undefined));
 
       if (!user) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
@@ -23,7 +23,7 @@ export const command: ICommand = {
 
       const banInfo: { user: User; reason?: string } = await message.guild
          .fetchBan(user)
-         .catch(_ => null);
+         .catch(() => undefined);
 
       if (!banInfo) {
          return sendErrorEmbed(message, `${user} is not banned`);

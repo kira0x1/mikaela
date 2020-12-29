@@ -15,7 +15,7 @@ export const command: ICommand = {
    async execute(message, args) {
       let member: GuildMember =
          message.mentions.members?.first() ||
-         (await message.guild.members.fetch(args[0]).catch(_ => null));
+         (await message.guild.members.fetch(args[0]).catch(() => undefined));
 
       if (!member) {
          return sendErrorEmbed(message, `Could not find member ${args[0]}`);
