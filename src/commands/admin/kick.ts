@@ -9,15 +9,10 @@ export const command: ICommand = {
    aliases: ['kick'],
    perms: [],
    args: true,
+   userPerms: ['KICK_MEMBERS'],
+   botPerms: ['KICK_MEMBERS'],
 
    async execute(message, args) {
-      if (!message.member?.hasPermission('KICK_MEMBERS')) {
-         return sendErrorEmbed(
-            message,
-            `Sorry ${message.member}, you are not allowed to kick members`
-         );
-      }
-
       let member: GuildMember =
          message.mentions.members?.first() ||
          (await message.guild.members.fetch(args[0]).catch(_ => null));

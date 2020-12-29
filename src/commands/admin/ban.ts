@@ -9,15 +9,10 @@ export const command: ICommand = {
    aliases: ['ban'],
    perms: [],
    args: true,
+   userPerms: ['BAN_MEMBERS'],
+   botPerms: ['BAN_MEMBERS'],
 
    async execute(message, args) {
-      if (!message.member?.hasPermission('BAN_MEMBERS')) {
-         return sendErrorEmbed(
-            message,
-            `Sorry ${message.member}, you are not allowed to ban members`
-         );
-      }
-
       let user: User =
          message.mentions.users?.first() ||
          (await message.client.users.fetch(args[0]).catch(_ => null));
