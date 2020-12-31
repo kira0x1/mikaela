@@ -95,3 +95,4 @@ typings/
 
 # JetBrains IDE folder
 .idea/
+.vscode/extensions.json
