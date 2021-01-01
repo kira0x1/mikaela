@@ -20,8 +20,8 @@ export const command: ICommand = {
 
         //Create an embed with the information of the song to be skipped
         const embed = new MessageEmbed()
-            .setColor(embedColor)
-            .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+           .setColor(embedColor)
+           .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
             .setTitle(`Skipped Song: ${currentSong.title}`)
             .setDescription(currentSong.url);
 

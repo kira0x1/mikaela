@@ -26,8 +26,8 @@ export const command: ICommand = {
 
         if (!user || !user.favorites || user.favorites.length === 0) {
             const embed: MessageEmbed = createFooter(message)
-                .setTitle(target.username + '\n\u200b')
-                .setThumbnail(target.avatarURL({ dynamic: true }))
+               .setTitle(target.username + '\n\u200b')
+               .setThumbnail(target.displayAvatarURL({ dynamic: true }))
                 .setDescription('Favorites: none')
                 .setColor(embedColor);
             return message.channel.send(embed);
@@ -59,7 +59,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
     }
 
     let pageAt = 0;
-    const embed = new MessageEmbed().setColor(embedColor).setThumbnail(target.avatarURL({ dynamic: true }));
+    const embed = new MessageEmbed().setColor(embedColor).setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
     let title = `**Favorites**\nPage **${pageAt + 1} / ${pages.size}**`;
     title += `\nSongs **${user.favorites.length}**`;
@@ -110,7 +110,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
         title += '\n\u200b';
 
         const newEmbed = new MessageEmbed()
-            .setThumbnail(target.avatarURL({ dynamic: true }))
+           .setThumbnail(target.displayAvatarURL({ dynamic: true }))
             .setTitle(title)
             .setColor(embedColor);
 

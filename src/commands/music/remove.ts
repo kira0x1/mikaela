@@ -30,9 +30,9 @@ export const command: ICommand = {
                 if (!song) return QuickEmbed(message, 'Couldnt find song');
 
                 const embed = new MessageEmbed()
-                    .setColor(embedColor)
-                    .setTitle(`Removed song ${song.title}`)
-                    .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }));
+                   .setColor(embedColor)
+                   .setTitle(`Removed song ${song.title}`)
+                   .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
                 message.channel.send(embed);
 

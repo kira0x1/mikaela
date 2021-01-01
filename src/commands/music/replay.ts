@@ -17,7 +17,7 @@ export const command: ICommand = {
         if (lastPlayed) {
             player.addSong(lastPlayed, message);
             const embed = new MessageEmbed()
-                .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+               .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
                 .setTitle(`Replaying: ${lastPlayed.title}`)
                 .setDescription(`**Added to queue**\n${lastPlayed.duration.duration}`)
                 .setURL(lastPlayed.url)

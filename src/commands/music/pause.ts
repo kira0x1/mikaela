@@ -28,7 +28,7 @@ export const command: ICommand = {
         player.pause();
 
         const embed = new MessageEmbed();
-        embed.setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }));
+        embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
         embed.setTitle(`Paused ${player.currentlyPlaying.title}`);
         embed.setColor(embedColor);
 

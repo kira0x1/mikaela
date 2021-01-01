@@ -19,7 +19,7 @@ export const command: ICommand = {
       const embed = createFooter(message)
          .setTitle('User info')
          .setDescription(`User info for ${target}`)
-         .setThumbnail(target.user.avatarURL({ dynamic: true, size: 4096 }))
+         .setThumbnail(target.user.displayAvatarURL({ dynamic: true, size: 4096 }))
          .addField('User ID', `\`${target.id}\``)
          .addField('Created at', target.user.createdAt.toUTCString())
          .addField('Joined at', target.joinedAt.toUTCString());

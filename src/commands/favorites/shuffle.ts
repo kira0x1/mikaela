@@ -50,8 +50,8 @@ export const command: ICommand = {
 
         embed.setTitle(title);
         embed.setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
-        embed.setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }));
-        embed.setThumbnail(target.avatarURL({ dynamic: true }));
+        embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
+        embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
         for (let i = 0; i < amount - 1; i++) {
             let rand = Math.floor(Math.random() * user.favorites.length);
