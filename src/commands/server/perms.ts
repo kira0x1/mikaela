@@ -1,12 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import {
-   Role,
-   GuildMember,
-   Message,
-   MessageEmbed,
-   EmbedFieldData,
-   PermissionString
-} from 'discord.js';
+import { GuildMember, Message, MessageEmbed, Role } from 'discord.js';
 import { createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
@@ -37,27 +30,24 @@ async function createEmbed(
    }
 
    const perms = target.permissions.serialize();
-   embed.addFields(getPermData(perms));
+
+   embed.addFields(
+      Object.entries(perms)
+         .sort((a, b) => a[0].localeCompare(b[0]))
+         .map(e => {
+            return {
+               name: formatPermName(e[0]),
+               value: e[1] ? 'Yes' : 'No',
+               inline: true
+            };
+         })
+   );
 
    return embed;
 }
 
-function getPermData(perms: Record<PermissionString, boolean>): EmbedFieldData[] {
-   let permData = [];
-
-   for (const perm in perms) {
-      if (perms.hasOwnProperty(perm)) {
-         const permName = perm.split('_').join(' ').slice(1).toLowerCase();
-
-         permData.push({
-            name: permName,
-            value: perms[perm],
-            inline: true
-         });
-      }
-   }
-
-   return permData;
+function formatPermName(permName: string): string {
+   return permName.charAt(0) + permName.split('_').join(' ').toLowerCase().slice(1);
 }
 
 async function getTarget(message: Message, args: string[]): Promise<GuildMember | Role> {
