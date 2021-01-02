@@ -41,14 +41,12 @@ export const command: ICommand = {
 };
 
 async function getPreviousNicks(member: GuildMember): Promise<string[]> {
-   return await member.guild
-      .fetchAuditLogs({
-         type: 'MEMBER_UPDATE'
-      })
-      .then(audit =>
-         audit.entries
-            .filter(e => e.target == member.user && e.changes.some(e => e.key == 'nick'))
-            .map(e => e.changes)
-            .flatMap(e => [e[0].old, e[0].new].filter(e => e !== undefined))
-      );
+   const auditLogs = await member.guild.fetchAuditLogs({
+      type: 'MEMBER_UPDATE'
+   });
+
+   return auditLogs.entries
+      .filter(e => e.target == member.user && e.changes.some(e => e.key == 'nick'))
+      .map(e => e.changes)
+      .flatMap(e => [e[0].old, e[0].new].filter(e => e !== undefined));
 }
