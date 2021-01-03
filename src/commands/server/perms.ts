@@ -26,22 +26,14 @@ async function createEmbed(
    embed.description = `Permissions for ${target}`;
 
    if (target instanceof GuildMember) {
-      embed.setThumbnail(target.user.displayAvatarURL());
+      embed.setThumbnail(target.user.displayAvatarURL({ dynamic: true }));
    }
 
    const perms = target.permissions.serialize();
 
-   embed.addFields(
-      Object.entries(perms)
-         .sort((a, b) => a[0].localeCompare(b[0]))
-         .map(e => {
-            return {
-               name: formatPermName(e[0]),
-               value: e[1] ? 'Yes' : 'No',
-               inline: true
-            };
-         })
-   );
+   Object.entries(perms)
+      .sort()
+      .forEach(p => embed.addField(formatPermName(p[0]), p[1] ? 'Yes' : 'No', true));
 
    return embed;
 }
