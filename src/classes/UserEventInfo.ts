@@ -35,7 +35,7 @@ export function toEmbed(message: Message, eventInfo: UserEventInfo) {
       .setTitle(msg)
       .setDescription(`${message.author} ${msg.toLowerCase()} ${eventInfo.receiver}`)
       .addField(`${msg} user ID`, `\`${eventInfo.receiver.id}\``)
-      .setThumbnail(eventInfo.receiver.displayAvatarURL());
+      .setThumbnail(eventInfo.receiver.displayAvatarURL({ dynamic: true }));
 
    if (eventInfo.reason) {
       embed.addField('Reason', eventInfo.reason);
