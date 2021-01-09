@@ -54,13 +54,12 @@ async function createEmbed(
       new MessageEmbed().addFields(perms.slice(16, 31))
    ];
 
-   const avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
+   let avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
 
    await new Embeds()
       .setArray(embeds)
       .setChannel(channel)
       .setPageIndicator('footer')
-      .setPage(1)
       .setTitle('Permissions')
       .setThumbnail(avatarUrl)
       .setDescription(`Permissions for ${target}`)
