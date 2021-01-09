@@ -1,13 +1,6 @@
 import { ICommand } from '../../classes/Command';
-import {
-   EmbedFieldData,
-   GuildMember,
-   Message,
-   MessageEmbed,
-   Role,
-   TextChannel
-} from 'discord.js';
-import { embedColor, sendErrorEmbed } from '../../util/styleUtil';
+import { GuildMember, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
+import { sendErrorEmbed } from '../../util/styleUtil';
 import { Embeds } from 'discord-paginationembed';
 
 export const command: ICommand = {
@@ -30,10 +23,10 @@ export const command: ICommand = {
    }
 };
 
-function getPerms(target: Role | GuildMember): Array<EmbedFieldData> {
+function getPerms(target: Role | GuildMember): MessageEmbed[] {
    const perms = target.permissions.serialize(true);
 
-   return Object.entries(perms)
+   const permData = Object.entries(perms)
       .sort()
       .map(p => {
          return {
@@ -42,18 +35,18 @@ function getPerms(target: Role | GuildMember): Array<EmbedFieldData> {
             inline: true
          };
       });
+
+   return [
+      new MessageEmbed().addFields(permData.slice(0, 16)),
+      new MessageEmbed().addFields(permData.slice(16, 31))
+   ];
 }
 
 async function createEmbed(
    channel: TextChannel,
-   perms: Array<EmbedFieldData>,
+   embeds: MessageEmbed[],
    target: GuildMember | Role
 ) {
-   const embeds = [
-      new MessageEmbed().addFields(perms.slice(0, 16)),
-      new MessageEmbed().addFields(perms.slice(16, 31))
-   ];
-
    const avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
 
    await new Embeds()
@@ -61,10 +54,9 @@ async function createEmbed(
       .setChannel(channel)
       .setPageIndicator('footer')
       .setTitle('Permissions')
-      .setThumbnail(avatarUrl)
       .setDescription(`Permissions for ${target}`)
-      .setFooter('Test Footer Text')
-      .setColor(embedColor)
+      .setThumbnail(avatarUrl)
+      .setFooter('')
       .build();
 }
 
