@@ -38,7 +38,7 @@ function getPerms(target: Role | GuildMember): MessageEmbed[] {
 
    return [
       new MessageEmbed().addFields(permData.slice(0, 16)),
-      new MessageEmbed().addFields(permData.slice(16, 31))
+      new MessageEmbed().addFields(permData.slice(16))
    ];
 }
 
