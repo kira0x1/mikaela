@@ -54,7 +54,7 @@ async function createEmbed(
       new MessageEmbed().addFields(perms.slice(16, 31))
    ];
 
-   let avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
+   const avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
 
    await new Embeds()
       .setArray(embeds)
