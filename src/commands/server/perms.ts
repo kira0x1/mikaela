@@ -1,6 +1,14 @@
 import { ICommand } from '../../classes/Command';
-import { GuildMember, Message, MessageEmbed, Role } from 'discord.js';
-import { createFooter } from '../../util/styleUtil';
+import {
+   EmbedFieldData,
+   GuildMember,
+   Message,
+   MessageEmbed,
+   Role,
+   TextChannel
+} from 'discord.js';
+import { embedColor, sendErrorEmbed } from '../../util/styleUtil';
+import { Embeds } from 'discord-paginationembed';
 
 export const command: ICommand = {
    name: 'permissions',
@@ -9,33 +17,56 @@ export const command: ICommand = {
    args: false,
 
    async execute(message, args) {
-      let target: Role | GuildMember = await getTarget(message, args);
+      if (!(message.channel instanceof TextChannel)) {
+         return await sendErrorEmbed(
+            message,
+            'This command can only be used in guild channels.'
+         );
+      }
 
-      const embed = await createEmbed(message, target);
-
-      await message.channel.send(embed);
+      const target: Role | GuildMember = await getTarget(message, args);
+      const perms = getPerms(target);
+      await createEmbed(message.channel, perms, target);
    }
 };
 
-async function createEmbed(
-   message: Message,
-   target: GuildMember | Role
-): Promise<MessageEmbed> {
-   const embed = createFooter(message);
-   embed.title = 'Permissions';
-   embed.description = `Permissions for ${target}`;
+function getPerms(target: Role | GuildMember): Array<EmbedFieldData> {
+   const perms = target.permissions.serialize(true);
 
-   if (target instanceof GuildMember) {
-      embed.setThumbnail(target.user.displayAvatarURL({ dynamic: true }));
-   }
-
-   const perms = target.permissions.serialize();
-
-   Object.entries(perms)
+   return Object.entries(perms)
       .sort()
-      .forEach(p => embed.addField(formatPermName(p[0]), p[1] ? 'Yes' : 'No', true));
+      .map(p => {
+         return {
+            name: formatPermName(p[0]),
+            value: p[1] ? 'Yes' : 'No',
+            inline: true
+         };
+      });
+}
 
-   return embed;
+async function createEmbed(
+   channel: TextChannel,
+   perms: Array<EmbedFieldData>,
+   target: GuildMember | Role
+) {
+   const embeds = [
+      new MessageEmbed().addFields(perms.slice(0, 16)),
+      new MessageEmbed().addFields(perms.slice(16, 31))
+   ];
+
+   const avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
+
+   await new Embeds()
+      .setArray(embeds)
+      .setChannel(channel)
+      .setPageIndicator('footer')
+      .setPage(1)
+      .setTitle('Permissions')
+      .setThumbnail(avatarUrl)
+      .setDescription(`Permissions for ${target}`)
+      .setFooter('Test Footer Text')
+      .setColor(embedColor)
+      .build();
 }
 
 function formatPermName(permName: string): string {
