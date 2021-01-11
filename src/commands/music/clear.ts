@@ -16,7 +16,7 @@ export const command: ICommand = {
         player.clearQueue();
         const embed = new MessageEmbed().setAuthor(
             message.author.username,
-            message.author.avatarURL({ dynamic: true })
+            message.author.displayAvatarURL({ dynamic: true })
         );
         embed.setColor(embedColor);
         embed.setTitle(`Queue cleared by ${message.author.username}`);

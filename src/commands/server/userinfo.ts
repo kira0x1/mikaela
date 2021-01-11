@@ -1,7 +1,7 @@
+import { GuildMember, Message, MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { getTargetMember } from '../../util/musicUtil';
-import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
-import { GuildMember, Message, MessageEmbed } from 'discord.js';
+import { createFooter, QuickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
    name: 'userinfo',
@@ -15,7 +15,7 @@ export const command: ICommand = {
             : message.member;
 
       if (!target)
-         return sendErrorEmbed(message, `Could not find user \`${args.join(' ')}\``);
+         return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
       const embed = await createEmbed(message, target);
       message.channel.send(embed);
