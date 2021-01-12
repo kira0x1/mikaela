@@ -1,7 +1,7 @@
 import { GuildMember, Message, MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { getTargetMember } from '../../util/musicUtil';
 import { createFooter, QuickEmbed } from '../../util/styleUtil';
+import { getTargetMember } from '../../util/discordUtil';
 
 export const command: ICommand = {
    name: 'userinfo',
