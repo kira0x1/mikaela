@@ -2,9 +2,10 @@ import { Message, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { findOrCreate } from '../../db/userController';
-import { getPlayer, getTarget } from '../../util/musicUtil';
+import { getPlayer } from '../../util/musicUtil';
 import { createFooter, QuickEmbed } from '../../util/styleUtil';
 import { playSong } from '../music/play';
+import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
     name: 'play',
@@ -41,9 +42,9 @@ export const command: ICommand = {
             player.addSong(firstSong, message)
 
             embed.setTitle(`Playing ${amount} ${amount > 1 ? 'songs' : 'song'} from ${res.target.username}`)
-               .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`)
-               .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
-               .setThumbnail(res.target.displayAvatarURL({ dynamic: true }));
+                .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`)
+                .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
+                .setThumbnail(res.target.displayAvatarURL({ dynamic: true }));
 
             for (let i = 0; i < amount - 1; i++) {
                 const song = res.song[i]
