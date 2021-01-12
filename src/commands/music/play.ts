@@ -65,7 +65,7 @@ export async function playSong(message: Message, song: ISong) {
 
    //Tell the user
    let embed = new MessageEmbed()
-      .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+      .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
       .setURL(song.url)

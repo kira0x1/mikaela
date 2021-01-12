@@ -77,7 +77,7 @@ client.on('ready', () => {
    logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
-client.on('message', message => {
+client.on('message', async message => {
    // Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || !message.content.startsWith(prefix)) {
       return;
@@ -172,6 +172,7 @@ client.on('message', message => {
          return sendErrorEmbed(message, `You don\'t have permission to do that`);
       }
    }
+
 
    // Finally if all checks have passed then try executing the command.
    try {

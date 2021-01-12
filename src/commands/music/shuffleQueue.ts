@@ -26,7 +26,7 @@ export const command: ICommand = {
         player.queue.shuffle();
 
         const embed = new MessageEmbed()
-            .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+           .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
             .setTitle(`Shuffled Queue!`)
             .setColor(embedColor)
 

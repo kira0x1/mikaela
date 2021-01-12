@@ -28,7 +28,7 @@ export const command: ICommand = {
 
         //Create an embed to tell the user the stream has been paused
         const embed = new MessageEmbed()
-            .setAuthor(message.author.username, message.author.avatarURL({ dynamic: true }))
+           .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
             .setTitle(`Resuming ${player.currentlyPlaying.title}`)
             .setColor(embedColor);
 

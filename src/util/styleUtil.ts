@@ -30,8 +30,8 @@ export function createFooter(message: Message): MessageEmbed {
     const author = message.author
 
     const embed = new MessageEmbed()
-        .setColor(embedColor)
-        .setFooter(author.username, author.avatarURL({ dynamic: true }))
+       .setColor(embedColor)
+       .setFooter(author.username, author.displayAvatarURL({ dynamic: true }))
         .setTimestamp(Date.now());
 
     return embed;
