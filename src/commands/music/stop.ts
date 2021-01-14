@@ -4,7 +4,7 @@ import { ICommand } from '../../classes/Command';
 export const command: ICommand = {
     name: 'stop',
     description: 'stops the music player',
-    aliases: ['end', 's', 'disconnect', 'leave', 'quit'],
+    aliases: ['end', 'dc', 's', 'disconnect', 'leave', 'quit'],
 
     execute(message, args) {
         const player = getPlayer(message);
