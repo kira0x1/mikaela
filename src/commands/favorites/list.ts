@@ -4,8 +4,8 @@ import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
 import { IUser } from '../../db/dbUser';
 import { findOrCreate } from '../../db/userController';
-import { getTarget } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
     name: 'list',

@@ -1,8 +1,9 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../db/userController';
-import { getPlayer, getTarget } from '../../util/musicUtil';
+import { getPlayer} from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
     name: 'shuffle',
