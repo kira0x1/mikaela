@@ -32,7 +32,7 @@ export async function findOrCreate(user: DiscordUser) {
 function converUserToIUser(user: DiscordUser) {
    return {
       username: user.username,
-      discordId: user.id,
+      id: user.id,
       tag: user.tag,
       roles: [],
       favorites: []
