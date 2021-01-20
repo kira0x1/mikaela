@@ -77,7 +77,14 @@ export class Player {
       this.isPlaying = false;
       this.currentlyPlaying = undefined;
       this.inVoice = false;
-      this.voiceChannel?.leave();
+
+      try {
+         if (this.voiceChannel) {
+            this.voiceChannel.leave()
+         }
+      } catch (error) {
+         console.warn(`Error trying to leave vc in guild ${this.guild.name}`)
+      }
    }
 
    clearQueue() {
