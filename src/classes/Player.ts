@@ -74,6 +74,7 @@ export class Player {
 
    leave() {
       this.clearQueue();
+      this.isPlaying = false;
       this.currentlyPlaying = undefined;
       this.inVoice = false;
       this.voiceChannel?.leave();
@@ -150,6 +151,7 @@ export class Player {
             volume: 0.2
          })
 
+         this.isPlaying = true;
          // this.stream.on('finish', () => this.playNext());
          this.stream.on('speaking', (speaking) => {
             if (!speaking) this.playNext()
