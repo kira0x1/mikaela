@@ -7,7 +7,7 @@ import { addFavoriteToUser } from '../db/userController';
 import { embedColor } from './styleUtil';
 import { heartEmoji, initEmoji } from './discordUtil';
 
-const players: Collection<string, Player> = new Collection();
+export const players: Collection<string, Player> = new Collection();
 
 export function ConvertDuration(duration_seconds: number | string) {
    let minutes: number = Math.floor(Number(duration_seconds) / 60);
