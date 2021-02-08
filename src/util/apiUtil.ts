@@ -28,7 +28,7 @@ export async function getSong(query: string): Promise<ISong | ytpl.Result> {
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.search(query, { limit: 1 });
+      const songSearch = await YouTube.search(query, { type: 'video', limit: 1 });
       if (!songSearch) return;
 
       //If a video is found then get details and convert it to ISong
