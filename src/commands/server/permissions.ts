@@ -1,7 +1,9 @@
-import { ICommand } from '../../classes/Command';
-import { GuildMember, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
-import { sendErrorEmbed } from '../../util/styleUtil';
 import { Embeds } from 'discord-paginationembed';
+import { GuildMember, MessageEmbed, Role, TextChannel } from 'discord.js';
+import ms from 'ms';
+import { ICommand } from '../../classes/Command';
+import { getTargetMember } from '../../util/discordUtil';
+import { sendErrorEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
    name: 'permissions',
@@ -17,7 +19,27 @@ export const command: ICommand = {
          );
       }
 
-      const target: Role | GuildMember = await getTarget(message, args);
+      let target: Role | GuildMember
+
+      const hasRolesFlag = args.includes('-r')
+
+      if (!args.length) {
+         target = message.member
+      }
+      else if (hasRolesFlag) {
+         const start = args.indexOf('-r') + 1
+         const query = args.slice(start, args.length).join(' ').toLowerCase()
+         target = message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
+      } else {
+         const query = args.join(' ').toLowerCase()
+         target =
+            message.mentions.roles?.first() ||
+            await getTargetMember(message, query) ||
+            message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
+      }
+
+      if (!target) return await sendErrorEmbed(message, `Could not find ${hasRolesFlag ? 'Role' : 'Member'}`)
+
       const perms = getPerms(target);
       await createEmbed(message.channel, perms, target);
    }
@@ -27,7 +49,7 @@ function getPerms(target: Role | GuildMember): MessageEmbed[] {
    const perms = target.permissions.serialize(true);
 
    const permData = Object.entries(perms)
-      .sort()
+      .sort(p => { if (p[1]) return -1 })
       .map(p => {
          return {
             name: formatPermName(p[0]),
@@ -56,6 +78,7 @@ async function createEmbed(
       .setTitle('Permissions')
       .setDescription(`Permissions for ${target}`)
       .setThumbnail(avatarUrl)
+      .setTimeout(ms('1h'))
       .setFooter('')
       .build();
 }
@@ -64,15 +87,15 @@ function formatPermName(permName: string): string {
    return permName.charAt(0) + permName.split('_').join(' ').toLowerCase().slice(1);
 }
 
-async function getTarget(message: Message, args: string[]): Promise<GuildMember | Role> {
-   if (args.length > 0) {
-      return (
-         message.mentions.members?.first() ||
-         message.mentions.roles?.first() ||
-         (await message.guild.roles.fetch(args[0]).catch(() => undefined)) ||
-         (await message.guild.members.fetch(args[0]).catch(() => undefined))
-      );
-   }
+// async function getTarget(message: Message, args: string[]): Promise<GuildMember | Role> {
+//    if (args.length > 0) {
+//       return (
+//          message.mentions.members?.first() ||
+//          message.mentions.roles?.first() ||
+//          (await message.guild.roles.fetch(args[0]).catch(() => undefined)) ||
+//          (await message.guild.members.fetch(args[0]).catch(() => undefined))
+//       );
+//    }
 
-   return message.member;
-}
+//    return message.member;
+// }
