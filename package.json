@@ -30,9 +30,9 @@
     "url": "https://github.com/kira0x1/mikaela/issues"
   },
   "scripts": {
-    "start": "node . --prefix=!",
+    "start": "node .",
     "start-prod": "node . --env=production",
-    "skipdb": "node . --prefix=! --skipDB",
+    "skipdb": "node . --skipDB",
     "watch": "tsc --watch --noEmit --project tsconfig.json"
   },
   "dependencies": {
