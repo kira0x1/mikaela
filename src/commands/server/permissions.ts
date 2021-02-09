@@ -86,16 +86,3 @@ async function createEmbed(
 function formatPermName(permName: string): string {
    return permName.charAt(0) + permName.split('_').join(' ').toLowerCase().slice(1);
 }
-
-// async function getTarget(message: Message, args: string[]): Promise<GuildMember | Role> {
-//    if (args.length > 0) {
-//       return (
-//          message.mentions.members?.first() ||
-//          message.mentions.roles?.first() ||
-//          (await message.guild.roles.fetch(args[0]).catch(() => undefined)) ||
-//          (await message.guild.members.fetch(args[0]).catch(() => undefined))
-//       );
-//    }
-
-//    return message.member;
-// }
