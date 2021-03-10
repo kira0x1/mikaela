@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { connect, connection, ConnectOptions } from 'mongoose';
 import { logger } from '../app';
 import { dbURI } from '../config';
-import { CacheBlockedList } from './dbBlocked';
+import { CacheBlockedList } from './models/Blocked';
 
 const mongooseOptions: ConnectOptions = {
    useNewUrlParser: true,

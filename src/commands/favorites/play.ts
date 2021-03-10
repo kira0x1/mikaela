@@ -1,7 +1,7 @@
 import { Message, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
-import { findOrCreate } from '../../db/userController';
+import { findOrCreate } from '../../database/api/userApi';
 import { getPlayer } from '../../util/musicUtil';
 import { createFooter, QuickEmbed } from '../../util/styleUtil';
 import { playSong } from '../music/play';

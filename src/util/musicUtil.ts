@@ -3,7 +3,7 @@ import { Client, Collection, Message, MessageEmbed, MessageReaction, StreamDispa
 import ms from 'ms';
 import { logger } from '../app';
 import { IDuration, ISong, Player } from '../classes/Player';
-import { addFavoriteToUser } from '../db/userController';
+import { addFavoriteToUser } from '../database/api/userApi';
 import { embedColor } from './styleUtil';
 import { heartEmoji, initEmoji } from './discordUtil';
 

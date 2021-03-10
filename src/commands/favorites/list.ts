@@ -2,8 +2,8 @@ import { Collection, Message, MessageEmbed, MessageReaction, User } from 'discor
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { ISong } from '../../classes/Player';
-import { IUser } from '../../db/dbUser';
-import { findOrCreate } from '../../db/userController';
+import { IUser } from '../../database/models/User';
+import { findOrCreate } from '../../database/api/userApi';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
