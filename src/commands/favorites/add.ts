@@ -1,6 +1,6 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { addFavoriteToUser } from '../../db/userController';
+import { addFavoriteToUser } from '../../database/api/userApi';
 import { getSong, isPlaylist } from '../../util/apiUtil';
 import { QuickEmbed } from '../../util/styleUtil';
 

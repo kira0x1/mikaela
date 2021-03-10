@@ -1,8 +1,8 @@
 import { Message, User as DiscordUser } from 'discord.js';
-import { logger } from '../app';
-import { ISong } from '../classes/Player';
-import { QuickEmbed } from '../util/styleUtil';
-import { IUser, User } from './dbUser';
+import { logger } from '../../app';
+import { ISong } from '../../classes/Player';
+import { QuickEmbed } from '../../util/styleUtil';
+import { IUser, User } from '../models/User';
 
 export async function findUser(id: string): Promise<IUser> {
    try {

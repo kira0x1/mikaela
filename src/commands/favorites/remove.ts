@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { findOrCreate } from '../../db/userController';
+import { findOrCreate } from '../../database/api/userApi';
 import { getSong } from '../../util/apiUtil';
 import { QuickEmbed } from '../../util/styleUtil';
 

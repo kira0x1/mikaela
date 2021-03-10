@@ -1,6 +1,6 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { findOrCreate } from '../../db/userController';
+import { findOrCreate } from '../../database/api/userApi';
 import { getPlayer} from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';

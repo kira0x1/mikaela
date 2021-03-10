@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { AddBlocked, blockedUsers } from '../../db/dbBlocked';
+import { AddBlocked, blockedUsers } from '../../database/models/Blocked';
 import { createFooter, QuickEmbed, wrap } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
