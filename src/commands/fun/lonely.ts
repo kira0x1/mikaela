@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 
-const koroneLink = 'https://cdn.discordapp.com/attachments/265256381437706240/758941396991213588/looneeely.mp4'
+const koroneLink = 'https://cdn.discordapp.com/attachments/702091543514710027/820638857396617226/Korone_you_are_lonely_lonely_lonely.mp4'
 
 export const command: ICommand = {
     name: 'lonely',
