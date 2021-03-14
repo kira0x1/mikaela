@@ -1,5 +1,5 @@
 import { Embeds } from 'discord-paginationembed';
-import { GuildMember, MessageEmbed, Role, TextChannel } from 'discord.js';
+import { GuildMember, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { getTargetMember } from '../../util/discordUtil';
@@ -19,31 +19,37 @@ export const command: ICommand = {
          );
       }
 
-      let target: Role | GuildMember
+      const target: Role | GuildMember = await findTarget(message, args)
 
-      const hasRolesFlag = args.includes('-r')
-
-      if (!args.length) {
-         target = message.member
+      if (!target) {
+         sendErrorEmbed(message, `Could not find ${args.includes('-r') ? 'Role' : 'Member'}`)
+         return
       }
-      else if (hasRolesFlag) {
-         const start = args.indexOf('-r') + 1
-         const query = args.slice(start, args.length).join(' ').toLowerCase()
-         target = message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
-      } else {
-         const query = args.join(' ').toLowerCase()
-         target =
-            message.mentions.roles?.first() ||
-            await getTargetMember(message, query) ||
-            message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
-      }
-
-      if (!target) return await sendErrorEmbed(message, `Could not find ${hasRolesFlag ? 'Role' : 'Member'}`)
 
       const perms = getPerms(target);
-      await createEmbed(message.channel, perms, target);
+      createEmbed(message.channel, perms, target);
    }
 };
+
+async function findTarget(message: Message, args: string[]) {
+   if (!args.length) {
+      return message.member
+   }
+
+   if (args.includes('-r')) {
+      const start = args.indexOf('-r') + 1
+      const query = args.slice(start, args.length).join(' ').toLowerCase()
+      return findRole(message, query)
+   }
+
+   const query = args.join(' ').toLowerCase()
+   return findRole(message, query) || await getTargetMember(message, query)
+
+}
+
+function findRole(message: Message, query: string) {
+   return message.mentions.roles?.first() || message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
+}
 
 function getPerms(target: Role | GuildMember): MessageEmbed[] {
    const perms = target.permissions.serialize(true);
