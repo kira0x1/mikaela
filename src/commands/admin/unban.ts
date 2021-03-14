@@ -2,6 +2,7 @@ import { ICommand } from '../../classes/Command';
 import { User } from 'discord.js';
 import { sendErrorEmbed } from '../../util/styleUtil';
 import { toEmbed, UserEventInfo, UserEventType } from '../../classes/UserEventInfo';
+import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
    name: 'unban',
@@ -13,17 +14,13 @@ export const command: ICommand = {
    botPerms: ['BAN_MEMBERS'],
 
    async execute(message, args) {
-      let user: User =
-         message.mentions.users?.first() ||
-         (await message.client.users.fetch(args[0]).catch(() => undefined));
+      const user = await getTarget(message, args[0])
 
       if (!user) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild
-         .fetchBan(user)
-         .catch(() => undefined);
+      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(user)
 
       if (!banInfo) {
          return sendErrorEmbed(message, `${user} is not banned`);
@@ -40,6 +37,6 @@ export const command: ICommand = {
          reason: reason
       };
 
-      await message.channel.send(toEmbed(message, eventInfo));
+      message.channel.send(toEmbed(message, eventInfo));
    }
 };

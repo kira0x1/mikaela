@@ -1,7 +1,8 @@
 import { ICommand } from '../../classes/Command';
-import { GuildMember, User } from 'discord.js';
+import { User } from 'discord.js';
 import { sendErrorEmbed } from '../../util/styleUtil';
 import { toEmbed, UserEventInfo, UserEventType } from '../../classes/UserEventInfo';
+import { getTargetMember } from '../../util/discordUtil';
 
 export const command: ICommand = {
    name: 'ban',
@@ -13,23 +14,20 @@ export const command: ICommand = {
    botPerms: ['BAN_MEMBERS'],
 
    async execute(message, args) {
-      let user: User =
-         message.mentions.users?.first() ||
-         (await message.client.users.fetch(args[0]).catch(() => undefined));
+      const member = await getTargetMember(message, args[0])
 
-      if (!user) {
+      if (!member) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
       }
-      if (user instanceof GuildMember && !user.bannable) {
-         return sendErrorEmbed(message, `Cannot kick ${user}`);
+
+      if (!member.bannable) {
+         return sendErrorEmbed(message, `Cannot kick ${member}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild
-         .fetchBan(user)
-         .catch(() => undefined);
+      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(member)
 
       if (banInfo) {
-         return sendErrorEmbed(message, `${user} is already banned`);
+         return sendErrorEmbed(message, `${member} is already banned`);
       }
 
       const deleteMessageDays = +args.slice(-1) || 0;
@@ -43,7 +41,7 @@ export const command: ICommand = {
 
       const reason = args.slice(1, -1).join(' ');
 
-      await message.guild.members.ban(user, {
+      await message.guild.members.ban(member, {
          reason: reason,
          days: deleteMessageDays
       });
@@ -51,7 +49,7 @@ export const command: ICommand = {
       let eventInfo: UserEventInfo = {
          type: UserEventType.Ban,
          issuer: message.author,
-         receiver: user,
+         receiver: member.user,
          deleteMessageDays: deleteMessageDays,
          reason: reason
       };
