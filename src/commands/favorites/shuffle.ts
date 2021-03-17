@@ -1,7 +1,7 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
-import { getPlayer} from '../../util/musicUtil';
+import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
@@ -46,19 +46,19 @@ export const command: ICommand = {
 
         const title = `Shuffling ${amount} ${amount > 1 ? 'songs' : 'song'} from ${user.username}`;
 
-        const firstSong = user.favorites[Math.floor(Math.random() * user.favorites.length)];
+        const random = randomUniqueArray(user.favorites)
+        const firstSong = random()
         player.addSong(firstSong, message);
 
         embed.setTitle(title);
-        embed.setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
+        embed.addField(`1 ${firstSong.title}`, firstSong.url);
         embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
         embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
-        for (let i = 0; i < amount - 1; i++) {
-            let rand = Math.floor(Math.random() * user.favorites.length);
-            const song = user.favorites[rand];
+        for (let i = 1; i < amount; i++) {
+            const song = random()
             embed.addField(`${i + 1} ${song.title}`, song.url);
-            player.queue.addSong(song);
+            player.queue.addSong(song)
         }
 
         message.channel.send(embed);
