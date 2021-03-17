@@ -94,3 +94,19 @@ export async function createFavoriteCollector(song: ISong, message: Message) {
       message.reactions.removeAll().catch(err => logger.log('error', err));
    });
 }
+
+export function randomUniqueArray<T>(array: Array<T>) {
+   const random = randomNumber(0, array.length - 1);
+   return () => array[random()];
+}
+
+export function randomNumber(min: number, max: number) {
+   let previousValue;
+   return function random() {
+      const number = Math.floor(
+         (Math.random() * (max - min + 1)) + min
+      );
+      previousValue = number === previousValue && min !== max ? random() : number;
+      return previousValue;
+   };
+}
