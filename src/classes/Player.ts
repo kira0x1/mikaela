@@ -19,6 +19,8 @@ export class Player {
    client: Client;
    volumeDisabled: boolean = false;
    lastPlayed: ISong | undefined;
+   ytdlHighWaterMark: number = 1 << 25
+   vcHighWaterMark: number = 1 << 18
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
@@ -144,7 +146,7 @@ export class Player {
       const opusStream = ytdl(song.url, {
          filter: 'audioonly',
          opusEncoded: true,
-         highWaterMark: 1 << 25,
+         highWaterMark: this.ytdlHighWaterMark,
          dlChunkSize: 0,
          encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
       })
@@ -153,9 +155,9 @@ export class Player {
          const conn = await this.voiceChannel.join();
 
          this.stream = conn.play(opusStream, {
-            highWaterMark: 1 << 15,
+            highWaterMark: this.vcHighWaterMark,
             type: 'opus',
-            volume: 0.2
+            volume: this.volume
          })
 
          this.isPlaying = true;
