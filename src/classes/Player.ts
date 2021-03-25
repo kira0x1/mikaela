@@ -10,7 +10,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 2;
+   volume: number = 1.6;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -20,7 +20,7 @@ export class Player {
    volumeDisabled: boolean = false;
    lastPlayed: ISong | undefined;
    ytdlHighWaterMark: number = 1 << 25
-   vcHighWaterMark: number = 1 << 18
+   vcHighWaterMark: number = 1 << 16
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
