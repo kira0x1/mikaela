@@ -10,7 +10,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 1.6;
+   volume: number = 1.5;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
@@ -20,7 +20,7 @@ export class Player {
    volumeDisabled: boolean = false;
    lastPlayed: ISong | undefined;
    ytdlHighWaterMark: number = 1 << 25
-   vcHighWaterMark: number = 1 << 16
+   vcHighWaterMark: number = 1 << 14
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
@@ -158,8 +158,10 @@ export class Player {
          this.stream = conn.play(opusStream, {
             highWaterMark: this.vcHighWaterMark,
             type: 'opus',
-            volume: this.volume
+            volume: this.volume / 10
          })
+
+         this.stream.setVolumeLogarithmic(this.volume / 10);
 
          this.isPlaying = true;
          // this.stream.on('finish', () => this.playNext());
