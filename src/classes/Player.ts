@@ -153,6 +153,7 @@ export class Player {
 
       try {
          const conn = await this.voiceChannel.join();
+         conn.voice.setSelfDeaf(true)
 
          this.stream = conn.play(opusStream, {
             highWaterMark: this.vcHighWaterMark,
