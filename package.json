@@ -33,7 +33,8 @@
     "start": "node .",
     "start-prod": "node . --env=production",
     "skipdb": "node . --skipDB",
-    "watch": "tsc --watch --noEmit --project tsconfig.json"
+    "watch": "tsc --watch --noEmit --project tsconfig.json",
+    "clean": "rimraf out"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
@@ -57,7 +58,8 @@
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
-    "@types/node": "^14.14.37"
+    "@types/node": "^14.14.37",
+    "rimraf": "^3.0.2"
   },
   "nodemonConfig": {
     "events": {
