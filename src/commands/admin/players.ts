@@ -8,7 +8,7 @@ export const command: ICommand = {
     name: 'Players',
     description: 'List all players',
     aliases: ['streams'],
-    perms: ['admin'],
+    perms: ['kira'],
 
     execute(message, args) {
         const embed = createFooter(message).setTitle(`Player: ${players.size}`)

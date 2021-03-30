@@ -9,15 +9,14 @@ export const command: ICommand = {
    aliases: ['v'],
    usage: '[- | + | number]\n\nDisplays the volume if no arguments given',
    hidden: true,
-   perms: ['kira'],
+   perms: ['mod'],
    isDisabled: false,
 
    execute(message, args) {
-      // if (!args.find(arg => arg === '-f')) return;
-
       const arg = args.shift();
       const player = getPlayer(message);
-      if (!player) return logger.log('info','no player found while using volume command');
+      if (!player)
+         return logger.log('info', 'no player found while using volume command');
 
       if (!arg) return QuickEmbed(message, `Volume is currently ${player.volume}`);
 

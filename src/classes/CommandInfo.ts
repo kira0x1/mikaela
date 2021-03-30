@@ -1,12 +1,12 @@
-import { ICommand } from './Command';
+import { ICommand, Permission } from './Command';
 
 export interface CommandInfo {
-    name: string;
-    description: string;
-    commands: ICommand[];
-    aliases: string[];
-    perms?: string[]
-    hidden?: boolean;
-    requiresPrefix?: boolean;
-    override?: string;
+   name: string;
+   description: string;
+   commands: ICommand[];
+   aliases: string[];
+   perms?: Permission[];
+   hidden?: boolean;
+   requiresPrefix?: boolean;
+   override?: string;
 }

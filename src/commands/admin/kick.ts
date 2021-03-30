@@ -7,7 +7,6 @@ export const command: ICommand = {
    name: 'kick',
    description: 'Kick a user',
    aliases: ['kick'],
-   perms: [],
    args: true,
    userPerms: ['KICK_MEMBERS'],
    botPerms: ['KICK_MEMBERS'],

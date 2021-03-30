@@ -9,7 +9,7 @@ export const command: ICommand = {
    name: 'Block',
    description: 'Block user from using the bot',
    aliases: ['blocked', 'bl'],
-   perms: ['admin'],
+   perms: ['mod'],
    args: true,
 
    async execute(message, args) {
