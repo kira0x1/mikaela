@@ -27,7 +27,7 @@ function displayAll(message: Message) {
     //reference this later to check for ungrouped commands
     commandGroups.map(grp => {
         grp.map(cmd => {
-            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden && !cmd.isDisabled) grouped.push(cmd);
+            if (hasPerms(message.member, cmd.name) && !cmd.hidden && !cmd.isDisabled) grouped.push(cmd);
         });
     });
 
@@ -40,14 +40,14 @@ function displayAll(message: Message) {
     const ungrouped = commandGroups.get('ungrouped');
     if (ungrouped) {
         ungrouped.map(cmd => {
-            if (hasPerms(message.author.id, cmd.name) && !cmd.hidden)
+            if (hasPerms(message.member, cmd.name) && !cmd.hidden)
                 embed.addField(cmd.name, cmd.description);
         });
     }
 
     //Add all group commands info to the embed
     commandInfos.map(info => {
-        if (hasPerms(message.author.id, info.name)) embed.addField(info.name, info.description);
+        if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description);
     });
 
     message.channel.send(embed);
@@ -66,7 +66,7 @@ function displayOne(message: Message, query: string) {
         return;
     }
 
-    if (!hasPerms(message.author.id, query))
+    if (!hasPerms(message.member, query))
         return message.author.send(`You do not have permission to use ${wrap(command?.name || info?.name)}`);
 
     //Create embed
