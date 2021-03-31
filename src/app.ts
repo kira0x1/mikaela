@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-import { args as cmdArgs, isProduction, prefix, token } from './config';
+import { args as cmdArgs, isProduction, prefix, token, perms } from './config';
 import { connectToDB } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
@@ -12,12 +12,11 @@ import {
    findCommand,
    findCommandGroup,
    getCommandOverride,
-   hasPerms,
-   sendArgsError,
-   userHasPerm
+   sendArgsError
 } from './util/commandUtil';
 import { initPlayers } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
+import { hasPerms } from './util/commandUtil';
 
 export const logger = createLogger({
    transports: [new transports.Console()],
@@ -87,7 +86,7 @@ client.on('message', async message => {
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
-   if (message.channel.type === 'dm' && !userHasPerm(message.author.id, 'admin')) {
+   if (message.channel.type === 'dm' && !perms.admin.users.includes(message.author.id)) {
       return;
    }
 
@@ -153,7 +152,7 @@ client.on('message', async message => {
    // If the command is disabled then return
    if (command.isDisabled) return;
 
-   if (!hasPerms(message.author.id, commandName))
+   if (!hasPerms(message.member, commandName))
       return message.author.send(
          `You do not have permission to use ${wrap(command.name)}`
       );
@@ -167,7 +166,7 @@ client.on('message', async message => {
    if (message.guild) {
       // Check bot permissions
       if (command.botPerms && !message.guild.me.hasPermission(command.botPerms)) {
-         return sendErrorEmbed(message, 'I don\'t have permissions for that');
+         return sendErrorEmbed(message, "I don't have permissions for that");
       }
 
       // Check user permissions
@@ -175,7 +174,6 @@ client.on('message', async message => {
          return sendErrorEmbed(message, `You don\'t have permission to do that`);
       }
    }
-
 
    // Finally if all checks have passed then try executing the command.
    try {

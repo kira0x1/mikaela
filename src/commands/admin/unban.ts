@@ -8,7 +8,6 @@ export const command: ICommand = {
    name: 'unban',
    description: 'Unban a user',
    aliases: ['unban'],
-   perms: [],
    args: true,
    userPerms: ['BAN_MEMBERS'],
    botPerms: ['BAN_MEMBERS'],

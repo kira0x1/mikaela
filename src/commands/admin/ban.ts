@@ -8,13 +8,12 @@ export const command: ICommand = {
    name: 'ban',
    description: 'Ban a user',
    aliases: ['ban'],
-   perms: [],
    args: true,
    userPerms: ['BAN_MEMBERS'],
    botPerms: ['BAN_MEMBERS'],
 
    async execute(message, args) {
-      const member = await getTargetMember(message, args[0])
+      const member = await getTargetMember(message, args[0]);
 
       if (!member) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
@@ -24,7 +23,9 @@ export const command: ICommand = {
          return sendErrorEmbed(message, `Cannot kick ${member}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(member)
+      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(
+         member
+      );
 
       if (banInfo) {
          return sendErrorEmbed(message, `${member} is already banned`);
