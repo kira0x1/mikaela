@@ -218,4 +218,5 @@ export interface IDuration {
    minutes: string;
    hours: string;
    duration: string;
+   totalSeconds: number
 }

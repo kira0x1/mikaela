@@ -6,6 +6,7 @@ import { IDuration, ISong, Player } from '../classes/Player';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { embedColor } from './styleUtil';
 import { heartEmoji, initEmoji } from './discordUtil';
+import createBar from 'string-progressbar';
 
 export const players: Collection<string, Player> = new Collection();
 
@@ -20,7 +21,8 @@ export function ConvertDuration(duration_seconds: number | string) {
       seconds: seconds.toString(),
       minutes: minutes.toString(),
       hours: hours.toString(),
-      duration: `${minutes}:${seconds}`
+      duration: `${minutes}:${seconds}`,
+      totalSeconds: Number(duration_seconds)
    };
 
    return duration;
@@ -68,12 +70,16 @@ export function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Pl
 
    let prettyTime = minutes.toFixed(0) + ':' + seconds;
 
+   const total = duration.totalSeconds
+   const current = streamTime
+   const songBar = createBar(total, current, 20)[0]
+
    //Create embed
    return new MessageEmbed()
       .setColor(embedColor)
       .setTitle('Playing: ' + player.currentlyPlaying.title)
       .setURL(player.currentlyPlaying.url)
-      .addField(`Duration`, `${prettyTime} / ${duration.duration}`);
+      .addField(`${prettyTime} / ${duration.duration}`, songBar)
 }
 
 export async function createFavoriteCollector(song: ISong, message: Message) {
