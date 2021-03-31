@@ -7,6 +7,7 @@ import { addFavoriteToUser } from '../database/api/userApi';
 import { embedColor } from './styleUtil';
 import { heartEmoji, initEmoji } from './discordUtil';
 import createBar from 'string-progressbar';
+import { getInfo } from 'ytdl-core';
 
 export const players: Collection<string, Player> = new Collection();
 
@@ -59,7 +60,7 @@ export function findPlayer(guildId: string): Player {
    return players.get(guildId);
 }
 
-export function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player) {
+export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player) {
    const streamTime = (stream.streamTime - stream.pausedTime) / 1000;
    const minutes = Math.floor(streamTime / 60);
 
@@ -70,7 +71,13 @@ export function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Pl
 
    let prettyTime = minutes.toFixed(0) + ':' + seconds;
 
-   const total = duration.totalSeconds
+   let total = duration.totalSeconds
+   if (!total) {
+      const song = await getInfo(player.currentlyPlaying.url)
+      total = Number(song.videoDetails.lengthSeconds)
+      player.currentlyPlaying.duration.totalSeconds = total
+   }
+
    const current = streamTime
    const songBar = createBar(total, current, 20)[0]
 
