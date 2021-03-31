@@ -94,10 +94,7 @@ export function hasPermission(member: GuildMember, permission: Permission) {
             checkOwner: true
          });
       case 'mod':
-         return member.hasPermission(modperms, {
-            checkAdmin: true,
-            checkOwner: true
-         });
+         return member.permissions.any(modperms, true)
       case 'kira':
          return member.id === perms.kira.users[0];
    }
@@ -119,8 +116,7 @@ export function checkCooldown(command: ICommand, message: Message): boolean {
          const timeLeft = (expirationTime - now) / 1000;
 
          author.send(
-            `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${
-               command.name
+            `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name
             }\` command.`
          );
 
