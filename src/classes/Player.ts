@@ -20,7 +20,7 @@ export class Player {
    volumeDisabled: boolean = false;
    lastPlayed: ISong | undefined;
    ytdlHighWaterMark: number = 1 << 25
-   vcHighWaterMark: number = 1 << 14
+   vcHighWaterMark: number = 1 << 15
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
