@@ -54,7 +54,7 @@
     "ws": "^7.4.4",
     "youtube-sr": "^4.0.3",
     "ytdl-core": "^4.5.0",
-    "ytpl": "^2.0.5"
+    "ytpl": "^2.1.0"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
