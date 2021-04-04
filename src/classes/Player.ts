@@ -1,5 +1,5 @@
 import ytdl from 'discord-ytdl-core';
-import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
+import { Client, Guild, Message, StreamDispatcher, VoiceChannel, GuildMember } from 'discord.js';
 import { logger } from '../app';
 import { QuickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
@@ -211,6 +211,7 @@ export interface ISong {
    id: string;
    url: string;
    duration: IDuration;
+   playedBy: GuildMember | undefined
 }
 
 export interface IDuration {
