@@ -1,6 +1,8 @@
 import ytdl from 'discord-ytdl-core';
-import { Client, Guild, Message, StreamDispatcher, VoiceChannel, GuildMember } from 'discord.js';
+import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
+
 import { logger } from '../app';
+import { addSongToServer } from '../database/api/serverApi';
 import { QuickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 
@@ -175,6 +177,9 @@ export class Player {
    }
 
    async addSong(song: ISong, message: Message) {
+      song.playedBy = message.member.id
+      addSongToServer(this.guild, song)
+
       this.queue.addSong(song);
       this.play(song, message);
    }
@@ -211,7 +216,7 @@ export interface ISong {
    id: string;
    url: string;
    duration: IDuration;
-   playedBy: GuildMember | undefined
+   playedBy: string | undefined
 }
 
 export interface IDuration {
