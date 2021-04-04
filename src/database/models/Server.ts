@@ -4,7 +4,7 @@ import { ISong } from '../../classes/Player';
 export interface IServer extends Document {
     serverId: string,
     serverName: string,
-    lastPlayer: ISong[]
+    lastPlayed: ISong[]
 }
 
 export const ServerSchema = new Schema({
