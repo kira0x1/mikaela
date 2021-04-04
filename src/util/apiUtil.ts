@@ -52,7 +52,8 @@ function convertDetailsToSong(details: MoreVideoDetails): ISong {
       title: Util.escapeMarkdown(details.title),
       id: details.videoId,
       url: details.video_url,
-      duration: ConvertDuration(details.lengthSeconds)
+      duration: ConvertDuration(details.lengthSeconds),
+      playedBy: undefined
    };
 }
 

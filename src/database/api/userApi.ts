@@ -9,7 +9,7 @@ export async function findUser(id: string): Promise<IUser> {
       const user = await User.findOne({ id: id })
       return user
    } catch (error) {
-      logger.log('error', error)
+      logger.error('error', error)
    }
 }
 
@@ -19,7 +19,7 @@ export async function createUser(user: IUser | DiscordUser) {
       return await new User(user).save()
    }
    catch (error) {
-      logger.log('error', error)
+      logger.error('error', error)
    }
 }
 
