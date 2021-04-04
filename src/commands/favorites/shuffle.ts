@@ -29,7 +29,7 @@ export const command: ICommand = {
 
         const user = await findOrCreate(target);
 
-        if (!user.favorites) {
+        if (!user.favorites || user.favorites.length == 0) {
             return QuickEmbed(message, 'You have no favorites to shuffle');
         }
 
