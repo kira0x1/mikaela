@@ -58,7 +58,7 @@ export const command: ICommand = {
         for (let i = 1; i < amount; i++) {
             const song = random()
             embed.addField(`${i + 1} ${song.title}`, song.url);
-            player.queue.addSong(song)
+            player.addSong(song, message)
         }
 
         message.channel.send(embed);

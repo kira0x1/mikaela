@@ -52,8 +52,7 @@ export const command: ICommand = {
         if (page) {
             page.map((song, index) => {
                 const num = `**${index + 1}**  `;
-                let content = 'Duration: ' + song.duration.duration;
-                content += `  ${song.url}\n<@${song.playedBy}>`;
+                let content = `${song.url}\n<@${song.playedBy}>`
                 let title = `${num} **${song.title}**`;
 
                 embed.addField(title, content);
@@ -100,9 +99,7 @@ export const command: ICommand = {
 
             page.map((song, index) => {
                 const num = `**${currentPage * songsPerPage + (index + 1)}**`;
-                let content = 'Duration: ' + song.duration.duration;
-                content += `  ${song.url}\n<@${song.playedBy}>`;
-
+                let content = `${song.url}\n<@${song.playedBy}>`
                 let title = `${num} **${song.title}**`;
                 newEmbed.addField(title, content);
             });
