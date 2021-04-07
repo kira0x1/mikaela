@@ -8,12 +8,12 @@ import { createFooter, embedColor } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'LastPlayed',
-    aliases: ['previous', 'played'],
+    aliases: ['previous', 'played', 'lp'],
     description: 'Displays the last songs played in this server',
 
     async execute(message, args) {
         const server = await findOrCreateServer(message.guild)
-        const songs = server.lastPlayed
+        const songs = server.lastPlayed.reverse()
 
         const songsPerPage = 5
 
