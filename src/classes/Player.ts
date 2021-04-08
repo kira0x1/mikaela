@@ -171,6 +171,10 @@ export class Player {
             if (!speaking) this.playNext()
          })
 
+         this.stream.on('error', (err) => {
+            logger.error(err)
+         })
+
       } catch (err) {
          logger.log('warn', err);
       }
