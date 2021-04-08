@@ -161,6 +161,7 @@ export class Player {
             highWaterMark: this.vcHighWaterMark,
             type: 'opus',
             volume: this.volume / 10
+            bitrate: 128
          })
 
          this.stream.setVolumeLogarithmic(this.volume / 10);
