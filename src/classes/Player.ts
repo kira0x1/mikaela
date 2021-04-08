@@ -150,6 +150,7 @@ export class Player {
          opusEncoded: true,
          highWaterMark: this.ytdlHighWaterMark,
          dlChunkSize: 0,
+         quality: "highestaudio"
       })
 
       try {
