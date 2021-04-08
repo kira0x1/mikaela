@@ -160,7 +160,6 @@ export class Player {
          this.stream = conn.play(opusStream, {
             highWaterMark: this.vcHighWaterMark,
             type: 'opus',
-            volume: this.volume / 10
             bitrate: 128
          })
 
