@@ -35,7 +35,9 @@
     "skipdb": "node . --skipDB",
     "build": "tsc",
     "watch": "tsc --watch --noEmit --project tsconfig.json",
-    "clean": "rimraf out"
+    "clean": "rimraf out",
+    "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
+    "clean:all": "npm run clean && npm run clean:node"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
