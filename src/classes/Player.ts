@@ -12,7 +12,7 @@ const maxVolume: number = 10;
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 1.7;
+   volume: number = 2.2;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
