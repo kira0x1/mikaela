@@ -150,7 +150,6 @@ export class Player {
          opusEncoded: true,
          highWaterMark: this.ytdlHighWaterMark,
          dlChunkSize: 0,
-         encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
       })
 
       try {
