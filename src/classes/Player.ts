@@ -166,7 +166,7 @@ export class Player {
          this.stream.setVolumeLogarithmic(this.volume / 10);
 
          this.isPlaying = true;
-         // this.stream.on('finish', () => this.playNext());
+
          this.stream.on('speaking', (speaking) => {
             if (!speaking) this.playNext()
          })
