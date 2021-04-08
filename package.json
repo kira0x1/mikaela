@@ -33,6 +33,7 @@
     "start": "node .",
     "start-prod": "node . --env=production",
     "skipdb": "node . --skipDB",
+    "build": "tsc",
     "watch": "tsc --watch --noEmit --project tsconfig.json",
     "clean": "rimraf out"
   },
