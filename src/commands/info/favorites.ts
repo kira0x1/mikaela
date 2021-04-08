@@ -4,6 +4,6 @@ export const info: CommandInfo = {
     name: "Favorites",
     description: "Users favorite songs",
     commands: [],
-    aliases: ['fav', 'f'],
+    aliases: ['fav', 'f', 'ls'],
     override: 'list'
 }
