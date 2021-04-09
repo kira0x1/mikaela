@@ -216,10 +216,4 @@ export class Player {
 }
 
 
-export interface IDuration {
-   seconds: string;
-   minutes: string;
-   hours: string;
-   duration: string;
-   totalSeconds: number
 }
