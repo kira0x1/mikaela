@@ -2,7 +2,7 @@ import { Collection, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
 
 import { ICommand } from '../../classes/Command';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { findOrCreateServer } from '../../database/api/serverApi';
 import { createFooter, embedColor } from '../../util/styleUtil';
 
@@ -17,7 +17,7 @@ export const command: ICommand = {
 
         const songsPerPage = 5
 
-        const pages: Collection<number, ISong[]> = new Collection();
+        const pages: Collection<number, Song[]> = new Collection();
 
         let count = 0;
         let pageAtInLoop = 0;

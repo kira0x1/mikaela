@@ -1,7 +1,10 @@
+import chalk from 'chalk';
 import { Message } from 'discord.js';
+
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
-import { getSong } from '../../util/apiUtil';
+import { getSong, sendSongNotFoundEmbed } from '../../util/apiUtil';
 import { QuickEmbed } from '../../util/styleUtil';
 
 const searchAliases = ["--search", "-search", "-s", "--s"]
@@ -10,7 +13,7 @@ export const command: ICommand = {
     name: 'remove',
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],
-    usage: '[Position | Search]',
+    usage: '[Position | -s Search]',
     cooldown: 1.5,
 
     async execute(message, args) {
@@ -51,7 +54,7 @@ async function RemoveBySearch(query: string, message: Message) {
     const song = await getSong(query)
 
     if (!song) {
-        return QuickEmbed(message, `Song not found: "${query}"`)
+        return sendSongNotFoundEmbed(message, query)
     }
 
     let hasRemovedSong = false
@@ -62,11 +65,12 @@ async function RemoveBySearch(query: string, message: Message) {
 
         const songRemoved = user.favorites.splice(i, 1).shift()
         if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${i}`);
+        logger.info(chalk.bgGreen.bold(`Deleting song ${s.title}`))
         user.save()
         hasRemovedSong = true;
         break;
     }
 
-    if (hasRemovedSong)
-        QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
+    if (hasRemovedSong) QuickEmbed(message, `Removed song **${song.title}** from your favorites`, true);
+    else sendSongNotFoundEmbed(message, query)
 }

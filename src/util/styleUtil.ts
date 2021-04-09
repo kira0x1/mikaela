@@ -30,15 +30,16 @@ export function createFooter(message: Message): MessageEmbed {
     const author = message.author
 
     const embed = new MessageEmbed()
-       .setColor(embedColor)
-       .setFooter(author.username, author.displayAvatarURL({ dynamic: true }))
+        .setColor(embedColor)
+        .setFooter(author.username, author.displayAvatarURL({ dynamic: true }))
         .setTimestamp(Date.now());
 
     return embed;
 }
 
-export function QuickEmbed(message: Message, content: string) {
-    const embed = new MessageEmbed().setTitle(content).setColor(embedColor);
+export function QuickEmbed(message: Message, content: string, withFooter: boolean = true) {
+    const embed = withFooter ? createFooter(message) : new MessageEmbed()
+    embed.setTitle(content).setColor(embedColor);
     message.channel.send(embed);
 }
 

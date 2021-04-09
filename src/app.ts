@@ -1,22 +1,17 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-import { args as cmdArgs, isProduction, prefix, token, perms } from './config';
+
+import { args, args as cmdArgs, isProduction, perms, prefix, token } from './config';
 import { connectToDB } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
-import {
-   findCommand,
-   findCommandGroup,
-   getCommandOverride,
-   sendArgsError
-} from './util/commandUtil';
+import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsError } from './util/commandUtil';
 import { initPlayers } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
-import { hasPerms } from './util/commandUtil';
 
 export const logger = createLogger({
    transports: [new transports.Console()],
@@ -24,8 +19,11 @@ export const logger = createLogger({
 });
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
-logger.log('info', chalk.bgRed.bold(envString));
-logger.log('info', chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
+logger.info(chalk.bgRed.bold(envString));
+args['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
+
+logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
+
 
 const client = new Client({
    ws: {
@@ -64,9 +62,9 @@ client.on('ready', () => {
    initPlayers(client);
 
    // Add event listener to add/remove voice role
-   if (isProduction) {
-      initVoiceManager(client);
+   initVoiceManager(client);
 
+   if (isProduction) {
       // Add event listeners to #roles
       syncRoles(client);
 

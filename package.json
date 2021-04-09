@@ -69,6 +69,7 @@
   "nodemonConfig": {
     "events": {
       "start": "cls || clear"
-    }
+    },
+    "delay": 1000
   }
 }

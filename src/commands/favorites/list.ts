@@ -1,7 +1,7 @@
 import { Collection, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { IUser } from '../../database/models/User';
 import { findOrCreate } from '../../database/api/userApi';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
@@ -40,7 +40,7 @@ export const command: ICommand = {
 async function ListFavorites(message: Message, target: User, user: IUser) {
     const songs = user.favorites;
     const songsPerPage = 5;
-    const pages: Collection<number, ISong[]> = new Collection();
+    const pages: Collection<number, Song[]> = new Collection();
 
     let count = 0;
     let pageAtInLoop = 0;

@@ -1,18 +1,18 @@
 import { Document, model, Schema } from 'mongoose';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 
 export interface IUser extends Document {
    username: string;
    id: string;
    tag: string;
-   favorites: ISong[];
+   favorites: Song[];
 }
 
 export const UserSchema = new Schema({
    username: { type: String, required: true },
    id: { type: String, required: true },
    tag: { type: String, required: true },
-   favorites: { type: Array<ISong>(), required: false },
+   favorites: { type: Array<Song>(), required: false },
    createdAt: Date
 });
 

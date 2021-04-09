@@ -1,9 +1,9 @@
-import { ISong } from "./Player";
+import { Song } from "./Song";
 
 export class Queue {
-    songs: Array<ISong> = [];
+    songs: Array<Song> = [];
 
-    constructor(songs?: Array<ISong>) {
+    constructor(songs?: Array<Song>) {
         if (songs) {
             this.songs = songs;
         } else {
@@ -11,11 +11,11 @@ export class Queue {
         }
     }
 
-    addSong(song: ISong) {
+    addSong(song: Song) {
         this.songs.push(song);
     }
 
-    getNext(): ISong | undefined {
+    getNext(): Song | undefined {
         return this.songs.shift();
     }
 
@@ -41,5 +41,9 @@ export class Queue {
             this.songs[currentIndex] = this.songs[randomIndex];
             this.songs[randomIndex] = tempValue;
         }
+    }
+
+    hasSongs() {
+        return this.songs.length > 0
     }
 }
