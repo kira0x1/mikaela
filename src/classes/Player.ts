@@ -1,44 +1,67 @@
+import chalk from 'chalk';
 import ytdl from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
+import ms from 'ms';
 
 import { logger } from '../app';
 import { addSongToServer } from '../database/api/serverApi';
 import { QuickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
+import { Song } from './Song';
+import { args, coders_club_id, isProduction } from '../config';
 
-const minVolume: number = 0;
+const minVolume: number = 0.05;
 const maxVolume: number = 10;
+const vcWaitTime: number = ms('1m')
+
+const testVoiceID = '610883901472243713'
 
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 2.4;
+   volume: number = 2;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
    voiceChannel: VoiceChannel | undefined;
-   currentlyPlaying: ISong | undefined;
+   currentlyPlaying: Song | undefined;
    client: Client;
    volumeDisabled: boolean = false;
-   lastPlayed: ISong | undefined;
+   lastPlayed: Song | undefined;
    ytdlHighWaterMark: number = 1 << 25
    vcHighWaterMark: number = 1 << 15
+   currentlyPlayingStopTime: number = 0
+   vcTimeout: NodeJS.Timeout
+   joinTestVc: boolean = false
+   testVc?: VoiceChannel
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
       this.client = client;
       this.queue = new Queue();
+
+
+      if (guild.id !== coders_club_id) return
+      this.joinTestVc = args['testvc']
+
+      if (this.joinTestVc) {
+         const vc = guild.channels.cache.get(testVoiceID)
+         if (vc instanceof VoiceChannel) this.testVc = vc;
+      }
    }
 
    async join(message: Message) {
-      const vc = message.member.voice.channel;
-      if (!vc) return logger.log('error', 'User not in voice');
+      const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
+
+      if (!vc) return QuickEmbed(message, `You must be in a voice channel to play music`);
+      if (!vc.joinable) return QuickEmbed(message, 'I dont have permission to join that voice-channel');
 
       try {
          const conn = await vc.join();
          if (!conn) return;
          this.inVoice = true;
          this.voiceChannel = vc;
+         this.startVcTimeout()
       } catch (err) {
          logger.log('error', err);
       }
@@ -77,22 +100,32 @@ export class Player {
    }
 
    leave() {
-      this.clearQueue();
       this.isPlaying = false;
-      this.currentlyPlaying = undefined;
       this.inVoice = false;
 
       try {
          if (this.voiceChannel) {
+            if (this.stream && this.currentlyPlaying) {
+               this.queue.songs = [this.currentlyPlaying, ...this.queue.songs]
+               this.currentlyPlaying = undefined
+               this.currentlyPlayingStopTime = (this.stream.streamTime - this.stream.pausedTime) / 1000
+            } else {
+               this.currentlyPlayingStopTime = 0
+            }
+
+            this.clearVoiceTimeout()
             this.voiceChannel.leave()
          }
       } catch (error) {
-         console.warn(`Error trying to leave vc in guild ${this.guild.name}`)
+         logger.warn(`Error trying to leave vc in: ${this.guild.name}`)
       }
    }
 
    clearQueue() {
+      this.currentlyPlaying = undefined
+      this.currentlyPlayingStopTime = 0
       this.queue.clear();
+      this.startVcTimeout()
    }
 
    playNext() {
@@ -106,7 +139,40 @@ export class Player {
          return;
       }
 
-      this.leave();
+      // if no songs next then start timeout
+      this.startVcTimeout()
+   }
+
+   async startVcTimeout() {
+      if (!isProduction)
+         logger.info(chalk.bgMagenta.bold(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`))
+
+      this.currentlyPlayingStopTime = 0
+      this.clearVoiceTimeout()
+
+      this.isPlaying = false
+      this.vcTimeout = setTimeout(() => {
+         this.onVcTimeout()
+      }, vcWaitTime);
+   }
+
+   onVcTimeout() {
+      if (!this.voiceChannel) {
+         if (this.vcTimeout) {
+            clearTimeout(this.vcTimeout)
+         }
+
+         this.vcTimeout = undefined
+         return;
+      }
+
+      if (!isProduction)
+         logger.info(chalk.bgMagenta.bold(`leaving vc after timeout`))
+      this.leave()
+   }
+
+   clearVoiceTimeout() {
+      if (this.vcTimeout) clearTimeout(this.vcTimeout)
    }
 
    skipSong() {
