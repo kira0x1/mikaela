@@ -209,8 +209,7 @@ export class Player {
          filter: 'audioonly',
          opusEncoded: true,
          highWaterMark: this.ytdlHighWaterMark,
-         dlChunkSize: 0,
-         quality: "highestaudio"
+         dlChunkSize: 0
       }
 
       if (seek && seek > 0) ytdlOptions.seek = seek
