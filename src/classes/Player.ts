@@ -19,7 +19,7 @@ const testVoiceID = '610883901472243713'
 export class Player {
    guild: Guild;
    queue: Queue;
-   volume: number = 2;
+   volume: number = 2.5;
    isPlaying: boolean = false;
    inVoice: boolean = false;
    stream: StreamDispatcher | undefined;
