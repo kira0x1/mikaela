@@ -215,13 +215,6 @@ export class Player {
    }
 }
 
-export interface ISong {
-   title: string;
-   id: string;
-   url: string;
-   duration: IDuration;
-   playedBy: string | undefined
-}
 
 export interface IDuration {
    seconds: string;
