@@ -4,9 +4,9 @@ import { QuickEmbed } from '../../util/styleUtil';
 
 
 export const command: ICommand = {
-    name: 'CurrentSong',
+    name: 'Now Playing',
     description: 'Display the currently playing song',
-    aliases: ['np', 'playing', 'current', 'c'],
+    aliases: ['np', 'playing', 'current', 'c', 'nowplaying', 'currentsong'],
 
     async execute(message, args) {
         //Get the guilds current player
