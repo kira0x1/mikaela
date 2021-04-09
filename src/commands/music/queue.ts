@@ -1,8 +1,8 @@
-import { Collection, Message, MessageEmbed } from 'discord.js';
+import { Collection, Message } from 'discord.js';
 
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { embedColor } from '../../util/styleUtil';
+import { getPlayer } from '../../util/musicUtil';
+import { createFooter } from '../../util/styleUtil';
 
 export const queueCalls: Collection<string, Message> = new Collection();
 
@@ -12,14 +12,18 @@ export const command: ICommand = {
     aliases: ['q'],
 
     async execute(message, args) {
-        const embed = getQueue(message);
-        const lastQueueCall = await message.channel.send(embed);
-
-        if (lastQueueCall instanceof Message) {
-            queueCalls.set(message.author.id, lastQueueCall);
-        }
-    },
+        sendQueueEmbed(message)
+    }
 };
+
+export async function sendQueueEmbed(message: Message) {
+    const embed = getQueue(message);
+    const lastQueueCall = await message.channel.send(embed);
+
+    if (lastQueueCall instanceof Message) {
+        queueCalls.set(message.author.id, lastQueueCall);
+    }
+}
 
 export function getQueue(message: Message) {
     //Get the guilds player
@@ -28,8 +32,7 @@ export function getQueue(message: Message) {
     if (!player) return;
 
     //Create embed
-    const embed = new MessageEmbed();
-    embed.setColor(embedColor);
+    const embed = createFooter(message)
 
     //If the player is playing a song add it to the top of the embed
     if (player.currentlyPlaying) {
@@ -42,9 +45,11 @@ export function getQueue(message: Message) {
         embed.setTitle('No currently playing song');
     }
 
+    const songs = player.getSongs()
+
     //Add songs to the embed
-    for (let i = 0; i < player.queue.songs.length && i < 25; i++) {
-        const song = player.queue.songs[i];
+    for (let i = 0; i < songs.length && i < 25; i++) {
+        const song = songs[i]
         embed.addField(`${i + 1}. ${song.title}`, song.duration.duration + '  ' + song.url);
     }
     return embed;
