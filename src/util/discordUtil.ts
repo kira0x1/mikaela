@@ -2,10 +2,6 @@ import { Client, Emoji, Guild, Message } from 'discord.js';
 import { coders_club_id } from '../config';
 import { logger } from '../app';
 
-export async function findUser() {
-
-}
-
 export let heartEmoji: Emoji;
 
 export function initEmoji(client: Client) {
