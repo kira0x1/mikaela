@@ -1,26 +1,36 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { convertPlaylistToSongs, getSong, isPlaylist } from '../../util/apiUtil';
 import { createFavoriteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+import { Player } from '../../classes/Player';
+import { sendQueueEmbed } from './queue';
 
 export const command: ICommand = {
    name: 'play',
    description: 'Play a song',
-   aliases: ['p'],
+   aliases: ['p', 'add'],
    usage: '[song]',
-   args: true,
+   args: false,
 
    async execute(message: Message, args: string[]) {
-      //Get the users query
-      let query = args.join(' ');
 
       //Make sure the user is in voice
       if (!message.member.voice.channel) {
          return QuickEmbed(message, `You must be in a voice channel to play music`);
       }
+
+      const player = getPlayer(message)
+
+      if (args.length === 0) {
+         resumeQueue(message, player)
+         return
+      }
+
+      //Get the users query
+      let query = args.join(' ');
 
       //Search for song
       const song = await getSong(query);
@@ -29,7 +39,6 @@ export const command: ICommand = {
       if (!song) return QuickEmbed(message, 'Song not found');
 
       if (isPlaylist(song)) {
-         const player = getPlayer(message);
          const playlistSongs = await convertPlaylistToSongs(song);
 
          const firstSong = playlistSongs[0];
@@ -53,7 +62,7 @@ export const command: ICommand = {
    }
 };
 
-export async function playSong(message: Message, song: ISong) {
+export async function playSong(message: Message, song: Song) {
    //Get the guilds player
    const player = getPlayer(message);
 
@@ -64,13 +73,28 @@ export async function playSong(message: Message, song: ISong) {
    player.addSong(song, message);
 
    //Tell the user
-   let embed = new MessageEmbed()
+   let embed = createFooter(message)
       .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
       .setURL(song.url)
-      .setColor(embedColor);
 
    const msg = await message.channel.send(embed);
    createFavoriteCollector(song, msg)
+}
+
+async function resumeQueue(message: Message, player: Player) {
+   if (!player.hasSongs()) {
+      const embed = new MessageEmbed()
+         .setColor(embedColor)
+         .setTitle("Queue Empty, please add a song")
+
+      message.channel.send(embed)
+      return;
+   }
+
+   player.resumeQueue(message)
+   const embed = createFooter(message).setTitle("Resuming Queue!")
+   await message.channel.send(embed)
+   sendQueueEmbed(message)
 }
