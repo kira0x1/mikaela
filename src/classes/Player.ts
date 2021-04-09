@@ -181,7 +181,7 @@ export class Player {
    }
 
    play(song: Song, message: Message, seek?: number) {
-      if (this.currentlyPlaying && this.isPlaying) return;
+      if (this.currentlyPlaying) return;
 
       this.currentlyPlaying = this.queue.getNext();
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
@@ -190,7 +190,8 @@ export class Player {
          return QuickEmbed(message, 'I dont have permission to join that voice-channel');
 
       this.voiceChannel = vc;
-      this.startStream(song, seek);
+      if (!this.isPlaying)
+         this.startStream(song, seek);
    }
 
    getLastPlayed() {
