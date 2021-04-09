@@ -131,13 +131,6 @@ export class Player {
       return this.lastPlayed;
    }
 
-   async reload(message) {
-      const currentSong = this.currentlyPlaying;
-      const prevQueue = this.queue.songs;
-      this.leave();
-      this.play(currentSong, message);
-      this.queue.songs = prevQueue;
-   }
 
    async startStream(song: ISong) {
       if (!this.voiceChannel) {
