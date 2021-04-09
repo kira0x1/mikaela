@@ -11,6 +11,7 @@ export const command: ICommand = {
     usage: '[search | url]',
     args: true,
     cooldown: 1,
+    isSubCommand: true,
 
     async execute(message, args) {
         const query = args.join();
