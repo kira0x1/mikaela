@@ -173,10 +173,13 @@ export class Player {
       }
    }
 
-   async addSong(song: ISong, message: Message) {
+   async resumeQueue(message: Message) {
+      this.play(this.currentlyPlaying || this.queue.songs[0], message, this.currentlyPlayingStopTime)
+   }
+
+   async addSong(song: Song, message: Message) {
       song.playedBy = message.member.id
       addSongToServer(this.guild, song)
-
       this.queue.addSong(song);
       this.play(song, message);
    }
