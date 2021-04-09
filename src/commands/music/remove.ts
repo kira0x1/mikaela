@@ -15,33 +15,39 @@ export const command: ICommand = {
         const player = getPlayer(message);
         if (!player) return;
 
+        if (!player.hasSongs()) return QuickEmbed(message, 'Queue is empty')
+
         const arg1 = args.shift();
         if (!arg1) return;
 
         if (Number(arg1) === NaN) {
             QuickEmbed(message, 'Invalid position');
-        } else {
-            const pos = Number(arg1);
-
-            if (pos > player.queue.songs.length + 1) {
-                return QuickEmbed(message, 'Invalid position');
-            } else {
-                const song = player.queue.removeAt(pos - 1).shift();
-                if (!song) return QuickEmbed(message, 'Couldnt find song');
-
-                const embed = new MessageEmbed()
-                   .setColor(embedColor)
-                   .setTitle(`Removed song ${song.title}`)
-                   .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
-
-                message.channel.send(embed);
-
-                const lastQueueCall = queueCalls.get(message.author.id);
-                if (lastQueueCall) {
-                    const queueEmbed = getQueue(message);
-                    lastQueueCall.edit(queueEmbed);
-                }
-            }
+            return;
         }
-    },
+
+        const pos = Number(arg1);
+
+        if (pos > player.queue.songs.length + 1) {
+            return QuickEmbed(message, 'Invalid position');
+        }
+
+        const song = player.queue.removeAt(pos - 1).shift();
+        if (!song) return QuickEmbed(message, 'Couldnt find song');
+
+        const embed = new MessageEmbed()
+            .setColor(embedColor)
+            .setTitle(`Removed song ${song.title}`)
+            .setAuthor(
+                message.author.username,
+                message.author.displayAvatarURL({ dynamic: true })
+            );
+
+        message.channel.send(embed);
+
+        const lastQueueCall = queueCalls.get(message.author.id);
+        if (lastQueueCall) {
+            const queueEmbed = getQueue(message);
+            lastQueueCall.edit(queueEmbed);
+        }
+    }
 };
