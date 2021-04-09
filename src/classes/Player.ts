@@ -215,5 +215,11 @@ export class Player {
    }
 }
 
+   hasSongs() {
+      return this.queue.hasSongs()
+   }
 
+   getSongs() {
+      return this.queue.songs
+   }
 }
