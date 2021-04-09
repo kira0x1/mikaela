@@ -1,7 +1,7 @@
 import { Guild } from 'discord.js';
 import { logger } from '../../app';
 import { Server } from '../models/Server';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 
 export async function findServer(id: string) {
     try {
@@ -38,7 +38,7 @@ export async function findOrCreateServer(guild: Guild) {
     }
 }
 
-export async function addSongToServer(guild: Guild, song: ISong) {
+export async function addSongToServer(guild: Guild, song: Song) {
     const server = await findOrCreateServer(guild)
     server.lastPlayed.push(song)
     return await server.save()

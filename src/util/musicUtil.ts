@@ -2,7 +2,9 @@ import chalk from 'chalk';
 import { Client, Collection, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
 import ms from 'ms';
 import { logger } from '../app';
-import { IDuration, ISong, Player } from '../classes/Player';
+import { Player } from '../classes/Player';
+import { IDuration } from "../classes/Song";
+import { Song } from "../classes/Song";
 import { addFavoriteToUser } from '../database/api/userApi';
 import { embedColor } from './styleUtil';
 import { heartEmoji, initEmoji } from './discordUtil';
@@ -61,7 +63,14 @@ export function findPlayer(guildId: string): Player {
 }
 
 export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player) {
-   const streamTime = (stream.streamTime - stream.pausedTime) / 1000;
+   let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
+   const seekTime = player.currentlyPlayingStopTime
+
+   logger.info(`seekTime: ${seekTime}, streamTime: ${streamTime}`)
+   if (seekTime > 0) streamTime += seekTime
+   else if (seekTime < 0) logger.warn(`seek time is negative!\nseek: ${seekTime}`)
+   logger.info(`streamTimeTotal: ${streamTime}`)
+
    const minutes = Math.floor(streamTime / 60);
 
    let seconds: number | string = streamTime - minutes * 60;
@@ -89,7 +98,7 @@ export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, play
       .addField(`${prettyTime} / ${duration.duration}`, songBar)
 }
 
-export async function createFavoriteCollector(song: ISong, message: Message) {
+export async function createFavoriteCollector(song: Song, message: Message) {
    await message.react(heartEmoji.id);
 
    const filter = (reaction: MessageReaction, user: User) => {

@@ -1,16 +1,17 @@
-import { Util } from 'discord.js';
+import { Util, Message } from 'discord.js';
 import YouTube from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
 import { logger } from '../app';
-import { ISong } from '../classes/Player';
+import { Song } from "../classes/Song";
 import { ConvertDuration } from './musicUtil';
+import { QuickEmbed, wrap } from './styleUtil';
 
 export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
 
-export async function getSong(query: string): Promise<ISong | ytpl.Result> {
+export async function getSong(query: string): Promise<Song | ytpl.Result> {
    try {
       // Check if the query is a link to a youtube video
       if (validateURL(query)) {
@@ -42,12 +43,12 @@ export async function getSong(query: string): Promise<ISong | ytpl.Result> {
 }
 
 // Returns true if its a playlist
-export function isPlaylist(song: ISong | ytpl.Result): song is ytpl.Result {
+export function isPlaylist(song: Song | ytpl.Result): song is ytpl.Result {
    return (song as ytpl.Result).items !== undefined;
 }
 
 // Convertts the video details to ISong
-function convertDetailsToSong(details: MoreVideoDetails): ISong {
+function convertDetailsToSong(details: MoreVideoDetails): Song {
    return {
       title: Util.escapeMarkdown(details.title),
       id: details.videoId,
@@ -58,8 +59,8 @@ function convertDetailsToSong(details: MoreVideoDetails): ISong {
 }
 
 // Converts a playlist retrieved from ytpl to an array of ISong
-export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<ISong[]> {
-   const res: ISong[] = [];
+export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Song[]> {
+   const res: Song[] = [];
 
    for (let i = 0; i < playlist.items.length && i < 20; i++) {
       const item = playlist.items[i];
@@ -76,4 +77,8 @@ async function getSongDetails(link: string) {
    const info = await getInfo(link);
    if (!info) return;
    return info.videoDetails;
+}
+
+export function sendSongNotFoundEmbed(message: Message, query: string) {
+   QuickEmbed(message, `Song not found: ${wrap(query)}`, true)
 }

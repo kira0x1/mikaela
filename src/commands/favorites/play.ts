@@ -1,6 +1,6 @@
 import { Message, User } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { findOrCreate } from '../../database/api/userApi';
 import { getPlayer } from '../../util/musicUtil';
 import { createFooter, QuickEmbed } from '../../util/styleUtil';
@@ -59,7 +59,7 @@ export const command: ICommand = {
     },
 };
 
-export async function findFavorite(message: Message, args: string[]): Promise<{ target: User, song: ISong | ISong[] }> {
+export async function findFavorite(message: Message, args: string[]): Promise<{ target: User, song: Song | Song[] }> {
     let songArg = '';
     let songIndex: number | undefined = undefined;
 

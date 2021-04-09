@@ -1,5 +1,5 @@
 import { ICommand } from '../../classes/Command';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed, wrap } from '../../util/styleUtil';
 
@@ -51,7 +51,7 @@ export const command: ICommand = {
     }
 }
 
-function moveString(song: ISong, toPos: number) {
+function moveString(song: Song, toPos: number) {
     let to: string = wrap(toPos.toString())
     return `**Moved Song:**  ${song.title}\n**To Position: ${to}**`
 }

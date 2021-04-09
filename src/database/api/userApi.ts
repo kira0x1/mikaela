@@ -1,6 +1,6 @@
 import { Message, User as DiscordUser } from 'discord.js';
 import { logger } from '../../app';
-import { ISong } from '../../classes/Player';
+import { Song } from "../../classes/Song";
 import { QuickEmbed } from '../../util/styleUtil';
 import { IUser, User } from '../models/User';
 
@@ -39,7 +39,7 @@ function converUserToIUser(user: DiscordUser) {
    }
 }
 
-export async function addFavoriteToUser(member: DiscordUser, song: ISong, message: Message) {
+export async function addFavoriteToUser(member: DiscordUser, song: Song, message: Message) {
    const user = await findOrCreate(member)
 
    if (user.favorites && user.favorites.find(fav => fav.id === song.id)) {
