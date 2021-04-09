@@ -114,37 +114,42 @@ export class Player {
       this.stream.end();
    }
 
-   play(song: ISong, message: Message) {
-      if (this.currentlyPlaying) return;
+   play(song: Song, message: Message, seek?: number) {
+      if (this.currentlyPlaying && this.isPlaying) return;
 
       this.currentlyPlaying = this.queue.getNext();
-      const vc = message.member.voice.channel;
+      const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
 
       if (!vc?.joinable)
          return QuickEmbed(message, 'I dont have permission to join that voice-channel');
 
       this.voiceChannel = vc;
-      this.startStream(song);
+      this.startStream(song, seek);
    }
 
    getLastPlayed() {
       return this.lastPlayed;
    }
 
+   async startStream(song: Song, seek?: number) {
+      this.clearVoiceTimeout()
 
-   async startStream(song: ISong) {
       if (!this.voiceChannel) {
          logger.log('error', 'No Voicechannel');
          return;
       }
 
-      const opusStream = ytdl(song.url, {
+      const ytdlOptions: any = {
          filter: 'audioonly',
          opusEncoded: true,
          highWaterMark: this.ytdlHighWaterMark,
          dlChunkSize: 0,
          quality: "highestaudio"
-      })
+      }
+
+      if (seek && seek > 0) ytdlOptions.seek = seek
+
+      const opusStream = ytdl(song.url, ytdlOptions)
 
       try {
          const conn = await this.voiceChannel.join();
@@ -153,7 +158,7 @@ export class Player {
          this.stream = conn.play(opusStream, {
             highWaterMark: this.vcHighWaterMark,
             type: 'opus',
-            bitrate: 128
+            bitrate: 128,
          })
 
          this.stream.setVolumeLogarithmic(this.volume / 10);
@@ -198,7 +203,7 @@ export class Player {
       return this.stream;
    }
 
-   getSongAt(position: number): ISong {
+   getSongAt(position: number): Song {
       return this.queue.songs[position];
    }
 
@@ -209,7 +214,6 @@ export class Player {
       this.queue.songs[from] = toSong;
       this.queue.songs[to] = fromSong;
    }
-}
 
    hasSongs() {
       return this.queue.hasSongs()
