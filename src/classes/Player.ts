@@ -12,7 +12,7 @@ import { args, coders_club_id, isProduction } from '../config';
 
 const minVolume: number = 0.05;
 const maxVolume: number = 10;
-const vcWaitTime: number = ms('1m')
+const vcWaitTime: number = ms('15m')
 
 const testVoiceID = '610883901472243713'
 
