@@ -1,19 +1,21 @@
+import { Message, MessageEmbed, Role } from 'discord.js';
+
 import { ICommand } from '../../classes/Command';
+import { findRole } from '../../util/discordUtil';
 import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
-import { Guild, Message, MessageEmbed, Role } from 'discord.js';
 
 export const command: ICommand = {
     name: 'roleinfo',
     description: 'Shows info about a role',
-    aliases: ['role'],
+    aliases: ['role', 'roles'],
     args: true,
 
     async execute(message, args) {
-        let arg: string = args[0];
-        let role: Role = await parseRole(arg, message.guild);
+        let query: string = args[0];
+        let role: Role = findRole(message, query)
 
         if (!role) {
-            await sendErrorEmbed(message, `Cannot find role ${role}`);
+            await sendErrorEmbed(message, `Cannot find role ${query}`);
             return;
         }
 
@@ -41,14 +43,4 @@ async function addFields(embed: MessageEmbed, role: Role) {
     embed.addField('Mentionable', role.mentionable, true);
     embed.addField('Position', role.position, true);
     embed.addField('Members with role', role.members.size, true);
-}
-
-const ROLE_MENTION_PATTERN = /<@&|>/g;
-
-async function parseRole(roleStr: string, guild: Guild): Promise<Role> {
-    let parsedStr: string = roleStr.replace(ROLE_MENTION_PATTERN, '');
-
-    return await guild.roles.fetch(parsedStr).catch(_ => {
-        return null;
-    });
 }
