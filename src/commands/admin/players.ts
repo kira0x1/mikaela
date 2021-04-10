@@ -2,7 +2,7 @@ import { Collection, MessageEmbed } from "discord.js";
 import { ICommand } from "../../classes/Command";
 import { Player } from "../../classes/Player";
 import { players } from "../../util/musicUtil";
-import { createFooter } from "../../util/styleUtil";
+import { createFooter, addCodeField } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Players',
@@ -11,11 +11,11 @@ export const command: ICommand = {
     perms: ['kira'],
 
     execute(message, args) {
-        const embed = createFooter(message).setTitle(`Player: ${players.size}`)
-
+        const embed = createFooter(message).setTitle(`Players: ${players.size}`)
         createPlayersEmbed(embed, players.filter(p => p.isPlaying))
-        createPlayersEmbed(embed, players.filter(p => !p.isPlaying))
 
+        const notPlaying = players.filter(p => !p.isPlaying).map(p => p.guild.name)
+        if (notPlaying.length > 0) addCodeField(embed, '---Not Playing---\n\n' + notPlaying.join('\n'))
         message.channel.send(embed)
     }
 }
