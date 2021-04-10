@@ -66,10 +66,8 @@ export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, play
    let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
    const seekTime = player.currentlyPlayingStopTime
 
-   logger.info(`seekTime: ${seekTime}, streamTime: ${streamTime}`)
    if (seekTime > 0) streamTime += seekTime
    else if (seekTime < 0) logger.warn(`seek time is negative!\nseek: ${seekTime}`)
-   logger.info(`streamTimeTotal: ${streamTime}`)
 
    const minutes = Math.floor(streamTime / 60);
 
