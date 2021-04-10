@@ -43,3 +43,7 @@ async function getMember(query: string, guild: Guild) {
 
     if (memberSearch && memberSearch.first()) return memberSearch.first();
 }
+
+export function findRole(message: Message, query: string) {
+    return message.mentions.roles?.first() || message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
+}
