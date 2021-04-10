@@ -46,3 +46,10 @@ export function QuickEmbed(message: Message, content: string, withFooter: boolea
 export function createEmptyField(inline?: boolean | false) {
     return { name: `\u200b`, value: '\u200b', inline: true };
 }
+
+export function addCodeField(embed: MessageEmbed, content: string, title?: string, blank?: boolean, lang = 'yaml', inline?: boolean | false) {
+    const value = `\`\`\`${lang}\n${content}\`\`\``
+
+    if (title && blank) title = `\u200b\n${title}`
+    embed.addField(title ? title : `\u200b`, value, inline)
+}
