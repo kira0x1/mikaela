@@ -2,7 +2,7 @@ import { Embeds } from 'discord-paginationembed';
 import { GuildMember, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
-import { getTargetMember } from '../../util/discordUtil';
+import { findRole, getTargetMember } from '../../util/discordUtil';
 import { sendErrorEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
@@ -45,10 +45,6 @@ async function findTarget(message: Message, args: string[]) {
    const query = args.join(' ').toLowerCase()
    return findRole(message, query) || await getTargetMember(message, query)
 
-}
-
-function findRole(message: Message, query: string) {
-   return message.mentions.roles?.first() || message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
 }
 
 function getPerms(target: Role | GuildMember): MessageEmbed[] {
