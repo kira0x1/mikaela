@@ -1,5 +1,6 @@
 # Mikaela - Discord Music Bot
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/68446923259c4437ad186201f78bb9dc)](https://app.codacy.com/gh/kira0x1/mikaela?utm_source=github.com&utm_medium=referral&utm_content=kira0x1/mikaela&utm_campaign=Badge_Grade_Settings)
 [![codebeat badge](https://codebeat.co/badges/6a40e725-5006-4c0c-9948-18326ab5338d)](https://codebeat.co/projects/github-com-kira0x1-mikaela-master)
 [![discord badge](https://img.shields.io/discord/585850878532124672?color=7289da&logo=discord&logoColor=white)](https://discord.gg/6fzTAReQtj)
 
