@@ -5,6 +5,8 @@ import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
+const maxShuffleAmount = 20;
+
 export const command: ICommand = {
     name: 'shuffle',
     description: 'Shuffle songs from a favorites list',
@@ -39,9 +41,9 @@ export const command: ICommand = {
         const player = getPlayer(message);
         if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
-        if (amount > 15) {
-            embed.setFooter(`Max Amount is 15!`);
-            amount = 15;
+        if (amount > maxShuffleAmount) {
+            embed.setFooter(`Max Amount is ${maxShuffleAmount}!`);
+            amount = maxShuffleAmount;
         }
 
         const title = `Shuffling ${amount} ${amount > 1 ? 'songs' : 'song'} from ${user.username}`;
