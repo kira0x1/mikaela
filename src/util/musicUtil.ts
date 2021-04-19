@@ -1,17 +1,15 @@
 import chalk from 'chalk';
 import { Client, Collection, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
 import ms from 'ms';
+
 import { logger } from '../app';
 import { Player } from '../classes/Player';
-import { IDuration } from "../classes/Song";
-import { Song } from "../classes/Song";
-import { addFavoriteToUser } from '../database/api/userApi';
-import { createFooter, embedColor, QuickEmbed } from './styleUtil';
-import { heartEmoji, initEmoji } from './discordUtil';
-import createBar from 'string-progressbar';
-import { getInfo } from 'ytdl-core';
+import { IDuration, Song } from '../classes/Song';
 import { sendQueueEmbed } from '../commands/music/queue';
+import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
+import { heartEmoji, initEmoji } from './discordUtil';
+import { createFooter, embedColor, QuickEmbed } from './styleUtil';
 
 export const players: Collection<string, Player> = new Collection();
 
@@ -65,37 +63,14 @@ export function findPlayer(guildId: string): Player {
 }
 
 export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player) {
-   let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
-   const seekTime = player.currentlyPlayingStopTime
-
-   if (seekTime > 0) streamTime += seekTime
-   else if (seekTime < 0) logger.warn(`seek time is negative!\nseek: ${seekTime}`)
-
-   const minutes = Math.floor(streamTime / 60);
-
-   let seconds: number | string = streamTime - minutes * 60;
-   seconds = seconds < 10 ? '0' + seconds.toFixed(0) : seconds.toFixed(0);
-
-   const duration = player.currentlyPlaying.duration;
-
-   let prettyTime = minutes.toFixed(0) + ':' + seconds;
-
-   let total = duration.totalSeconds
-   if (!total) {
-      const song = await getInfo(player.currentlyPlaying.url)
-      total = Number(song.videoDetails.lengthSeconds)
-      player.currentlyPlaying.duration.totalSeconds = total
-   }
-
-   const current = streamTime
-   const songBar = createBar(total, current, 20)[0]
+   const songBar = await player.getProgressBar()
 
    //Create embed
    return new MessageEmbed()
       .setColor(embedColor)
       .setTitle('Playing: ' + player.currentlyPlaying.title)
       .setURL(player.currentlyPlaying.url)
-      .addField(`${prettyTime} / ${duration.duration}`, songBar)
+      .addField(player.getDurationPretty(), songBar)
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
