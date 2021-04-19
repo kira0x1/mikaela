@@ -17,7 +17,7 @@ export const command: ICommand = {
 };
 
 export async function sendQueueEmbed(message: Message) {
-    const embed = getQueue(message);
+    const embed = await getQueue(message);
     const lastQueueCall = await message.channel.send(embed);
 
     if (lastQueueCall instanceof Message) {
@@ -25,7 +25,7 @@ export async function sendQueueEmbed(message: Message) {
     }
 }
 
-export function getQueue(message: Message) {
+export async function getQueue(message: Message) {
     //Get the guilds player
     const player = getPlayer(message);
 
@@ -37,9 +37,11 @@ export function getQueue(message: Message) {
     //If the player is playing a song add it to the top of the embed
     if (player.currentlyPlaying) {
         let currentlyPlaying = player.currentlyPlaying;
-        embed.setTitle('Playing: ' + currentlyPlaying.title);
+        const songBar = await player.getProgressBar()
+
+        embed.setTitle(`Playing: ${currentlyPlaying.title}`);
         embed.setURL(currentlyPlaying.url);
-        embed.setDescription(currentlyPlaying.duration.duration);
+        embed.setDescription(`**${player.getDurationPretty()}**\n${songBar}`);
     } else {
         //If no song is currently playing
         embed.setTitle('No currently playing song');
