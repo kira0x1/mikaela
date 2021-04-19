@@ -11,7 +11,7 @@ export const command: ICommand = {
     usage: '[position in queue]',
     aliases: ['r'],
 
-    execute(message, args) {
+    async execute(message, args) {
         const player = getPlayer(message);
         if (!player) return;
 
@@ -46,7 +46,7 @@ export const command: ICommand = {
 
         const lastQueueCall = queueCalls.get(message.author.id);
         if (lastQueueCall) {
-            const queueEmbed = getQueue(message);
+            const queueEmbed = await getQueue(message);
             lastQueueCall.edit(queueEmbed);
         }
     }

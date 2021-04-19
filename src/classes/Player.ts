@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import ytdl from 'discord-ytdl-core';
+import ytdl, { getInfo } from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import ms from 'ms';
 
@@ -9,6 +9,7 @@ import { QuickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
+import createBar from 'string-progressbar';
 
 const minVolume: number = 0.05;
 const maxVolume: number = 10;
@@ -196,6 +197,55 @@ export class Player {
 
    getLastPlayed() {
       return this.lastPlayed;
+   }
+
+   // Returns stream time + seek time + paused time
+   getStreamTime(): number {
+      const stream = this.stream
+      let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
+
+      const seekTime = this.currentlyPlayingStopTime
+
+      if (seekTime > 0) streamTime += seekTime
+      else if (seekTime < 0) logger.warn(`seek time is negative!\nseek: ${seekTime}`)
+
+      return streamTime
+   }
+
+   // Returns string representation of the current songs duration
+   async getProgressBar(): Promise<string> {
+      const streamTime = this.getStreamTime()
+
+      const duration = this.currentlyPlaying.duration;
+      let total = duration.totalSeconds
+
+
+      if (!total) {
+         const song = await getInfo(this.currentlyPlaying.url)
+         total = Number(song.videoDetails.lengthSeconds)
+         this.currentlyPlaying.duration.totalSeconds = total
+      }
+
+      const current = streamTime
+      const songBar = createBar(total, current, 20)[0]
+
+      return songBar
+   }
+
+   // Returns a string of how long the songs been playing / the total duration
+   getDurationPretty(): string {
+      const streamTime = this.getStreamTime()
+
+      const minutes = Math.floor(streamTime / 60);
+
+      let seconds: number | string = streamTime - minutes * 60;
+      seconds = seconds < 10 ? '0' + seconds.toFixed(0) : seconds.toFixed(0);
+
+      const duration = this.currentlyPlaying.duration;
+
+      let prettyTime = minutes.toFixed(0) + ':' + seconds;
+
+      return `${prettyTime} / ${duration.duration}`
    }
 
    async startStream(song: Song, seek?: number) {
