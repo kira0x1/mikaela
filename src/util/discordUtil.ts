@@ -3,15 +3,20 @@ import { coders_club_id } from '../config';
 import { logger } from '../app';
 
 export let heartEmoji: Emoji;
+export let trashEmoji: Emoji;
 
 export function initEmoji(client: Client) {
     const coders_club = client.guilds.cache.get(coders_club_id);
     if (!coders_club) return;
 
-    const emoji = coders_club.emojis.cache.find(em => em.name === 'heart');
-    if (!emoji) return logger.log('warn', `emoji not found`);
+    heartEmoji = getEmojiFromGuild(coders_club, 'heart')
+    trashEmoji = getEmojiFromGuild(coders_club, 'delete')
+}
 
-    heartEmoji = emoji;
+function getEmojiFromGuild(guild: Guild, emojiName: string) {
+    const emoji = guild.emojis.cache.find(em => em.name.toLowerCase() === emojiName)
+    if (!emoji) logger.log('warn', `emoji not found`);
+    return emoji
 }
 
 export async function getTargetMember(message: Message, query: string) {

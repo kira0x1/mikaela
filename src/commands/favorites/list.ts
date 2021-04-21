@@ -1,4 +1,4 @@
-import { Collection, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
 import { ICommand } from '../../classes/Command';
 import { Song } from "../../classes/Song";
@@ -6,6 +6,8 @@ import { IUser } from '../../database/models/User';
 import { findOrCreate } from '../../database/api/userApi';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
+import { createDeleteCollector } from '../../util/musicUtil';
+import { logger } from '../../app';
 
 export const command: ICommand = {
     name: 'list',
@@ -26,8 +28,8 @@ export const command: ICommand = {
 
         if (!user || !user.favorites || user.favorites.length === 0) {
             const embed: MessageEmbed = createFooter(message)
-               .setTitle(target.username + '\n\u200b')
-               .setThumbnail(target.displayAvatarURL({ dynamic: true }))
+                .setTitle(target.username + '\n\u200b')
+                .setThumbnail(target.displayAvatarURL({ dynamic: true }))
                 .setDescription('Favorites: none')
                 .setColor(embedColor);
             return message.channel.send(embed);
@@ -82,9 +84,13 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
     const msg = await message.channel.send(embed);
 
     //If there are only 1 or none pages then dont add the next, previous page emojis / collector
-    if (pages.size <= 1) return;
+    if (pages.size <= 1) {
+        createDeleteCollector(msg, message.author)
+        return;
+    }
 
-    msg.react('⬅').then(() => msg.react('➡'));
+    msg.react('⬅').then(() => msg.react('➡')).finally(() => createDeleteCollector(msg, message.author))
+
 
     const filter = (reaction: MessageReaction, userReacted: User) => {
         return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
@@ -110,7 +116,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
         title += '\n\u200b';
 
         const newEmbed = new MessageEmbed()
-           .setThumbnail(target.displayAvatarURL({ dynamic: true }))
+            .setThumbnail(target.displayAvatarURL({ dynamic: true }))
             .setTitle(title)
             .setColor(embedColor);
 
@@ -130,6 +136,9 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
     });
 
     collector.on('end', collected => {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(error => {
+            if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE)
+                logger.error(error)
+        })
     })
 }
