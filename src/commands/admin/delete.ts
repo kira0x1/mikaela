@@ -1,3 +1,5 @@
+import { Constants } from 'discord.js';
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
 
@@ -41,10 +43,10 @@ export const command: ICommand = {
          );
 
          author.send(embed);
-      } catch (err) {
-         author.send(
-            `Error deleting messages in  ${message.guild}, channel: ${message.channel.name}`
-         );
+      } catch (error) {
+         if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return
+         logger.error(error)
+         author.send(`Error deleting messages in  ${message.guild}, channel: ${message.channel.name}`);
       }
    }
 };
