@@ -41,7 +41,8 @@ export async function getQueue(message: Message) {
 
         embed.setTitle(`Playing: ${currentlyPlaying.title}`);
         embed.setURL(currentlyPlaying.url);
-        embed.setDescription(`**${player.getDurationPretty()}**\n${songBar}`);
+
+        embed.addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`)
     } else {
         //If no song is currently playing
         embed.setTitle('No currently playing song');
@@ -52,7 +53,8 @@ export async function getQueue(message: Message) {
     //Add songs to the embed
     for (let i = 0; i < songs.length && i < 25; i++) {
         const song = songs[i]
-        embed.addField(`${i + 1}. ${song.title}`, song.duration.duration + '  ' + song.url);
+        //song.duration.duration + '  ' + song.url
+        embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n<@${song.playedBy}>\n`);
     }
     return embed;
 }
