@@ -63,15 +63,15 @@ export function findPlayer(guildId: string): Player {
    return players.get(guildId);
 }
 
-export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player) {
+export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player, message: Message) {
    const songBar = await player.getProgressBar()
 
    //Create embed
-   return new MessageEmbed()
+   return createFooter(message)
       .setColor(embedColor)
-      .setTitle('Playing: ' + player.currentlyPlaying.title)
+      .setTitle(`Playing: ${player.currentlyPlaying.title}`)
       .setURL(player.currentlyPlaying.url)
-      .addField(player.getDurationPretty(), songBar)
+      .addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`)
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
