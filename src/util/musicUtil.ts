@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Client, Collection, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
+import { Client, Collection, Constants, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
 import ms from 'ms';
 
 import { logger } from '../app';
@@ -8,9 +8,10 @@ import { IDuration, Song } from '../classes/Song';
 import { sendQueueEmbed } from '../commands/music/queue';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
-import { heartEmoji, initEmoji } from './discordUtil';
+import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, QuickEmbed } from './styleUtil';
 
+const collectorTime = ms('3h')
 export const players: Collection<string, Player> = new Collection();
 
 export function ConvertDuration(duration_seconds: number | string) {
@@ -80,7 +81,7 @@ export async function createFavoriteCollector(song: Song, message: Message) {
       return reaction.emoji.name === heartEmoji.name && !user.bot;
    };
 
-   const collector = message.createReactionCollector(filter, { time: ms('1h') });
+   const collector = message.createReactionCollector(filter, { time: collectorTime });
 
    collector.on('collect', async (reaction, reactionCollector) => {
       const user = reaction.users.cache.last();
@@ -88,8 +89,32 @@ export async function createFavoriteCollector(song: Song, message: Message) {
    });
 
    collector.on('end', collected => {
-      message.reactions.removeAll().catch(err => logger.log('error', err));
+      message.reactions.removeAll().catch(err => logger.error(err));
    });
+}
+
+export async function createDeleteCollector(message: Message, author: User) {
+   await message.react(trashEmoji.id)
+
+   const filter = (reaction: MessageReaction, user: User) => {
+      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === author.id
+   }
+
+   const collector = message.createReactionCollector(filter, { time: collectorTime })
+
+   collector.on('collect', async (reaction, reactionCollector) => {
+      if (message.deletable)
+         message.delete()
+      else
+         logger.warn(chalk.bgYellow.bold(`Unable to delete message`))
+   })
+
+   collector.on('end', collected => {
+      message.reactions.removeAll().catch(error => {
+         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE)
+            logger.error(error)
+      })
+   })
 }
 
 export function randomUniqueArray<T>(array: Array<T>) {
