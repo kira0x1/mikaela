@@ -115,6 +115,9 @@ export class Player {
             }
 
             this.clearVoiceTimeout()
+
+            //TODO make this an option that can be toggled via the server
+            this.clearQueue()
             this.voiceChannel.leave()
          }
       } catch (error) {
@@ -202,6 +205,8 @@ export class Player {
    // Returns stream time + seek time + paused time
    getStreamTime(): number {
       const stream = this.stream
+      if (!stream) return 0
+
       let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
 
       const seekTime = this.currentlyPlayingStopTime
