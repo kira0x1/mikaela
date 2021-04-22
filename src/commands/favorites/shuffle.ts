@@ -1,9 +1,9 @@
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
+import { getTarget } from '../../util/discordUtil';
 import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
 import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
-import { getTarget } from '../../util/discordUtil';
 
 const maxShuffleAmount = 20;
 
@@ -57,8 +57,27 @@ export const command: ICommand = {
         embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
         embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
+        const songsAdding = [firstSong]
+
         for (let i = 1; i < amount; i++) {
-            const song = random()
+            let song = random()
+
+            // logger.info(chalk.bgMagenta.bold(`Songs Adding Length: ${songsAdding.length}\nfavorites length: ${user.favorites.length}`))
+
+            if (songsAdding.includes(song) && songsAdding.length < user.favorites.length) {
+                // logger.info(chalk.bgCyan.bold(`\n ${song.title}\nDuplicate song, picking another one\n`))
+
+                let hasFoundSong = false
+                while (!hasFoundSong) {
+                    song = random()
+                    if (!songsAdding.includes(song)) hasFoundSong = true
+                }
+
+                // logger.info((chalk.bgCyan.bold(`picked: ${song.title}\n`)))
+            }
+
+            songsAdding.push(song)
+
             embed.addField(`${i + 1} ${song.title}`, song.url);
             player.addSong(song, message)
         }
