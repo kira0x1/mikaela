@@ -5,7 +5,7 @@ import { onSongRequest } from '../../util/musicUtil';
 export const command: ICommand = {
    name: 'play',
    description: 'Play a song',
-   aliases: ['p', 'add'],
+   aliases: ['p'],
    usage: '[song]',
    args: false,
 
