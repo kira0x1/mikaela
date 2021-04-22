@@ -4,12 +4,6 @@ app-local.ts
 out/
 ecosystem.config.js
 
-#yarn v2
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-.pnp.*
-
 # Logs
 logs
 *.log
