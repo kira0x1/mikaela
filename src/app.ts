@@ -2,15 +2,16 @@ import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
 
-import { args, args as cmdArgs, isProduction, perms, prefix, token } from './config';
-import { connectToDB } from './database/dbConnection';
+import { args as cmdArgs, isProduction, perms, prefix, token } from './config';
+import { saveAllServersQueue } from './database/api/serverApi';
+import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsError } from './util/commandUtil';
-import { initPlayers } from './util/musicUtil';
+import { initPlayers, players } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
 
 export const logger = createLogger({
@@ -20,7 +21,7 @@ export const logger = createLogger({
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
 logger.info(chalk.bgRed.bold(envString));
-args['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
+cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
 
 logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
 
@@ -178,6 +179,15 @@ client.on('message', async message => {
       logger.log('error', err);
    }
 });
+
+process.on('message', async (msg: string) => {
+   if (msg != 'shutdown') return
+   logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`))
+   players.map(p => p.saveQueueState())
+   await saveAllServersQueue()
+   await db.close()
+   process.exit(0)
+})
 
 process.on('uncaughtException', error => logger.error(error))
 process.on('unhandledRejection', error => logger.error(error))
