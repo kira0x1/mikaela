@@ -33,6 +33,8 @@
     "start": "node .",
     "start-prod": "node . --env=production",
     "skipdb": "node . --skipDB",
+    "testvc": "node . --testvc",
+    "prebuild": "npm run clean",
     "build": "tsc",
     "watch": "tsc --watch --noEmit --project tsconfig.json",
     "clean": "rimraf out",
