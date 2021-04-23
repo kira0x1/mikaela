@@ -85,11 +85,11 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
     //If there are only 1 or none pages then dont add the next, previous page emojis / collector
     if (pages.size <= 1) {
-        createDeleteCollector(msg, message.author)
+        createDeleteCollector(msg, message)
         return;
     }
 
-    msg.react('⬅').then(() => msg.react('➡')).finally(() => createDeleteCollector(msg, message.author))
+    msg.react('⬅').then(() => msg.react('➡')).finally(() => createDeleteCollector(msg, message))
 
 
     const filter = (reaction: MessageReaction, userReacted: User) => {

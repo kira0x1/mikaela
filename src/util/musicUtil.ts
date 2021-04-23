@@ -1,11 +1,12 @@
 import chalk from 'chalk';
-import { Client, Collection, Constants, Message, MessageEmbed, MessageReaction, StreamDispatcher, User } from 'discord.js';
+import { Client, Collection, Constants, Message, MessageEmbed, MessageReaction, StreamDispatcher, User, VoiceChannel } from 'discord.js';
 import ms from 'ms';
 
 import { logger } from '../app';
 import { Player } from '../classes/Player';
 import { IDuration, Song } from '../classes/Song';
 import { sendQueueEmbed } from '../commands/music/queue';
+import { getAllServers } from '../database/api/serverApi';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
@@ -32,13 +33,37 @@ export function ConvertDuration(duration_seconds: number | string) {
    return duration;
 }
 
-export function initPlayers(client: Client) {
+export async function initPlayers(client: Client) {
    initEmoji(client)
+
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
       logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
       players.set(guildResolved.id, new Player(guildResolved, client));
    });
+
+   const servers = await getAllServers(client.guilds.cache.array())
+   servers
+      .filter(server => server.queue && server.queue.length > 0)
+      .map(server => {
+         const player = findPlayer(server.serverId)
+         player.queue.songs = server.queue
+
+         const voiceChannels: VoiceChannel[] = []
+
+         player.guild.channels.cache.map(channel => {
+            if (channel instanceof VoiceChannel)
+               voiceChannels.push(channel)
+         })
+
+         voiceChannels.map(vc => {
+            if (vc.members.has(client.user.id)) {
+               logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`))
+               player.voiceChannel = vc
+               player.playNext()
+            }
+         })
+      })
 }
 
 export function getPlayer(message: Message): Player {
@@ -93,20 +118,26 @@ export async function createFavoriteCollector(song: Song, message: Message) {
    });
 }
 
-export async function createDeleteCollector(message: Message, author: User) {
+export async function createDeleteCollector(message: Message, previousMessage: Message) {
    await message.react(trashEmoji.id)
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === author.id
+      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id
    }
 
    const collector = message.createReactionCollector(filter, { time: collectorTime })
 
    collector.on('collect', async (reaction, reactionCollector) => {
+
+      const promises = []
+
       if (message.deletable)
-         message.delete()
-      else
-         logger.warn(chalk.bgYellow.bold(`Unable to delete message`))
+         promises.push(message.delete())
+
+      if (previousMessage.deletable)
+         promises.push(previousMessage.delete())
+
+      Promise.all(promises)
    })
 
    collector.on('end', collected => {
