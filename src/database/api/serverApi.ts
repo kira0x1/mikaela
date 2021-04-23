@@ -38,8 +38,3 @@ export async function findOrCreateServer(guild: Guild) {
     }
 }
 
-export async function addSongToServer(guild: Guild, song: Song) {
-    const server = await findOrCreateServer(guild)
-    server.lastPlayed.push(song)
-    return await server.save()
-}
