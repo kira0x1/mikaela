@@ -104,31 +104,31 @@ export class Player {
       this.inVoice = false;
 
       try {
+         this.saveQueueState()
+         this.clearVoiceTimeout()
+
          if (this.voiceChannel) {
-            if (this.stream && this.currentlyPlaying) {
-               this.queue.songs = [this.currentlyPlaying, ...this.queue.songs]
-               this.currentlyPlaying = undefined
-               this.currentlyPlayingStopTime = (this.stream.streamTime - this.stream.pausedTime) / 1000
-            } else {
-               this.currentlyPlayingStopTime = 0
-            }
-
-            this.clearVoiceTimeout()
-
-            //TODO make this an option that can be toggled via the server
-            this.clearQueue()
             this.voiceChannel.leave()
          }
+
+         this.queue.clear()
       } catch (error) {
          logger.warn(`Error trying to leave vc in: ${this.guild.name}`)
       }
+   }
+
+   saveQueueState() {
+      if (!this.currentlyPlaying) return
+      this.queue.songs = [this.currentlyPlaying, ...this.queue.songs]
+      this.currentlyPlaying = undefined
+      this.currentlyPlayingStopTime = this.stream ? (this.stream.streamTime - this.stream.pausedTime) / 1000 : 0
    }
 
    clearQueue() {
       this.currentlyPlaying = undefined
       this.currentlyPlayingStopTime = 0
       this.queue.clear();
-      this.startVcTimeout()
+      if (this.voiceChannel) this.startVcTimeout()
    }
 
    playNext() {
