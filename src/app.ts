@@ -43,9 +43,6 @@ const client = new Client({
          url: 'https://github.com/kira0x1/mikaela'
       }
    },
-   // messageCacheMaxSize: 50,
-   // messageCacheLifetime: 60,
-   // messageSweepInterval: 120,
    disableMentions: 'everyone'
 });
 
