@@ -1,7 +1,7 @@
 import { Song } from "./Song";
 
 export class Queue {
-    songs: Array<Song> = [];
+    songs: Song[] = [];
 
     constructor(songs?: Array<Song>) {
         if (songs) {
