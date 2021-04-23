@@ -4,7 +4,6 @@ import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.
 import ms from 'ms';
 
 import { logger } from '../app';
-import { addSongToServer } from '../database/api/serverApi';
 import { QuickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
@@ -305,7 +304,6 @@ export class Player {
 
    async addSong(song: Song, message: Message, onlyAddToQueue: boolean = false) {
       song.playedBy = message.member.id
-      addSongToServer(this.guild, song)
       this.queue.addSong(song);
       if (!onlyAddToQueue) this.play(song, message);
    }
