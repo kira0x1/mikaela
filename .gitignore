@@ -2,7 +2,7 @@ usersongs.json
 config.*
 app-local.ts
 out/
-ecosystem.config.js
+# ecosystem.config.js
 
 # Logs
 logs
