@@ -74,6 +74,7 @@ client.on('ready', () => {
    logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
+
 client.on('message', async message => {
    // Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || !message.content.startsWith(prefix)) {
@@ -177,5 +178,8 @@ client.on('message', async message => {
       logger.log('error', err);
    }
 });
+
+process.on('uncaughtException', error => logger.error(error))
+process.on('unhandledRejection', error => logger.error(error))
 
 init();
