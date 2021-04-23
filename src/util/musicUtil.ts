@@ -93,11 +93,11 @@ export async function createFavoriteCollector(song: Song, message: Message) {
    });
 }
 
-export async function createDeleteCollector(message: Message, author: User) {
+export async function createDeleteCollector(message: Message, previousMessage: Message) {
    await message.react(trashEmoji.id)
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === author.id
+      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id
    }
 
    const collector = message.createReactionCollector(filter, { time: collectorTime })
@@ -105,8 +105,9 @@ export async function createDeleteCollector(message: Message, author: User) {
    collector.on('collect', async (reaction, reactionCollector) => {
       if (message.deletable)
          message.delete()
-      else
-         logger.warn(chalk.bgYellow.bold(`Unable to delete message`))
+
+      if (previousMessage.deletable)
+         previousMessage.delete()
    })
 
    collector.on('end', collected => {
