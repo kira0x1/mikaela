@@ -62,5 +62,5 @@ export async function saveAllServersQueue() {
         server.queue = player.queue.songs
     })
 
-    await Promise.all(servers.map(server => server.save))
+    await Promise.all(servers.map(server => server.save()))
 }
