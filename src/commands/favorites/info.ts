@@ -9,7 +9,7 @@ export const command: ICommand = {
     description: 'Get a songs info',
     aliases: ['i'],
     args: true,
-    usage: '',
+    usage: '.fav info [song position] [target: optional]',
 
     async execute(message, args) {
         const favInfo = await findFavorite(message, args);
