@@ -26,7 +26,7 @@ export const successIconUrl = 'https://cdn.discordapp.com/attachments/7020915435
 export async function sendErrorEmbed(message: Message, errorMessage: string) {
     let embed = createFooter(message)
         .setTitle('Error')
-        .setDescription(errorMessage)
+        .setDescription(`**${errorMessage}**`)
         .setThumbnail(errorIconUrl)
 
     await message.channel.send(embed);
