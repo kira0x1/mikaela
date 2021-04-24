@@ -20,7 +20,10 @@ export const logger = createLogger({
 });
 
 const envString = isProduction ? '-------production-------' : '-------development-------';
+const dbString = (isProduction || cmdArgs['prodDB']) ? '-------production DB-------' : '-------development DB-------'
 logger.info(chalk.bgRed.bold(envString));
+logger.info(chalk.bgRed.bold(dbString));
+
 cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
 
 logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
