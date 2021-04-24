@@ -3,7 +3,8 @@ import { Message, MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
 import { prefix } from '../../config';
 import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/commandUtil';
-import { embedColor, wrap } from '../../util/styleUtil';
+import { createDeleteCollector } from '../../util/musicUtil';
+import { embedColor, wrap, createFooter } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Help',
@@ -20,7 +21,7 @@ export const command: ICommand = {
     },
 };
 
-function displayAll(message: Message) {
+async function displayAll(message: Message) {
     const grouped: ICommand[] = [];
 
     //Add all grouped commands to the grouped array so we can cross
@@ -32,28 +33,29 @@ function displayAll(message: Message) {
     });
 
     //Create embed
-    const embed = new MessageEmbed();
-    embed.setTitle('Commands');
-    embed.setColor(embedColor);
+    const embed = createFooter(message)
+        .setTitle(`Commands`)
+        .setDescription(`For information about a command or category\n**${prefix}help [command]**`)
 
     //Add all ungrouped commands to the embed
     const ungrouped = commandGroups.get('ungrouped');
     if (ungrouped) {
         ungrouped.map(cmd => {
             if (hasPerms(message.member, cmd.name) && !cmd.hidden)
-                embed.addField(cmd.name, cmd.description);
+                embed.addField(cmd.name, cmd.description, true);
         });
     }
 
     //Add all group commands info to the embed
     commandInfos.map(info => {
-        if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description);
+        if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description, true);
     });
 
-    message.channel.send(embed);
+    const msg = await message.channel.send(embed);
+    createDeleteCollector(msg, message)
 }
 
-function displayOne(message: Message, query: string) {
+async function displayOne(message: Message, query: string) {
     //Look for Command
     const command = findCommand(query);
 
@@ -105,7 +107,8 @@ function displayOne(message: Message, query: string) {
         });
 
     //Send embed
-    message.channel.send(embed);
+    const msg = await message.channel.send(embed);
+    createDeleteCollector(msg, message)
 }
 
 function getUsage(command: ICommand): string {
