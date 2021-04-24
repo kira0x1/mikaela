@@ -7,7 +7,7 @@ import { createFooter, embedColor, QuickEmbed, wrap } from '../../util/styleUtil
 
 export const command: ICommand = {
     name: 'Move',
-    description: 'Move a commands position in the Queue',
+    description: 'Move a songs position in the Queue',
     args: true,
     usage: '[song position] [desired position]',
 
