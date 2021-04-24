@@ -30,7 +30,6 @@ export class Player {
    lastPlayed: Song | undefined;
    ytdlHighWaterMark: number = 1 << 25
    vcHighWaterMark: number = 1 << 15
-   currentlyPlayingStopTime: number = 0
    vcTimeout: NodeJS.Timeout
    joinTestVc: boolean = false
    testVc?: VoiceChannel
@@ -121,12 +120,10 @@ export class Player {
       if (!this.currentlyPlaying) return
       this.queue.songs = [this.currentlyPlaying, ...this.queue.songs]
       this.currentlyPlaying = undefined
-      this.currentlyPlayingStopTime = this.stream ? (this.stream.streamTime - this.stream.pausedTime) / 1000 : 0
    }
 
    clearQueue() {
       this.currentlyPlaying = undefined
-      this.currentlyPlayingStopTime = 0
       this.queue.clear();
       if (this.voiceChannel) this.startVcTimeout()
    }
@@ -150,7 +147,6 @@ export class Player {
       if (!isProduction)
          logger.info(chalk.bgMagenta.bold(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`))
 
-      this.currentlyPlayingStopTime = 0
       this.clearVoiceTimeout()
 
       this.isPlaying = false
@@ -207,12 +203,6 @@ export class Player {
       if (!stream) return 0
 
       let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
-
-      const seekTime = this.currentlyPlayingStopTime
-
-      if (seekTime > 0) streamTime += seekTime
-      else if (seekTime < 0) logger.warn(`seek time is negative!\nseek: ${seekTime}`)
-
       return streamTime
    }
 
@@ -299,7 +289,7 @@ export class Player {
    }
 
    async resumeQueue(message: Message) {
-      this.play(this.currentlyPlaying || this.queue.songs[0], message, this.currentlyPlayingStopTime)
+      this.play(this.currentlyPlaying || this.queue.songs[0], message)
    }
 
    async addSong(song: Song, message: Message, onlyAddToQueue: boolean = false) {
