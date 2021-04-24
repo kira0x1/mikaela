@@ -179,7 +179,7 @@ export class Player {
       this.stream.end();
    }
 
-   play(song: Song, message: Message, seek?: number) {
+   play(song: Song, message: Message) {
       if (this.currentlyPlaying) return;
 
       this.currentlyPlaying = this.queue.getNext();
@@ -190,7 +190,7 @@ export class Player {
 
       this.voiceChannel = vc;
       if (!this.isPlaying)
-         this.startStream(song, seek);
+         this.startStream(song);
    }
 
    getLastPlayed() {
@@ -242,7 +242,7 @@ export class Player {
       return `${prettyTime} / ${duration.duration}`
    }
 
-   async startStream(song: Song, seek?: number) {
+   async startStream(song: Song) {
       this.clearVoiceTimeout()
 
       if (!this.voiceChannel) {
@@ -256,8 +256,6 @@ export class Player {
          highWaterMark: this.ytdlHighWaterMark,
          dlChunkSize: 0
       }
-
-      if (seek && seek > 0) ytdlOptions.seek = seek
 
       const opusStream = ytdl(song.url, ytdlOptions)
 
