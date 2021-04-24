@@ -13,7 +13,7 @@ export const command: ICommand = {
     name: 'remove',
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],
-    usage: '[Position | -s Search]',
+    usage: '.fav remove [Position | -s Search]',
     cooldown: 1.5,
 
     async execute(message, args) {
