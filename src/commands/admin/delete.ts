@@ -1,7 +1,7 @@
 import { Constants } from 'discord.js';
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { createFooter } from '../../util/styleUtil';
+import { createFooter, addCodeField, errorIconUrl, successIconUrl } from '../../util/styleUtil';
 
 export const command: ICommand = {
    name: 'delete',
@@ -29,24 +29,39 @@ export const command: ICommand = {
       const author = message.author;
 
       try {
-         const messagesDeleted = await message.channel.bulkDelete(amount);
+         const messagesDeleted = await (await message.channel.bulkDelete(amount)).array().reverse();
          if (!messagesDeleted) return;
 
          const embed = createFooter(message)
-            .setTitle(`${author.username} deleted ${messagesDeleted.size} messages`)
-            .setDescription(
-               `Server:\n\tName: ${message.guild.name}\n\tID:${message.guild.id}`
-            );
+            .setTitle(`${author.username} deleted ${messagesDeleted.length} messages`)
+            .addField(`Guild`, message.guild.name, true)
+            .addField(`Channel`, message.channel.name, true)
+            .setThumbnail(successIconUrl)
 
-         messagesDeleted.map((del, i) =>
-            embed.addField(`${i}) From: ${del.author.username}`, del.content)
-         );
+         let deletedMessagesPretty = ''
 
+         for (let i = 1; i < messagesDeleted.length; i++) {
+            const msg = messagesDeleted[i];
+            deletedMessagesPretty += `(${i})\nAuthor: ${msg.author.username}\ncontent: ${msg.content}\n\n`
+         }
+
+         addCodeField(embed, deletedMessagesPretty)
          author.send(embed);
       } catch (error) {
          if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return
          logger.error(error)
-         author.send(`Error deleting messages in  ${message.guild}, channel: ${message.channel.name}`);
+
+         const embed = createFooter(message)
+            .setTitle(`Error`)
+            .setDescription(error.message)
+            .addField(`Command`, 'delete')
+            .addField(`Guild`, message.guild.name)
+            .addField(`Channel`, message.channel.name)
+            .setThumbnail(errorIconUrl)
+
+         addCodeField(embed, error.message)
+
+         author.send(embed)
       }
    }
 };
