@@ -31,7 +31,8 @@
     "testvc": "node . --testvc",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "watch": "tsc --watch --noEmit --project tsconfig.json",
+    "watch": "tsc -w",
+    "watch:node": "nodemon .",
     "clean": "rimraf out",
     "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
     "clean:all": "npm run clean && npm run clean:node"
