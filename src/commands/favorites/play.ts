@@ -3,7 +3,7 @@ import { ICommand } from '../../classes/Command';
 import { Song } from "../../classes/Song";
 import { findOrCreate } from '../../database/api/userApi';
 import { getPlayer, playSong } from '../../util/musicUtil';
-import { createFooter, QuickEmbed } from '../../util/styleUtil';
+import { createFooter, QuickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
@@ -53,7 +53,7 @@ export const command: ICommand = {
 
             message.channel.send(embed)
         } catch (err) {
-            QuickEmbed(message, err);
+            sendErrorEmbed(message, err)
         }
     },
 };
@@ -93,6 +93,7 @@ export async function findFavorite(message: Message, args: string[]): Promise<{ 
 
     const userResult = await findOrCreate(target);
     const fav = userResult.favorites;
+    if (fav.length === 0) throw `${target} has no favorites`
 
     if (songRanges.length === 2) {
         const startRange = songRanges[0] - 1;
