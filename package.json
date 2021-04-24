@@ -43,7 +43,6 @@
     "discord-paginationembed": "^2.1.0",
     "discord-ytdl-core": "^5.0.2",
     "discord.js": "^12.5.3",
-    "ffmpeg-static": "^4.3.0",
     "minimist": "^1.2.5",
     "mongoose": "^5.12.5",
     "ms": "^2.1.3",
