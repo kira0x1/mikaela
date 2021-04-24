@@ -6,7 +6,7 @@ export const command: ICommand = {
    name: 'play',
    description: 'Play a song',
    aliases: ['p'],
-   usage: '[song]',
+   usage: '[url | search]',
    args: false,
 
    async execute(message: Message, args: string[]) {
