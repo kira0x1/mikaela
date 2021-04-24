@@ -11,7 +11,7 @@ export const command: ICommand = {
     name: 'shuffle',
     description: 'Shuffle songs from a favorites list',
     usage: '[amount: optional] [target: optional]',
-    aliases: ['random', 'mix'],
+    aliases: ['random', 'mix', 'rand', 'sh'],
     cooldown: 1,
 
     async execute(message, args) {
@@ -62,22 +62,14 @@ export const command: ICommand = {
         for (let i = 1; i < amount; i++) {
             let song = random()
 
-            // logger.info(chalk.bgMagenta.bold(`Songs Adding Length: ${songsAdding.length}\nfavorites length: ${user.favorites.length}`))
-
             if (songsAdding.includes(song) && songsAdding.length < user.favorites.length) {
-                // logger.info(chalk.bgCyan.bold(`\n ${song.title}\nDuplicate song, picking another one\n`))
-
                 let hasFoundSong = false
                 while (!hasFoundSong) {
                     song = random()
                     if (!songsAdding.includes(song)) hasFoundSong = true
                 }
-
-                // logger.info((chalk.bgCyan.bold(`picked: ${song.title}\n`)))
             }
-
             songsAdding.push(song)
-
             embed.addField(`${i + 1} ${song.title}`, song.url);
             player.addSong(song, message)
         }
