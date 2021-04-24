@@ -20,6 +20,9 @@ export function wrap(content: string[] | string, wrap: string = '`'): string {
         .join(' ');
 }
 
+export const errorIconUrl = 'https://cdn.discordapp.com/attachments/702091543514710027/835451455208423424/error_icon.png'
+export const successIconUrl = 'https://cdn.discordapp.com/attachments/702091543514710027/835456148811415602/success_icon.png'
+
 export async function sendErrorEmbed(message: Message, errorMessage: string) {
     let embed: MessageEmbed = createFooter(message).setTitle('Error').setDescription(errorMessage);
 
