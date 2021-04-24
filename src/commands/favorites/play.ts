@@ -11,7 +11,7 @@ export const command: ICommand = {
     description: 'Play a song from yours or someone elses favorites',
     aliases: ['p'],
     args: true,
-    usage: '[song index | startIndex - endIndex (To Select Multiple Songs) ]',
+    usage: '.fav play [song index | start pos - end pos (To Select Multiple Songs) ]',
     cooldown: 1,
 
     async execute(message, args) {
