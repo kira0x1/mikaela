@@ -11,6 +11,8 @@ import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, QuickEmbed } from './styleUtil';
+import { sendArgsError } from './commandUtil';
+import { ICommand } from '../classes/Command';
 
 const collectorTime = ms('3h')
 export const players: Collection<string, Player> = new Collection();
@@ -164,7 +166,7 @@ export function randomNumber(min: number, max: number) {
    };
 }
 
-export async function onSongRequest(message: Message, args: string[], onlyAddToQueue: boolean = false) {
+export async function onSongRequest(message: Message, args: string[], command: ICommand, onlyAddToQueue: boolean = false) {
 
    //Make sure the user is in voice
    if (!message.member.voice.channel) {
@@ -173,9 +175,9 @@ export async function onSongRequest(message: Message, args: string[], onlyAddToQ
 
    const player = getPlayer(message)
 
-   if (args.length === 0 && onlyAddToQueue) {
-      resumeQueue(message, player)
-      return
+   if (args.length === 0) {
+      if (onlyAddToQueue) return resumeQueue(message, player)
+      return sendArgsError(command, message);
    }
 
    //Get the users query

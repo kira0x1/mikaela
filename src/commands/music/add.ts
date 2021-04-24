@@ -8,6 +8,6 @@ export const command: ICommand = {
     args: true,
 
     async execute(message, args) {
-        onSongRequest(message, args, true)
+        onSongRequest(message, args, this, true)
     }
 }

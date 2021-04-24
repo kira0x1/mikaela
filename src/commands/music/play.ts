@@ -10,6 +10,6 @@ export const command: ICommand = {
    args: false,
 
    async execute(message: Message, args: string[]) {
-      onSongRequest(message, args);
+      onSongRequest(message, args, this);
    }
 };
