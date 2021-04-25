@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Skip',
@@ -16,7 +16,7 @@ export const command: ICommand = {
 
         //Get the current playing song
         const currentSong = player.currentlyPlaying;
-        if (!currentSong) return QuickEmbed(message, `No song currently playing`);
+        if (!currentSong) return quickEmbed(message, `No song currently playing`);
 
         //Create an embed with the information of the song to be skipped
         const embed = new MessageEmbed()

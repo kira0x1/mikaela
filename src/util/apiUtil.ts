@@ -5,7 +5,7 @@ import ytpl from 'ytpl';
 import { logger } from '../app';
 import { Song } from "../classes/Song";
 import { ConvertDuration } from './musicUtil';
-import { QuickEmbed, wrap } from './styleUtil';
+import { quickEmbed, wrap } from './styleUtil';
 
 export function rand(max: number) {
    return Math.floor(Math.random() * max);
@@ -17,7 +17,6 @@ export async function getSong(query: string): Promise<Song | ytpl.Result> {
       if (validateURL(query)) {
          const details = await getSongDetails(query);
          if (!details) return;
-
          return convertDetailsToSong(details);
       }
 
@@ -37,8 +36,8 @@ export async function getSong(query: string): Promise<Song | ytpl.Result> {
       const details = await getSongDetails(songSearch[0].id);
       if (!details) return;
       return convertDetailsToSong(details);
-   } catch (err) {
-      logger.log('error', err);
+   } catch (error) {
+      logger.error(error.stack);
    }
 }
 
@@ -73,12 +72,18 @@ export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Son
 
 // A helper function that gets info from a link
 async function getSongDetails(link: string) {
-   if (!link) return
-   const info = await getInfo(link);
-   if (!info) return;
-   return info.videoDetails;
+   try {
+      if (!link) return
+      const info = await getInfo(link);
+
+      if (!info) return;
+      return info.videoDetails;
+   }
+   catch (error) {
+      logger.error(error.stack)
+   }
 }
 
 export function sendSongNotFoundEmbed(message: Message, query: string) {
-   QuickEmbed(message, `Song not found: ${wrap(query)}`, true)
+   quickEmbed(message, `Song not found: ${wrap(query)}`, { addFooter: true })
 }

@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Resume',
@@ -18,10 +18,10 @@ export const command: ICommand = {
 
         //If theres no song playing or if the stream dispatcher is undefined exit out
         if (!player.currentlyPlaying || !player.getStream())
-            return QuickEmbed(message, `No song currently playing to resume`);
+            return quickEmbed(message, `No song currently playing to resume`);
 
         //If its not paused exit out
-        if (!player.stream.paused) return QuickEmbed(message, `Player isnt paused`);
+        if (!player.stream.paused) return quickEmbed(message, `Player isnt paused`);
 
         //If its paused go ahead with unpausing the stream
         player.unpause();

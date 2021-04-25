@@ -4,7 +4,7 @@ import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.
 import ms from 'ms';
 
 import { logger } from '../app';
-import { QuickEmbed } from '../util/styleUtil';
+import { quickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
@@ -52,8 +52,8 @@ export class Player {
    async join(message: Message) {
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
 
-      if (!vc) return QuickEmbed(message, `You must be in a voice channel to play music`);
-      if (!vc.joinable) return QuickEmbed(message, 'I dont have permission to join that voice-channel');
+      if (!vc) return quickEmbed(message, `You must be in a voice channel to play music`);
+      if (!vc.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
 
       try {
          const conn = await vc.join();
@@ -71,12 +71,12 @@ export class Player {
 
       if (amount < minVolume || amount > maxVolume) {
          if (message && amount < minVolume) {
-            return QuickEmbed(
+            return quickEmbed(
                message,
                `Cannot go below minimum volume ( **${minVolume}** )`
             );
          } else if (message && amount > maxVolume) {
-            return QuickEmbed(
+            return quickEmbed(
                message,
                `Cannot exceed maximum volume ( **${maxVolume}** )`
             );
@@ -90,7 +90,7 @@ export class Player {
       }
 
       if (message) {
-         QuickEmbed(message, `volume set to ${this.volume}`);
+         quickEmbed(message, `volume set to ${this.volume}`);
       }
    }
 
@@ -186,7 +186,7 @@ export class Player {
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
 
       if (!vc?.joinable)
-         return QuickEmbed(message, 'I dont have permission to join that voice-channel');
+         return quickEmbed(message, 'I dont have permission to join that voice-channel');
 
       this.voiceChannel = vc;
       if (!this.isPlaying)
@@ -246,7 +246,7 @@ export class Player {
       this.clearVoiceTimeout()
 
       if (!this.voiceChannel) {
-         logger.log('error', 'No Voicechannel');
+         logger.error('No Voicechannel');
          return;
       }
 
@@ -257,9 +257,13 @@ export class Player {
          dlChunkSize: 0
       }
 
-      const opusStream = ytdl(song.url, ytdlOptions)
-
       try {
+         const opusStream = ytdl(song.url, ytdlOptions)
+
+         opusStream.on('error', (error) => {
+            logger.error(error.stack)
+         })
+
          const conn = await this.voiceChannel.join();
          conn.voice.setSelfDeaf(true)
 
@@ -277,12 +281,11 @@ export class Player {
             if (!speaking) this.playNext()
          })
 
-         this.stream.on('error', (err) => {
-            logger.error(err)
+         this.stream.on('error', (error) => {
+            logger.error(`stream error: ${error}`)
          })
-
-      } catch (err) {
-         logger.log('warn', err);
+      } catch (error) {
+         logger.error(error.stack);
       }
    }
 

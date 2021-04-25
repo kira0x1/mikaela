@@ -10,7 +10,7 @@ import { getAllServers } from '../database/api/serverApi';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
-import { createFooter, embedColor, QuickEmbed } from './styleUtil';
+import { createFooter, embedColor, quickEmbed } from './styleUtil';
 import { sendArgsError } from './commandUtil';
 import { ICommand } from '../classes/Command';
 
@@ -130,7 +130,6 @@ export async function createDeleteCollector(message: Message, previousMessage: M
    const collector = message.createReactionCollector(filter, { time: collectorTime })
 
    collector.on('collect', async (reaction, reactionCollector) => {
-
       const promises = []
 
       if (message.deletable)
@@ -168,12 +167,13 @@ export function randomNumber(min: number, max: number) {
 
 export async function onSongRequest(message: Message, args: string[], command: ICommand, onlyAddToQueue: boolean = false) {
 
+   const player = getPlayer(message)
+
    //Make sure the user is in voice
-   if (!message.member.voice.channel) {
-      return QuickEmbed(message, `You must be in a voice channel to play music`);
+   if (!message.member.voice.channel && !player.testVc) {
+      return quickEmbed(message, `You must be in a voice channel to play music`);
    }
 
-   const player = getPlayer(message)
 
    if (args.length === 0) {
       if (onlyAddToQueue) return resumeQueue(message, player)
@@ -187,7 +187,7 @@ export async function onSongRequest(message: Message, args: string[], command: I
    const song = await getSong(query);
 
    //If song not found, tell the user.
-   if (!song) return QuickEmbed(message, 'Song not found');
+   if (!song) return quickEmbed(message, 'Song not found');
 
    if (isPlaylist(song)) {
       const playlistSongs = await convertPlaylistToSongs(song);

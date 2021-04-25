@@ -3,7 +3,7 @@ import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getTarget } from '../../util/discordUtil';
 import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
-import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+import { createFooter, embedColor, quickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 
 const maxShuffleAmount = 20;
 
@@ -27,12 +27,12 @@ export const command: ICommand = {
         let target = message.author
         if (args.length > 0) target = await getTarget(message, args.join(' '));
 
-        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
+        if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
         const user = await findOrCreate(target);
 
         if (!user.favorites || user.favorites.length == 0) {
-            return QuickEmbed(message, 'You have no favorites to shuffle');
+            return sendErrorEmbed(message, `Cannot shuffle from user <@${user.id}>\nuser must add songs to their favorites list first`, 'User has no favorites')
         }
 
         const embed = createFooter(message);
