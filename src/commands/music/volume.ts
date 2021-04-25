@@ -16,7 +16,11 @@ export const command: ICommand = {
       const arg = args.shift();
       const player = getPlayer(message);
 
-      if (!player) return logger.log('info', 'no player found while using volume command');
+      const member = message.member;
+      if (!member.voice.channel)
+         return QuickEmbed(message, `You must be in a voice channel to play music`);
+
+      if (!player) return logger.warn('info', 'no player found while using volume command');
       if (!arg) return QuickEmbed(message, `Volume is currently ${player.volume}`);
 
       if (!hasPerms(message.member, this.name)) {
