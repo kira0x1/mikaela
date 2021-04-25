@@ -5,51 +5,46 @@ import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getSong, sendSongNotFoundEmbed } from '../../util/apiUtil';
-import { QuickEmbed } from '../../util/styleUtil';
-
-const searchAliases = ["--search", "-search", "-s", "--s"]
+import { quickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'remove',
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],
-    usage: '.fav remove [Position | -s Search]',
+    usage: '.fav remove [Position | Search]',
     cooldown: 1.5,
 
     async execute(message, args) {
-        let firstArg = args[0]
-
-        if (searchAliases.includes(firstArg)) {
-            args.shift()
-            RemoveBySearch(args.join(' '), message)
-        } else {
+        if (Number(args[0]))
             RemoveByIndex(args, message)
-        }
+        else
+            RemoveBySearch(args.join(' '), message)
     },
 };
 
 async function RemoveByIndex(args: string[], message: Message) {
     const index = Number(args.shift());
-    if (!index) return QuickEmbed(message, 'Invalid position');
+    if (!index) return
 
     const user = await findOrCreate(message.author);
 
     if (index > user.favorites.length) {
-        return QuickEmbed(message, 'Invalid position');
+        return quickEmbed(message, 'Invalid position');
     }
 
     const song = user.favorites.splice(index - 1, 1).shift();
     user.save()
 
     if (!song) {
-        return QuickEmbed(message, `Error while trying to remove song at ${index}`);
+        return quickEmbed(message, `Error while trying to remove song at ${index}`);
     }
 
-    QuickEmbed(message, `Removed song **${song.title}** from your favorites`);
+    quickEmbed(message, `Removed song **${song.title}** from your favorites`);
 }
 
 
 async function RemoveBySearch(query: string, message: Message) {
+    logger.info(chalk.bgRed.bold(`Removing by search: ${query}`))
     const user = await findOrCreate(message.author);
     const song = await getSong(query)
 
@@ -64,13 +59,13 @@ async function RemoveBySearch(query: string, message: Message) {
         if (s.id !== song.id) continue;
 
         const songRemoved = user.favorites.splice(i, 1).shift()
-        if (!songRemoved) return QuickEmbed(message, `Error while trying to remove song at ${i}`);
+        if (!songRemoved) return quickEmbed(message, `Error while trying to remove song at ${i}`);
         logger.info(chalk.bgGreen.bold(`Deleting song ${s.title}`))
         user.save()
         hasRemovedSong = true;
         break;
     }
 
-    if (hasRemovedSong) QuickEmbed(message, `Removed song **${song.title}** from your favorites`, true);
+    if (hasRemovedSong) quickEmbed(message, `Removed song **${song.title}** from your favorites`, { addFooter: true });
     else sendSongNotFoundEmbed(message, query)
 }

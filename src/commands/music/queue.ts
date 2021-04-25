@@ -1,7 +1,7 @@
 import { Collection, Message } from 'discord.js';
 
 import { ICommand } from '../../classes/Command';
-import { getPlayer } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter } from '../../util/styleUtil';
 
 export const queueCalls: Collection<string, Message> = new Collection();
@@ -19,10 +19,8 @@ export const command: ICommand = {
 export async function sendQueueEmbed(message: Message) {
     const embed = await getQueue(message);
     const lastQueueCall = await message.channel.send(embed);
-
-    if (lastQueueCall instanceof Message) {
-        queueCalls.set(message.author.id, lastQueueCall);
-    }
+    queueCalls.set(message.author.id, lastQueueCall);
+    createDeleteCollector(lastQueueCall, message)
 }
 
 export async function getQueue(message: Message) {
@@ -41,7 +39,6 @@ export async function getQueue(message: Message) {
 
         embed.setTitle(`Playing: ${currentlyPlaying.title}`);
         embed.setURL(currentlyPlaying.url);
-
         embed.addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`)
     } else {
         //If no song is currently playing
@@ -55,5 +52,6 @@ export async function getQueue(message: Message) {
         const song = songs[i]
         embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n<@${song.playedBy}>\n`);
     }
+
     return embed;
 }

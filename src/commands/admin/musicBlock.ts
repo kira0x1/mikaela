@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { AddBlocked, blockedUsers } from '../../database/models/Blocked';
-import { createFooter, QuickEmbed, wrap } from '../../util/styleUtil';
+import { createFooter, quickEmbed, wrap } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
@@ -19,10 +19,10 @@ export const command: ICommand = {
 
       const query = args.join(' ');
       const target = await getTarget(message, query);
-      if (!target) return QuickEmbed(message, `Member \"${query}\" not found`);
+      if (!target) return quickEmbed(message, `Member \"${query}\" not found`);
 
       if (blockedUsers.has(target.id))
-         return QuickEmbed(message, `Member \"${target.tag}\" is already blocked`);
+         return quickEmbed(message, `Member \"${target.tag}\" is already blocked`);
 
       const blockedResponse = await AddBlocked(target.tag, target.id);
       logger.log('info', blockedResponse);

@@ -1,6 +1,6 @@
 import { ICommand } from '../../classes/Command';
 import { createCurrentlyPlayingEmbed, createFavoriteCollector, getPlayer } from '../../util/musicUtil';
-import { QuickEmbed } from '../../util/styleUtil';
+import { quickEmbed } from '../../util/styleUtil';
 
 
 export const command: ICommand = {
@@ -16,7 +16,7 @@ export const command: ICommand = {
         const currentSong = player.currentlyPlaying;
         const stream = player.getStream();
 
-        if (!(stream && player.currentlyPlaying)) return QuickEmbed(message, 'No song currently playing');
+        if (!(stream && player.currentlyPlaying)) return quickEmbed(message, 'No song currently playing');
 
         //Create embed
         const embed = await createCurrentlyPlayingEmbed(stream, player, message)

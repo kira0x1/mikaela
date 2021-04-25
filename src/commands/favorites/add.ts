@@ -2,13 +2,13 @@ import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
 import { addFavoriteToUser } from '../../database/api/userApi';
 import { getSong, isPlaylist } from '../../util/apiUtil';
-import { QuickEmbed } from '../../util/styleUtil';
+import { quickEmbed } from '../../util/styleUtil';
 
 
 export const command: ICommand = {
     name: 'add',
     description: 'Add a song to your favorites',
-    usage: '[search | url]',
+    usage: '.fav add [search | url]',
     args: true,
     cooldown: 1,
     isSubCommand: true,
@@ -17,17 +17,16 @@ export const command: ICommand = {
         const query = args.join();
         try {
             const song = await getSong(query);
+            if (!song) return quickEmbed(message, 'song not found');
 
             if (isPlaylist(song)) {
-                QuickEmbed(message, "Cannot add playlists to your favorites... this feature is coming soon.")
+                quickEmbed(message, "Cannot add playlists to your favorites... this feature is coming soon.", { autoDelete: true })
                 return
             }
 
-            if (!song) return QuickEmbed(message, 'song not found');
-
             addFavoriteToUser(message.author, song, message)
-        } catch (err) {
-            logger.log('error', err);
+        } catch (error) {
+            logger.error(error);
         }
     },
 };

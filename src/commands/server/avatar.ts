@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { createFooter, QuickEmbed } from '../../util/styleUtil';
+import { createFooter, quickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
 export const command: ICommand = {
@@ -17,7 +17,7 @@ export const command: ICommand = {
 
       // If we couldnt find a user, then tell the user, and return.
       if (!target)
-         return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``);
+         return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
       // Create the embed
       const embed: MessageEmbed = createFooter(message)

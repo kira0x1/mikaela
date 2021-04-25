@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed } from '../../util/styleUtil';
 import { findFavorite } from './play';
 
 
@@ -15,7 +15,7 @@ export const command: ICommand = {
         const favInfo = await findFavorite(message, args);
         const song = favInfo.song
 
-        if (!song || song instanceof Array) return QuickEmbed(message, `Song not found`)
+        if (!song || song instanceof Array) return quickEmbed(message, `Song not found`)
 
         const embed = new MessageEmbed()
             .setColor(embedColor)

@@ -1,10 +1,11 @@
 import { Message, User } from 'discord.js';
+
 import { ICommand } from '../../classes/Command';
-import { Song } from "../../classes/Song";
+import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
-import { getPlayer, playSong } from '../../util/musicUtil';
-import { createFooter, QuickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
+import { getPlayer, playSong } from '../../util/musicUtil';
+import { createFooter, quickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'play',
@@ -18,8 +19,8 @@ export const command: ICommand = {
         const player = getPlayer(message);
         if (!player) return;
 
-        if (!player.inVoice && !message.member.voice.channel)
-            return QuickEmbed(message, `You must be in a voice channel to play music`);
+        if (!player.testVc && !player.inVoice && !message.member.voice.channel)
+            return quickEmbed(message, `You must be in a voice channel to play music`);
 
         try {
             const res = await findFavorite(message, args);
@@ -52,8 +53,8 @@ export const command: ICommand = {
             }
 
             message.channel.send(embed)
-        } catch (err) {
-            sendErrorEmbed(message, err)
+        } catch (error) {
+            sendErrorEmbed(message, error.message, '')
         }
     },
 };
@@ -89,11 +90,11 @@ export async function findFavorite(message: Message, args: string[]): Promise<{ 
     let target = message.author
     if (args.length > 0) target = await getTarget(message, args.join(' '));
 
-    if (!target) throw `Could not find user \`${args.join(' ')}\``
+    if (!target) throw new Error(`Could not find user \`${args.join(' ')}\``)
 
     const userResult = await findOrCreate(target);
     const fav = userResult.favorites;
-    if (fav.length === 0) throw `${target} has no favorites`
+    if (fav.length === 0) throw new Error(`${target} has no favorites`)
 
     if (songRanges.length === 2) {
         const startRange = songRanges[0] - 1;
@@ -102,15 +103,15 @@ export async function findFavorite(message: Message, args: string[]): Promise<{ 
         const startValid = startRange < fav.length && startRange >= 0;
         const endValid = endRange <= fav.length && endRange > 0;
 
-        if (!startValid || !endValid) throw `This user doesnt have songs in that range`;
+        if (!startValid || !endValid) throw new Error(`This user doesnt have songs in that range`);
 
         const songs = fav.slice(startRange, endRange);
         return { target: target, song: songs }
     }
 
-    if (songIndex === undefined) throw `no song index given`;
+    if (songIndex === undefined) throw new Error(`no song index given`);
 
     songIndex--;
-    if (fav.length < songIndex || !fav[songIndex]) throw `song at index \"${songArg}\" not found`;
+    if (fav.length < songIndex || !fav[songIndex]) throw new Error(`song at index \"${songArg}\" not found`);
     return { target: target, song: fav[songIndex] }
 }

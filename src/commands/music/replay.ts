@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed } from '../../util/styleUtil';
 
 export const command: ICommand = {
     name: 'Replay',
@@ -25,7 +25,7 @@ export const command: ICommand = {
 
             message.channel.send(embed);
         } else {
-            QuickEmbed(message, `No song was played previously`);
+            quickEmbed(message, `No song was played previously`);
         }
     },
 };

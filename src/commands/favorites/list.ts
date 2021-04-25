@@ -1,13 +1,17 @@
 import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
+
+import { logger } from '../../app';
 import { ICommand } from '../../classes/Command';
-import { Song } from "../../classes/Song";
-import { IUser } from '../../database/models/User';
+import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
-import { createFooter, embedColor, QuickEmbed } from '../../util/styleUtil';
+import { IUser } from '../../database/models/User';
 import { getTarget } from '../../util/discordUtil';
 import { createDeleteCollector } from '../../util/musicUtil';
-import { logger } from '../../app';
+import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
+
+const favlistCalls: Collection<string, Message> = new Collection();
+const songsPerPage = 5;
 
 export const command: ICommand = {
     name: 'list',
@@ -22,7 +26,7 @@ export const command: ICommand = {
         let target = message.author
         if (args.length > 0) target = await getTarget(message, args.join(' '));
 
-        if (!target) return QuickEmbed(message, `Could not find user \`${args.join(' ')}\``)
+        if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``)
 
         const user = await findOrCreate(target);
 
@@ -39,14 +43,47 @@ export const command: ICommand = {
     },
 };
 
-async function ListFavorites(message: Message, target: User, user: IUser) {
-    const songs = user.favorites;
-    const songsPerPage = 5;
+export async function updateFavList(userId: string) {
+    const lastFav = favlistCalls.get(userId)
+    if (!lastFav) return
+
+}
+
+function createFavListEmbed(target: User, user: IUser, pages: Collection<number, Song[]>, pageAt = 0) {
+    let title = `**Favorites**\nPage **${pageAt + 1} / ${pages.size}**`;
+    title += `\nSongs **${user.favorites.length}**`;
+    title += '\n\u200b';
+
+    const embed = new MessageEmbed()
+        .setThumbnail(target.displayAvatarURL({ dynamic: true }))
+        .setColor(embedColor)
+        .setTitle(title)
+
+
+    const page = pages.get(pageAt);
+    if (!page) {
+        logger.warn(`Could not get page: ${pageAt} for user ${user.username}`)
+        return
+    }
+
+    page.map((song, index) => {
+        const num = `**${pageAt * songsPerPage + (index + 1)}**`;
+        let content = `Duration: ${song.duration.duration}  ${song.url}`;
+        let title = `${num} **${song.title}**`;
+
+        embed.addField(title, content);
+    });
+
+    return embed
+}
+
+function getPages(songs: Song[]) {
     const pages: Collection<number, Song[]> = new Collection();
 
     let count = 0;
     let pageAtInLoop = 0;
     pages.set(0, []);
+
     for (let i = 0; i < songs.length; i++) {
         if (count >= songsPerPage) {
             count = 0;
@@ -60,28 +97,18 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
         count++;
     }
 
-    let pageAt = 0;
-    const embed = new MessageEmbed().setColor(embedColor).setThumbnail(target.displayAvatarURL({ dynamic: true }));
+    return pages;
+}
 
-    let title = `**Favorites**\nPage **${pageAt + 1} / ${pages.size}**`;
-    title += `\nSongs **${user.favorites.length}**`;
-    title += '\n\u200b';
+async function ListFavorites(message: Message, target: User, user: IUser) {
 
-    embed.setTitle(title);
+    const songs = user.favorites;
+    const pages = getPages(songs)
 
-    const page = pages.get(pageAt);
-    if (page) {
-        page.map((song, index) => {
-            const num = `**${index + 1}**  `;
-            let content = 'Duration: ' + song.duration.duration;
-            content += `  ${song.url}`;
-
-            let title = num + ' ' + `**${song.title}**`;
-            embed.addField(title, content);
-        });
-    }
+    const embed = createFavListEmbed(target, user, pages)
 
     const msg = await message.channel.send(embed);
+    favlistCalls.set(message.author.id, msg)
 
     //If there are only 1 or none pages then dont add the next, previous page emojis / collector
     if (pages.size <= 1) {
@@ -111,26 +138,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
         reaction.users.remove(userReacted);
 
-        let title = `**Favorites**\nPage **${currentPage + 1} / ${pages.size}**`;
-        title += `\nSongs **${user.favorites.length}**`;
-        title += '\n\u200b';
-
-        const newEmbed = new MessageEmbed()
-            .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-            .setTitle(title)
-            .setColor(embedColor);
-
-        const page = pages.get(currentPage);
-        if (!page) return;
-
-        page.map((song, index) => {
-            const num = `**${currentPage * songsPerPage + (index + 1)}**`;
-            let content = 'Duration: ' + song.duration.duration;
-            content += `  ${song.url}`;
-
-            let title = num + ' ' + `**${song.title}**`;
-            newEmbed.addField(title, content);
-        });
+        const newEmbed = createFavListEmbed(target, user, pages, currentPage);
 
         msg.edit(newEmbed);
     });

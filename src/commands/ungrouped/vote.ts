@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 import { logger } from '../../app';
 
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed } from '../../util/styleUtil';
 
 const voteEmojis = [
    { name: 'one' },
@@ -40,7 +40,7 @@ export const command: ICommand = {
       const embed = new MessageEmbed().setTitle(title).setColor(embedColor);
 
       if (votes.length > 9) {
-         return QuickEmbed(message, `max options 9`);
+         return quickEmbed(message, `max options 9`);
       }
 
       for (let i = 0; i < votes.length; i++) {

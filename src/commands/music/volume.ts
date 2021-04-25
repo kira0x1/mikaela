@@ -1,6 +1,6 @@
 import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { QuickEmbed, wrap } from '../../util/styleUtil';
+import { quickEmbed, wrap } from '../../util/styleUtil';
 import { logger } from '../../app';
 import { hasPerms } from '../../util/commandUtil';
 
@@ -18,10 +18,10 @@ export const command: ICommand = {
 
       const member = message.member;
       if (!member.voice.channel)
-         return QuickEmbed(message, `You must be in a voice channel to play music`);
+         return quickEmbed(message, `You must be in a voice channel to play music`);
 
       if (!player) return logger.warn('info', 'no player found while using volume command');
-      if (!arg) return QuickEmbed(message, `Volume is currently ${player.volume}`);
+      if (!arg) return quickEmbed(message, `Volume is currently ${player.volume}`);
 
       if (!hasPerms(message.member, this.name)) {
          return message.author.send(`You do not have permission to use ${wrap(command.name)}`);

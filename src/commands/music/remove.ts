@@ -1,8 +1,6 @@
-import { MessageEmbed } from 'discord.js';
-
-import { getPlayer } from '../../util/musicUtil';
 import { ICommand } from '../../classes/Command';
-import { embedColor, QuickEmbed } from '../../util/styleUtil';
+import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
+import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
 import { getQueue, queueCalls } from './queue';
 
 export const command: ICommand = {
@@ -15,26 +13,26 @@ export const command: ICommand = {
         const player = getPlayer(message);
         if (!player) return;
 
-        if (!player.hasSongs()) return QuickEmbed(message, 'Queue is empty')
+        if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty')
 
         const arg1 = args.shift();
         if (!arg1) return;
 
         if (Number(arg1) === NaN) {
-            QuickEmbed(message, 'Invalid position');
+            quickEmbed(message, 'Invalid position');
             return;
         }
 
         const pos = Number(arg1);
 
         if (pos > player.queue.songs.length + 1) {
-            return QuickEmbed(message, 'Invalid position');
+            return quickEmbed(message, 'Invalid position');
         }
 
         const song = player.queue.removeAt(pos - 1).shift();
-        if (!song) return QuickEmbed(message, 'Couldnt find song');
+        if (!song) return quickEmbed(message, 'Couldnt find song');
 
-        const embed = new MessageEmbed()
+        const embed = createFooter(message)
             .setColor(embedColor)
             .setTitle(`Removed song ${song.title}`)
             .setAuthor(
@@ -42,7 +40,7 @@ export const command: ICommand = {
                 message.author.displayAvatarURL({ dynamic: true })
             );
 
-        message.channel.send(embed);
+        message.channel.send(embed).then((msg) => createDeleteCollector(msg, message))
 
         const lastQueueCall = queueCalls.get(message.author.id);
         if (lastQueueCall) {

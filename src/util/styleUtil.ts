@@ -1,4 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
+import ms from 'ms';
+
+import { logger } from '../app';
 
 const redColor = 0xcf274e;
 // const blueColor = 0x4e74e6;
@@ -23,11 +26,12 @@ export function wrap(content: string[] | string, wrap: string = '`'): string {
 export const errorIconUrl = 'https://cdn.discordapp.com/attachments/702091543514710027/835451455208423424/error_icon.png'
 export const successIconUrl = 'https://cdn.discordapp.com/attachments/702091543514710027/835456148811415602/success_icon.png'
 
-export async function sendErrorEmbed(message: Message, errorMessage: string) {
+export async function sendErrorEmbed(message: Message, errorMessage: string, errorTitle = "Error") {
     let embed = createFooter(message)
-        .setTitle('Error')
         .setDescription(`**${errorMessage}**`)
         .setThumbnail(errorIconUrl)
+
+    if (errorTitle !== '') embed.setTitle(errorTitle)
 
     await message.channel.send(embed);
 }
@@ -43,10 +47,41 @@ export function createFooter(message: Message): MessageEmbed {
     return embed;
 }
 
-export function QuickEmbed(message: Message, content: string, withFooter: boolean = true) {
-    const embed = withFooter ? createFooter(message) : new MessageEmbed()
-    embed.setTitle(content).setColor(embedColor);
-    message.channel.send(embed);
+export interface quickEmbedOptions {
+    addFooter?: boolean,
+    autoDelete?: boolean
+    deleteDelay?: string
+}
+
+export function quickEmbed(message: Message, content: string, options?: quickEmbedOptions) {
+    const addFooter = options?.addFooter || true
+    const autoDelete = options?.autoDelete;
+    const deleteDelay = options?.deleteDelay
+
+    const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor)
+    embed.setTitle(content)
+    message.channel.send(embed)
+
+    if (autoDelete) {
+        autoDeleteMessage(message, deleteDelay)
+    }
+}
+
+async function autoDeleteMessage(message: Message | Promise<Message>, delay: string = '10s') {
+    const msg = message instanceof Message ? message : await message;
+
+    setTimeout(() => {
+        deleteMessage(msg)
+    }, ms(delay));
+}
+
+export function deleteMessage(message: Message) {
+    if (!message.deletable) {
+        logger.info(`Message not deletable\nfrom: ${message.author.username}\ncontent:${message.content}`)
+        return
+    }
+
+    message.delete()
 }
 
 export function createEmptyField(inline?: boolean | false) {
