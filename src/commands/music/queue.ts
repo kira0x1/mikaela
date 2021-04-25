@@ -53,7 +53,6 @@ export async function getQueue(message: Message) {
     //Add songs to the embed
     for (let i = 0; i < songs.length && i < 25; i++) {
         const song = songs[i]
-        //song.duration.duration + '  ' + song.url
         embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n<@${song.playedBy}>\n`);
     }
     return embed;
