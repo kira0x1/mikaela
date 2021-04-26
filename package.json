@@ -53,9 +53,9 @@
     "utf-8-validate": "^5.0.4",
     "winston": "^3.3.3",
     "ws": "^7.4.5",
-    "youtube-sr": "^4.0.4",
+    "youtube-sr": "^4.0.5",
     "ytdl-core": "^4.5.0",
-    "ytpl": "^2.1.1"
+    "ytpl": "^2.2.0"
   },
   "devDependencies": {
     "@types/ms": "^0.7.31",
