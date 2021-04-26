@@ -2,7 +2,7 @@ import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } f
 import ms from 'ms';
 
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
 import { IUser } from '../../database/models/User';
@@ -13,7 +13,7 @@ import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
 const favlistCalls: Collection<string, Message> = new Collection();
 const songsPerPage = 5;
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'list',
     description: 'Lists your favorites or someone elses',
     aliases: ['ls'],

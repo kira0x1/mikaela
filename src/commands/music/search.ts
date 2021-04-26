@@ -1,8 +1,8 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { convertPlaylistToSongs, getSong, isPlaylist } from '../../util/apiUtil';
 import { createFooter } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'search',
    description: 'Search for a song',
    args: true,

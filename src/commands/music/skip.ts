@@ -1,10 +1,10 @@
 import { MessageEmbed } from 'discord.js';
 
 import { getPlayer } from '../../util/musicUtil';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Skip',
     description: 'Skip song',
     aliases: ['fs', 'next'],

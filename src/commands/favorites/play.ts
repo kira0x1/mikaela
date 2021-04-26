@@ -1,13 +1,13 @@
 import { Message, User } from 'discord.js';
 
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
 import { getTarget } from '../../util/discordUtil';
 import { getPlayer, playSong } from '../../util/musicUtil';
 import { createFooter, quickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'play',
     description: 'Play a song from yours or someone elses favorites',
     aliases: ['p'],

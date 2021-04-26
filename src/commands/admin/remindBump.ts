@@ -1,7 +1,7 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { setReminder } from '../ungrouped/reminder';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'RemindBump',
     description: 'Sets a reminder to bump in 2 hours',
     aliases: ['rb'],

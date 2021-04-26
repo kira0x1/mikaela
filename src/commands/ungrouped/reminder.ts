@@ -1,10 +1,10 @@
 import { Message } from 'discord.js';
 import ms from 'ms';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { sendArgsError } from '../../util/commandUtil';
 import { createFooter } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Reminder',
     description: 'Set a reminder',
     aliases: ['remind', 'rm'],

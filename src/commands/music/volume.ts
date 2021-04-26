@@ -1,10 +1,10 @@
 import { getPlayer } from '../../util/musicUtil';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { quickEmbed, wrap } from '../../util/styleUtil';
 import { logger } from '../../app';
 import { hasPerms } from '../../util/commandUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'volume',
    description: 'Change the volume',
    aliases: ['v'],

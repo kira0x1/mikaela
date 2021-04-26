@@ -1,12 +1,12 @@
 import { Collection, Message } from 'discord.js';
 
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter } from '../../util/styleUtil';
 
 export const queueCalls: Collection<string, Message> = new Collection();
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Queue',
     description: 'Displays the queue',
     aliases: ['q'],

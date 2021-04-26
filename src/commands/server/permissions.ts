@@ -1,11 +1,11 @@
 import { Embeds } from 'discord-paginationembed';
 import { GuildMember, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
 import ms from 'ms';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { findRole, getTargetMember } from '../../util/discordUtil';
 import { sendErrorEmbed } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'permissions',
    description: 'Show permissions for users and roles',
    aliases: ['perms'],

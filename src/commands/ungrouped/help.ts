@@ -1,12 +1,12 @@
 import { Message, MessageEmbed } from 'discord.js';
 
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { prefix } from '../../config';
 import { commandGroups, commandInfos, findCommand, findCommandInfo, hasPerms } from '../../util/commandUtil';
 import { createDeleteCollector } from '../../util/musicUtil';
 import { embedColor, wrap, createFooter } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Help',
     description: 'Lists all commands',
     aliases: ['h'],
@@ -22,7 +22,7 @@ export const command: ICommand = {
 };
 
 async function displayAll(message: Message) {
-    const grouped: ICommand[] = [];
+    const grouped: Command[] = [];
 
     //Add all grouped commands to the grouped array so we can cross
     //reference this later to check for ungrouped commands
@@ -111,8 +111,9 @@ async function displayOne(message: Message, query: string) {
     createDeleteCollector(msg, message)
 }
 
-function getUsage(command: ICommand): string {
+function getUsage(command: Command): string {
     let usage = ``;
+
     if (command.isSubCommand) {
         let cmdGroup = '';
 
@@ -128,7 +129,7 @@ function getUsage(command: ICommand): string {
     return usage;
 }
 
-function InsertCommandEmbed(embed: MessageEmbed, command: ICommand) {
+function InsertCommandEmbed(embed: MessageEmbed, command: Command) {
     embed.setTitle(command.name);
     embed.setDescription(command.description);
 
@@ -140,5 +141,6 @@ function InsertCommandEmbed(embed: MessageEmbed, command: ICommand) {
         const aliasesString = wrap(command.aliases, '`');
         embed.addField('aliases: ', aliasesString);
     }
+
     return embed;
 }

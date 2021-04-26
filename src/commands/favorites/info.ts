@@ -1,10 +1,10 @@
 import { MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';
 import { findFavorite } from './play';
 
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'info',
     description: 'Get a songs info',
     aliases: ['i'],

@@ -1,9 +1,9 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createCurrentlyPlayingEmbed, createFavoriteCollector, getPlayer } from '../../util/musicUtil';
 import { quickEmbed } from '../../util/styleUtil';
 
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Now Playing',
     description: 'Display the currently playing song',
     aliases: ['np', 'playing', 'current', 'c', 'nowplaying', 'currentsong'],

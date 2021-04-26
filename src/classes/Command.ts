@@ -1,6 +1,6 @@
 import { Message, PermissionResolvable } from 'discord.js';
 
-export interface ICommand {
+export interface Command {
    name: string;
    description: string;
    aliases?: string[];

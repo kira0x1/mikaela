@@ -1,4 +1,4 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 
 const dogeHorny = 'https://cdn.discordapp.com/attachments/285778400956645376/752686497592770651/wench.mp4';
 const dogeBonk = 'https://cdn.discordapp.com/attachments/419976078321385473/736559596155699290/fetchimage.png';
@@ -7,7 +7,7 @@ const bonkTwo = 'https://cdn.discordapp.com/attachments/702091543514710027/78456
 
 const links = [dogeBonk, dogeHorny, underArrest, bonkTwo];
 
-export const command: ICommand = {
+export const command: Command = {
   name: 'Horny',
   description: 'Posts a response chosen at random to horny people 😳',
 

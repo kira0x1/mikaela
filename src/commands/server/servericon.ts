@@ -1,8 +1,8 @@
 import { MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'servericon',
     description: 'Shows the icon of the current server',
     aliases: ['guildicon', 'srvicon'],

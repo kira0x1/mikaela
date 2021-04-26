@@ -1,11 +1,11 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { Song } from "../../classes/Song";
 import { getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed, wrap } from '../../util/styleUtil';
 
 
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Move',
     description: 'Move a songs position in the Queue',
     args: true,

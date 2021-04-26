@@ -1,9 +1,9 @@
 import { Constants } from 'discord.js';
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter, addCodeField, errorIconUrl, successIconUrl } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'delete',
    description: 'Deletes messages',
    usage: '[amount]',

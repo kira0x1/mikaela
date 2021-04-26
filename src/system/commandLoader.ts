@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import path from 'path';
-import { ICommand } from '../classes/Command';
+import { Command } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { commands, commandGroups, commandInfos } from '../util/commandUtil';
 
@@ -17,7 +17,7 @@ export function initCommands() {
         .filter(file => file.endsWith('js'))
         .map(file => {
             const { command } = require(path.join(__dirname, '..', 'commands', file));
-            const cmd: ICommand = command;
+            const cmd: Command = command;
             commands.set(cmd.name, cmd);
         });
 
@@ -25,13 +25,13 @@ export function initCommands() {
         .filter(folder => folder !== 'info')
         .filter(file => file.endsWith('.js') === false && !file.endsWith('.map'))
         .map(folder => {
-            const folderCommands: ICommand[] = [];
+            const folderCommands: Command[] = [];
             readdirSync(path.join(__dirname, '..', 'commands', folder))
                 .filter(file => file.endsWith('.map') == false)
                 .map(file => {
                     const { command } = require(path.join(__dirname, '..', 'commands', folder, file));
 
-                    const cmd: ICommand = command;
+                    const cmd: Command = command;
                     folderCommands.push(cmd);
 
                     if (!cmd.isSubCommand) {

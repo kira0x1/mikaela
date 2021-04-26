@@ -1,5 +1,5 @@
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getTarget } from '../../util/discordUtil';
 import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
@@ -7,7 +7,7 @@ import { createFooter, embedColor, quickEmbed, sendErrorEmbed } from '../../util
 
 const maxShuffleAmount = 20;
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'shuffle',
     description: 'Shuffle songs from a favorites list',
     usage: '[amount: optional] [target: optional]',
