@@ -1,10 +1,10 @@
 import { Collection, MessageEmbed } from "discord.js";
-import { ICommand } from "../../classes/Command";
+import { Command } from "../../classes/Command";
 import { Player } from "../../classes/Player";
 import { players } from "../../util/musicUtil";
 import { createFooter, addCodeField } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Players',
     description: 'List all players',
     aliases: ['streams'],

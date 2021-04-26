@@ -1,6 +1,6 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'AutoQueue',
     description: "Auto Queue's random song's from peoples favorites",
     aliases: ['aq'],

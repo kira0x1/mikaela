@@ -1,8 +1,8 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter, embedColor } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
   name: 'latency',
   description: 'Measures latency',
   aliases: ['ping'],

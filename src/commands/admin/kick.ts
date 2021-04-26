@@ -1,9 +1,9 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { GuildMember } from 'discord.js';
 import { sendErrorEmbed } from '../../util/styleUtil';
 import { toEmbed, UserEventInfo, UserEventType } from '../../classes/UserEventInfo';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'kick',
    description: 'Kick a user',
    aliases: ['kick'],

@@ -1,8 +1,8 @@
 import { Message } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { onSongRequest } from '../../util/musicUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'play',
    description: 'Play a song',
    aliases: ['p'],

@@ -1,9 +1,9 @@
 import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
 
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'channelinfo',
     description: 'Shows info of a channel',
     aliases: ['channel'],

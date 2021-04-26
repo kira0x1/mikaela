@@ -1,8 +1,8 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 
 const githubLink = 'https://github.com/kira0x1/mikaela'
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'Github',
     description: 'Links mikaelas github',
     aliases: ['git', 'code'],

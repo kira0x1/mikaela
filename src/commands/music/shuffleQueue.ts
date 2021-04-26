@@ -1,11 +1,11 @@
 import { MessageEmbed } from 'discord.js';
 
 import { getPlayer } from '../../util/musicUtil';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { embedColor } from '../../util/styleUtil';
 import { logger } from '../../app';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'shuffle queue',
     description: 'shuffle the queue',
     aliases: ['sq', 'shuffleq', 'shufflequeue'],

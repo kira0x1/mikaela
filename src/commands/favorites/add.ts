@@ -1,11 +1,11 @@
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { addFavoriteToUser } from '../../database/api/userApi';
 import { getSong, isPlaylist } from '../../util/apiUtil';
 import { quickEmbed } from '../../util/styleUtil';
 
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'add',
     description: 'Add a song to your favorites',
     usage: '[search | url]',

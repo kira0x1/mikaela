@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { logger } from '../../app';
 
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';
 
 const voteEmojis = [
@@ -16,7 +16,7 @@ const voteEmojis = [
    { name: 'nine' }
 ];
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'Vote',
    description: 'Create a strawpoll',
    usage: '[option1, option2, ...etc] [optional: -title]',

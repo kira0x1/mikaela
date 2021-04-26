@@ -1,10 +1,10 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { User } from 'discord.js';
 import { sendErrorEmbed } from '../../util/styleUtil';
 import { toEmbed, UserEventInfo, UserEventType } from '../../classes/UserEventInfo';
 import { getTarget } from '../../util/discordUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'unban',
    description: 'Unban a user',
    aliases: ['unban'],

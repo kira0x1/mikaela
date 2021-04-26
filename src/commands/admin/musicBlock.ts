@@ -1,11 +1,11 @@
 import { Message } from 'discord.js';
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { AddBlocked, blockedUsers } from '../../database/models/Blocked';
 import { createFooter, quickEmbed, wrap } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'MusicBlock',
    description: 'Block user from using the bot',
    perms: ['mod'],

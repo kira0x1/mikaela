@@ -1,9 +1,9 @@
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
 import { getQueue, queueCalls } from './queue';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'remove',
     description: 'Remove a song from queue',
     usage: '[position in queue]',

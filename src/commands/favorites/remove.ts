@@ -2,12 +2,12 @@ import chalk from 'chalk';
 import { Message } from 'discord.js';
 
 import { logger } from '../../app';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getSong, sendSongNotFoundEmbed } from '../../util/apiUtil';
 import { quickEmbed } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'remove',
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],

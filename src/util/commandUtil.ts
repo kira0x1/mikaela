@@ -1,15 +1,15 @@
 import { Collection, Message, MessageEmbed, GuildMember, Permissions } from 'discord.js';
-import { ICommand, Permission } from '../classes/Command';
+import { Command, Permission } from '../classes/Command';
 import { CommandInfo } from '../classes/CommandInfo';
 import { perms } from '../config';
 import { embedColor, wrap } from './styleUtil';
 
-export const commands: Collection<string, ICommand> = new Collection();
-export const commandGroups: Collection<string, ICommand[]> = new Collection();
+export const commands: Collection<string, Command> = new Collection();
+export const commandGroups: Collection<string, Command[]> = new Collection();
 export const commandInfos: Collection<string, CommandInfo> = new Collection();
 export const cooldowns: Collection<string, Collection<string, number>> = new Collection();
 
-export function findCommand(query: string): ICommand | undefined {
+export function findCommand(query: string): Command | undefined {
    let command = commands.get(query.toLowerCase());
    if (!command) {
       const cmdArray = commands.array();
@@ -23,7 +23,7 @@ export function findCommand(query: string): ICommand | undefined {
    return command;
 }
 
-export function getCommandOverride(query: string): ICommand | undefined {
+export function getCommandOverride(query: string): Command | undefined {
    const info = commandInfos.find(
       cmd_info =>
          cmd_info.name.toLowerCase() === query ||
@@ -100,7 +100,7 @@ export function hasPermission(member: GuildMember, permission: Permission) {
    }
 }
 
-export function checkCooldown(command: ICommand, message: Message): boolean {
+export function checkCooldown(command: Command, message: Message): boolean {
    const author = message.author;
    const userId = author.id;
 
@@ -130,7 +130,7 @@ export function checkCooldown(command: ICommand, message: Message): boolean {
    return false;
 }
 
-export function sendArgsError(command: ICommand, message: Message) {
+export function sendArgsError(command: Command, message: Message) {
    let usageString = 'Arguments required';
    const embed = new MessageEmbed().setColor(embedColor);
 

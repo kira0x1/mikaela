@@ -1,9 +1,9 @@
 import { GuildMember, Message, MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter, quickEmbed } from '../../util/styleUtil';
 import { getTargetMember } from '../../util/discordUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'userinfo',
    description: 'Shows information of a user',
    aliases: ['info', 'user', 'uinfo'],

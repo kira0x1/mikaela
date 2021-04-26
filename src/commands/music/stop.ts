@@ -1,7 +1,7 @@
 import { getPlayer } from '../../util/musicUtil';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'stop',
     description: 'stops the music player',
     aliases: ['end', 's', 'dc', 'disconnect', 'leave', 'quit'],

@@ -1,9 +1,9 @@
 import { MessageEmbed } from 'discord.js';
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { createFooter, quickEmbed } from '../../util/styleUtil';
 import { getTarget } from '../../util/discordUtil';
 
-export const command: ICommand = {
+export const command: Command = {
    name: 'avatar',
    description: 'Shows the avatar of a user',
    aliases: ['av', 'avi', 'pfp', 'pic', 'icon', 'usericon', 'img', 'ava'],

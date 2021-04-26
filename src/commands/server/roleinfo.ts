@@ -1,10 +1,10 @@
 import { Message, MessageEmbed, Role } from 'discord.js';
 
-import { ICommand } from '../../classes/Command';
+import { Command } from '../../classes/Command';
 import { findRole } from '../../util/discordUtil';
 import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
 
-export const command: ICommand = {
+export const command: Command = {
     name: 'roleinfo',
     description: 'Shows info about a role',
     aliases: ['role', 'roles'],
