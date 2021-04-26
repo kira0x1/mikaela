@@ -8,7 +8,7 @@ import { quickEmbed } from '../../util/styleUtil';
 export const command: ICommand = {
     name: 'add',
     description: 'Add a song to your favorites',
-    usage: '.fav add [search | url]',
+    usage: '[search | url]',
     args: true,
     cooldown: 1,
     isSubCommand: true,
