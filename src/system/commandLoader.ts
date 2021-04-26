@@ -55,7 +55,8 @@ export function initCommands() {
                     perms: info.perms,
                     hidden: info.hidden,
                     override: info.override,
-                    requiresPrefix: info.requiresPrefix
+                    requiresPrefix: info.requiresPrefix,
+                    usageName: info.usageName
                 }
                 commandInfos.set(newInfo.name.toLowerCase(), newInfo);
             }
