@@ -11,8 +11,9 @@ export const command: ICommand = {
     name: 'remove',
     description: 'Remove a song from your favorites',
     aliases: ['delete', 'rem'],
-    usage: '.fav remove [Position | Search]',
+    usage: '[Position | Search]',
     cooldown: 1.5,
+    isSubCommand: true,
 
     async execute(message, args) {
         if (Number(args[0]))
