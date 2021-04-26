@@ -14,21 +14,26 @@ import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsEr
 import { initPlayers, players } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
 
+// Create logger
 export const logger = createLogger({
    transports: [new transports.Console()],
    format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
 });
 
+// print args - production, skipdb, etc
 const envString = isProduction ? '-------production-------' : '-------development-------';
 const dbString = (isProduction || cmdArgs['prodDB']) ? '-------production DB-------' : '-------development DB-------'
 logger.info(chalk.bgRed.bold(envString));
 logger.info(chalk.bgRed.bold(dbString));
 
+// print testvc arg
 cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
 
+// print prefix
 logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
 
 
+// Instantiate discord.js client
 const client = new Client({
    ws: {
       intents: [
@@ -53,8 +58,10 @@ const client = new Client({
 async function init() {
    const skipDB: boolean = cmdArgs['skipDB'];
    if (skipDB) logger.log('info', chalk.bgMagenta.bold('----SKIPPING DB----\n'));
+   // if skipdb flag is false then connect to mongodb
    if (!skipDB) await connectToDB();
 
+   // login to discord
    client.login(token);
 }
 
@@ -183,6 +190,8 @@ client.on('message', async message => {
    }
 });
 
+// on shutdown signal save the queue to the database
+// so we can play the queue after restart
 process.on('message', async (msg: string) => {
    if (msg != 'shutdown') return
    logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`))
