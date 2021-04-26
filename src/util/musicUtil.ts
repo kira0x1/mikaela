@@ -13,6 +13,7 @@ import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
 import { sendArgsError } from './commandUtil';
 import { Command } from '../classes/Command';
+import { args } from '../config';
 
 const collectorTime = ms('3h')
 export const players: Collection<string, Player> = new Collection();
@@ -43,6 +44,12 @@ export async function initPlayers(client: Client) {
       logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
       players.set(guildResolved.id, new Player(guildResolved, client));
    });
+
+
+   if (args['skipDB']) {
+      logger.info(chalk.bgMagenta.bold(`Persistant Queue disabled, due to skipDB flag`))
+      return;
+   }
 
    const servers = await getAllServers(client.guilds.cache.array())
    servers
