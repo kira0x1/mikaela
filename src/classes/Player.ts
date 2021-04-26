@@ -261,7 +261,8 @@ export class Player {
          const opusStream = ytdl(song.url, ytdlOptions)
 
          opusStream.on('error', (error) => {
-            logger.error(error.stack)
+            this.playNext()
+            // logger.error(error.stack)
          })
 
          const conn = await this.voiceChannel.join();
