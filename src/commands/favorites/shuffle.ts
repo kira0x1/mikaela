@@ -24,15 +24,19 @@ export const command: Command = {
             }
         });
 
-        let target = message.author
+        let target = message.author;
         if (args.length > 0) target = await getTarget(message, args.join(' '));
 
-        if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``)
+        if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
         const user = await findOrCreate(target);
 
         if (!user.favorites || user.favorites.length == 0) {
-            return sendErrorEmbed(message, `Cannot shuffle from user <@${user.id}>\nuser must add songs to their favorites list first`, 'User has no favorites')
+            return sendErrorEmbed(
+                message,
+                `Cannot shuffle from user <@${user.id}>\nuser must add songs to their favorites list first`,
+                { errorTitle: 'User has no favorites' }
+            );
         }
 
         const embed = createFooter(message);
@@ -48,8 +52,9 @@ export const command: Command = {
 
         const title = `Shuffling ${amount} ${amount > 1 ? 'songs' : 'song'} from ${user.username}`;
 
-        const random = randomUniqueArray(user.favorites)
-        const firstSong = random()
+        const random = randomUniqueArray(user.favorites);
+        const firstSong = random();
+        firstSong.favSource = user.id
         player.addSong(firstSong, message);
 
         embed.setTitle(title);
@@ -57,23 +62,25 @@ export const command: Command = {
         embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
         embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
-        const songsAdding = [firstSong]
+        const songsAdding = [firstSong];
 
         for (let i = 1; i < amount; i++) {
-            let song = random()
+            let song = random();
 
             if (songsAdding.includes(song) && songsAdding.length < user.favorites.length) {
-                let hasFoundSong = false
+                let hasFoundSong = false;
                 while (!hasFoundSong) {
-                    song = random()
-                    if (!songsAdding.includes(song)) hasFoundSong = true
+                    song = random();
+                    if (!songsAdding.includes(song)) hasFoundSong = true;
                 }
             }
-            songsAdding.push(song)
+
+            song.favSource = target.id;
+            songsAdding.push(song);
             embed.addField(`${i + 1} ${song.title}`, song.url);
-            player.addSong(song, message)
+            player.addSong(song, message);
         }
 
         message.channel.send(embed);
-    },
+    }
 };
