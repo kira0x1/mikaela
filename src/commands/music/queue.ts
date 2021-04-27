@@ -1,7 +1,7 @@
 import { Collection, Message } from 'discord.js';
 
 import { Command } from '../../classes/Command';
-import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer, getSongSourceInfo } from '../../util/musicUtil';
 import { createFooter } from '../../util/styleUtil';
 
 export const queueCalls: Collection<string, Message> = new Collection();
@@ -37,9 +37,10 @@ export async function getQueue(message: Message) {
         let currentlyPlaying = player.currentlyPlaying;
         const songBar = await player.getProgressBar()
 
-        embed.setTitle(`Playing: ${currentlyPlaying.title}`);
+        embed.setTitle(`Playing: ${currentlyPlaying.title}`)
         embed.setURL(currentlyPlaying.url);
-        embed.addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`)
+
+        embed.addField(`**${player.getDurationPretty()}**\n${songBar}`, `*${getSongSourceInfo(currentlyPlaying)}*`)
     } else {
         //If no song is currently playing
         embed.setTitle('No currently playing song');
@@ -48,10 +49,12 @@ export async function getQueue(message: Message) {
     const songs = player.getSongs()
 
     //Add songs to the embed
-    for (let i = 0; i < songs.length && i < 25; i++) {
+    for (let i = 0; i < songs.length && i < 10; i++) {
         const song = songs[i]
-        embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n<@${song.playedBy}>\n`);
+        embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n*${getSongSourceInfo(song)}*\n`);
     }
+
+    embed.footer.text += ` ${songs.length} ${songs.length === 1 ? 'song' : 'songs'} in queue`
 
     return embed;
 }
