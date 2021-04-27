@@ -252,3 +252,11 @@ async function resumeQueue(message: Message, player: Player) {
    await message.channel.send(embed)
    sendQueueEmbed(message)
 }
+
+export function getSongSourceInfo(song: Song) {
+   let sourceInfo = `<@${song.playedBy}>`
+   if (song.favSource && song.favSource !== song.playedBy) {
+      sourceInfo += ` from <@${song.favSource}>'s favorites`
+   }
+   return sourceInfo
+}
