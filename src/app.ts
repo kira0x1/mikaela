@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-
-import { args as cmdArgs, isProduction, perms, prefix, token } from './config';
-import { saveAllServersQueue } from './database/api/serverApi';
+import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, token } from './config';
+import { initServers, saveAllServersQueue, prefixes } from './database/api/serverApi';
 import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
@@ -13,6 +12,7 @@ import { initVoiceManager } from './system/voiceManager';
 import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsError } from './util/commandUtil';
 import { initPlayers, players } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
+
 
 // Create logger
 export const logger = createLogger({
@@ -30,8 +30,7 @@ logger.info(chalk.bgRed.bold(dbString));
 cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
 
 // print prefix
-logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
-
+// logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
 
 // Instantiate discord.js client
 const client = new Client({
@@ -58,6 +57,7 @@ const client = new Client({
 async function init() {
    const skipDB: boolean = cmdArgs['skipDB'];
    if (skipDB) logger.log('info', chalk.bgMagenta.bold('----SKIPPING DB----\n'));
+
    // if skipdb flag is false then connect to mongodb
    if (!skipDB) await connectToDB();
 
@@ -65,7 +65,10 @@ async function init() {
    client.login(token);
 }
 
-client.on('ready', () => {
+client.on('ready', async () => {
+   // Setup Prefixes
+   await initServers(client)
+
    // Setup players
    initPlayers(client);
 
@@ -79,6 +82,7 @@ client.on('ready', () => {
       //Add event listener to welcome new members
       initGreeter(client);
    }
+
    // Read command files and create a collection for the commands
    initCommands();
 
@@ -87,9 +91,17 @@ client.on('ready', () => {
 
 
 client.on('message', async message => {
+   const prefix = prefixes.get(message.guild?.id) || defaultPrefix
+
+   const prefixGiven = message.content.substr(0, prefix.length)
+
    // Check if message is from a bot and that the message starts with the prefix
-   if (message.author.bot || !message.content.startsWith(prefix)) {
-      return;
+   if (message.author.bot || prefixGiven !== prefix) {
+      // check if user mentioned the bot instead of using the prefix
+      const mention = message.mentions.users.first()
+      if (mention?.id !== client.user.id) {
+         return
+      }
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
@@ -108,16 +120,23 @@ client.on('message', async message => {
    if (blockedUsers.has(message.author.id))
       return message.author.send("Sorry you're blocked");
 
-   const firstCharacter = message.content.charAt(1);
-   //Make sure the first character is not a number since people could just be writing decimals I.E .001
-   if (firstCharacter === '.' || !isNaN(Number(firstCharacter))) return;
+   if (prefix === '.') {
+      const firstCharacter = message.content.charAt(1);
+      //Make sure the first character is not a number since people could just be writing decimals I.E .001
+      if (firstCharacter === '.' || !isNaN(Number(firstCharacter))) return;
+   }
 
    // Split up message into an array and remove the prefix
-   let args = message.content.slice(prefix.length).split(/ +/);
+   let args = message.content.slice(message.content.startsWith(prefix) ? prefix.length : 0).split(/ +/);
+   if (!message.content.startsWith(prefix)) args.shift()
 
    // Remove the first element from the args array ( this is the command name )
    let commandName = args.shift();
-   if (!commandName || commandName.includes(prefix) || commandName === prefix) return;
+   if (!commandName) commandName = args.shift()
+
+   if (!commandName || commandName === prefix) {
+      return;
+   }
 
    // Set commandName to lowercase
    commandName = commandName.toLowerCase();
@@ -153,8 +172,9 @@ client.on('message', async message => {
    }
 
    // If command not found send a message
-   if (!command)
+   if (!command) {
       return message.author.send(`command ${wrap(commandName || '')} not found`);
+   }
 
    // If the command is disabled then return
    if (command.isDisabled) return;
