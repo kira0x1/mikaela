@@ -1,9 +1,11 @@
-import { Guild } from 'discord.js';
+import { Client, Collection, Guild, Message } from 'discord.js';
 
 import { logger } from '../../app';
 import { Queue } from '../../classes/Queue';
+import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';
 import { Server } from '../models/Server';
+import chalk from 'chalk';
 
 export async function getAllServers(guilds: Guild[]) {
     const servers = guilds.map(g => findOrCreateServer(g))
@@ -31,7 +33,8 @@ function convertGuildToIServer(guild: Guild) {
     return {
         serverId: guild.id,
         serverName: guild.name,
-        queue: []
+        queue: [],
+        prefixes: []
     };
 }
 
@@ -63,4 +66,53 @@ export async function saveAllServersQueue() {
     })
 
     await Promise.all(servers.map(server => server.save()))
+}
+
+export async function getServerPrefix(message: Message) {
+    const server = await findOrCreateServer(message.guild)
+    return server.prefixes.find(serverPrefix => serverPrefix.botId === message.client.user.id)
+}
+
+export async function setServerPrefix(message: Message, prefix: string) {
+    const server = await findOrCreateServer(message.guild)
+    const botId = message.client.user.id
+
+    const currentServerPrefix = await getServerPrefix(message)
+
+
+    const allPrefixes = []
+
+    if (!currentServerPrefix) {
+        server.prefixes = [{ botId: botId, prefix: prefix }]
+    } else {
+        for (let i = 0; i < server.prefixes.length; i++) {
+            const prefixSetting = server.prefixes[i]
+            if (prefixSetting.botId !== botId) {
+                allPrefixes.push(prefixSetting)
+                continue;
+            };
+            allPrefixes.push({ botId: botId, prefix: prefix })
+        }
+
+        server.prefixes = allPrefixes;
+    }
+
+    prefixes.set(message.guild.id, prefix)
+    await server.save();
+}
+
+export const prefixes: Collection<string, string> = new Collection();
+
+export async function initServers(client: Client) {
+    const servers = await getAllServers(client.guilds.cache.array());
+
+    servers.map(server => {
+        const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix
+        logger.info(`server prefix: ${serverPrefix}`)
+        prefixes.set(server.serverId, serverPrefix || defaultPrefix)
+    })
+
+    prefixes.map(p => {
+        logger.info(chalk.bgRed.bold(`Prefix: ${p}`))
+    })
 }
