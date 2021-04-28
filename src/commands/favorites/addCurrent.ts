@@ -8,7 +8,7 @@ import { addFavoriteToUser } from '../../database/api/userApi';
 export const command: Command = {
    name: 'AddCurrent',
    description: 'Adds the currently playing song to your favorites',
-   aliases: ['addnp', 'fnp', 'addcurrent'],
+   aliases: ['addnp', 'fnp', 'addcurrent', 'favnp'],
    isSubCommand: false,
 
    async execute(message, args) {
