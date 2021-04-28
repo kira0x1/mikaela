@@ -1,6 +1,7 @@
 import { Client, Emoji, Guild, Message } from 'discord.js';
-import { coders_club_id } from '../config';
 import { logger } from '../app';
+import { coders_club_id } from '../config';
+import { prefixes } from '../database/api/serverApi';
 
 export let heartEmoji: Emoji;
 export let trashEmoji: Emoji;
@@ -51,4 +52,8 @@ async function getMember(query: string, guild: Guild) {
 
 export function findRole(message: Message, query: string) {
     return message.mentions.roles?.first() || message.guild.roles.cache.find(r => r.name.toLowerCase() === query || r.id === query)
+}
+
+export function getPrefix(message: Message) {
+    return prefixes.get(message.guild.id)
 }
