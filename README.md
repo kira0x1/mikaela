@@ -4,25 +4,35 @@
 [![discord badge](https://img.shields.io/discord/585850878532124672?color=7289da&logo=discord&logoColor=white)](https://discord.gg/6fzTAReQtj)
 
 ## Inivte Link
-> https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=36964416&scope=bot
 
+You can use the second link if you want to add a second instance of mikaela on your server
+
+1. > https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=36964416&scope=bot
+
+2. > https://discord.com/oauth2/authorize?client_id=836799311458992138&permissions=36964416&scope=bot
 
 ## Commands
 
 ### Help
->**Description**: lists all commands.
- 
+
+> **Description**: lists all commands.
+
 ### Music
->**Description**: Plays music via links or youtube searches.
+
+> **Description**: Plays music via links or youtube searches.
 
 ### Favorites
+
 > **Description**: Saves a list of user's favorite songs, and can shuffle through them.
 
 ### Fun
+
 > **Description**: A few fun commands
 
 ### Vote
+
 > **Description**: Create a strawpoll.
 
 ### Reminder
+
 > **Description**: Set a reminder.
