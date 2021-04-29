@@ -2,6 +2,7 @@ import { Command } from '../../classes/Command';
 import { Song } from "../../classes/Song";
 import { getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed, wrap } from '../../util/styleUtil';
+import { sendArgsError } from '../../util/commandUtil';
 
 
 
@@ -15,7 +16,7 @@ export const command: Command = {
         const player = getPlayer(message)
         if (player.getQueueCount() === 0) return quickEmbed(message, 'Queue is empty')
 
-        if (args.length < 2) return quickEmbed(message, 'Not enough arguments..')
+        if (args.length < 2) return sendArgsError(this, message)
 
         let songPos: string | number = args.shift();
         let toPos: string | number = args.shift();
