@@ -1,4 +1,5 @@
 import { Client, VoiceChannel } from 'discord.js';
+import { mikaelaId } from '../app';
 
 import { coders_club_id, isProduction } from '../config';
 import { findPlayer } from '../util/musicUtil';
@@ -20,7 +21,7 @@ export async function initVoiceManager(client: Client) {
 
         //User joined a vc
         if (!oldChannel && newChannel) {
-            if (guildId === coders_club_id && isProduction)
+            if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
                 codersClubVoiceManager.emit('voice-join', member);
 
             return;
@@ -30,7 +31,7 @@ export async function initVoiceManager(client: Client) {
         if (!newChannel) {
             voiceManager.onVoiceLeave(oldChannel)
 
-            if (guildId === coders_club_id && isProduction)
+            if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
                 codersClubVoiceManager.emit('voice-leave', member);
         }
     });

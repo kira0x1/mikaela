@@ -13,6 +13,7 @@ import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsEr
 import { initPlayers, players } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
 
+export const mikaelaId = '585874337618460672'
 
 // Create logger
 export const logger = createLogger({
@@ -75,7 +76,8 @@ client.on('ready', async () => {
    // Add event listener to add/remove voice role
    initVoiceManager(client);
 
-   if (isProduction) {
+   // Make sure were in production, and not on mikaela 2
+   if (isProduction && client.user.id === mikaelaId) {
       // Add event listeners to #roles
       syncRoles(client);
 
