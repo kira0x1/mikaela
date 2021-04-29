@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, User } from 'discord.js';
 import ms from 'ms';
 
 import { logger } from '../app';
@@ -50,8 +50,8 @@ export async function sendErrorEmbed(message: Message, errorMessage: string, opt
    createDeleteCollector(msg, message);
 }
 
-export function createFooter(message: Message): MessageEmbed {
-   const author = message.author;
+export function createFooter(message: Message, overrideAuthor?: User): MessageEmbed {
+   const author = overrideAuthor || message.author;
 
    const embed = new MessageEmbed()
       .setColor(embedColor)
