@@ -43,7 +43,7 @@ export const command: Command = {
 
         message.channel.send(embed).then((msg) => createDeleteCollector(msg, message))
 
-        const lastQueueCall = queueCalls.get(message.author.id)
+        const lastQueueCall = queueCalls.get(message.guild.id)
         if (lastQueueCall) {
             const queueEmbed = await getQueue(message);
             lastQueueCall.message.edit(queueEmbed);

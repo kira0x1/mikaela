@@ -28,7 +28,8 @@ export const command: Command = {
 export async function sendQueueEmbed(message: Message) {
     const embed = await getQueue(message);
     const lastQueueCall = await message.channel.send(embed);
-    queueCalls.set(message.author.id, { message: lastQueueCall, pageAt: 0 });
+
+    queueCalls.set(message.guild.id, { message: lastQueueCall, pageAt: 0 });
 
     const songs = getPlayer(message).getSongs();
 
@@ -74,7 +75,7 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
     collector.on('collect', async (reaction: MessageReaction, user: User) => {
         const songs = getPlayer(message).getSongs()
         const pages = getPages(songs)
-        pageAt = queueCalls.get(author.id)?.pageAt || 0
+        pageAt = queueCalls.get(message.guild.id)?.pageAt || 0
 
         if (reaction.emoji.name === '➡') {
             pageAt++;
@@ -86,7 +87,7 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
         }
 
 
-        queueCalls.set(author.id, { message, pageAt })
+        queueCalls.set(message.guild.id, { message, pageAt })
         reaction.users.remove(user)
         const newEmbed = await createQueueEmbed(message, pages, pageAt, author)
         message.edit(newEmbed)
