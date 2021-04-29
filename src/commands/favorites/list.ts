@@ -46,7 +46,6 @@ export const command: Command = {
 export async function updateFavList(userId: string) {
     const lastFav = favlistCalls.get(userId)
     if (!lastFav) return
-
 }
 
 function createFavListEmbed(target: User, user: IUser, pages: Collection<number, Song[]>, pageAt = 0) {
@@ -77,7 +76,7 @@ function createFavListEmbed(target: User, user: IUser, pages: Collection<number,
     return embed
 }
 
-function getPages(songs: Song[]) {
+export function getPages(songs: Song[]) {
     const pages: Collection<number, Song[]> = new Collection();
 
     let count = 0;

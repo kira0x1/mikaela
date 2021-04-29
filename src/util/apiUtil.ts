@@ -28,13 +28,15 @@ export async function getSong(query: string): Promise<Song | ytpl.Result> {
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.search(query, { type: 'video', limit: 1 });
+      const songSearch = await YouTube.searchOne(query);
       if (!songSearch) return;
 
       //If a video is found then get details and convert it to ISong
-      if (!songSearch || songSearch.length === 0) return
-      const details = await getSongDetails(songSearch[0].id);
+      if (!songSearch) return
+
+      const details = await getSongDetails(songSearch.id);
       if (!details) return;
+
       return convertDetailsToSong(details);
    } catch (error) {
       logger.error(error.stack);

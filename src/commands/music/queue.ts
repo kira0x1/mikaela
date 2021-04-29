@@ -1,10 +1,19 @@
-import { Collection, Message } from 'discord.js';
+import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import ms from 'ms';
+import { logger } from '../../app';
 
 import { Command } from '../../classes/Command';
+import { Song } from '../../classes/Song';
 import { createDeleteCollector, getPlayer, getSongSourceInfo } from '../../util/musicUtil';
-import { createFooter } from '../../util/styleUtil';
+import { createFooter, wrap } from '../../util/styleUtil';
+import { getPages } from '../favorites/list';
 
-export const queueCalls: Collection<string, Message> = new Collection();
+interface QueueCall {
+    message: Message,
+    pageAt: number
+}
+
+export const queueCalls: Collection<string, QueueCall> = new Collection();
 
 export const command: Command = {
     name: 'Queue',
@@ -19,7 +28,11 @@ export const command: Command = {
 export async function sendQueueEmbed(message: Message) {
     const embed = await getQueue(message);
     const lastQueueCall = await message.channel.send(embed);
-    queueCalls.set(message.author.id, lastQueueCall);
+    queueCalls.set(message.author.id, { message: lastQueueCall, pageAt: 0 });
+
+    const songs = getPlayer(message).getSongs();
+
+    if (songs.length > 5) await createQueuePagination(lastQueueCall, embed, message.author)
     createDeleteCollector(lastQueueCall, message)
 }
 
@@ -27,10 +40,71 @@ export async function getQueue(message: Message) {
     //Get the guilds player
     const player = getPlayer(message);
 
-    if (!player) return;
+    const songs = player.getSongs()
+    const pages = getPages(songs)
+    const queueEmbed = await createQueueEmbed(message, pages)
+
+    return queueEmbed;
+}
+
+export async function updateQueueMessage(queueCall: QueueCall) {
+    const message = queueCall.message
+    queueCall.pageAt = 0;
+    const player = getPlayer(message);
+    const songs = player.getSongs();
+
+    if (songs.length <= 5) {
+        message.reactions.cache.get('⬅')?.remove()
+        message.reactions.cache.get('➡')?.remove()
+    }
+}
+
+async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
+    const promises = [message.react('⬅'), message.react('➡')]
+    await Promise.all(promises)
+
+    const filter = (reaction: MessageReaction, user: User) => {
+        return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;
+    };
+
+    const collector = message.createReactionCollector(filter, { time: ms('3h') })
+
+    let pageAt = 0
+
+    collector.on('collect', async (reaction: MessageReaction, user: User) => {
+        const songs = getPlayer(message).getSongs()
+        const pages = getPages(songs)
+        pageAt = queueCalls.get(author.id)?.pageAt || 0
+
+        if (reaction.emoji.name === '➡') {
+            pageAt++;
+            if (pageAt >= pages.size) pageAt = 0;
+        }
+        else if (reaction.emoji.name === '⬅') {
+            pageAt--;
+            if (pageAt < 0) pageAt = pages.size - 1
+        }
+
+
+        queueCalls.set(author.id, { message, pageAt })
+        reaction.users.remove(user)
+        const newEmbed = await createQueueEmbed(message, pages, pageAt, author)
+        message.edit(newEmbed)
+    })
+
+    collector.on('end', collected => {
+        message.reactions.removeAll().catch(error => {
+            if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE)
+                logger.error(error)
+        })
+    })
+}
+
+async function createQueueEmbed(message: Message, pages: Collection<number, Song[]>, pageAt = 0, author?: User) {
+    const player = getPlayer(message)
 
     //Create embed
-    const embed = createFooter(message)
+    const embed = createFooter(message, author)
 
     //If the player is playing a song add it to the top of the embed
     if (player.currentlyPlaying) {
@@ -38,6 +112,7 @@ export async function getQueue(message: Message) {
         const songBar = await player.getProgressBar()
 
         embed.setTitle(`Playing: ${currentlyPlaying.title}`)
+        embed.setDescription(wrap(`Queue: ${player.getSongs().length}\nPage ${pageAt + 1} / ${pages.size}`, `**`))
         embed.setURL(currentlyPlaying.url);
 
         embed.addField(`**${player.getDurationPretty()}**\n${songBar}`, `*${getSongSourceInfo(currentlyPlaying)}*`)
@@ -46,15 +121,12 @@ export async function getQueue(message: Message) {
         embed.setTitle('No currently playing song');
     }
 
-    const songs = player.getSongs()
+    const page = pages.get(pageAt)
 
-    //Add songs to the embed
-    for (let i = 0; i < songs.length && i < 10; i++) {
-        const song = songs[i]
-        embed.addField(`${i + 1}. ${song.title}`, `${song.duration.duration}  ${song.url}\n*${getSongSourceInfo(song)}*\n`);
-    }
-
-    embed.footer.text += ` ${songs.length} ${songs.length === 1 ? 'song' : 'songs'} in queue`
+    page.map((song, i) => {
+        embed.addField(`${pageAt * 5 + (i + 1)}. ${song.title}`, `${song.duration.duration}  ${song.url}\n*${getSongSourceInfo(song)}*\n`);
+    })
 
     return embed;
 }
+

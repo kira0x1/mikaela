@@ -2,7 +2,7 @@ import { logger } from '../../app';
 import { Command } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getTarget } from '../../util/discordUtil';
-import { getPlayer, randomUniqueArray } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer, randomUniqueArray } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed, sendErrorEmbed } from '../../util/styleUtil';
 
 const maxShuffleAmount = 20;
@@ -81,6 +81,7 @@ export const command: Command = {
             player.addSong(song, message);
         }
 
-        message.channel.send(embed);
+        const msg = await message.channel.send(embed);
+        createDeleteCollector(msg, message)
     }
 };

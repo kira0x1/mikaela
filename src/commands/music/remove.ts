@@ -1,7 +1,7 @@
 import { Command } from '../../classes/Command';
 import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
-import { getQueue, queueCalls } from './queue';
+import { getQueue, queueCalls, updateQueueMessage } from './queue';
 
 export const command: Command = {
     name: 'remove',
@@ -34,7 +34,8 @@ export const command: Command = {
 
         const embed = createFooter(message)
             .setColor(embedColor)
-            .setTitle(`Removed song ${song.title}`)
+            .setTitle(`Removed song\n${song.title}`)
+            .setURL(song.url)
             .setAuthor(
                 message.author.username,
                 message.author.displayAvatarURL({ dynamic: true })
@@ -42,10 +43,11 @@ export const command: Command = {
 
         message.channel.send(embed).then((msg) => createDeleteCollector(msg, message))
 
-        const lastQueueCall = queueCalls.get(message.author.id);
+        const lastQueueCall = queueCalls.get(message.author.id)
         if (lastQueueCall) {
             const queueEmbed = await getQueue(message);
-            lastQueueCall.edit(queueEmbed);
+            lastQueueCall.message.edit(queueEmbed);
+            updateQueueMessage(lastQueueCall);
         }
     }
 };
