@@ -28,8 +28,8 @@ export class Player {
    client: Client;
    volumeDisabled: boolean = false;
    lastPlayed: Song | undefined;
-   ytdlHighWaterMark: number = 1 << 25
-   vcHighWaterMark: number = 1 << 15
+   ytdlHighWaterMark: number = 1 << 24
+   vcHighWaterMark: number = 1
    vcTimeout: NodeJS.Timeout
    joinTestVc: boolean = false
    testVc?: VoiceChannel
@@ -250,15 +250,14 @@ export class Player {
          return;
       }
 
-      const ytdlOptions: any = {
-         filter: 'audioonly',
-         opusEncoded: true,
-         highWaterMark: this.ytdlHighWaterMark,
-         dlChunkSize: 0
-      }
-
       try {
-         const opusStream = ytdl(song.url, ytdlOptions)
+         const opusStream = ytdl(song.url, {
+            filter: 'audioonly',
+            opusEncoded: true,
+            highWaterMark: this.ytdlHighWaterMark,
+            dlChunkSize: 0,
+            quality: 'highestaudio'
+         })
 
          opusStream.on('error', (error) => {
             this.playNext()
@@ -271,7 +270,7 @@ export class Player {
          this.stream = conn.play(opusStream, {
             highWaterMark: this.vcHighWaterMark,
             type: 'opus',
-            bitrate: 128,
+            bitrate: 'auto',
          })
 
          this.stream.setVolumeLogarithmic(this.volume / 10);
@@ -283,9 +282,11 @@ export class Player {
          })
 
          this.stream.on('error', (error) => {
+            // this.playNext();
             logger.error(`stream error: ${error}`)
          })
       } catch (error) {
+         // this.playNext();
          logger.error(error.stack);
       }
    }
