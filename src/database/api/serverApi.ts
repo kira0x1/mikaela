@@ -107,9 +107,7 @@ export async function initServers(client: Client) {
 
     servers.map(server => {
         const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix
-        logger.info(`\n----------------`)
         if (serverPrefix) logger.info(`prefix for ${server.serverName}: ${serverPrefix}`)
         prefixes.set(server.serverId, serverPrefix || defaultPrefix)
-        logger.info(`----------------\n`)
     })
 }
