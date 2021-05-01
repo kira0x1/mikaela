@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { Guild, GuildMember, Role } from 'discord.js';
-import { logger } from '../app';
+import { logger, mikaelaId } from '../app';
 import chalk from 'chalk';
 import { isProduction } from '../config';
 
@@ -14,6 +14,7 @@ export class VoiceRoleManager extends EventEmitter {
       this.guild = guild;
 
       // This is called on voice manager creation, i.e when the bot starts
+      if (this.guild.client.user.id !== mikaelaId) return;
       this.refreshVoiceRole();
 
       if (!this.voiceRole) {
