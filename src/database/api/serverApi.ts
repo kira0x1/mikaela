@@ -1,11 +1,10 @@
 import { Client, Collection, Guild, Message } from 'discord.js';
-
 import { logger } from '../../app';
 import { Queue } from '../../classes/Queue';
 import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';
 import { Server } from '../models/Server';
-import chalk from 'chalk';
+
 
 export async function getAllServers(guilds: Guild[]) {
     const servers = guilds.map(g => findOrCreateServer(g))
@@ -79,18 +78,19 @@ export async function setServerPrefix(message: Message, prefix: string) {
 
     const currentServerPrefix = await getServerPrefix(message)
 
-
     const allPrefixes = []
 
     if (!currentServerPrefix) {
-        server.prefixes = [{ botId: botId, prefix: prefix }]
+        logger.info(`server prefix for this bot not found`)
+        server.prefixes.push({ botId: botId, prefix: prefix })
     } else {
         for (let i = 0; i < server.prefixes.length; i++) {
             const prefixSetting = server.prefixes[i]
+            allPrefixes.push(prefixSetting)
             if (prefixSetting.botId !== botId) {
-                allPrefixes.push(prefixSetting)
                 continue;
             };
+
             allPrefixes.push({ botId: botId, prefix: prefix })
         }
 
@@ -108,11 +108,7 @@ export async function initServers(client: Client) {
 
     servers.map(server => {
         const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix
-        logger.info(`server prefix: ${serverPrefix}`)
+        logger.info(`prefix for ${server.serverName}: ${serverPrefix}`)
         prefixes.set(server.serverId, serverPrefix || defaultPrefix)
-    })
-
-    prefixes.map(p => {
-        logger.info(chalk.bgRed.bold(`Prefix: ${p}`))
     })
 }
