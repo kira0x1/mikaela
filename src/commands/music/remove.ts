@@ -44,24 +44,24 @@ export const command: Command = {
          }
       }
 
+      const startIndex = Math.max(0, pos - 1);
+
       if (pos2) {
-         const songs = player.queue.songs.splice(
-            Math.max(0, pos - 1),
-            Math.min(pos2, player.queue.songs.length)
-         );
+         const deleteAmount = Math.min(pos2, player.queue.songs.length) - startIndex;
+         const songs = player.queue.songs.splice(startIndex, deleteAmount);
 
          const embed = createFooter(message)
             .setTitle(`Removed ${songs.length} ${songs.length == 1 ? 'song' : 'songs'} from the queue`)
             .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
-         addCodeField(embed, songs.map((s, i) => `${i + 1}: ${s.title}`).join('\n'));
+         addCodeField(embed, songs.map((s, i) => `${pos + i}: ${s.title}`).join('\n'));
 
          message.channel.send(embed).then(msg => createDeleteCollector(msg, message));
          updateLastQueue(message);
          return;
       }
 
-      const song = player.queue.removeAt(pos).shift();
+      const song = player.queue.removeAt(startIndex).shift();
       if (!song) return quickEmbed(message, 'Couldnt find song');
 
       const embed = createFooter(message)
