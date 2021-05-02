@@ -17,11 +17,9 @@ export async function syncRoles(client: Client) {
 
   channel.messages.fetch({ limit: 100 }).then(messages => {
     messages.map(msg => {
-      if (msg.reactions.cache.size > 0) {
-        msg.reactions.cache.map(rc => {
-          syncEmoji(msg, rc.emoji);
-        });
-      }
+       msg.reactions.cache.map(rc => {
+         syncEmoji(msg, rc.emoji);
+       });
     });
   });
 

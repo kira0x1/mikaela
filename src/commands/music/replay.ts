@@ -14,22 +14,23 @@ export const command: Command = {
       if (!player) return;
 
       const lastPlayed = player.getLastPlayed();
-      if (lastPlayed) {
-         lastPlayed.playedBy = message.author.id;
-         lastPlayed.favSource = undefined;
-
-         player.addSong(lastPlayed, message);
-
-         const embed = new MessageEmbed()
-            .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
-            .setTitle(`Replaying: ${lastPlayed.title}`)
-            .setDescription(`**Added to queue**\n${lastPlayed.duration.duration}`)
-            .setURL(lastPlayed.url)
-            .setColor(embedColor);
-
-         message.channel.send(embed);
-      } else {
+      if (!lastPlayed) {
          quickEmbed(message, `No song was played previously`);
+         return;
       }
+
+      lastPlayed.playedBy = message.author.id;
+      lastPlayed.favSource = undefined;
+
+      player.addSong(lastPlayed, message);
+
+      const embed = new MessageEmbed()
+         .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
+         .setTitle(`Replaying: ${lastPlayed.title}`)
+         .setDescription(`**Added to queue**\n${lastPlayed.duration.duration}`)
+         .setURL(lastPlayed.url)
+         .setColor(embedColor);
+
+      message.channel.send(embed);
    }
 };

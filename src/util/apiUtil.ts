@@ -78,8 +78,7 @@ async function getSongDetails(link: string) {
       if (!link) return
       const info = await getInfo(link);
 
-      if (!info) return;
-      return info.videoDetails;
+      if (info) return info.videoDetails;
    }
    catch (error) {
       logger.error(error.stack)

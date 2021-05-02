@@ -61,8 +61,8 @@ export async function updateQueueMessage(queueCall: QueueCall) {
 }
 
 async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
-    const promises = [message.react('⬅'), message.react('➡')]
-    await Promise.all(promises)
+    await message.react('⬅')
+    await message.react('➡');
 
     const filter = (reaction: MessageReaction, user: User) => {
         return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;

@@ -49,10 +49,12 @@ class VoiceManager {
 
         const nonbots = vc.members.filter(m => !m.user.bot)
 
-        if (!nonbots || nonbots.size === 0) {
-            const player = findPlayer(vc.guild.id)
-            player.leave()
+        if (nonbots && nonbots.size !== 0) {
+           return
         }
+
+        const player = findPlayer(vc.guild.id)
+        player.leave()
     }
 
     // is the bot in the vc?

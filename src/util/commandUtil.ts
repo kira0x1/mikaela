@@ -77,13 +77,9 @@ export function hasPerms(member: GuildMember, query: string): boolean {
    //If none set then this command does not require permissions to use
    if (!permsFound || permsFound.length === 0) return true;
 
-   for (let i = 0; i < permsFound.length; i++) {
-      const perm: Permission = permsFound[i];
-      const hasPerm = hasPermission(member, perm);
-      if (hasPerm) return true;
-   }
-
-   return false;
+   return permsFound.some(permFound => {
+      hasPermission(member, permFound);
+   });
 }
 
 export function hasPermission(member: GuildMember, permission: Permission) {

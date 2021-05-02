@@ -6,8 +6,7 @@ import { IUser, User } from '../models/User';
 
 export async function findUser(id: string): Promise<IUser> {
    try {
-      const user = await User.findOne({ id: id })
-      return user
+      return  await User.findOne({ id: id })
    } catch (error) {
       logger.error('error', error)
    }

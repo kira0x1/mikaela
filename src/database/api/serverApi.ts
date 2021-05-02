@@ -12,8 +12,7 @@ export async function getAllServers(guilds: Guild[]) {
 
 export async function findServer(id: string) {
    try {
-      const server = await Server.findOne({ serverId: id });
-      return server;
+      return await Server.findOne({ serverId: id });
    } catch (error) {
       logger.error(error);
    }
@@ -38,9 +37,7 @@ function convertGuildToIServer(guild: Guild) {
 
 export async function findOrCreateServer(guild: Guild) {
    try {
-      let server = await findServer(guild.id);
-      if (!server) server = await createServer(guild);
-      return server;
+      return await findServer(guild.id) || createServer(guild);
    } catch (error) {
       logger.error(error);
    }

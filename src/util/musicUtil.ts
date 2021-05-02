@@ -211,28 +211,28 @@ export async function onSongRequest(
    //If song not found, tell the user.
    if (!song) return quickEmbed(message, 'Song not found');
 
-   if (isPlaylist(song)) {
-      const playlistSongs = await convertPlaylistToSongs(song);
-
-      const firstSong = playlistSongs[0];
-      player.addSong(firstSong, message, onlyAddToQueue);
-
-      const embed = createFooter(message)
-         .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
-         .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
-
-      for (let i = 1; i < playlistSongs.length && i < 20; i++) {
-         const psong = playlistSongs[i];
-         embed.addField(`${i + 1} ${psong.title}`, psong.url);
-         player.queue.addSong(psong);
-      }
-
-      message.channel.send(embed);
+   if (!isPlaylist(song)) {
+      //Otherwise play the song
+      playSong(message, song, onlyAddToQueue);
       return;
    }
 
-   //Otherwise play the song
-   playSong(message, song, onlyAddToQueue);
+   const playlistSongs = await convertPlaylistToSongs(song);
+
+   const firstSong = playlistSongs[0];
+   player.addSong(firstSong, message, onlyAddToQueue);
+
+   const embed = createFooter(message)
+      .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
+      .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
+
+   for (let i = 1; i < playlistSongs.length && i < 20; i++) {
+      const psong = playlistSongs[i];
+      embed.addField(`${i + 1} ${psong.title}`, psong.url);
+      player.queue.addSong(psong);
+   }
+
+   message.channel.send(embed);
 }
 
 export async function playSong(message: Message, song: Song, onlyAddToQueue: boolean = false) {

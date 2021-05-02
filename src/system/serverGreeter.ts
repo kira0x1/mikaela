@@ -15,6 +15,6 @@ function greetMember(member: GuildMember | PartialGuildMember) {
 
     // get welcome channel
     const channel = member.guild.channels.cache.get('647099246436286494');
-    if (!channel) return;
+
     if (channel instanceof TextChannel) channel.send(content);
 }
