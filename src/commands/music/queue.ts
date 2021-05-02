@@ -42,9 +42,7 @@ export async function getQueue(message: Message) {
 
    const songs = player.getSongs();
    const pages = getPages(songs);
-   const queueEmbed = await createQueueEmbed(message, pages);
-
-   return queueEmbed;
+   return  await createQueueEmbed(message, pages);
 }
 
 export async function updateLastQueue(message: Message) {
@@ -72,8 +70,8 @@ export async function updateQueueMessage(queueCall: QueueCall) {
 }
 
 async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
-    await message.react('⬅')
-    await message.react('➡');
+   const promises = [message.react('⬅'), message.react('➡')];
+   await Promise.all(promises);
 
    const filter = (reaction: MessageReaction, user: User) => {
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;

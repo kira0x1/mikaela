@@ -26,10 +26,7 @@ export async function getTargetMember(message: Message, query: string) {
    const mention = message.mentions.members.first();
    if (mention !== undefined) return mention;
 
-   const guild = message.guild;
-
-   let member = await getMember(query, guild);
-   return member;
+   return await getMember(query, message.guild);
 }
 
 export async function getTarget(message: Message, query: string): Promise<User> {
