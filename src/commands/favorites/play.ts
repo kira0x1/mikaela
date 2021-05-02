@@ -130,7 +130,6 @@ export async function findFavorite(
    if (songIndex === undefined) throw new Error(`no song index given`);
 
    songIndex--;
-   if (fav.length < songIndex || !fav[songIndex])
-      throw new Error(`song at index \"${songArg}\" not found`);
+   if (fav.length < songIndex || !fav[songIndex]) throw new Error(`song at index \"${songArg}\" not found`);
    return { target: target, song: fav[songIndex] };
 }

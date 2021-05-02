@@ -36,20 +36,20 @@ export const command: Command = {
             .setTitle(`${author.username} deleted ${messagesDeleted.length} messages`)
             .addField(`Guild`, message.guild.name, true)
             .addField(`Channel`, message.channel.name, true)
-            .setThumbnail(successIconUrl)
+            .setThumbnail(successIconUrl);
 
-         let deletedMessagesPretty = ''
+         let deletedMessagesPretty = '';
 
          for (let i = 1; i < messagesDeleted.length; i++) {
             const msg = messagesDeleted[i];
-            deletedMessagesPretty += `(${i})\nAuthor: ${msg.author.username}\ncontent: ${msg.content}\n\n`
+            deletedMessagesPretty += `(${i})\nAuthor: ${msg.author.username}\ncontent: ${msg.content}\n\n`;
          }
 
-         addCodeField(embed, deletedMessagesPretty)
+         addCodeField(embed, deletedMessagesPretty);
          author.send(embed);
       } catch (error) {
-         if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return
-         logger.error(error)
+         if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return;
+         logger.error(error);
 
          const embed = createFooter(message)
             .setTitle(`Error`)
@@ -57,11 +57,11 @@ export const command: Command = {
             .addField(`Command`, 'delete')
             .addField(`Guild`, message.guild.name)
             .addField(`Channel`, message.channel.name)
-            .setThumbnail(errorIconUrl)
+            .setThumbnail(errorIconUrl);
 
-         addCodeField(embed, error.message)
+         addCodeField(embed, error.message);
 
-         author.send(embed)
+         author.send(embed);
       }
    }
 };

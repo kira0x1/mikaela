@@ -13,13 +13,13 @@ export const command: Command = {
    botPerms: ['BAN_MEMBERS'],
 
    async execute(message, args) {
-      const user = await getTarget(message, args[0])
+      const user = await getTarget(message, args[0]);
 
       if (!user) {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(user)
+      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(user);
 
       if (!banInfo) {
          return sendErrorEmbed(message, `${user} is not banned`);

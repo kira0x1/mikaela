@@ -13,17 +13,14 @@ export const command: Command = {
 
    async execute(message, args) {
       if (!(message.channel instanceof TextChannel)) {
-         return await sendErrorEmbed(
-            message,
-            'This command can only be used in guild channels.'
-         );
+         return await sendErrorEmbed(message, 'This command can only be used in guild channels.');
       }
 
-      const target: Role | GuildMember = await findTarget(message, args)
+      const target: Role | GuildMember = await findTarget(message, args);
 
       if (!target) {
-         sendErrorEmbed(message, `Could not find ${args.includes('-r') ? 'Role' : 'Member'}`)
-         return
+         sendErrorEmbed(message, `Could not find ${args.includes('-r') ? 'Role' : 'Member'}`);
+         return;
       }
 
       const perms = getPerms(target);
@@ -33,25 +30,26 @@ export const command: Command = {
 
 async function findTarget(message: Message, args: string[]) {
    if (!args.length) {
-      return message.member
+      return message.member;
    }
 
    if (args.includes('-r')) {
-      const start = args.indexOf('-r') + 1
-      const query = args.slice(start, args.length).join(' ').toLowerCase()
-      return findRole(message, query)
+      const start = args.indexOf('-r') + 1;
+      const query = args.slice(start, args.length).join(' ').toLowerCase();
+      return findRole(message, query);
    }
 
-   const query = args.join(' ').toLowerCase()
-   return findRole(message, query) || await getTargetMember(message, query)
-
+   const query = args.join(' ').toLowerCase();
+   return findRole(message, query) || (await getTargetMember(message, query));
 }
 
 function getPerms(target: Role | GuildMember): MessageEmbed[] {
    const perms = target.permissions.serialize(true);
 
    const permData = Object.entries(perms)
-      .sort(p => { if (p[1]) return -1 })
+      .sort(p => {
+         if (p[1]) return -1;
+      })
       .map(p => {
          return {
             name: formatPermName(p[0]),
@@ -66,11 +64,7 @@ function getPerms(target: Role | GuildMember): MessageEmbed[] {
    ];
 }
 
-async function createEmbed(
-   channel: TextChannel,
-   embeds: MessageEmbed[],
-   target: GuildMember | Role
-) {
+async function createEmbed(channel: TextChannel, embeds: MessageEmbed[], target: GuildMember | Role) {
    const avatarUrl = (target as GuildMember).user?.displayAvatarURL({ dynamic: true });
 
    await new Embeds()
