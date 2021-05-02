@@ -27,7 +27,9 @@ export const command: Command = {
          const res = await findFavorite(message, args);
 
          if (!(res.song instanceof Array)) {
-            res.song.favSource = res.target.id
+            res.song.playedBy = message.author.id;
+            res.song.favSource = res.target.id;
+
             playSong(message, res.song);
             return;
          }
@@ -41,8 +43,13 @@ export const command: Command = {
          }
 
          const firstSong = res.song.shift();
-         firstSong.favSource = res.target.id
-         firstSong.playedBy = message.author.id
+
+         const favSource = res.target.id;
+         const playedBy = message.author.id;
+
+         firstSong.favSource = favSource;
+         firstSong.playedBy = playedBy;
+
          player.addSong(firstSong, message);
 
          embed
@@ -54,8 +61,8 @@ export const command: Command = {
          for (let i = 0; i < amount - 1; i++) {
             const song = res.song[i];
 
-            song.favSource = song.favSource;
-            song.playedBy = message.author.id
+            song.favSource = favSource;
+            song.playedBy = playedBy;
 
             embed.addField(`${i + 1} ${song.title}`, song.url);
             player.queue.addSong(song);
@@ -123,6 +130,7 @@ export async function findFavorite(
    if (songIndex === undefined) throw new Error(`no song index given`);
 
    songIndex--;
-   if (fav.length < songIndex || !fav[songIndex]) throw new Error(`song at index \"${songArg}\" not found`);
+   if (fav.length < songIndex || !fav[songIndex])
+      throw new Error(`song at index \"${songArg}\" not found`);
    return { target: target, song: fav[songIndex] };
 }

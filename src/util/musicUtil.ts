@@ -1,5 +1,15 @@
 import chalk from 'chalk';
-import { Client, Collection, Constants, Message, MessageEmbed, MessageReaction, StreamDispatcher, User, VoiceChannel } from 'discord.js';
+import {
+   Client,
+   Collection,
+   Constants,
+   Message,
+   MessageEmbed,
+   MessageReaction,
+   StreamDispatcher,
+   User,
+   VoiceChannel
+} from 'discord.js';
 import ms from 'ms';
 
 import { logger } from '../app';
@@ -15,7 +25,7 @@ import { sendArgsError } from './commandUtil';
 import { Command } from '../classes/Command';
 import { args } from '../config';
 
-const collectorTime = ms('3h')
+const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
 
 export function ConvertDuration(duration_seconds: number | string) {
@@ -37,7 +47,7 @@ export function ConvertDuration(duration_seconds: number | string) {
 }
 
 export async function initPlayers(client: Client) {
-   initEmoji(client)
+   initEmoji(client);
 
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
@@ -45,34 +55,32 @@ export async function initPlayers(client: Client) {
       players.set(guildResolved.id, new Player(guildResolved, client));
    });
 
-
    if (args['skipDB']) {
-      logger.info(chalk.bgMagenta.bold(`Persistant Queue disabled, due to skipDB flag`))
+      logger.info(chalk.bgMagenta.bold(`Persistant Queue disabled, due to skipDB flag`));
       return;
    }
 
-   const servers = await getAllServers(client.guilds.cache.array())
+   const servers = await getAllServers(client.guilds.cache.array());
    servers
       .filter(server => server.queue && server.queue.length > 0)
       .map(server => {
-         const player = findPlayer(server.serverId)
-         player.queue.songs = server.queue
+         const player = findPlayer(server.serverId);
+         player.queue.songs = server.queue;
 
-         const voiceChannels: VoiceChannel[] = []
+         const voiceChannels: VoiceChannel[] = [];
 
          player.guild.channels.cache.map(channel => {
-            if (channel instanceof VoiceChannel)
-               voiceChannels.push(channel)
-         })
+            if (channel instanceof VoiceChannel) voiceChannels.push(channel);
+         });
 
          voiceChannels.map(vc => {
             if (vc.members.has(client.user.id)) {
-               logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`))
-               player.voiceChannel = vc
-               player.playNext()
+               logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`));
+               player.voiceChannel = vc;
+               player.playNext();
             }
-         })
-      })
+         });
+      });
 }
 
 export function getPlayer(message: Message): Player {
@@ -97,15 +105,22 @@ export function findPlayer(guildId: string): Player {
    return players.get(guildId);
 }
 
-export async function createCurrentlyPlayingEmbed(stream: StreamDispatcher, player: Player, message: Message) {
-   const songBar = await player.getProgressBar()
+export async function createCurrentlyPlayingEmbed(
+   stream: StreamDispatcher,
+   player: Player,
+   message: Message
+) {
+   const songBar = await player.getProgressBar();
 
    //Create embed
    return createFooter(message)
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
       .setURL(player.currentlyPlaying.url)
-      .addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`)
+      .addField(
+         `**${player.getDurationPretty()}**\n${songBar}`,
+         `<@${player.currentlyPlaying.playedBy}>`
+      );
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
@@ -119,7 +134,7 @@ export async function createFavoriteCollector(song: Song, message: Message) {
 
    collector.on('collect', async (reaction, reactionCollector) => {
       const user = reaction.users.cache.last();
-      addFavoriteToUser(user, song, message)
+      addFavoriteToUser(user, song, message);
    });
 
    collector.on('end', collected => {
@@ -128,32 +143,31 @@ export async function createFavoriteCollector(song: Song, message: Message) {
 }
 
 export async function createDeleteCollector(message: Message, previousMessage: Message) {
-   await message.react(trashEmoji.id)
+   await message.react(trashEmoji.id);
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id
-   }
+      return (
+         reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id
+      );
+   };
 
-   const collector = message.createReactionCollector(filter, { time: collectorTime })
+   const collector = message.createReactionCollector(filter, { time: collectorTime });
 
    collector.on('collect', async (reaction, reactionCollector) => {
-      const promises = []
+      const promises = [];
 
-      if (message.deletable)
-         promises.push(message.delete())
+      if (message.deletable) promises.push(message.delete());
 
-      if (previousMessage.deletable)
-         promises.push(previousMessage.delete())
+      if (previousMessage.deletable) promises.push(previousMessage.delete());
 
-      Promise.all(promises)
-   })
+      Promise.all(promises);
+   });
 
    collector.on('end', collected => {
       message.reactions.removeAll().catch(error => {
-         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE)
-            logger.error(error)
-      })
-   })
+         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
+      });
+   });
 }
 
 export function randomUniqueArray<T>(array: Array<T>) {
@@ -164,26 +178,27 @@ export function randomUniqueArray<T>(array: Array<T>) {
 export function randomNumber(min: number, max: number) {
    let previousValue;
    return function random() {
-      const number = Math.floor(
-         (Math.random() * (max - min + 1)) + min
-      );
+      const number = Math.floor(Math.random() * (max - min + 1) + min);
       previousValue = number === previousValue && min !== max ? random() : number;
       return previousValue;
    };
 }
 
-export async function onSongRequest(message: Message, args: string[], command: Command, onlyAddToQueue: boolean = false) {
-
-   const player = getPlayer(message)
+export async function onSongRequest(
+   message: Message,
+   args: string[],
+   command: Command,
+   onlyAddToQueue: boolean = false
+) {
+   const player = getPlayer(message);
 
    //Make sure the user is in voice
    if (!message.member.voice.channel && !player.testVc) {
       return quickEmbed(message, `You must be in a voice channel to play music`);
    }
 
-
    if (args.length === 0) {
-      if (onlyAddToQueue) return resumeQueue(message, player)
+      if (onlyAddToQueue) return resumeQueue(message, player);
       return sendArgsError(command, message);
    }
 
@@ -200,7 +215,7 @@ export async function onSongRequest(message: Message, args: string[], command: C
       const playlistSongs = await convertPlaylistToSongs(song);
 
       const firstSong = playlistSongs[0];
-      player.addSong(firstSong, message, onlyAddToQueue)
+      player.addSong(firstSong, message, onlyAddToQueue);
 
       const embed = createFooter(message)
          .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
@@ -211,6 +226,7 @@ export async function onSongRequest(message: Message, args: string[], command: C
          embed.addField(`${i + 1} ${psong.title}`, psong.url);
          player.queue.addSong(psong);
       }
+
       message.channel.send(embed);
       return;
    }
@@ -223,6 +239,8 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue: boo
    //Get the guilds player
    const player = getPlayer(message);
 
+   song.playedBy = message.author.id;
+
    //Add the song to the player
    player.addSong(song, message, onlyAddToQueue);
 
@@ -231,32 +249,30 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue: boo
       .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
-      .setURL(song.url)
+      .setURL(song.url);
 
    const msg = await message.channel.send(embed);
-   createFavoriteCollector(song, msg)
+   createFavoriteCollector(song, msg);
 }
 
 async function resumeQueue(message: Message, player: Player) {
    if (!player.hasSongs()) {
-      const embed = new MessageEmbed()
-         .setColor(embedColor)
-         .setTitle("Queue Empty, please add a song")
+      const embed = new MessageEmbed().setColor(embedColor).setTitle('Queue Empty, please add a song');
 
-      message.channel.send(embed)
+      message.channel.send(embed);
       return;
    }
 
-   player.resumeQueue(message)
-   const embed = createFooter(message).setTitle("Resuming Queue!")
-   await message.channel.send(embed)
-   sendQueueEmbed(message)
+   player.resumeQueue(message);
+   const embed = createFooter(message).setTitle('Resuming Queue!');
+   await message.channel.send(embed);
+   sendQueueEmbed(message);
 }
 
 export function getSongSourceInfo(song: Song) {
-   let sourceInfo = `<@${song.playedBy}>`
+   let sourceInfo = `<@${song.playedBy}>`;
    if (song.favSource && song.favSource !== song.playedBy) {
-      sourceInfo += ` from <@${song.favSource}>'s favorites`
+      sourceInfo += ` from <@${song.favSource}>'s favorites`;
    }
-   return sourceInfo
+   return sourceInfo;
 }
