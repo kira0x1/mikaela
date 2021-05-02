@@ -1,4 +1,4 @@
-import { Client, Emoji, Guild, Message } from 'discord.js';
+import { Client, Emoji, Guild, Message, User } from 'discord.js';
 import { logger } from '../app';
 import { coders_club_id } from '../config';
 import { prefixes } from '../database/api/serverApi';
@@ -32,7 +32,7 @@ export async function getTargetMember(message: Message, query: string) {
     return member;
 }
 
-export async function getTarget(message: Message, query: string) {
+export async function getTarget(message: Message, query: string): Promise<User> {
     const member = await getTargetMember(message, query)
     if (member) return member.user
 }
