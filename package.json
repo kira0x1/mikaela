@@ -35,7 +35,8 @@
     "watch:node": "nodemon .",
     "clean": "rimraf out",
     "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
-    "clean:all": "npm run clean && npm run clean:node"
+    "clean:all": "npm run clean && npm run clean:node",
+    "prettier": "npm run prettier --write src/"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
