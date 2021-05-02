@@ -68,7 +68,7 @@ export async function saveAllServersQueue() {
 
 export async function getServerPrefix(message: Message) {
    const server = await findOrCreateServer(message.guild);
-   return server.prefixes.find(serverPrefix => serverPrefix.botId === message.client.user.id);
+   return await server.prefixes.find(serverPrefix => serverPrefix.botId === message.client.user.id);
 }
 
 export async function setServerPrefix(message: Message, prefix: string) {
