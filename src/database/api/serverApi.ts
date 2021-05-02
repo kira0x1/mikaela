@@ -84,12 +84,12 @@ export async function setServerPrefix(message: Message, prefix: string) {
    } else {
       for (let i = 0; i < server.prefixes.length; i++) {
          const prefixSetting = server.prefixes[i];
-         allPrefixes.push(prefixSetting);
-         if (prefixSetting.botId !== botId) {
-            continue;
+
+         if (prefixSetting.botId === botId) {
+            prefixSetting.prefix = prefix;
          }
 
-         prefixSetting.prefix = prefix;
+         allPrefixes.push(prefixSetting);
       }
 
       server.prefixes = allPrefixes;
