@@ -42,7 +42,7 @@ export async function getQueue(message: Message) {
 
    const songs = player.getSongs();
    const pages = getPages(songs);
-   return  await createQueueEmbed(message, pages);
+   return await createQueueEmbed(message, pages);
 }
 
 export async function updateLastQueue(message: Message) {
