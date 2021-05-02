@@ -88,6 +88,7 @@ export async function setServerPrefix(message: Message, prefix: string) {
    }
 
    prefixes.set(message.guild.id, prefix);
+   server.markModified('prefixes');
    await server.save();
 }
 
