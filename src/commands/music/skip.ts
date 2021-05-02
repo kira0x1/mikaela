@@ -1,31 +1,34 @@
 import { MessageEmbed } from 'discord.js';
 
-import { getPlayer } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';
+import { updateLastQueue } from './queue';
 
 export const command: Command = {
-    name: 'Skip',
-    description: 'Skip song',
-    aliases: ['fs', 'next'],
+   name: 'Skip',
+   description: 'Skip song',
+   aliases: ['fs', 'next'],
 
-    execute(message, args) {
-        //Get the guilds player
-        const player = getPlayer(message);
-        if (!player) return;
+   async execute(message, args) {
+      //Get the guilds player
+      const player = getPlayer(message);
+      if (!player) return;
 
-        //Get the current playing song
-        const currentSong = player.currentlyPlaying;
-        if (!currentSong) return quickEmbed(message, `No song currently playing`);
+      //Get the current playing song
+      const currentSong = player.currentlyPlaying;
+      if (!currentSong) return quickEmbed(message, `No song currently playing`);
 
-        //Create an embed with the information of the song to be skipped
-        const embed = new MessageEmbed()
-           .setColor(embedColor)
-           .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
-            .setTitle(`Skipped Song: ${currentSong.title}`)
-            .setDescription(currentSong.url);
+      //Create an embed with the information of the song to be skipped
+      const embed = new MessageEmbed()
+         .setColor(embedColor)
+         .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
+         .setTitle(`Skipped Song: ${currentSong.title}`)
+         .setDescription(currentSong.url);
 
-        message.channel.send(embed);
-        player.skipSong();
-    },
+      player.skipSong();
+      const msg = message.channel.send(embed);
+      createDeleteCollector(msg, message);
+      updateLastQueue(message);
+   }
 };
