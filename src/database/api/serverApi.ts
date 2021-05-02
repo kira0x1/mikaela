@@ -77,22 +77,14 @@ export async function setServerPrefix(message: Message, prefix: string) {
 
    const currentServerPrefix = await getServerPrefix(message);
 
-   const allPrefixes = [];
-
    if (!currentServerPrefix) {
       server.prefixes.push({ botId: botId, prefix: prefix });
    } else {
-      for (let i = 0; i < server.prefixes.length; i++) {
-         const prefixSetting = server.prefixes[i];
-
-         if (prefixSetting.botId === botId) {
-            prefixSetting.prefix = prefix;
+      server.prefixes.find(b => {
+         if (b.botId === botId) {
+            b.prefix = prefix;
          }
-
-         allPrefixes.push(prefixSetting);
-      }
-
-      server.prefixes = allPrefixes;
+      });
    }
 
    prefixes.set(message.guild.id, prefix);
