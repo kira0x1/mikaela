@@ -6,34 +6,34 @@ import { embedColor } from '../../util/styleUtil';
 import { logger } from '../../app';
 
 export const command: Command = {
-    name: 'shuffle queue',
-    description: 'shuffle the queue',
-    aliases: ['sq', 'shuffleq', 'shufflequeue'],
+   name: 'shuffle queue',
+   description: 'shuffle the queue',
+   aliases: ['sq', 'shuffleq', 'shufflequeue'],
 
-    async execute(message, args) {
-        const player = getPlayer(message);
-        if (!player) return logger.log('error',`Could not find player for guild ${message.guild.name}`);
+   async execute(message, args) {
+      const player = getPlayer(message);
+      if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
-        if (!player.queue.songs || player.queue.songs.length === 0) {
-            const embed = new MessageEmbed()
-                .setTitle(`No songs currently playing to shuffle`)
-                .setColor(embedColor);
+      if (!player.queue.songs || player.queue.songs.length === 0) {
+         const embed = new MessageEmbed()
+            .setTitle(`No songs currently playing to shuffle`)
+            .setColor(embedColor);
 
-            message.channel.send(embed);
-            return;
-        }
+         message.channel.send(embed);
+         return;
+      }
 
-        player.queue.shuffle();
+      player.queue.shuffle();
 
-        const embed = new MessageEmbed()
-           .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
-            .setTitle(`Shuffled Queue!`)
-            .setColor(embedColor)
+      const embed = new MessageEmbed()
+         .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
+         .setTitle(`Shuffled Queue!`)
+         .setColor(embedColor);
 
-        player.queue.songs.map((song, index) => {
-            embed.addField(`${index + 1} ${song.title}`, song.url);
-        });
+      player.queue.songs.map((song, index) => {
+         embed.addField(`${index + 1} ${song.title}`, song.url);
+      });
 
-        message.channel.send(embed);
-    },
+      message.channel.send(embed);
+   }
 };

@@ -1,72 +1,74 @@
 {
-  "name": "mikaela",
-  "version": "1.0.0",
-  "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
-  "main": "out/app.js",
-  "license": "MIT",
-  "author": {
-    "name": "Kira",
-    "email": "kira.eva@outlook.com"
-  },
-  "private": true,
-  "keywords": [
-    "discord",
-    "music",
-    "debate",
-    "typescript",
-    "bot"
-  ],
-  "homepage": "https://github.com/kira0x1/mikaela#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kira0x1/mikaela.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kira0x1/mikaela/issues"
-  },
-  "scripts": {
-    "start": "node .",
-    "start-prod": "node . --env=production",
-    "skipdb": "node . --skipDB",
-    "testvc": "node . --testvc",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "watch": "tsc -w",
-    "watch:node": "nodemon .",
-    "clean": "rimraf out",
-    "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
-    "clean:all": "npm run clean && npm run clean:node"
-  },
-  "dependencies": {
-    "@discordjs/opus": "^0.5.0",
-    "bufferutil": "^4.0.3",
-    "chalk": "^4.1.1",
-    "discord-paginationembed": "^2.1.0",
-    "discord-ytdl-core": "^5.0.2",
-    "discord.js": "^12.5.3",
-    "minimist": "^1.2.5",
-    "mongoose": "^5.12.7",
-    "ms": "^2.1.3",
-    "sodium": "^3.0.2",
-    "string-progressbar": "^1.0.3",
-    "tslib": "^2.2.0",
-    "utf-8-validate": "^5.0.4",
-    "winston": "^3.3.3",
-    "ws": "^7.4.5",
-    "youtube-sr": "^4.0.6",
-    "ytdl-core": "^4.5.0",
-    "ytpl": "^2.2.0"
-  },
-  "devDependencies": {
-    "@types/ms": "^0.7.31",
-    "@types/node": "^15.0.1",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.2.4"
-  },
-  "nodemonConfig": {
-    "events": {
-      "start": "cls || clear"
-    },
-    "delay": 1000
-  }
+   "name": "mikaela",
+   "version": "1.0.0",
+   "description": "Mikaela is DiscordBot who can help make your server a more vibrant place to be in, she plays music, saves members favorites, those who like to debate can even organize their notes and sources with her help.",
+   "main": "out/app.js",
+   "license": "MIT",
+   "author": {
+      "name": "Kira",
+      "email": "kira.eva@outlook.com"
+   },
+   "private": true,
+   "keywords": [
+      "discord",
+      "music",
+      "debate",
+      "typescript",
+      "bot"
+   ],
+   "homepage": "https://github.com/kira0x1/mikaela#readme",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/kira0x1/mikaela.git"
+   },
+   "bugs": {
+      "url": "https://github.com/kira0x1/mikaela/issues"
+   },
+   "scripts": {
+      "start": "node .",
+      "start-prod": "node . --env=production",
+      "skipdb": "node . --skipDB",
+      "testvc": "node . --testvc",
+      "prebuild": "npm run clean",
+      "build": "tsc",
+      "watch": "tsc -w",
+      "watch:node": "nodemon .",
+      "clean": "rimraf out",
+      "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
+      "clean:all": "npm run clean && npm run clean:node",
+      "prettier": "prettier --write src/"
+   },
+   "dependencies": {
+      "@discordjs/opus": "^0.5.0",
+      "bufferutil": "^4.0.3",
+      "chalk": "^4.1.1",
+      "discord-paginationembed": "^2.1.0",
+      "discord-ytdl-core": "^5.0.2",
+      "discord.js": "^12.5.3",
+      "minimist": "^1.2.5",
+      "mongoose": "^5.12.7",
+      "ms": "^2.1.3",
+      "sodium": "^3.0.2",
+      "string-progressbar": "^1.0.3",
+      "tslib": "^2.2.0",
+      "utf-8-validate": "^5.0.4",
+      "winston": "^3.3.3",
+      "ws": "^7.4.5",
+      "youtube-sr": "^4.0.6",
+      "ytdl-core": "^4.5.0",
+      "ytpl": "^2.2.0"
+   },
+   "devDependencies": {
+      "@types/ms": "^0.7.31",
+      "@types/node": "^15.0.1",
+      "prettier": "^2.2.1",
+      "rimraf": "^3.0.2",
+      "typescript": "^4.2.4"
+   },
+   "nodemonConfig": {
+      "events": {
+         "start": "cls || clear"
+      },
+      "delay": 1000
+   }
 }

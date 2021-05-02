@@ -17,8 +17,7 @@ export const command: Command = {
       const player = getPlayer(message);
 
       const member = message.member;
-      if (!member.voice.channel)
-         return quickEmbed(message, `You must be in a voice channel to play music`);
+      if (!member.voice.channel) return quickEmbed(message, `You must be in a voice channel to play music`);
 
       if (!player) return logger.warn('info', 'no player found while using volume command');
       if (!arg) return quickEmbed(message, `Volume is currently ${player.volume}`);

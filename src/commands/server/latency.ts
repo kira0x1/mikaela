@@ -3,27 +3,27 @@ import { Command } from '../../classes/Command';
 import { createFooter, embedColor } from '../../util/styleUtil';
 
 export const command: Command = {
-  name: 'latency',
-  description: 'Measures latency',
-  aliases: ['ping'],
+   name: 'latency',
+   description: 'Measures latency',
+   aliases: ['ping'],
 
-  async execute(message, _) {
-    let embed: MessageEmbed = createFooter(message);
+   async execute(message, _) {
+      let embed: MessageEmbed = createFooter(message);
 
-    embed.setTitle('Pong!');
-    embed.addField('Websocket', `${message.client.ws.ping} ms`, true);
-    embed.setColor(embedColor);
+      embed.setTitle('Pong!');
+      embed.addField('Websocket', `${message.client.ws.ping} ms`, true);
+      embed.setColor(embedColor);
 
-    let before: number = Date.now();
+      let before: number = Date.now();
 
-    const msg: Message = await message.channel.send(embed);
+      const msg: Message = await message.channel.send(embed);
 
-    const sendDelay = Date.now() - before;
-    embed.addField('Send', `${sendDelay} ms`, true);
+      const sendDelay = Date.now() - before;
+      embed.addField('Send', `${sendDelay} ms`, true);
 
-    const msgDelay = msg.createdTimestamp - message.createdTimestamp;
-    embed.addField('Message', `${msgDelay} ms`, true);
+      const msgDelay = msg.createdTimestamp - message.createdTimestamp;
+      embed.addField('Message', `${msgDelay} ms`, true);
 
-    await msg.edit(embed);
-  },
+      await msg.edit(embed);
+   }
 };

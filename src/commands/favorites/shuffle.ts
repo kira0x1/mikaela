@@ -61,16 +61,25 @@ export const command: Command = {
       firstSong.favSource = favSource;
       firstSong.playedBy = playedBy;
 
-      player.addSong(firstSong, message);
-
       embed.setTitle(title);
-      embed.addField(`1 ${firstSong.title}`, firstSong.url);
+
+      let startIndex = 1;
+
+      if (!player.isPlaying) {
+         embed.addField(`Playing ${firstSong.title}`, `${firstSong.url}\n\u200b`);
+         startIndex = 0;
+      } else {
+         embed.addField(`1 ${firstSong.title}`, firstSong.url);
+      }
+
       embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
       embed.setThumbnail(target.displayAvatarURL({ dynamic: true }));
 
+      player.addSong(firstSong, message);
+
       const songsAdding = [firstSong];
 
-      for (let i = 1; i < amount; i++) {
+      for (let i = startIndex; i < amount; i++) {
          let song = random();
 
          if (songsAdding.includes(song) && songsAdding.length < user.favorites.length) {

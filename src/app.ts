@@ -9,11 +9,17 @@ import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
-import { findCommand, findCommandGroup, getCommandOverride, hasPerms, sendArgsError } from './util/commandUtil';
+import {
+   findCommand,
+   findCommandGroup,
+   getCommandOverride,
+   hasPerms,
+   sendArgsError
+} from './util/commandUtil';
 import { initPlayers, players } from './util/musicUtil';
 import { sendErrorEmbed, wrap } from './util/styleUtil';
 
-export const mikaelaId = '585874337618460672'
+export const mikaelaId = '585874337618460672';
 
 // Create logger
 export const logger = createLogger({
@@ -23,12 +29,13 @@ export const logger = createLogger({
 
 // print args - production, skipdb, etc
 const envString = isProduction ? '-------production-------' : '-------development-------';
-const dbString = (isProduction || cmdArgs['prodDB']) ? '-------production DB-------' : '-------development DB-------'
+const dbString =
+   isProduction || cmdArgs['prodDB'] ? '-------production DB-------' : '-------development DB-------';
 logger.info(chalk.bgRed.bold(envString));
 logger.info(chalk.bgRed.bold(dbString));
 
 // print testvc arg
-cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`))
+cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`));
 
 // print prefix
 // logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
@@ -68,7 +75,7 @@ async function init() {
 
 client.on('ready', async () => {
    // Setup Prefixes
-   await initServers(client)
+   await initServers(client);
 
    // Setup players
    initPlayers(client);
@@ -91,18 +98,17 @@ client.on('ready', async () => {
    logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
-
 client.on('message', async message => {
-   const prefix = prefixes.get(message.guild?.id) || defaultPrefix
+   const prefix = prefixes.get(message.guild?.id) || defaultPrefix;
 
-   const prefixGiven = message.content.substr(0, prefix.length)
+   const prefixGiven = message.content.substr(0, prefix.length);
 
    // Check if message is from a bot and that the message starts with the prefix
    if (message.author.bot || prefixGiven !== prefix) {
       // check if user mentioned the bot instead of using the prefix
-      const mention = message.mentions.users.first()
+      const mention = message.mentions.users.first();
       if (mention?.id !== client.user.id) {
-         return
+         return;
       }
    }
 
@@ -119,8 +125,7 @@ client.on('message', async message => {
       return;
    }
 
-   if (blockedUsers.has(message.author.id))
-      return message.author.send("Sorry you're blocked");
+   if (blockedUsers.has(message.author.id)) return message.author.send("Sorry you're blocked");
 
    if (prefix === '.') {
       const firstCharacter = message.content.charAt(1);
@@ -130,11 +135,11 @@ client.on('message', async message => {
 
    // Split up message into an array and remove the prefix
    let args = message.content.slice(message.content.startsWith(prefix) ? prefix.length : 0).split(/ +/);
-   if (!message.content.startsWith(prefix)) args.shift()
+   if (!message.content.startsWith(prefix)) args.shift();
 
    // Remove the first element from the args array ( this is the command name )
    let commandName = args.shift();
-   if (!commandName) commandName = args.shift()
+   if (!commandName) commandName = args.shift();
 
    if (!commandName || commandName === prefix) {
       return;
@@ -159,8 +164,7 @@ client.on('message', async message => {
          command = grp.find(
             cmd =>
                cmd.name.toLowerCase() === subCmdName?.toLowerCase() ||
-               (cmd.aliases &&
-                  cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
+               (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
          );
 
          //If the command-group doesnt contain the command then check if the command-group has it set as an override
@@ -182,9 +186,7 @@ client.on('message', async message => {
    if (command.isDisabled) return;
 
    if (!hasPerms(message.member, commandName))
-      return message.author.send(
-         `You do not have permission to use ${wrap(command.name)}`
-      );
+      return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
 
    // If command arguments are required and not given send an error message
    if (command.args && args.length === 0) return sendArgsError(command, message);
@@ -215,15 +217,15 @@ client.on('message', async message => {
 // on shutdown signal save the queue to the database
 // so we can play the queue after restart
 process.on('message', async (msg: string) => {
-   if (msg != 'shutdown') return
-   logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`))
-   players.map(p => p.saveQueueState())
-   await saveAllServersQueue()
-   await db.close()
-   process.exit(0)
-})
+   if (msg != 'shutdown') return;
+   logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`));
+   players.map(p => p.saveQueueState());
+   await saveAllServersQueue();
+   await db.close();
+   process.exit(0);
+});
 
-process.on('uncaughtException', error => logger.error(error))
-process.on('unhandledRejection', error => logger.error(error))
+process.on('uncaughtException', error => logger.error(error));
+process.on('unhandledRejection', error => logger.error(error));
 
 init();

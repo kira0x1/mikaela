@@ -117,10 +117,7 @@ export async function createCurrentlyPlayingEmbed(
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
       .setURL(player.currentlyPlaying.url)
-      .addField(
-         `**${player.getDurationPretty()}**\n${songBar}`,
-         `<@${player.currentlyPlaying.playedBy}>`
-      );
+      .addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`);
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
@@ -142,21 +139,20 @@ export async function createFavoriteCollector(song: Song, message: Message) {
    });
 }
 
-export async function createDeleteCollector(message: Message, previousMessage: Message) {
-   await message.react(trashEmoji.id);
+export async function createDeleteCollector(message: Message | Promise<Message>, previousMessage: Message) {
+   const msg = message instanceof Message ? message : await message;
+   await msg.react(trashEmoji.id);
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return (
-         reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id
-      );
+      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id;
    };
 
-   const collector = message.createReactionCollector(filter, { time: collectorTime });
+   const collector = msg.createReactionCollector(filter, { time: collectorTime });
 
    collector.on('collect', async (reaction, reactionCollector) => {
       const promises = [];
 
-      if (message.deletable) promises.push(message.delete());
+      if (msg.deletable) promises.push(msg.delete());
 
       if (previousMessage.deletable) promises.push(previousMessage.delete());
 
@@ -164,7 +160,7 @@ export async function createDeleteCollector(message: Message, previousMessage: M
    });
 
    collector.on('end', collected => {
-      message.reactions.removeAll().catch(error => {
+      msg.reactions.removeAll().catch(error => {
          if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
       });
    });

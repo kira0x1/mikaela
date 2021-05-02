@@ -23,9 +23,7 @@ export const command: Command = {
          return sendErrorEmbed(message, `Cannot kick ${member}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(
-         member
-      );
+      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(member);
 
       if (banInfo) {
          return sendErrorEmbed(message, `${member} is already banned`);

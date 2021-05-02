@@ -52,8 +52,7 @@ export class Player {
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
 
       if (!vc) return quickEmbed(message, `You must be in a voice channel to play music`);
-      if (!vc.joinable)
-         return quickEmbed(message, 'I dont have permission to join that voice-channel');
+      if (!vc.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
 
       try {
          const conn = await vc.join();
@@ -139,9 +138,7 @@ export class Player {
 
    async startVcTimeout() {
       if (!isProduction)
-         logger.info(
-            chalk.bgMagenta.bold(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`)
-         );
+         logger.info(chalk.bgMagenta.bold(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`));
 
       this.clearVoiceTimeout();
 
@@ -180,8 +177,7 @@ export class Player {
       this.currentlyPlaying = this.queue.getNext();
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
 
-      if (!vc?.joinable)
-         return quickEmbed(message, 'I dont have permission to join that voice-channel');
+      if (!vc?.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
 
       this.voiceChannel = vc;
       if (!this.isPlaying) this.startStream(song);

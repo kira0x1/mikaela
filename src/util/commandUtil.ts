@@ -14,9 +14,7 @@ export function findCommand(query: string): Command | undefined {
    if (!command) {
       const cmdArray = commands.array();
       command = cmdArray.find(
-         cmd =>
-            cmd.aliases &&
-            cmd.aliases.find(al => al.toLowerCase() === query.toLowerCase())
+         cmd => cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === query.toLowerCase())
       );
    }
 
@@ -25,16 +23,13 @@ export function findCommand(query: string): Command | undefined {
 
 export function getCommandOverride(query: string): Command | undefined {
    const info = commandInfos.find(
-      cmd_info =>
-         cmd_info.name.toLowerCase() === query ||
-         cmd_info.aliases.includes(query.toLowerCase())
+      cmd_info => cmd_info.name.toLowerCase() === query || cmd_info.aliases.includes(query.toLowerCase())
    );
 
    if (info) {
       if (!info.override) return;
       const grp = findCommandGroup(info.name);
-      if (grp)
-         return grp.find(cmd => cmd.name.toLowerCase() === info.override.toLowerCase());
+      if (grp) return grp.find(cmd => cmd.name.toLowerCase() === info.override.toLowerCase());
    }
 }
 
@@ -53,9 +48,7 @@ export function findCommandInfo(query: string) {
 
 function getInfo(query: string): CommandInfo {
    return commandInfos.find(
-      info =>
-         info.name.toLowerCase() === query.toLowerCase() ||
-         info.aliases.includes(query.toLowerCase())
+      info => info.name.toLowerCase() === query.toLowerCase() || info.aliases.includes(query.toLowerCase())
    );
 }
 
@@ -90,7 +83,7 @@ export function hasPermission(member: GuildMember, permission: Permission) {
             checkOwner: true
          });
       case 'mod':
-         return member.permissions.any(modperms, true)
+         return member.permissions.any(modperms, true);
       case 'kira':
          return member.id === perms.kira.users[0];
    }
@@ -112,7 +105,8 @@ export function checkCooldown(command: Command, message: Message): boolean {
          const timeLeft = (expirationTime - now) / 1000;
 
          author.send(
-            `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name
+            `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${
+               command.name
             }\` command.`
          );
 
