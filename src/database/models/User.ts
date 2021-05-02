@@ -1,5 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
-import { Song } from "../../classes/Song";
+import { Song } from '../../classes/Song';
 
 export interface IUser extends Document {
    username: string;

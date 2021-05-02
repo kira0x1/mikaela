@@ -3,7 +3,7 @@ import YouTube from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
 import { logger } from '../app';
-import { Song } from "../classes/Song";
+import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
 import { quickEmbed, wrap } from './styleUtil';
 
@@ -32,7 +32,7 @@ export async function getSong(query: string): Promise<Song | ytpl.Result> {
       if (!songSearch) return;
 
       //If a video is found then get details and convert it to ISong
-      if (!songSearch) return
+      if (!songSearch) return;
 
       const details = await getSongDetails(songSearch.id);
       if (!details) return;
@@ -75,17 +75,16 @@ export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Son
 // A helper function that gets info from a link
 async function getSongDetails(link: string) {
    try {
-      if (!link) return
+      if (!link) return;
       const info = await getInfo(link);
 
       if (!info) return;
       return info.videoDetails;
-   }
-   catch (error) {
-      logger.error(error.stack)
+   } catch (error) {
+      logger.error(error.stack);
    }
 }
 
 export function sendSongNotFoundEmbed(message: Message, query: string) {
-   quickEmbed(message, `Song not found: ${wrap(query)}`, { addFooter: true })
+   quickEmbed(message, `Song not found: ${wrap(query)}`, { addFooter: true });
 }

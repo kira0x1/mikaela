@@ -9,13 +9,9 @@ export const command: Command = {
    aliases: ['info', 'user', 'uinfo'],
 
    async execute(message, args) {
-      const target =
-         args.length > 0
-            ? await getTargetMember(message, args.join(' '))
-            : message.member;
+      const target = args.length > 0 ? await getTargetMember(message, args.join(' ')) : message.member;
 
-      if (!target)
-         return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
+      if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
       const embed = await createEmbed(message, target);
       message.channel.send(embed);
@@ -31,10 +27,7 @@ async function createEmbed(message: Message, target: GuildMember): Promise<Messa
       .addField('Created at', target.user.createdAt.toUTCString())
       .addField('Joined at', target.joinedAt.toUTCString());
 
-   if (
-      message.guild.me.hasPermission('VIEW_AUDIT_LOG') &&
-      message.member.hasPermission('VIEW_AUDIT_LOG')
-   ) {
+   if (message.guild.me.hasPermission('VIEW_AUDIT_LOG') && message.member.hasPermission('VIEW_AUDIT_LOG')) {
       const previousNicks = await getPreviousNicks(target);
 
       if (previousNicks.length > 0) {

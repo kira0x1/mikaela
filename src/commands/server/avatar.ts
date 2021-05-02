@@ -16,8 +16,7 @@ export const command: Command = {
       if (args.length > 0) target = await getTarget(message, args.join(' '));
 
       // If we couldnt find a user, then tell the user, and return.
-      if (!target)
-         return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
+      if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
       // Create the embed
       const embed: MessageEmbed = createFooter(message)

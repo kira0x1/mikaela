@@ -29,7 +29,7 @@ export class VoiceRoleManager extends EventEmitter {
    async refreshVoiceRole() {
       this.voiceRole = this.guild.roles.cache.find(r => r.name.toLowerCase() === 'voice');
 
-      if (!isProduction) return
+      if (!isProduction) return;
 
       this.removeVoiceRoleFromAll();
 
@@ -54,9 +54,7 @@ export class VoiceRoleManager extends EventEmitter {
    removVoiceRole(member: GuildMember) {
       member.roles
          .remove(this.voiceRole)
-         .catch(err =>
-            logger.error(chalk.bgRed(`Failed to remove voice role\nREASON: ${err.message}`))
-         );
+         .catch(err => logger.error(chalk.bgRed(`Failed to remove voice role\nREASON: ${err.message}`)));
    }
 
    addVoiceRole(member: GuildMember) {
@@ -64,6 +62,6 @@ export class VoiceRoleManager extends EventEmitter {
          .add(this.voiceRole)
          .catch(err =>
             logger.error(chalk.bgRed.bold(`Error trying to add vc role\nREASON: ${err.message}`))
-         )
+         );
    }
 }
