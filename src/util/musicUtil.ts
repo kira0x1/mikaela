@@ -222,11 +222,10 @@ export async function onSongRequest(
       .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
       .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
 
-   for (let i = 1; i < playlistSongs.length && i < 20; i++) {
-      const psong = playlistSongs[i];
-      embed.addField(`${i + 1} ${psong.title}`, psong.url);
-      player.queue.addSong(psong);
-   }
+   playlistSongs.slice(1, 20).forEach((song, idx) => {
+      embed.addField(`${idx + 1} ${song.title}`, song.url);
+      player.queue.addSong(song);
+   })
 
    message.channel.send(embed);
 }
