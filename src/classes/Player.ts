@@ -28,7 +28,7 @@ export class Player {
    client: Client;
    volumeDisabled: boolean = false;
    lastPlayed: Song | undefined;
-   ytdlHighWaterMark: number = 1 << 24
+   ytdlHighWaterMark: number = 1 << 26
    vcHighWaterMark: number = 1
    vcTimeout: NodeJS.Timeout
    joinTestVc: boolean = false
