@@ -42,6 +42,7 @@ export const command: Command = {
 
          const firstSong = res.song.shift();
          firstSong.favSource = res.target.id
+         firstSong.playedBy = message.author.id
          player.addSong(firstSong, message);
 
          embed
@@ -52,6 +53,10 @@ export const command: Command = {
 
          for (let i = 0; i < amount - 1; i++) {
             const song = res.song[i];
+
+            song.favSource = song.favSource;
+            song.playedBy = message.author.id
+
             embed.addField(`${i + 1} ${song.title}`, song.url);
             player.queue.addSong(song);
          }
@@ -112,7 +117,6 @@ export async function findFavorite(
       if (!startValid || !endValid) throw new Error(`This user doesnt have songs in that range`);
 
       const songs = fav.slice(startRange, endRange);
-      songs.map(s => s.favSource = target.id)
       return { target: target, song: songs };
    }
 

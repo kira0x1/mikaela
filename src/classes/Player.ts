@@ -296,7 +296,7 @@ export class Player {
    }
 
    async addSong(song: Song, message: Message, onlyAddToQueue: boolean = false) {
-      song.playedBy = message.member.id
+      song.playedBy = message.author.id
       this.queue.addSong(song);
       if (!onlyAddToQueue) this.play(song, message);
    }

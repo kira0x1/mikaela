@@ -75,7 +75,9 @@ export const command: Command = {
                 }
             }
 
+            song.playedBy = message.author.id
             song.favSource = target.id;
+
             songsAdding.push(song);
             embed.addField(`${i + 1} ${song.title}`, song.url);
             player.addSong(song, message);
