@@ -51,7 +51,7 @@
       "sodium": "^3.0.2",
       "string-progressbar": "^1.0.3",
       "tslib": "^2.2.0",
-      "utf-8-validate": "^5.0.4",
+      "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.4.5",
       "youtube-sr": "^4.0.6",
