@@ -1,9 +1,10 @@
 import { MessageEmbed } from 'discord.js';
 
-import { getPlayer } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
-import { embedColor } from '../../util/styleUtil';
+import { embedColor, createFooter } from '../../util/styleUtil';
 import { logger } from '../../app';
+import { updateLastQueue } from './queue';
 
 export const command: Command = {
    name: 'shuffle queue',
@@ -19,21 +20,21 @@ export const command: Command = {
             .setTitle(`No songs currently playing to shuffle`)
             .setColor(embedColor);
 
-         message.channel.send(embed);
+         const msg = message.channel.send(embed);
+         createDeleteCollector(msg, message);
          return;
       }
 
       player.queue.shuffle();
 
-      const embed = new MessageEmbed()
+      const embed = createFooter(message)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
-         .setTitle(`Shuffled Queue!`)
-         .setColor(embedColor);
+         .setTitle(`Shuffled The Queue!`)
+         .setDescription(`Shuffled ${player.getSongs().length} songs`);
 
-      player.queue.songs.map((song, index) => {
-         embed.addField(`${index + 1} ${song.title}`, song.url);
-      });
+      const msg = message.channel.send(embed);
+      createDeleteCollector(msg, message);
 
-      message.channel.send(embed);
+      updateLastQueue(message);
    }
 };
