@@ -55,7 +55,7 @@
       "winston": "^3.3.3",
       "ws": "^7.4.5",
       "youtube-sr": "^4.0.6",
-      "ytdl-core": "^4.5.0",
+      "ytdl-core": "^4.7.0",
       "ytpl": "^2.2.0"
    },
    "devDependencies": {
