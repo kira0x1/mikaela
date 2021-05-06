@@ -32,7 +32,7 @@ export const command: Command = {
       options.map((arg, pos) => {
          if (arg.includes('-title')) {
             title = arg.slice(7, arg.length);
-         } else {
+         } else if (arg && arg.trim() !== '') {
             votes.push(arg);
          }
       });
