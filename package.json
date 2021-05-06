@@ -43,7 +43,7 @@
       "bufferutil": "^4.0.3",
       "chalk": "^4.1.1",
       "discord-paginationembed": "^2.1.0",
-      "discord-ytdl-core": "^5.0.2",
+      "discord-ytdl-core": "^5.0.3",
       "discord.js": "^12.5.3",
       "minimist": "^1.2.5",
       "mongoose": "^5.12.7",
@@ -56,11 +56,11 @@
       "ws": "^7.4.5",
       "youtube-sr": "^4.0.6",
       "ytdl-core": "^4.7.0",
-      "ytpl": "^2.2.0"
+      "ytpl": "^2.2.1"
    },
    "devDependencies": {
       "@types/ms": "^0.7.31",
-      "@types/node": "^15.0.1",
+      "@types/node": "^15.0.2",
       "prettier": "^2.2.1",
       "rimraf": "^3.0.2",
       "typescript": "^4.2.4"
