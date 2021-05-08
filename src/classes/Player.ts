@@ -12,7 +12,7 @@ import progressbar from 'string-progressbar'
 
 const minVolume: number = 0.05;
 const maxVolume: number = 10;
-const vcWaitTime: number = ms('15m');
+const vcWaitTime: number = ms('20m');
 
 const testVoiceID = '610883901472243713';
 
@@ -142,7 +142,6 @@ export class Player {
 
       this.clearVoiceTimeout();
 
-      this.isPlaying = false;
       this.vcTimeout = setTimeout(() => {
          this.onVcTimeout();
       }, vcWaitTime);

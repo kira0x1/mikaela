@@ -49,7 +49,7 @@ class VoiceManager {
 
       if (!nonbots || nonbots.size === 0) {
          const player = findPlayer(vc.guild.id);
-         player.leave();
+         player.startVcTimeout()
       }
    }
 
