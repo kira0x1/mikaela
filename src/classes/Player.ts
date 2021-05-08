@@ -8,7 +8,7 @@ import { quickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
-import progressbar from 'string-progressbar'
+import createBar from 'string-progressbar';
 
 const minVolume: number = 0.05;
 const maxVolume: number = 10;
@@ -209,8 +209,7 @@ export class Player {
       }
 
       const current = streamTime;
-
-      const songBar = progressbar.filledBar(total, current, 20)[0]
+      const songBar = createBar(total, current, 20)[0];
 
       return songBar;
    }
