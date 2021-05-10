@@ -202,10 +202,25 @@ export async function onSongRequest(
    let query = args.join(' ');
 
    //Search for song
-   const song = await getSong(query);
+   const song = await getSong(query, true);
 
    //If song not found, tell the user.
    if (!song) return quickEmbed(message, 'Song not found');
+
+   if (song instanceof Array) {
+      song[0].playedBy = message.author.id
+
+      player.addSong(song[0], message)
+
+      for (let i = 1; i < song.length; i++) {
+         song[i].playedBy = message.author.id
+         player.queue.addSong(song[i])
+      }
+
+      const embed = createFooter(message).setTitle(`Added ${song.length} songs to queue`)
+      message.channel.send(embed)
+      return;
+   }
 
    if (isPlaylist(song)) {
       const playlistSongs = await convertPlaylistToSongs(song);

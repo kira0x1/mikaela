@@ -45,6 +45,8 @@ async function RemoveBySearch(query: string, message: Message) {
    logger.info(chalk.bgRed.bold(`Removing by search: ${query}`));
    const user = await findOrCreate(message.author);
    const song = await getSong(query);
+   if (song instanceof Array) return;
+
 
    if (!song) {
       return sendSongNotFoundEmbed(message, query);
