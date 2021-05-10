@@ -16,6 +16,8 @@ export const command: Command = {
       const query = args.join();
       try {
          const song = await getSong(query);
+         if (song instanceof Array) return;
+         
          if (!song) return quickEmbed(message, 'song not found');
 
          if (isPlaylist(song)) {

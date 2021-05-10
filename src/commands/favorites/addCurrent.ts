@@ -21,6 +21,7 @@ export const command: Command = {
       }
 
       const song = await getSong(currentSong.id);
+      if (song instanceof Array) return;
 
       if (!song) {
          sendErrorEmbed(message, `Error while trying to fetch song`);

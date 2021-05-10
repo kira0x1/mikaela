@@ -10,6 +10,8 @@ export const command: Command = {
    async execute(message, args) {
       const query = args.join(' ');
       const song = await getSong(query);
+      if (song instanceof Array) return;
+
       const embed = createFooter(message);
 
       if (!song) {
