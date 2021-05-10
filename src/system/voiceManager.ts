@@ -44,17 +44,18 @@ class VoiceManager {
 
    onVoiceLeave(vc: VoiceChannel) {
       if (!this.inVc(vc)) return;
+      if (vc && vc.members) {
+         const nonbots = vc.members.filter(m => !m.user.bot);
 
-      const nonbots = vc.members.filter(m => !m.user.bot);
-
-      if (!nonbots || nonbots.size === 0) {
-         const player = findPlayer(vc.guild.id);
-         player.startVcTimeout()
+         if (!nonbots || nonbots.size === 0) {
+            const player = findPlayer(vc.guild.id);
+            player.startVcTimeout()
+         }
       }
    }
 
    // is the bot in the vc?
    inVc(vc: VoiceChannel) {
-      return vc.members.has(this.client.user.id);
+      return vc.members?.has(this.client.user.id);
    }
 }
