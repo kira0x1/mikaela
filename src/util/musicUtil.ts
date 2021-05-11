@@ -214,12 +214,16 @@ export async function onSongRequest(
 
       player.addSong(song[0], message)
 
+      let songCount = 1;
+
       for (let i = 1; i < song.length; i++) {
+         if (!song[i]) continue;
+         songCount++;
          song[i].playedBy = message.author.id
          player.queue.addSong(song[i])
       }
 
-      const embed = createFooter(message).setTitle(`Added ${song.length} songs to queue`)
+      const embed = createFooter(message).setTitle(`Added ${songCount} songs to queue`)
       message.channel.send(embed)
       return;
    }
