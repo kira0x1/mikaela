@@ -46,7 +46,7 @@
       "discord-ytdl-core": "^5.0.3",
       "discord.js": "^12.5.3",
       "minimist": "^1.2.5",
-      "mongoose": "^5.12.7",
+      "mongoose": "^5.12.8",
       "ms": "^2.1.3",
       "sodium": "^3.0.2",
       "spotify-uri": "^2.2.0",
@@ -56,7 +56,7 @@
       "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.4.5",
-      "youtube-sr": "^4.0.6",
+      "youtube-sr": "^4.0.7",
       "ytdl-core": "^4.7.0",
       "ytpl": "^2.2.1"
    },
