@@ -65,7 +65,7 @@ function createFavListEmbed(target: User, user: IUser, pages: Collection<number,
 
    page.map((song, index) => {
       const num = `**${pageAt * songsPerPage + (index + 1)}**`;
-      let content = `Duration: ${song.duration.duration}  ${song.url}`;
+      let content = `Duration: ${song.duration.duration}  ${song.spotifyUrl ? song.spotifyUrl : song.url}`;
       let title = `${num} **${song.title}**`;
 
       embed.addField(title, content);

@@ -129,7 +129,7 @@ async function createQueueEmbed(
       embed.setDescription(
          wrap(`Queue: ${player.getSongs().length}\nPage ${pageAt + 1} / ${pages.size}`, `**`)
       );
-      embed.setURL(currentlyPlaying.url);
+      embed.setURL(currentlyPlaying.spotifyUrl ? currentlyPlaying.spotifyUrl : currentlyPlaying.url);
 
       embed.addField(
          `**${player.getDurationPretty()}**\n${songBar}`,
@@ -145,7 +145,7 @@ async function createQueueEmbed(
    page.map((song, i) => {
       embed.addField(
          `${pageAt * 5 + (i + 1)}. ${song.title}`,
-         `${song.duration.duration}  ${song.url}\n*${getSongSourceInfo(song)}*\n`
+         `${song.duration.duration}  ${song.spotifyUrl ? song.spotifyUrl : song.url}\n*${getSongSourceInfo(song)}*\n`
       );
    });
 
