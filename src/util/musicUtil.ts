@@ -111,12 +111,14 @@ export async function createCurrentlyPlayingEmbed(
    message: Message
 ) {
    const songBar = await player.getProgressBar();
+   const song = player.currentlyPlaying
+   const url = song.spotifyUrl ? song.spotifyUrl : song.url
 
    //Create embed
    return createFooter(message)
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
-      .setURL(player.currentlyPlaying.url)
+      .setURL(url)
       .addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`);
 }
 
@@ -230,11 +232,11 @@ export async function onSongRequest(
 
       const embed = createFooter(message)
          .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
-         .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`);
+         .setDescription(`Playing ${firstSong.title}\n${firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url}\n\u200b`);
 
       for (let i = 1; i < playlistSongs.length && i < 20; i++) {
          const psong = playlistSongs[i];
-         embed.addField(`${i + 1} ${psong.title}`, psong.url);
+         embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
          player.queue.addSong(psong);
       }
 
@@ -260,7 +262,7 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue: boo
       .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
-      .setURL(song.url);
+      .setURL(song.spotifyUrl ? song.spotifyUrl : song.url);
 
    const msg = await message.channel.send(embed);
    createFavoriteCollector(song, msg);

@@ -1,4 +1,6 @@
-import { Util, Message } from 'discord.js';
+import { Message, Util } from 'discord.js';
+import spotifyURI from 'spotify-uri';
+import spotify from 'spotify-url-info';
 import YouTube from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
@@ -6,8 +8,6 @@ import { logger } from '../app';
 import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
 import { quickEmbed, wrap } from './styleUtil';
-import spotifyURI from 'spotify-uri'
-import spotify from 'spotify-url-info'
 
 export function rand(max: number) {
    return Math.floor(Math.random() * max);
@@ -106,28 +106,29 @@ export function sendSongNotFoundEmbed(message: Message, query: string) {
 async function handleSpotify(query: string, allowPlaylists: boolean = false) {
    const data = await spotify.getData(query);
    if (data.type === 'track') {
-      const songQuery = `${data.name} ${data.artists.map(a => a.name).join(" ")}`
-      return await getSpotifySong(songQuery)
+      return await getSpotifySong(data)
    } else if (allowPlaylists) {
       const songs = await convertSpotifyPlatlist(data);
       return songs
    }
 }
 
-async function getSpotifySong(track: string) {
-   const song = await YouTube.searchOne(track);
-   if (!song) return;
+async function getSpotifySong(data: any) {
+   const track = `${data.name} ${data.artists.map(a => a.name).join(" ")}`
+   const searchRes = await YouTube.searchOne(track);
+   if (!searchRes) return;
 
-   const details = await getSongDetails(song.id)
+   const details = await getSongDetails(searchRes.id)
    if (!details) return;
 
-   return convertDetailsToSong(details)
+   const song = convertDetailsToSong(details)
+   song.spotifyUrl = data.external_urls.spotify
+   return song;
 }
 
 async function convertSpotifyPlatlist(spotifyData: any) {
    const queries = spotifyData.tracks.items.map(item => {
-      const track = item.track || item
-      return `${track.name} ${track.artists.map(a => a.name).join(" ")}`;
+      return item.track || item
    })
 
    const promises = queries.map(track => getSpotifySong(track))

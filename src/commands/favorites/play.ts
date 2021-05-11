@@ -54,7 +54,7 @@ export const command: Command = {
 
          embed
             .setTitle(`Playing ${amount} ${amount > 1 ? 'songs' : 'song'} from ${res.target.username}`)
-            .setDescription(`Playing ${firstSong.title}\n${firstSong.url}\n\u200b`)
+            .setDescription(`Playing ${firstSong.title}\n${firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url}\n\u200b`)
             .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
             .setThumbnail(res.target.displayAvatarURL({ dynamic: true }));
 
