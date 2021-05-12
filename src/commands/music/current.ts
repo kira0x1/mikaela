@@ -18,7 +18,7 @@ export const command: Command = {
       if (!(stream && player.currentlyPlaying)) return quickEmbed(message, 'No song currently playing');
 
       //Create embed
-      const embed = await createCurrentlyPlayingEmbed(stream, player, message);
+      const embed = await createCurrentlyPlayingEmbed(player, message);
 
       const msg = await message.channel.send(embed);
       createFavoriteCollector(currentSong, msg);

@@ -6,24 +6,24 @@ import {
    Message,
    MessageEmbed,
    MessageReaction,
-   StreamDispatcher,
+
    User,
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
-
 import { logger } from '../app';
+import { Command } from '../classes/Command';
 import { Player } from '../classes/Player';
 import { IDuration, Song } from '../classes/Song';
 import { sendQueueEmbed } from '../commands/music/queue';
+import { args } from '../config';
 import { getAllServers } from '../database/api/serverApi';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
+import { sendArgsError } from './commandUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
-import { sendArgsError } from './commandUtil';
-import { Command } from '../classes/Command';
-import { args } from '../config';
+
 
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
@@ -106,7 +106,6 @@ export function findPlayer(guildId: string): Player {
 }
 
 export async function createCurrentlyPlayingEmbed(
-   stream: StreamDispatcher,
    player: Player,
    message: Message
 ) {
