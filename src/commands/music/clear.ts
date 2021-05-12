@@ -18,6 +18,7 @@ export const command: Command = {
          message.author.username,
          message.author.displayAvatarURL({ dynamic: true })
       );
+
       embed.setColor(embedColor);
       embed.setTitle(`Queue cleared by ${message.author.username}`);
 

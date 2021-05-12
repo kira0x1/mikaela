@@ -116,9 +116,7 @@ export class Player {
    }
 
    clearQueue() {
-      this.currentlyPlaying = undefined;
       this.queue.clear();
-      if (this.voiceChannel) this.startVcTimeout();
    }
 
    playNext() {
