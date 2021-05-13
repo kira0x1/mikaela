@@ -56,6 +56,7 @@ class VoiceManager {
 
    // is the bot in the vc?
    inVc(vc: VoiceChannel) {
-      return vc.members?.has(this.client.user.id);
+      if (vc === null) return false
+      return vc?.members?.has(this.client.user.id);
    }
 }
