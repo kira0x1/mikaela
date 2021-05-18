@@ -131,6 +131,7 @@ export class Player {
       }
 
       // if no songs next then start timeout
+      this.isPlaying = false;
       this.startVcTimeout();
    }
 
