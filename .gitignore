@@ -2,6 +2,7 @@ usersongs.json
 config.*
 app-local.ts
 out/
+scripts/
 # ecosystem.config.js
 
 # Logs
