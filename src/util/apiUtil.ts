@@ -13,11 +13,14 @@ export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
 
-export async function getSong(query: string, allowPlaylists: boolean = false): Promise<Song | ytpl.Result | Song[]> {
+export async function getSong(
+   query: string,
+   allowPlaylists: boolean = false
+): Promise<Song | ytpl.Result | Song[]> {
    try {
       // Check if spotify song
       if (isSpotify(query)) {
-         return await handleSpotify(query, allowPlaylists)
+         return await handleSpotify(query, allowPlaylists);
       }
 
       // Check if the query is a link to a youtube video
@@ -35,9 +38,8 @@ export async function getSong(query: string, allowPlaylists: boolean = false): P
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.searchOne(query);
+      const songSearch = await YouTube.searchOne(query, 'video');
       if (!songSearch) return;
-
 
       //If a video is found then get details and convert it to ISong
       const details = await getSongDetails(songSearch.id);
@@ -50,7 +52,7 @@ export async function getSong(query: string, allowPlaylists: boolean = false): P
 }
 
 function isSpotify(query: string) {
-   if (!query.includes("spotify")) return false;
+   if (!query.includes('spotify')) return false;
    const parsed = spotifyURI.parse(query);
    if (!parsed.type) return false;
    return true;
@@ -102,37 +104,36 @@ export function sendSongNotFoundEmbed(message: Message, query: string) {
    quickEmbed(message, `Song not found: ${wrap(query)}`, { addFooter: true });
 }
 
-
 async function handleSpotify(query: string, allowPlaylists: boolean = false) {
    const data = await spotify.getData(query);
    if (data.type === 'track') {
-      return await getSpotifySong(data)
+      return await getSpotifySong(data);
    } else if (allowPlaylists) {
       const songs = await convertSpotifyPlatlist(data);
-      return songs
+      return songs;
    }
 }
 
 async function getSpotifySong(data: any) {
-   const track = `${data.name} ${data.artists.map(a => a.name).join(" ")}`
-   const searchRes = await YouTube.searchOne(track);
+   const track = `${data.name} ${data.artists.map(a => a.name).join(' ')}`;
+   const searchRes = await YouTube.searchOne(track, 'video');
    if (!searchRes) return;
 
-   const details = await getSongDetails(searchRes.id)
+   const details = await getSongDetails(searchRes.id);
    if (!details) return;
 
-   const song = convertDetailsToSong(details)
-   song.spotifyUrl = data.external_urls.spotify
+   const song = convertDetailsToSong(details);
+   song.spotifyUrl = data.external_urls.spotify;
    return song;
 }
 
 async function convertSpotifyPlatlist(spotifyData: any) {
    const queries = spotifyData.tracks.items.map(item => {
-      return item.track || item
-   })
+      return item.track || item;
+   });
 
-   const promises = queries.map(track => getSpotifySong(track))
-   const songs: Song[] = await Promise.all(promises)
+   const promises = queries.map(track => getSpotifySong(track));
+   const songs: Song[] = await Promise.all(promises);
 
    return songs;
 }
