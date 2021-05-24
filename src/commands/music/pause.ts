@@ -11,20 +11,20 @@ export const command: Command = {
    hidden: true,
 
    async execute(message, args) {
-      //Get the guilds player
+      // Get the guilds player
       const player = getPlayer(message);
 
-      //Make sure a player exists
+      // Make sure a player exists
       if (!player) return;
 
-      //If theres no song playing or if the stream dispatcher is undefined exit out
+      // If theres no song playing or if the stream dispatcher is undefined exit out
       if (!player.currentlyPlaying || !player.getStream())
          return quickEmbed(message, `No song currently playing to pause`);
 
-      //If the stream is already paused exit out
+      // If the stream is already paused exit out
       if (player.stream.paused) return quickEmbed(message, `Player is already paused`);
 
-      //Pause the player
+      // Pause the player
       player.pause();
 
       const embed = new MessageEmbed();

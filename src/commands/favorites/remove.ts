@@ -47,7 +47,6 @@ async function RemoveBySearch(query: string, message: Message) {
    const song = await getSong(query);
    if (song instanceof Array) return;
 
-
    if (!song) {
       return sendSongNotFoundEmbed(message, query);
    }

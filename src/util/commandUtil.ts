@@ -13,9 +13,7 @@ export function findCommand(query: string): Command | undefined {
    let command = commands.get(query.toLowerCase());
    if (!command) {
       const cmdArray = commands.array();
-      command = cmdArray.find(
-         cmd => cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === query.toLowerCase())
-      );
+      command = cmdArray.find(cmd => cmd.aliases?.find(al => al.toLowerCase() === query.toLowerCase()));
    }
 
    return command;
@@ -23,7 +21,7 @@ export function findCommand(query: string): Command | undefined {
 
 export function getCommandOverride(query: string): Command | undefined {
    const info = commandInfos.find(
-      cmd_info => cmd_info.name.toLowerCase() === query || cmd_info.aliases.includes(query.toLowerCase())
+      cmdInfo => cmdInfo.name.toLowerCase() === query || cmdInfo.aliases.includes(query.toLowerCase())
    );
 
    if (info) {
@@ -64,14 +62,13 @@ const modperms = [
 ];
 
 export function hasPerms(member: GuildMember, query: string): boolean {
-   //Get ID's
+   // Get ID's
    const permsFound = findCommandInfo(query)?.perms || findCommand(query)?.perms;
 
-   //If none set then this command does not require permissions to use
+   // If none set then this command does not require permissions to use
    if (!permsFound || permsFound.length === 0) return true;
 
-   for (let i = 0; i < permsFound.length; i++) {
-      const perm: Permission = permsFound[i];
+   for (const perm of permsFound) {
       const hasPerm = hasPermission(member, perm);
       if (hasPerm) return true;
    }

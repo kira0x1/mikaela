@@ -27,7 +27,7 @@ export function initCommands() {
       .map(folder => {
          const folderCommands: Command[] = [];
          readdirSync(path.join(__dirname, '..', 'commands', folder))
-            .filter(file => file.endsWith('.map') == false)
+            .filter(file => file.endsWith('.map') === false)
             .map(file => {
                const { command } = require(path.join(__dirname, '..', 'commands', folder, file));
 

@@ -41,7 +41,7 @@ function converUserToIUser(user: DiscordUser) {
 export async function addFavoriteToUser(member: DiscordUser, song: Song, message: Message) {
    const user = await findOrCreate(member);
 
-   if (user.favorites && user.favorites.find(fav => fav.id === song.id)) {
+   if (user.favorites?.find(fav => fav.id === song.id)) {
       return quickEmbed(message, `Sorry **${user.username}** You already have this song as a favorite`);
    }
 

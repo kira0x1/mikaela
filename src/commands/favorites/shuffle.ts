@@ -31,7 +31,7 @@ export const command: Command = {
 
       const user = await findOrCreate(target);
 
-      if (!user.favorites || user.favorites.length == 0) {
+      if (!user.favorites || user.favorites.length === 0) {
          return sendErrorEmbed(
             message,
             `Cannot shuffle from user <@${user.id}>\nuser must add songs to their favorites list first`,

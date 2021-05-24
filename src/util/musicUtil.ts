@@ -6,7 +6,6 @@ import {
    Message,
    MessageEmbed,
    MessageReaction,
-
    User,
    VoiceChannel
 } from 'discord.js';
@@ -24,13 +23,12 @@ import { sendArgsError } from './commandUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
 
-
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
 
-export function ConvertDuration(duration_seconds: number | string) {
-   let minutes: number = Math.floor(Number(duration_seconds) / 60);
-   let seconds: number | string = Math.floor(Number(duration_seconds) - minutes * 60);
+export function ConvertDuration(durationSeconds: number | string) {
+   let minutes: number = Math.floor(Number(durationSeconds) / 60);
+   let seconds: number | string = Math.floor(Number(durationSeconds) - minutes * 60);
    let hours = Math.floor(minutes / 60);
 
    if (seconds < 10) seconds = '0' + seconds;
@@ -40,7 +38,7 @@ export function ConvertDuration(duration_seconds: number | string) {
       minutes: minutes.toString(),
       hours: hours.toString(),
       duration: `${minutes}:${seconds}`,
-      totalSeconds: Number(duration_seconds)
+      totalSeconds: Number(durationSeconds)
    };
 
    return duration;
@@ -61,26 +59,27 @@ export async function initPlayers(client: Client) {
    }
 
    const servers = await getAllServers(client.guilds.cache.array());
-   servers
-      .filter(server => server.queue && server.queue.length > 0)
-      .map(server => {
-         const player = findPlayer(server.serverId);
-         player.queue.songs = server.queue;
+   const serverWithSongs = servers.filter(server => server.queue && server.queue.length > 0);
 
-         const voiceChannels: VoiceChannel[] = [];
+   for (const server of serverWithSongs) {
+      const player = findPlayer(server.serverId);
+      player.queue.songs = server.queue;
 
-         player.guild.channels.cache.map(channel => {
-            if (channel instanceof VoiceChannel) voiceChannels.push(channel);
-         });
+      const channels = player.guild.channels.cache;
+      const voiceChannels: VoiceChannel[] = [];
 
-         voiceChannels.map(vc => {
-            if (vc.members.has(client.user.id)) {
-               logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`));
-               player.voiceChannel = vc;
-               player.playNext();
-            }
-         });
+      channels.forEach(channel => {
+         if (channel instanceof VoiceChannel) voiceChannels.push(channel);
       });
+
+      voiceChannels.forEach(vc => {
+         if (vc.members.has(client.user.id)) {
+            logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`));
+            player.voiceChannel = vc;
+            player.playNext();
+         }
+      });
+   }
 }
 
 export function getPlayer(message: Message): Player {
@@ -105,15 +104,12 @@ export function findPlayer(guildId: string): Player {
    return players.get(guildId);
 }
 
-export async function createCurrentlyPlayingEmbed(
-   player: Player,
-   message: Message
-) {
+export async function createCurrentlyPlayingEmbed(player: Player, message: Message) {
    const songBar = await player.getProgressBar();
-   const song = player.currentlyPlaying
-   const url = song.spotifyUrl ? song.spotifyUrl : song.url
+   const song = player.currentlyPlaying;
+   const url = song.spotifyUrl ? song.spotifyUrl : song.url;
 
-   //Create embed
+   // Create embed
    return createFooter(message)
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
@@ -185,11 +181,11 @@ export async function onSongRequest(
    message: Message,
    args: string[],
    command: Command,
-   onlyAddToQueue: boolean = false
+   onlyAddToQueue = false
 ) {
    const player = getPlayer(message);
 
-   //Make sure the user is in voice
+   // Make sure the user is in voice
    if (!message.member.voice.channel && !player.testVc) {
       return quickEmbed(message, `You must be in a voice channel to play music`);
    }
@@ -199,31 +195,31 @@ export async function onSongRequest(
       return sendArgsError(command, message);
    }
 
-   //Get the users query
+   // Get the users query
    let query = args.join(' ');
 
-   //Search for song
+   // Search for song
    const song = await getSong(query, true);
 
-   //If song not found, tell the user.
+   // If song not found, tell the user.
    if (!song) return quickEmbed(message, 'Song not found');
 
    if (song instanceof Array) {
-      song[0].playedBy = message.author.id
+      song[0].playedBy = message.author.id;
 
-      player.addSong(song[0], message)
+      player.addSong(song[0], message);
 
       let songCount = 1;
 
       for (let i = 1; i < song.length; i++) {
          if (!song[i]) continue;
          songCount++;
-         song[i].playedBy = message.author.id
-         player.queue.addSong(song[i])
+         song[i].playedBy = message.author.id;
+         player.queue.addSong(song[i]);
       }
 
-      const embed = createFooter(message).setTitle(`Added ${songCount} songs to queue`)
-      message.channel.send(embed)
+      const embed = createFooter(message).setTitle(`Added ${songCount} songs to queue`);
+      message.channel.send(embed);
       return;
    }
 
@@ -235,7 +231,11 @@ export async function onSongRequest(
 
       const embed = createFooter(message)
          .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
-         .setDescription(`Playing ${firstSong.title}\n${firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url}\n\u200b`);
+         .setDescription(
+            `Playing ${firstSong.title}\n${
+               firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url
+            }\n\u200b`
+         );
 
       for (let i = 1; i < playlistSongs.length && i < 20; i++) {
          const psong = playlistSongs[i];
@@ -247,20 +247,20 @@ export async function onSongRequest(
       return;
    }
 
-   //Otherwise play the song
+   // Otherwise play the song
    playSong(message, song, onlyAddToQueue);
 }
 
-export async function playSong(message: Message, song: Song, onlyAddToQueue: boolean = false) {
-   //Get the guilds player
+export async function playSong(message: Message, song: Song, onlyAddToQueue = false) {
+   // Get the guilds player
    const player = getPlayer(message);
 
    song.playedBy = message.author.id;
 
-   //Add the song to the player
+   // Add the song to the player
    player.addSong(song, message, onlyAddToQueue);
 
-   //Tell the user
+   // Tell the user
    let embed = createFooter(message)
       .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)

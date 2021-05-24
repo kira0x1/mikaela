@@ -29,7 +29,7 @@ export const command: Command = {
          return sendErrorEmbed(message, `${member} is already banned`);
       }
 
-      const deleteMessageDays = +args.slice(-1) || 0;
+      const deleteMessageDays = Number(args.slice(-1)) || 0;
 
       if (deleteMessageDays < 0 || deleteMessageDays > 7) {
          return sendErrorEmbed(

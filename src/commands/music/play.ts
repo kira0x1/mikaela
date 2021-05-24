@@ -13,7 +13,7 @@ export const command: Command = {
       // if no arguments given then attempt to play whats in the queue
       if (args.join('').trim() === '') {
          getPlayer(message).resumeQueue(message);
-         //TODO provide feedback
+         // TODO provide feedback
          return;
       }
 

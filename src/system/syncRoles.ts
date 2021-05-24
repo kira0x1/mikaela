@@ -23,12 +23,11 @@ export async function syncRoles(client: Client) {
       return logger.log('info', 'Couldnt find channel');
 
    channel.messages.fetch({ limit: 100 }).then(messages => {
-      messages.map(msg => {
-         if (msg.reactions.cache.size > 0) {
-            msg.reactions.cache.map(rc => {
-               syncEmoji(msg, rc.emoji);
-            });
-         }
+      const messagesWithReactions = messages.filter(msg => msg.reactions.cache.size > 0);
+      messagesWithReactions.forEach(msg => {
+         msg.reactions.cache.forEach(rc => {
+            syncEmoji(msg, rc.emoji);
+         });
       });
    });
 
@@ -52,7 +51,7 @@ export async function syncRoles(client: Client) {
 
       const rolesFound: Role[] = [];
 
-      member.roles.cache.map(role => {
+      member.roles.cache.forEach(role => {
          if (section.roles.find(reaction => reaction.roleId === role.id)) {
             rolesFound.push(role);
          }

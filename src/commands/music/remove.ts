@@ -18,7 +18,7 @@ export const command: Command = {
 
       const numbers = args.filter(arg => {
          const n = Number(arg);
-         if (n !== NaN && n !== undefined) return n;
+         if (!isNaN(n) && n !== undefined) return n;
       });
 
       const arg1 = numbers[0];
@@ -51,7 +51,7 @@ export const command: Command = {
          const songs = player.queue.songs.splice(startIndex, deleteAmount);
 
          const embed = createFooter(message)
-            .setTitle(`Removed ${songs.length} ${songs.length == 1 ? 'song' : 'songs'} from the queue`)
+            .setTitle(`Removed ${songs.length} ${songs.length === 1 ? 'song' : 'songs'} from the queue`)
             .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
          addCodeField(embed, songs.map((s, i) => `${pos + i}: ${s.title}`).join('\n'));
@@ -76,7 +76,7 @@ export const command: Command = {
 
 function checkPos(arg: number | string, player: Player) {
    const pos = Number(arg);
-   if (pos === NaN) throw new Error(`Remove position must be a number`);
+   if (isNaN(pos)) throw new Error(`Remove position must be a number`);
 
    if (pos < 1 || pos > player.getSongs().length + 1) throw new Error(`Invalid position`);
 

@@ -14,7 +14,7 @@ export interface Command {
    userPerms?: PermissionResolvable;
    botPerms?: PermissionResolvable;
 
-   execute(message: Message, args: string[]): void;
+   execute: (message: Message, args: string[]) => void;
 }
 
 export declare type Permission = 'admin' | 'mod' | 'kira';

@@ -11,15 +11,15 @@ export const command: Command = {
    aliases: ['fs', 'next'],
 
    async execute(message, args) {
-      //Get the guilds player
+      // Get the guilds player
       const player = getPlayer(message);
       if (!player) return;
 
-      //Get the current playing song
+      // Get the current playing song
       const currentSong = player.currentlyPlaying;
       if (!currentSong) return quickEmbed(message, `No song currently playing`);
 
-      //Create an embed with the information of the song to be skipped
+      // Create an embed with the information of the song to be skipped
       const embed = new MessageEmbed()
          .setColor(embedColor)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))

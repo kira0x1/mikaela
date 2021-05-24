@@ -1,7 +1,7 @@
 import { Song } from './Song';
 
 export class Queue {
-   songs: Song[] = [];
+   public songs: Song[] = [];
 
    constructor(songs?: Array<Song>) {
       if (songs) {
@@ -30,13 +30,13 @@ export class Queue {
    shuffle() {
       let currentIndex = this.songs.length;
 
-      //While there are still elements to shuffle
+      // While there are still elements to shuffle
       while (0 !== currentIndex) {
-         //Pick a remaining element
+         // Pick a remaining element
          const randomIndex = Math.floor(Math.random() * currentIndex);
          currentIndex -= 1;
 
-         //Swap it with the current element;
+         // Swap it with the current element;
          const tempValue = this.songs[currentIndex];
          this.songs[currentIndex] = this.songs[randomIndex];
          this.songs[randomIndex] = tempValue;

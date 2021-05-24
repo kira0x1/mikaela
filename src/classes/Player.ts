@@ -10,29 +10,32 @@ import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
 import progressbar from 'string-progressbar';
 
-const minVolume: number = 0.05;
-const maxVolume: number = 10;
+const minVolume = 0.05;
+const maxVolume = 10;
 const vcWaitTime: number = ms('10m');
 
 const testVoiceID = '610883901472243713';
 
 export class Player {
-   guild: Guild;
-   queue: Queue;
-   volume: number = 2.6;
-   isPlaying: boolean = false;
-   inVoice: boolean = false;
-   stream: StreamDispatcher | undefined;
-   voiceChannel: VoiceChannel | undefined;
-   currentlyPlaying: Song | undefined;
-   client: Client;
-   volumeDisabled: boolean = false;
-   lastPlayed: Song | undefined;
-   ytdlHighWaterMark: number = 1 << 26;
-   vcHighWaterMark: number = 1;
-   vcTimeout: NodeJS.Timeout;
-   joinTestVc: boolean = false;
-   testVc?: VoiceChannel;
+   public guild: Guild;
+   public queue: Queue;
+   public volume = 2.6;
+   public isPlaying = false;
+   public inVoice = false;
+   public stream: StreamDispatcher | undefined;
+   public voiceChannel: VoiceChannel | undefined;
+   public currentlyPlaying: Song | undefined;
+   public client: Client;
+   public volumeDisabled = false;
+   public lastPlayed: Song | undefined;
+   public ytdlHighWaterMark: number = 1 << 26;
+   public vcHighWaterMark = 1;
+
+   // eslint-disable-next-line no-undef
+   public vcTimeout: NodeJS.Timeout;
+
+   public joinTestVc = false;
+   public testVc?: VoiceChannel;
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
@@ -282,7 +285,7 @@ export class Player {
       this.play(this.currentlyPlaying || this.queue.songs[0], message);
    }
 
-   async addSong(song: Song, message: Message, onlyAddToQueue: boolean = false) {
+   async addSong(song: Song, message: Message, onlyAddToQueue = false) {
       this.queue.addSong(song);
       if (!onlyAddToQueue) this.play(song, message);
    }

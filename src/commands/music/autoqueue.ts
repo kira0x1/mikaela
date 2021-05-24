@@ -7,6 +7,6 @@ export const command: Command = {
    args: false,
 
    async execute(message, args) {
-      //TODO
+      // TODO
    }
 };

@@ -81,7 +81,7 @@ export function getPages(songs: Song[]) {
    let pageAtInLoop = 0;
    pages.set(0, []);
 
-   for (let i = 0; i < songs.length; i++) {
+   for (const song of songs) {
       if (count >= songsPerPage) {
          count = 0;
          pageAtInLoop++;
@@ -89,7 +89,7 @@ export function getPages(songs: Song[]) {
       }
 
       const pageSongs = pages.get(pageAtInLoop);
-      if (pageSongs) pageSongs.push(songs[i]);
+      if (pageSongs) pageSongs.push(song);
 
       count++;
    }
@@ -106,7 +106,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
    const msg = await message.channel.send(embed);
    favlistCalls.set(message.author.id, msg);
 
-   //If there are only 1 or none pages then dont add the next, previous page emojis / collector
+   // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
       createDeleteCollector(msg, message);
       return;

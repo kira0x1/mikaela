@@ -44,7 +44,7 @@ async function getPreviousNicks(member: GuildMember): Promise<string[]> {
    });
 
    return auditLogs.entries
-      .filter(e => e.target == member.user && e.changes.some(c => c.key == 'nick'))
+      .filter(e => e.target === member.user && e.changes.some(c => c.key === 'nick'))
       .map(e => e.changes[0])
       .flatMap(c => [c.old, c.new].filter(c => c !== undefined));
 }

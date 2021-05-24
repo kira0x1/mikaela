@@ -17,7 +17,7 @@ export async function initVoiceManager(client: Client) {
       const oldChannel = oldMember.channel;
       const newChannel = newMember.channel;
 
-      //User joined a vc
+      // User joined a vc
       if (!oldChannel && newChannel) {
          if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
             codersClubVoiceManager.emit('voice-join', member);
@@ -25,7 +25,7 @@ export async function initVoiceManager(client: Client) {
          return;
       }
 
-      //User left vc
+      // User left vc
       if (!newChannel) {
          voiceManager.onVoiceLeave(oldChannel);
 
@@ -36,7 +36,7 @@ export async function initVoiceManager(client: Client) {
 }
 
 class VoiceManager {
-   client: Client;
+   public client: Client;
 
    constructor(client: Client) {
       this.client = client;
@@ -44,19 +44,19 @@ class VoiceManager {
 
    onVoiceLeave(vc: VoiceChannel) {
       if (!this.inVc(vc)) return;
-      if (vc && vc.members) {
+      if (vc?.members) {
          const nonbots = vc.members.filter(m => !m.user.bot);
 
          if (!nonbots || nonbots.size === 0) {
             const player = findPlayer(vc.guild.id);
-            player.startVcTimeout()
+            player.startVcTimeout();
          }
       }
    }
 
    // is the bot in the vc?
    inVc(vc: VoiceChannel) {
-      if (vc === null) return false
+      if (vc === null) return false;
       return vc?.members?.has(this.client.user.id);
    }
 }

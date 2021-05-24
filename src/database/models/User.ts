@@ -8,6 +8,7 @@ export interface IUser extends Document {
    favorites: Song[];
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const UserSchema = new Schema({
    username: { type: String, required: true },
    id: { type: String, required: true },
@@ -16,4 +17,5 @@ export const UserSchema = new Schema({
    createdAt: Date
 });
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const User = model<IUser>('users', UserSchema);
