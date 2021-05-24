@@ -14,7 +14,7 @@ export class VoiceRoleManager extends EventEmitter {
       this.guild = guild;
 
       // This is called on voice manager creation, i.e when the bot starts
-      if (this.guild.client.user.id !== mikaelaId) return;
+      if (this.guild?.client.user.id !== mikaelaId) return;
       this.refreshVoiceRole();
 
       if (!this.voiceRole) {
