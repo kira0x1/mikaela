@@ -24,7 +24,7 @@ export const command: Command = {
          }
       });
 
-      //If the channel is not a text channel then we cant bulkdelete so return
+      // If the channel is not a text channel then we cant bulkdelete so return
       if (message.channel.type !== 'text') return;
       const author = message.author;
 

@@ -8,7 +8,7 @@ export const command: Command = {
    aliases: ['np', 'playing', 'current', 'c', 'nowplaying', 'currentsong'],
 
    async execute(message, args) {
-      //Get the guilds current player
+      // Get the guilds current player
       const player = getPlayer(message);
       if (!player) return;
 
@@ -17,7 +17,7 @@ export const command: Command = {
 
       if (!(stream && player.currentlyPlaying)) return quickEmbed(message, 'No song currently playing');
 
-      //Create embed
+      // Create embed
       const embed = await createCurrentlyPlayingEmbed(player, message);
 
       const msg = await message.channel.send(embed);

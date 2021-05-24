@@ -88,7 +88,7 @@ client.on('ready', async () => {
       // Add event listeners to #roles
       syncRoles(client);
 
-      //Add event listener to welcome new members
+      // Add event listener to welcome new members
       initGreeter(client);
    }
 
@@ -98,6 +98,7 @@ client.on('ready', async () => {
    logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
+// eslint-disable-next-line complexity
 client.on('message', async message => {
    const prefix = prefixes.get(message.guild?.id) || defaultPrefix;
 
@@ -129,7 +130,7 @@ client.on('message', async message => {
 
    if (prefix === '.') {
       const firstCharacter = message.content.charAt(1);
-      //Make sure the first character is not a number since people could just be writing decimals I.E .001
+      // Make sure the first character is not a number since people could just be writing decimals I.E .001
       if (firstCharacter === '.' || !isNaN(Number(firstCharacter))) return;
    }
 
@@ -153,21 +154,21 @@ client.on('message', async message => {
 
    // If the command wasnt found check if its in a commandgroup
    if (!command) {
-      //Get the sub-command input given by the user
+      // Get the sub-command input given by the user
       const grp = findCommandGroup(commandName);
 
       if (grp) {
-         //Get the sub-command input given by the user
+         // Get the sub-command input given by the user
          const subCmdName = args[0];
 
-         //Check if the command-group contains the command
+         // Check if the command-group contains the command
          command = grp.find(
             cmd =>
                cmd.name.toLowerCase() === subCmdName?.toLowerCase() ||
-               (cmd.aliases && cmd.aliases.find(al => al.toLowerCase() === subCmdName?.toLowerCase()))
+               cmd.aliases?.find(al => al.toLowerCase() === subCmdName?.toLowerCase())
          );
 
-         //If the command-group doesnt contain the command then check if the command-group has it set as an override
+         // If the command-group doesnt contain the command then check if the command-group has it set as an override
          if (!command) {
             command = getCommandOverride(commandName);
          } else {
@@ -191,7 +192,7 @@ client.on('message', async message => {
    // If command arguments are required and not given send an error message
    if (command.args && args.length === 0) return sendArgsError(command, message);
 
-   //Check if the command is in cooldown
+   // Check if the command is in cooldown
    // if (checkCooldown(command, message)) return;
 
    if (message.guild) {
@@ -217,7 +218,7 @@ client.on('message', async message => {
 // on shutdown signal save the queue to the database
 // so we can play the queue after restart
 process.on('message', async (msg: string) => {
-   if (msg != 'shutdown') return;
+   if (msg !== 'shutdown') return;
    logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`));
    players.map(p => p.saveQueueState());
    await saveAllServersQueue();

@@ -28,7 +28,7 @@ export const command: Command = {
 
       let votes: string[] = [];
 
-      //find -title
+      // find -title
       options.map((arg, pos) => {
          if (arg.includes('-title')) {
             title = arg.slice(7, arg.length);

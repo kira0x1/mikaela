@@ -9,7 +9,7 @@ export interface Song {
    favSource?: string;
 
    // if this song is from a spotify link then use this to display it
-   spotifyUrl?: string
+   spotifyUrl?: string;
 }
 
 export interface IDuration {

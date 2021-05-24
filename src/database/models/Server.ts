@@ -14,6 +14,7 @@ export interface IServer extends Document {
    prefixes: PrefixSetting[];
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ServerSchema = new Schema({
    serverId: { type: String, required: true },
    serverName: { type: String, required: true },
@@ -21,4 +22,5 @@ export const ServerSchema = new Schema({
    prefixes: { type: Array<PrefixSetting>(), required: true }
 });
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Server = model<IServer>('servers', ServerSchema);

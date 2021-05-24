@@ -18,18 +18,18 @@ export const command: Command = {
 };
 
 export function setReminder(message: Message, time: string, content: string) {
-   //If user didnt give a message then tell the user the usage of the command
+   // If user didnt give a message then tell the user the usage of the command
    if (!content || !time) return sendArgsError(command, message);
 
-   //Create embed
+   // Create embed
    const embed = createFooter(message)
       .setTitle('Reminder set')
       .setDescription(`remind ${message.author.username} to ${content} in ${time}`);
 
-   //Send embed telling the user that the reminder was created
+   // Send embed telling the user that the reminder was created
    message.channel.send(embed);
 
-   //Create reminder time out
+   // Create reminder time out
    setTimeout(() => onReminder(message, content), ms(time));
 }
 

@@ -15,7 +15,7 @@ export function darken(...content: string[]): string {
    return wrap(content, tag);
 }
 
-export function wrap(content: string[] | string, wrap: string = '`'): string {
+export function wrap(content: string[] | string, wrap = '`'): string {
    if (typeof content === 'string') return wrap + content + wrap;
 
    return content
@@ -29,16 +29,16 @@ export const errorIconUrl =
 export const successIconUrl =
    'https://cdn.discordapp.com/attachments/702091543514710027/835456148811415602/success_icon.png';
 
-export interface errorEmbedOptions {
+export interface ErrorEmbedOptions {
    errorTitle?: string;
    autoDelete?: boolean;
 }
 
-const defaultErrorEmbedOptions: errorEmbedOptions = {
+const defaultErrorEmbedOptions: ErrorEmbedOptions = {
    autoDelete: false
 };
 
-export async function sendErrorEmbed(message: Message, errorMessage: string, options?: errorEmbedOptions) {
+export async function sendErrorEmbed(message: Message, errorMessage: string, options?: ErrorEmbedOptions) {
    // if no options given then use default
    if (!options) options = defaultErrorEmbedOptions;
 
@@ -61,13 +61,13 @@ export function createFooter(message: Message, overrideAuthor?: User): MessageEm
    return embed;
 }
 
-export interface quickEmbedOptions {
+export interface QuickEmbedOptions {
    addFooter?: boolean;
    autoDelete?: boolean;
    deleteDelay?: string;
 }
 
-export function quickEmbed(message: Message, content: string, options?: quickEmbedOptions) {
+export function quickEmbed(message: Message, content: string, options?: QuickEmbedOptions) {
    const addFooter = options?.addFooter || true;
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
@@ -81,7 +81,7 @@ export function quickEmbed(message: Message, content: string, options?: quickEmb
    }
 }
 
-async function autoDeleteMessage(message: Message | Promise<Message>, delay: string = '10s') {
+async function autoDeleteMessage(message: Message | Promise<Message>, delay = '10s') {
    const msg = message instanceof Message ? message : await message;
 
    setTimeout(() => {

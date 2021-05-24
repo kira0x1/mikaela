@@ -54,7 +54,11 @@ export const command: Command = {
 
          embed
             .setTitle(`Playing ${amount} ${amount > 1 ? 'songs' : 'song'} from ${res.target.username}`)
-            .setDescription(`Playing ${firstSong.title}\n${firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url}\n\u200b`)
+            .setDescription(
+               `Playing ${firstSong.title}\n${
+                  firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url
+               }\n\u200b`
+            )
             .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
             .setThumbnail(res.target.displayAvatarURL({ dynamic: true }));
 
@@ -80,7 +84,7 @@ export async function findFavorite(
    args: string[]
 ): Promise<{ target: User; song: Song | Song[] }> {
    let songArg = '';
-   let songIndex: number | undefined = undefined;
+   let songIndex: number | undefined;
 
    const songRanges: number[] = [];
 
@@ -104,7 +108,7 @@ export async function findFavorite(
       }
    }
 
-   //? Get User
+   // ? Get User
    let target = message.author;
    if (args.length > 0) target = await getTarget(message, args.join(' '));
 

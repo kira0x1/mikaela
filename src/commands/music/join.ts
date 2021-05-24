@@ -6,11 +6,11 @@ export const command: Command = {
    description: 'Joins voice',
 
    execute(message, args) {
-      //Get the guilds player
+      // Get the guilds player
       const player = getPlayer(message);
 
       if (player) {
-         //Join the VoiceChannel
+         // Join the VoiceChannel
          player.join(message);
       }
    }

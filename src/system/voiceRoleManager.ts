@@ -5,8 +5,8 @@ import chalk from 'chalk';
 import { isProduction } from '../config';
 
 export class VoiceRoleManager extends EventEmitter {
-   guild: Guild;
-   voiceRole: Role;
+   public guild: Guild;
+   public voiceRole: Role;
 
    constructor(guild: Guild) {
       super();
@@ -33,15 +33,16 @@ export class VoiceRoleManager extends EventEmitter {
 
       this.removeVoiceRoleFromAll();
 
-      //Check if their are any people in voice, and add the voice role incase the bot was offline
+      // Check if their are any people in voice, and add the voice role incase the bot was offline
       this.addVoiceRoleToAll();
    }
 
    // adds voice role to all members currently in a vc
    async addVoiceRoleToAll() {
-      this.guild.voiceStates.cache.map(voiceState => {
+      const states = this.guild.voiceStates.cache.array();
+      for (const voiceState of states) {
          this.addVoiceRole(voiceState.member);
-      });
+      }
    }
 
    // Remove the voice role from everyone not in a vc

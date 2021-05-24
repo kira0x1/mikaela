@@ -42,10 +42,10 @@ async function getMember(query: string, guild: Guild) {
 
    if (member) return member;
 
-   //If member wasnt found either due to a typo, or the member wasnt cached then query query the guild.
+   // If member wasnt found either due to a typo, or the member wasnt cached then query query the guild.
    const memberSearch = await guild.members.fetch({ query: query, limit: 1 });
 
-   if (memberSearch && memberSearch.first()) return memberSearch.first();
+   if (memberSearch?.first()) return memberSearch.first();
 }
 
 export function findRole(message: Message, query: string) {

@@ -37,7 +37,7 @@ export async function sendQueueEmbed(message: Message) {
 }
 
 export async function getQueue(message: Message) {
-   //Get the guilds player
+   // Get the guilds player
    const player = getPlayer(message);
 
    const songs = player.getSongs();
@@ -117,10 +117,10 @@ async function createQueueEmbed(
 ) {
    const player = getPlayer(message);
 
-   //Create embed
+   // Create embed
    const embed = createFooter(message, author);
 
-   //If the player is playing a song add it to the top of the embed
+   // If the player is playing a song add it to the top of the embed
    if (player.currentlyPlaying) {
       let currentlyPlaying = player.currentlyPlaying;
       const songBar = await player.getProgressBar();
@@ -136,7 +136,7 @@ async function createQueueEmbed(
          `*${getSongSourceInfo(currentlyPlaying)}*`
       );
    } else {
-      //If no song is currently playing
+      // If no song is currently playing
       embed.setTitle('No currently playing song');
    }
 
@@ -145,7 +145,9 @@ async function createQueueEmbed(
    page.map((song, i) => {
       embed.addField(
          `${pageAt * 5 + (i + 1)}. ${song.title}`,
-         `${song.duration.duration}  ${song.spotifyUrl ? song.spotifyUrl : song.url}\n*${getSongSourceInfo(song)}*\n`
+         `${song.duration.duration}  ${song.spotifyUrl ? song.spotifyUrl : song.url}\n*${getSongSourceInfo(
+            song
+         )}*\n`
       );
    });
 
