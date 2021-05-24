@@ -67,7 +67,6 @@ export const command: Command = {
 
       if (!player.isPlaying) {
          embed.addField(`Playing ${firstSong.title}`, `${firstSong.url}\n\u200b`);
-         startIndex = 0;
       } else {
          embed.addField(`1 ${firstSong.title}`, firstSong.url);
       }
