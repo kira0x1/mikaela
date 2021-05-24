@@ -180,14 +180,19 @@ client.on('message', async message => {
 
    // If command not found send a message
    if (!command) {
-      return message.author.send(`command ${wrap(commandName || '')} not found`);
+      try {
+         return message.author.send(`command ${wrap(commandName || '')} not found`);
+      } catch (e) {}
    }
 
    // If the command is disabled then return
    if (command.isDisabled) return;
 
-   if (!hasPerms(message.member, commandName))
-      return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
+   if (!hasPerms(message.member, commandName)) {
+      try {
+         return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
+      } catch (e) {}
+   }
 
    // If command arguments are required and not given send an error message
    if (command.args && args.length === 0) return sendArgsError(command, message);
