@@ -180,9 +180,8 @@ client.on('message', async message => {
 
    // If command not found send a message
    if (!command) {
-      try {
-         return message.author.send(`command ${wrap(commandName || '')} not found`);
-      } catch (e) {}
+      // message.author.send(`command ${wrap(commandName || '')} not found`);
+      return;
    }
 
    // If the command is disabled then return
