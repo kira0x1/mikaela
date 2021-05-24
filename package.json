@@ -36,7 +36,8 @@
       "clean": "rimraf out",
       "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
       "clean:all": "npm run clean && npm run clean:node",
-      "prettier": "prettier --write src/"
+      "prettier": "prettier --write **.ts",
+      "lint": "eslint . --ext .js,.ts"
    },
    "dependencies": {
       "@discordjs/opus": "^0.5.0",
@@ -63,6 +64,14 @@
    "devDependencies": {
       "@types/ms": "^0.7.31",
       "@types/node": "^15.6.0",
+      "@typescript-eslint/eslint-plugin": "^4.24.0",
+      "@typescript-eslint/parser": "^4.24.0",
+      "eslint": "^7.27.0",
+      "eslint-config-alloy": "^4.1.0",
+      "eslint-config-prettier": "^8.3.0",
+      "eslint-plugin-import": "^2.23.3",
+      "eslint-plugin-prettier": "^3.4.0",
+      "eslint-plugin-unused-imports": "^1.1.1",
       "prettier": "^2.3.0",
       "rimraf": "^3.0.2",
       "typescript": "^4.2.4"
