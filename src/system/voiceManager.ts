@@ -20,7 +20,7 @@ export async function initVoiceManager(client: Client) {
       // User joined a vc
       if (!oldChannel && newChannel) {
          if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
-            codersClubVoiceManager.emit('voice-join', member);
+            codersClubVoiceManager?.emit('voice-join', member);
 
          return;
       }
@@ -30,7 +30,7 @@ export async function initVoiceManager(client: Client) {
          voiceManager.onVoiceLeave(oldChannel);
 
          if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
-            codersClubVoiceManager.emit('voice-leave', member);
+            codersClubVoiceManager?.emit('voice-leave', member);
       }
    });
 }
