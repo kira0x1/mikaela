@@ -19,6 +19,8 @@ export async function initVoiceManager(client: Client) {
 
       // User joined a vc
       if (!oldChannel && newChannel) {
+         voiceManager.onVoiceJoin(newChannel);
+
          if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
             codersClubVoiceManager.emit('voice-join', member);
 
@@ -40,6 +42,12 @@ class VoiceManager {
 
    constructor(client: Client) {
       this.client = client;
+   }
+
+   onVoiceJoin(vc: VoiceChannel) {
+      if (!this.inVc(vc)) return;
+      const player = findPlayer(vc.guild.id);
+      player.clearVoiceTimeout();
    }
 
    onVoiceLeave(vc: VoiceChannel) {

@@ -233,8 +233,6 @@ export class Player {
    }
 
    async startStream(song: Song) {
-      this.clearVoiceTimeout();
-
       if (!this.voiceChannel) {
          logger.error('No Voicechannel');
          return;
