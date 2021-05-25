@@ -13,18 +13,20 @@ export const command: Command = {
 
    async execute(message, args) {
       const timeArg = args.shift();
-      setReminder(message, timeArg || '', args.join(' '));
+      setReminder(message, timeArg, args.join(' '));
    }
 };
 
 export function setReminder(message: Message, time: string, content: string) {
    // If user didnt give a message then tell the user the usage of the command
-   if (!content || !time) return sendArgsError(command, message);
+   if (!time) return sendArgsError(command, message);
+
+   let description = `remind ${message.author.username} `;
+   if (content) description += `to ${content} `;
+   description += `in ${time}`;
 
    // Create embed
-   const embed = createFooter(message)
-      .setTitle('Reminder set')
-      .setDescription(`remind ${message.author.username} to ${content} in ${time}`);
+   const embed = createFooter(message).setTitle('Reminder set').setDescription(description);
 
    // Send embed telling the user that the reminder was created
    message.channel.send(embed);
