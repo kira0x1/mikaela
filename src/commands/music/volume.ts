@@ -1,8 +1,8 @@
-import { getPlayer } from '../../util/musicUtil';
-import { Command } from '../../classes/Command';
-import { quickEmbed, wrap } from '../../util/styleUtil';
 import { logger } from '../../app';
+import { Command } from '../../classes/Command';
 import { hasPerms } from '../../util/commandUtil';
+import { getPlayer } from '../../util/musicUtil';
+import { quickEmbed, wrap } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'volume',
@@ -16,8 +16,8 @@ export const command: Command = {
       const arg = args.shift();
       const player = getPlayer(message);
 
-      const member = message.member;
-      if (!member.voice.channel) return quickEmbed(message, `You must be in a voice channel to play music`);
+      // const member = message.member;
+      // if (!member.voice.channel) return quickEmbed(message, `You must be in a voice channel to play music`);
 
       if (!player) return logger.warn('info', 'no player found while using volume command');
       if (!arg) return quickEmbed(message, `Volume is currently ${player.volume}`);
