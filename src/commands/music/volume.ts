@@ -9,8 +9,8 @@ export const command: Command = {
    description: 'Change the volume',
    aliases: ['v'],
    usage: '[- | + | number]\n\nDisplays the volume if no arguments given',
-   hidden: true,
    isDisabled: false,
+   perms: ['mod', 'kira', 'admin'],
 
    execute(message, args) {
       const arg = args.shift();
