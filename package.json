@@ -57,7 +57,7 @@
       "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.4.6",
-      "youtube-sr": "^4.0.8",
+      "youtube-sr": "^4.0.9",
       "ytdl-core": "^4.8.0",
       "ytpl": "^2.2.1"
    },
