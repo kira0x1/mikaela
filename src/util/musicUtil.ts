@@ -125,15 +125,34 @@ export async function createFavoriteCollector(song: Song, message: Message) {
    };
 
    const collector = message.createReactionCollector(filter, { time: collectorTime });
+   const userCooldowns: Collection<string, number> = new Collection();
 
    collector.on('collect', async (reaction, reactionCollector) => {
       const user = reaction.users.cache.last();
-      addFavoriteToUser(user, song, message);
+
+      const inCooldown = getFavReactionCooldown(user, userCooldowns);
+
+      if (!inCooldown) {
+         userCooldowns.set(user.id, Date.now());
+         addFavoriteToUser(user, song, message);
+      }
    });
 
    collector.on('end', collected => {
       message.reactions.removeAll().catch(err => logger.error(err));
    });
+}
+
+function getFavReactionCooldown(user: User, userCooldowns: Collection<string, number>) {
+   const now = Date.now();
+
+   if (!userCooldowns.has(user.id)) {
+      userCooldowns.set(user.id, now);
+      return false;
+   }
+
+   const expTime = userCooldowns.get(user.id) + ms('5m');
+   return now < expTime;
 }
 
 export async function createDeleteCollector(message: Message | Promise<Message>, previousMessage: Message) {
