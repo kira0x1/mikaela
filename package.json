@@ -57,8 +57,8 @@
       "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.4.6",
-      "youtube-sr": "^4.0.9",
-      "ytdl-core": "^4.8.0",
+      "youtube-sr": "^4.0.10",
+      "ytdl-core": "^4.8.2",
       "ytpl": "^2.2.1"
    },
    "devDependencies": {
@@ -74,7 +74,7 @@
       "eslint-plugin-unused-imports": "^1.1.1",
       "prettier": "^2.3.0",
       "rimraf": "^3.0.2",
-      "typescript": "^4.2.4"
+      "typescript": "^4.3.2"
    },
    "nodemonConfig": {
       "events": {
