@@ -284,6 +284,7 @@ export class Player {
    }
 
    async addSong(song: Song, message: Message, onlyAddToQueue = false) {
+      this.clearVoiceTimeout();
       this.queue.addSong(song);
       if (!onlyAddToQueue) this.play(song, message);
    }
