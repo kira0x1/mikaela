@@ -10,8 +10,8 @@ import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
 import progressbar from 'string-progressbar';
 
-const minVolume = 0.05;
-const maxVolume = 10;
+const minVolume = 0;
+const maxVolume = 12;
 const vcWaitTime: number = ms('45m');
 
 const testVoiceID = '610883901472243713';
