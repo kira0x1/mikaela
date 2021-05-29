@@ -47,7 +47,7 @@ class VoiceManager {
    onVoiceJoin(vc: VoiceChannel) {
       if (!this.inVc(vc)) return;
       const player = findPlayer(vc.guild.id);
-      player.clearVoiceTimeout();
+      if (player.isPlaying) player.clearVoiceTimeout();
    }
 
    onVoiceLeave(vc: VoiceChannel) {
