@@ -26,11 +26,21 @@ export async function AddBlocked(name: string, id: string) {
       if (await BlockedModel.findOne({ id: id })) {
          return logger.log('info', chalk.bgMagenta.bold('User already exists'));
       }
-      logger.log('info', 'adding blocked user');
       blockedUsers.set(id, name);
       return await new BlockedModel({ name: name, id: id }).save();
    } catch (err) {
-      logger.log('error', err);
+      logger.error(err);
+   }
+}
+
+export async function UnBlock(id: string) {
+   try {
+      const user = await BlockedModel.findOne({ id: id });
+      if (!user) return logger.warn(`blocked user not found`);
+      user.delete();
+      blockedUsers.delete(id);
+   } catch (err) {
+      logger.error(err);
    }
 }
 
@@ -39,6 +49,6 @@ export async function CacheBlockedList() {
       const blist = await BlockedModel.find();
       blist.map(doc => blockedUsers.set(doc.id, doc.name));
    } catch (err) {
-      logger.log('error', err);
+      logger.error(err);
    }
 }
