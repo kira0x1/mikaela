@@ -62,22 +62,28 @@ export function createFooter(message: Message, overrideAuthor?: User): MessageEm
 }
 
 export interface QuickEmbedOptions {
+   addDeleteCollector?: boolean;
    addFooter?: boolean;
    autoDelete?: boolean;
    deleteDelay?: string;
 }
 
-export function quickEmbed(message: Message, content: string, options?: QuickEmbedOptions) {
+export async function quickEmbed(message: Message, content: string, options?: QuickEmbedOptions) {
    const addFooter = options?.addFooter || true;
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
+   const addDeleteCollector = options?.addDeleteCollector;
 
    const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor);
    embed.setTitle(content);
-   message.channel.send(embed);
+   const msg = await message.channel.send(embed);
 
    if (autoDelete) {
       autoDeleteMessage(message, deleteDelay);
+   }
+
+   if (addDeleteCollector) {
+      createDeleteCollector(msg, message);
    }
 }
 

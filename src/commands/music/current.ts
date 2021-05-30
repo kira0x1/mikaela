@@ -20,7 +20,9 @@ export const command: Command = {
       const currentSong = player.currentlyPlaying;
       const stream = player.getStream();
 
-      if (!(stream && player.currentlyPlaying)) return quickEmbed(message, 'No song currently playing');
+      if (!(stream && player.currentlyPlaying)) {
+         return quickEmbed(message, 'No song currently playing', { addDeleteCollector: true });
+      }
 
       // Create embed
       const embed = await createCurrentlyPlayingEmbed(player, message);
