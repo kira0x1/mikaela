@@ -1,17 +1,21 @@
+import chalk from 'chalk';
 import {
    Client,
-   Emoji,
+   Collection,
+   Guild,
    Message,
+   MessageEmbed,
    MessageReaction,
-   ReactionEmoji,
    Role,
    TextChannel,
    User
 } from 'discord.js';
 import { logger } from '../app';
 import { coders_club_id } from '../config';
+import { getEmojiFromGuild } from '../util/discordUtil';
 
 const customRoles = require('../../customRoles.json');
+const sections: RoleSection[] = customRoles.sections;
 
 export async function syncRoles(client: Client) {
    const guild = client.guilds.cache.get(coders_club_id);
@@ -19,17 +23,15 @@ export async function syncRoles(client: Client) {
    const channel = guild.channels.cache.get('618438576119742464');
    if (!channel) return;
 
-   if (!((channel): channel is TextChannel => channel.type === 'text')(channel))
-      return logger.log('info', 'Couldnt find channel');
+   if (!(channel instanceof TextChannel)) return logger.log('info', 'Couldnt find channel');
 
-   channel.messages.fetch({ limit: 100 }).then(messages => {
-      const messagesWithReactions = messages.filter(msg => msg.reactions.cache.size > 0);
-      messagesWithReactions.forEach(msg => {
-         msg.reactions.cache.forEach(rc => {
-            syncEmoji(msg, rc.emoji);
-         });
-      });
-   });
+   const messages = await channel.messages.fetch({ limit: 100 });
+
+   await updateSections(channel, messages);
+   await updateRoles(channel, messages);
+
+   const reactions = messages.flatMap(m => m.reactions.cache);
+   reactions.map(r => syncEmoji(r));
 
    client.on('messageReactionRemove', (reaction, user) => {
       if (
@@ -43,7 +45,9 @@ export async function syncRoles(client: Client) {
 
       const member = guild.members.cache.get(user.id);
       const section = getSection(reaction);
+
       if (!section) return;
+
       const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
       const role = guild.roles.cache.find(rl => rl.id === crole.roleId);
 
@@ -64,12 +68,80 @@ export async function syncRoles(client: Client) {
    });
 }
 
-async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
+async function updateSections(channel: TextChannel, messages: Collection<string, Message>) {
+   const sectionTitles = messages.filter(
+      msg =>
+         msg.reactions.cache.size === 0 && sections.find(s => s.name === msg.embeds[0].title) !== undefined
+   );
+
+   const missingSections = sections.filter(s => !sectionTitles.find(m => m.embeds[0].title === s.name));
+   for (const section of missingSections) {
+      const embed = new MessageEmbed().setTitle(section.name);
+      await channel.send(embed);
+
+      const embedRoles = createSectionRolesEmbed(channel.guild, section);
+      channel.send(embedRoles);
+   }
+}
+async function updateRoles(channel: TextChannel, messages: Collection<string, Message>) {
+   const reactedMessages = messages
+      .filter(msg => !sections.find(s => s.name === msg.embeds[0].title))
+      .values();
+
+   for (const msg of reactedMessages) {
+      const msgReactions = msg.reactions.cache;
+
+      const msgSection = sections.find(s => s.roles.find(r => r.name === msg.embeds[0].fields[0].name));
+
+      if (!msgSection) {
+         continue;
+      }
+
+      const sectionRolesAmount = msgSection.roles.length;
+      if (msgReactions.size === sectionRolesAmount && msg.embeds[0].fields.length === sectionRolesAmount)
+         continue;
+
+      console.log(
+         chalk.bgMagenta.bold(`msg roles: ${msgReactions.size}, section roles: ${msgSection.roles.length}`)
+      );
+
+      const missingReactions = msgSection.roles.filter(
+         role => !msgReactions.find(r => r.emoji.name === role.reactionName)
+      );
+
+      console.log(chalk.bgCyan.bold(`Missing reactions for: ${msgSection.name}`));
+      missingReactions.map(mr => console.log(chalk.bgBlue.bold(mr.name)));
+      console.log(`\n`);
+
+      if (msgReactions.size !== sectionRolesAmount) {
+         const promises = missingReactions.map(async r =>
+            msg.react(msg.guild.emojis.cache.find(e => e.name === r.reactionName) || r.reactionName)
+         );
+
+         Promise.all(promises);
+      }
+
+      if (msg.embeds[0].fields.length !== sectionRolesAmount) {
+         const embed = createSectionRolesEmbed(msg.guild, msgSection);
+
+         try {
+            await msg.edit(embed);
+         } catch (err) {
+            logger.error(err);
+         }
+      }
+   }
+}
+
+async function syncEmoji(messageReaction: MessageReaction) {
+   const msg = messageReaction.message;
+   const emoji = messageReaction.emoji;
+
    const filter = (reaction: MessageReaction, user: User) => {
       return (
          reaction.emoji.id === emoji.id &&
          !user.bot &&
-         customRoles.sections.find(sec => sec.roles.find(rl => rl.reactionName === emoji.name))
+         customRoles.sections.find(sec => getSection(reaction))
       );
    };
 
@@ -83,8 +155,8 @@ async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
       if (!section) return;
       const crole = section.roles.find(rl => rl.reactionName === reaction.emoji.name);
 
-      if (!section) return logger.log('info', 'couldnt find section');
-      if (!crole) return logger.log('info', 'couldnt find crole');
+      if (!section) return logger.info('couldnt find section');
+      if (!crole) return logger.info('couldnt find crole');
 
       const role = msg.guild.roles.cache.find(rl => rl.id === crole.roleId);
       if (!member) return;
@@ -95,6 +167,35 @@ async function syncEmoji(msg: Message, emoji: Emoji | ReactionEmoji) {
    });
 }
 
-function getSection(reaction) {
+function getSection(reaction: MessageReaction): RoleSection {
    return customRoles.sections.find(sec => sec.roles.find(rl => rl.reactionName === reaction.emoji.name));
+}
+
+// async function createSectionEmbed(section: RoleSection) {
+
+// }
+
+function createSectionRolesEmbed(guild: Guild, section: RoleSection) {
+   console.log(`editing section: ${section.name}`);
+
+   const embed = new MessageEmbed();
+
+   for (const role of section.roles) {
+      const emoji = getEmojiFromGuild(guild, role.reactionName) || role.reactionName;
+      embed.addField(role.name, emoji, true);
+   }
+
+   return embed;
+}
+
+interface CustomRole {
+   name: string;
+   roleId: string;
+   reactionName: string;
+}
+
+interface RoleSection {
+   name: string;
+   id: string;
+   roles: CustomRole[];
 }

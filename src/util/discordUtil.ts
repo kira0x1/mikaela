@@ -14,9 +14,9 @@ export function initEmoji(client: Client) {
    trashEmoji = getEmojiFromGuild(coders_club, 'delete');
 }
 
-function getEmojiFromGuild(guild: Guild, emojiName: string) {
-   const emoji = guild.emojis.cache.find(em => em.name.toLowerCase() === emojiName);
-   if (!emoji) logger.log('warn', `emoji not found`);
+export function getEmojiFromGuild(guild: Guild, emojiName: string) {
+   const emoji = guild.emojis.cache.find(em => em.name.toLowerCase() === emojiName.toLowerCase());
+   if (!emoji) logger.warn(`emoji not found`);
    return emoji;
 }
 
