@@ -28,7 +28,7 @@ export async function syncRoles(client: Client) {
    const messages = await channel.messages.fetch({ limit: 100 });
 
    await updateSections(channel, messages);
-   await updateRoles(channel, messages);
+   await updateRoles(messages);
 
    const reactions = messages.flatMap(m => m.reactions.cache);
    reactions.map(r => syncEmoji(r));
@@ -83,7 +83,7 @@ async function updateSections(channel: TextChannel, messages: Collection<string,
       channel.send(embedRoles);
    }
 }
-async function updateRoles(channel: TextChannel, messages: Collection<string, Message>) {
+async function updateRoles(messages: Collection<string, Message>) {
    const reactedMessages = messages
       .filter(msg => !sections.find(s => s.name === msg.embeds[0].title))
       .values();
@@ -101,7 +101,7 @@ async function updateRoles(channel: TextChannel, messages: Collection<string, Me
       if (msgReactions.size === sectionRolesAmount && msg.embeds[0].fields.length === sectionRolesAmount)
          continue;
 
-      console.log(
+      logger.info(
          chalk.bgMagenta.bold(`msg roles: ${msgReactions.size}, section roles: ${msgSection.roles.length}`)
       );
 
@@ -109,9 +109,9 @@ async function updateRoles(channel: TextChannel, messages: Collection<string, Me
          role => !msgReactions.find(r => r.emoji.name === role.reactionName)
       );
 
-      console.log(chalk.bgCyan.bold(`Missing reactions for: ${msgSection.name}`));
+      logger.info(chalk.bgCyan.bold(`Missing reactions for: ${msgSection.name}`));
       missingReactions.map(mr => console.log(chalk.bgBlue.bold(mr.name)));
-      console.log(`\n`);
+      logger.info(`\n`);
 
       if (msgReactions.size !== sectionRolesAmount) {
          const promises = missingReactions.map(async r =>
