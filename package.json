@@ -57,13 +57,13 @@
       "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.4.6",
-      "youtube-sr": "^4.1.1",
+      "youtube-sr": "^4.1.2",
       "ytdl-core": "^4.8.2",
       "ytpl": "^2.2.1"
    },
    "devDependencies": {
       "@types/ms": "^0.7.31",
-      "@types/node": "^15.6.1",
+      "@types/node": "^15.12.0",
       "@typescript-eslint/eslint-plugin": "^4.26.0",
       "@typescript-eslint/parser": "^4.26.0",
       "eslint": "^7.27.0",
