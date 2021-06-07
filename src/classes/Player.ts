@@ -12,7 +12,7 @@ import progressbar from 'string-progressbar';
 
 const minVolume = 0;
 const maxVolume = 12;
-const vcWaitTime: number = ms('45m');
+const vcWaitTime: number = ms('30m');
 
 const testVoiceID = '610883901472243713';
 
