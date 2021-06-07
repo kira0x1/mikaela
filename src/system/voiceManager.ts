@@ -1,6 +1,5 @@
 import { Client, VoiceChannel } from 'discord.js';
 import { mikaelaId } from '../app';
-
 import { coders_club_id, isProduction } from '../config';
 import { findPlayer } from '../util/musicUtil';
 import { VoiceRoleManager } from './voiceRoleManager';
@@ -16,6 +15,20 @@ export async function initVoiceManager(client: Client) {
 
       const oldChannel = oldMember.channel;
       const newChannel = newMember.channel;
+
+      // check if bot changed vc
+      if (newChannel) {
+         const player = findPlayer(guildId);
+
+         if (
+            oldMember?.id === mikaelaId &&
+            oldChannel?.id === player.voiceChannel.id &&
+            newChannel?.id !== player.voiceChannel.id
+         ) {
+            player.voiceChannel = newChannel;
+            player.clearVoiceTimeout();
+         }
+      }
 
       // User joined a vc
       if (!oldChannel && newChannel) {
@@ -46,6 +59,7 @@ class VoiceManager {
 
    onVoiceJoin(vc: VoiceChannel) {
       if (!this.inVc(vc)) return;
+
       const player = findPlayer(vc.guild.id);
       if (player.isPlaying) player.clearVoiceTimeout();
    }
