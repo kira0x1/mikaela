@@ -16,14 +16,13 @@ export async function initVoiceManager(client: Client) {
       const oldChannel = oldMember.channel;
       const newChannel = newMember.channel;
 
-      // check if bot changed vc
-      if (newChannel) {
-         const player = findPlayer(guildId);
-
+      // check if bot changed vc while playing, I.E dragged by a moderator to a different vc
+      const player = findPlayer(guildId);
+      if (newChannel && player.voiceChannel) {
          if (
             oldMember?.id === mikaelaId &&
             oldChannel?.id === player.voiceChannel.id &&
-            newChannel?.id !== player.voiceChannel.id
+            newChannel.id !== player.voiceChannel.id
          ) {
             player.voiceChannel = newChannel;
             player.clearVoiceTimeout();
