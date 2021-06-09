@@ -14,7 +14,7 @@ export const command: Command = {
       const player = getPlayer(message);
       if (!player) return;
 
-      if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty');
+      if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty', { addDeleteCollector: true });
 
       const numbers = args.filter(arg => {
          const n = Number(arg);
@@ -40,7 +40,7 @@ export const command: Command = {
          try {
             pos2 = checkPos(arg2, player);
          } catch (error) {
-            return quickEmbed(message, error.message);
+            return quickEmbed(message, error.message, { addDeleteCollector: true });
          }
       }
 
@@ -62,7 +62,7 @@ export const command: Command = {
       }
 
       const song = player.queue.removeAt(startIndex).shift();
-      if (!song) return quickEmbed(message, 'Couldnt find song');
+      if (!song) return quickEmbed(message, 'Couldnt find song', { addDeleteCollector: true });
 
       const embed = createFooter(message)
          .setTitle(`Removed song\n${song.title}`)
