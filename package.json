@@ -58,7 +58,7 @@
       "winston": "^3.3.3",
       "ws": "^7.5.0",
       "youtube-sr": "^4.1.5",
-      "ytdl-core": "^4.8.2",
+      "ytdl-core": "https://github.com/kira0x1/node-ytdl-core.git",
       "ytpl": "^2.2.1"
    },
    "devDependencies": {
