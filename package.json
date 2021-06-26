@@ -47,7 +47,7 @@
       "discord-ytdl-core": "^5.0.4",
       "discord.js": "^12.5.3",
       "minimist": "^1.2.5",
-      "mongoose": "^5.12.14",
+      "mongoose": "^5.12.15",
       "ms": "^2.1.3",
       "sodium": "^3.0.2",
       "spotify-uri": "^2.2.0",
@@ -58,7 +58,7 @@
       "winston": "^3.3.3",
       "ws": "^7.5.0",
       "youtube-sr": "^4.1.5",
-      "ytdl-core": "https://github.com/kira0x1/node-ytdl-core.git",
+      "ytdl-core": "^4.8.3",
       "ytpl": "^2.2.1"
    },
    "devDependencies": {
