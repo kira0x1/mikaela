@@ -7,6 +7,7 @@ import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
 import { initGreeter } from './system/serverGreeter';
+import { syncReminders } from './system/syncReminders';
 import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import {
@@ -91,6 +92,8 @@ client.on('ready', async () => {
       // Add event listener to welcome new members
       initGreeter(client);
    }
+
+   syncReminders(client);
 
    // Read command files and create a collection for the commands
    initCommands();
