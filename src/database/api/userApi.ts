@@ -9,7 +9,7 @@ export async function findUser(id: string): Promise<IUser> {
       const user = await User.findOne({ id: id });
       return user;
    } catch (error) {
-      logger.error('error', error);
+      logger.error(error);
    }
 }
 
@@ -18,7 +18,7 @@ export async function createUser(user: IUser | DiscordUser) {
       if (user instanceof DiscordUser) return await new User(converUserToIUser(user)).save();
       return await new User(user).save();
    } catch (error) {
-      logger.error('error', error);
+      logger.error(error);
    }
 }
 
