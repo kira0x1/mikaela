@@ -23,13 +23,14 @@ export async function setReminder(message: Message, time: string, content: strin
    // If user didnt give a message then tell the user the usage of the command
    if (!time) return sendArgsError(command, message);
    const msTime = ms(time);
+   const prettyTime = ms(msTime, { long: true });
 
    if (msTime > ms('3w'))
       return quickEmbed(message, `Time cannot exceed 3 weeks`, { addDeleteCollector: true });
 
    let description = `remind ${message.author.username} `;
    if (content) description += `to ${content} `;
-   description += `in ${time}`;
+   description += `in ${prettyTime}`;
 
    // Create embed
    const embed = createFooter(message).setTitle('Reminder set').setDescription(description);
@@ -40,11 +41,11 @@ export async function setReminder(message: Message, time: string, content: strin
    let dbReminder: IReminder | undefined;
 
    if (msTime > ms('1h')) {
-      dbReminder = await createReminder(message.member, message.channel.id, content, ms(time));
+      dbReminder = await createReminder(message.member, message.channel.id, content, msTime);
    }
 
    // Create reminder time out
-   setTimeout(() => onReminder(message, content, dbReminder), ms(time));
+   setTimeout(() => onReminder(message, content, dbReminder), msTime);
 }
 
 export function onReminder(message: Message, content: string, dbReminder?: IReminder) {
