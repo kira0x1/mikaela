@@ -57,7 +57,7 @@
       "utf-8-validate": "^5.0.5",
       "winston": "^3.3.3",
       "ws": "^7.5.1",
-      "youtube-sr": "^4.1.5",
+      "youtube-sr": "^4.1.6",
       "ytdl-core": "^4.8.3",
       "ytpl": "^2.2.1"
    },
@@ -74,7 +74,7 @@
       "eslint-plugin-unused-imports": "^1.1.1",
       "prettier": "^2.3.2",
       "rimraf": "^3.0.2",
-      "typescript": "^4.3.4"
+      "typescript": "^4.3.5"
    },
    "nodemonConfig": {
       "events": {
