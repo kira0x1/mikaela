@@ -15,7 +15,8 @@ export async function createReminder(
    member: GuildMember,
    channelId: string,
    content: string,
-   remindAt: number
+   remindAt: number,
+   botId: string
 ) {
    try {
       const { guild, user } = member;
@@ -28,6 +29,7 @@ export async function createReminder(
          channelId: channelId,
          content: content,
          remindAt: remindAt,
+         botId: botId,
          createdAt: Date.now()
       }).save();
    } catch (error) {

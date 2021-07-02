@@ -5,8 +5,11 @@ import { IReminder } from '../database/models/Reminders';
 export async function syncReminders(client: Client) {
    const reminders = await getAllReminders();
    const remindersToDelete: IReminder[] = [];
+   const botId = client.user.id;
 
    for (const reminder of reminders) {
+      if (reminder.botId && reminder.botId !== botId) continue;
+
       const timeToRemind = reminder.remindAt + reminder.createdAt;
       const timeLeft = timeToRemind - Date.now();
 

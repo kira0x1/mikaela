@@ -39,9 +39,10 @@ export async function setReminder(message: Message, time: string, content: strin
    message.channel.send(embed);
 
    let dbReminder: IReminder | undefined;
+   const botId = message.client.user.id;
 
    if (msTime > ms('1h')) {
-      dbReminder = await createReminder(message.member, message.channel.id, content, msTime);
+      dbReminder = await createReminder(message.member, message.channel.id, content, msTime, botId);
    }
 
    // Create reminder time out
