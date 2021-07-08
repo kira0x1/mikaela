@@ -72,7 +72,7 @@ export async function quickEmbed(message: Message, content: string, options?: Qu
    const addFooter = options?.addFooter || true;
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
-   const addDeleteCollector = options?.addDeleteCollector;
+   const addDeleteCollector = options?.addDeleteCollector || true;
 
    const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor);
    embed.setTitle(content);

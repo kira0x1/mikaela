@@ -14,7 +14,7 @@ export const command: Command = {
       const player = getPlayer(message);
       if (!player) return;
 
-      if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty', { addDeleteCollector: true });
+      if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty');
 
       const numbers = args.filter(arg => {
          const n = Number(arg);
@@ -40,7 +40,7 @@ export const command: Command = {
          try {
             pos2 = checkPos(arg2, player);
          } catch (error) {
-            return quickEmbed(message, error.message, { addDeleteCollector: true });
+            return quickEmbed(message, error.message);
          }
       }
 
