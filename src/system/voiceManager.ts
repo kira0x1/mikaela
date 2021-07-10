@@ -1,5 +1,5 @@
 import { Client, VoiceChannel } from 'discord.js';
-import { mikaelaId } from '../app';
+import { mikaelaId, logger } from '../app';
 import { coders_club_id, isProduction } from '../config';
 import { findPlayer } from '../util/musicUtil';
 import { VoiceRoleManager } from './voiceRoleManager';
@@ -18,6 +18,11 @@ export async function initVoiceManager(client: Client) {
 
       // check if bot changed vc while playing, I.E dragged by a moderator to a different vc
       const player = findPlayer(guildId);
+      if (!player) {
+         logger.error(`Voice Manager: Player for guild: ${guildId} not found`);
+         return;
+      }
+
       if (newChannel && player.voiceChannel) {
          if (
             oldMember?.id === mikaelaId &&
