@@ -82,7 +82,7 @@ export const command: Command = {
          song.playedBy = playedBy;
 
          songsAdding.push(song);
-         player.addSong(song, message);
+         player.addSong(song, message, true);
       }
 
       createShuffleCollector(message, songsAdding, target, user, amount);

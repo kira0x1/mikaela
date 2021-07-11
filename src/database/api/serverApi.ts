@@ -1,9 +1,9 @@
-import { Client, Collection, Guild, Message } from 'discord.js';
+import { Client, Collection, Guild, Message, GuildChannel } from 'discord.js';
 import { logger } from '../../app';
 import { Queue } from '../../classes/Queue';
 import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';
-import { Server } from '../models/Server';
+import { Server, BannedChannel } from '../models/Server';
 
 export async function getAllServers(guilds: Guild[]) {
    const servers = guilds.map(g => findOrCreateServer(g));
@@ -32,7 +32,8 @@ function convertGuildToIServer(guild: Guild) {
       serverId: guild.id,
       serverName: guild.name,
       queue: [],
-      prefixes: []
+      prefixes: [],
+      bannedChannels: []
    };
 }
 
@@ -92,7 +93,49 @@ export async function setServerPrefix(message: Message, prefix: string) {
    await server.save();
 }
 
+export async function setBannedChannel(message: Message, channel: GuildChannel) {
+   const server = await findOrCreateServer(message.guild);
+   const channelsBanned = server.bannedChannels || [];
+
+   if (channelsBanned?.find(c => c.id === channel.id)) {
+      return false;
+   }
+
+   const newBannedChannel: BannedChannel = {
+      name: channel.name,
+      id: channel.id,
+      bannedBy: message.author.id
+   };
+
+   if (!server.bannedChannels) server.bannedChannels = [];
+
+   channelsBanned.push(newBannedChannel);
+   bannedChannels.set(server.serverId, channelsBanned);
+
+   server.markModified('bannedChannels');
+   await server.save();
+   return true;
+}
+
+export async function unbanChannel(message: Message, channel: GuildChannel) {
+   const channelId = channel.id;
+   const server = await findOrCreateServer(message.guild);
+   const channelsBanned = server.bannedChannels || [];
+
+   for (let i = 0; i < channelsBanned.length; i++) {
+      const c = channelsBanned[i];
+      if (c.id !== channelId) continue;
+      server.bannedChannels.splice(i, 1);
+      break;
+   }
+
+   bannedChannels.set(server.serverId, server.bannedChannels);
+   server.markModified('bannedChannels');
+   await server.save();
+}
+
 export const prefixes: Collection<string, string> = new Collection();
+export const bannedChannels: Collection<string, BannedChannel[]> = new Collection();
 
 export async function initServers(client: Client) {
    const servers = await getAllServers(client.guilds.cache.array());
@@ -101,5 +144,8 @@ export async function initServers(client: Client) {
       const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix;
       if (serverPrefix) logger.info(`prefix for ${server.serverName}: ${serverPrefix}`);
       prefixes.set(server.serverId, serverPrefix || defaultPrefix);
+
+      // Set banned channels to collection
+      bannedChannels.set(server.serverId, server.bannedChannels);
    });
 }

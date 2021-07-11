@@ -9,6 +9,7 @@ import { Queue } from './Queue';
 import { Song } from './Song';
 import { args, coders_club_id, isProduction } from '../config';
 import progressbar from 'string-progressbar';
+import { bannedChannels } from '../database/api/serverApi';
 
 const minVolume = 0;
 const maxVolume = 12;
@@ -56,6 +57,9 @@ export class Player {
 
       if (!vc) return quickEmbed(message, `You must be in a voice channel to play music`);
       if (!vc.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
+      if (bannedChannels.get(message.guild.id)?.find(c => c.id === vc.id)) {
+         return quickEmbed(message, `The voice channel ${vc.name} has been blocked for use by a moderator`);
+      }
 
       try {
          const conn = await vc.join();
@@ -175,8 +179,14 @@ export class Player {
    play(song: Song, message: Message) {
       if (this.currentlyPlaying) return;
 
-      this.currentlyPlaying = this.queue.getNext();
       const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
+
+      if (bannedChannels.get(message.guild.id)?.find(c => c.id === vc.id)) {
+         this.leave();
+         return quickEmbed(message, `The voice channel ${vc.name} has been blocked for use by a moderator`);
+      }
+
+      this.currentlyPlaying = this.queue.getNext();
 
       if (!vc?.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
 
