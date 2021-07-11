@@ -114,7 +114,10 @@ export async function createCurrentlyPlayingEmbed(player: Player, message: Messa
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
       .setURL(url)
-      .addField(`**${player.getDurationPretty()}**\n${songBar}`, `<@${player.currentlyPlaying.playedBy}>`);
+      .addField(
+         `**${player.getDurationPretty()}**\n${songBar}`,
+         getSongSourceInfo(player.currentlyPlaying)
+      );
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
