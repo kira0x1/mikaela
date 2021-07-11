@@ -7,6 +7,7 @@ export const command: Command = {
    usage: '[channel id]',
    args: true,
    perms: ['admin', 'kira', 'mod'],
+   aliases: ['unbanChannel', 'ubc'],
    execute(message, args) {
       const channelId: string = args.shift();
 
