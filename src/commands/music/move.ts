@@ -1,6 +1,6 @@
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
-import { getPlayer } from '../../util/musicUtil';
+import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed, wrap } from '../../util/styleUtil';
 import { sendArgsError } from '../../util/commandUtil';
 
@@ -10,7 +10,7 @@ export const command: Command = {
    args: true,
    usage: '[song position] [desired position]',
 
-   execute(message, args) {
+   async execute(message, args) {
       const player = getPlayer(message);
       if (player.getQueueCount() === 0) return quickEmbed(message, 'Queue is empty');
 
@@ -46,9 +46,8 @@ export const command: Command = {
             `${moveString(songSelected, toPos)}\n\n${moveString(otherSong, songPos)}\n\u200b`
          );
 
-      // embed.fields.push(createEmptyField())
-
-      message.channel.send(embed);
+      const msg = await message.channel.send(embed);
+      createDeleteCollector(msg, message);
    }
 };
 
