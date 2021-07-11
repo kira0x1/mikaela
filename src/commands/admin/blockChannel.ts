@@ -6,7 +6,7 @@ import { sendErrorEmbed, wrap, createFooter, successIconUrl } from '../../util/s
 export const command: Command = {
    name: 'BlockChannel',
    description: 'Block the bot from being used in a channel by giving its id',
-   aliases: ['BanChannel', 'bchannel', 'blockedchannel', 'blockedchannels', 'bannedchannels'],
+   aliases: ['BanChannel', 'bchannel', 'blockedchannel', 'blockedchannels', 'bannedchannels', 'bc', 'bcs'],
    usage: '[channelId]',
    perms: ['admin', 'mod', 'kira'],
    async execute(message, args) {
