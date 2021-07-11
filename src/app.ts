@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
 import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, token } from './config';
-import { initServers, saveAllServersQueue, prefixes } from './database/api/serverApi';
+import { initServers, saveAllServersQueue, prefixes, bannedChannels } from './database/api/serverApi';
 import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
@@ -18,7 +18,7 @@ import {
    sendArgsError
 } from './util/commandUtil';
 import { initPlayers, players } from './util/musicUtil';
-import { sendErrorEmbed, wrap } from './util/styleUtil';
+import { sendErrorEmbed, wrap, createFooter } from './util/styleUtil';
 
 export const mikaelaId = '585874337618460672';
 
@@ -129,7 +129,22 @@ client.on('message', async message => {
       return;
    }
 
+   // Check if user is blocked
    if (blockedUsers.has(message.author.id)) return message.author.send("Sorry you're blocked");
+
+   // Check if this channel is black listed by the server moderators
+   const channelId = message.channel.id;
+   const guildId = message.guild.id;
+
+   const blackListedChannels = bannedChannels.get(guildId);
+   const bannedChannel = blackListedChannels?.find(c => c.id === channelId);
+
+   if (bannedChannel) {
+      const embed = createFooter(message)
+         .setTitle(`Channel "${bannedChannel.name}" is banned from use`)
+         .setDescription(`Banned by <@${bannedChannel.bannedBy}>`);
+      return message.author.send(embed);
+   }
 
    if (prefix === '.') {
       const firstCharacter = message.content.charAt(1);
