@@ -31,7 +31,11 @@ async function RemoveByIndex(args: string[], message: Message) {
       return quickEmbed(message, 'Invalid position');
    }
 
-   const song = user.favorites.splice(index - 1, 1).shift();
+   const song = user.favorites
+      .reverse()
+      .splice(index - 1, 1)
+      .shift();
+
    user.save();
 
    if (!song) {

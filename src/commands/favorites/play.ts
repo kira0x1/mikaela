@@ -115,7 +115,7 @@ export async function findFavorite(
    if (!target) throw new Error(`Could not find user \`${args.join(' ')}\``);
 
    const userResult = await findOrCreate(target);
-   const fav = userResult.favorites;
+   const fav = userResult.favorites.reverse();
    if (fav.length === 0) throw new Error(`${target} has no favorites`);
 
    if (songRanges.length === 2) {
