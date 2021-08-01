@@ -6,7 +6,7 @@ const videoLink =
 export const command: Command = {
    name: 'Bootonanny',
    description: 'Bootonanny?',
-   aliases: ['boo', 'botonany', 'seesaw', 'moorgan'],
+   aliases: ['boo', 'botonany', 'seesaw', 'morgan'],
    async execute(message, args) {
       message.channel.send(videoLink);
    }
