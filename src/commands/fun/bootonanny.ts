@@ -5,10 +5,9 @@ const videoLink =
 
 export const command: Command = {
    name: 'Bootonanny',
-   description: ':bootonanny:',
+   description: 'Bootonanny?',
    aliases: ['boo', 'botonany', 'seesaw', 'moorgan'],
    async execute(message, args) {
-      const msg = await message.channel.send(videoLink);
-      msg.react(':bootonanny:');
+      message.channel.send(videoLink);
    }
 };
