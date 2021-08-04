@@ -29,7 +29,7 @@ export class Player {
    public client: Client;
    public volumeDisabled = false;
    public lastPlayed: Song | undefined;
-   public ytdlHighWaterMark: number = 1 << 27;
+   public ytdlHighWaterMark: number = 1 << 30;
    public vcHighWaterMark = 1;
 
    // eslint-disable-next-line no-undef
