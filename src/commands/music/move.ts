@@ -46,7 +46,7 @@ export const command: Command = {
             `${moveString(songSelected, toPos)}\n\n${moveString(otherSong, songPos)}\n\u200b`
          );
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
    }
 };

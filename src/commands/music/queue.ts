@@ -26,7 +26,7 @@ export const command: Command = {
 
 export async function sendQueueEmbed(message: Message) {
    const embed = await getQueue(message);
-   const lastQueueCall = await message.channel.send(embed);
+   const lastQueueCall = await message.channel.send({ embeds: [embed] });
 
    queueCalls.set(message.guild.id, { message: lastQueueCall, pageAt: 0 });
 
@@ -51,7 +51,7 @@ export async function updateLastQueue(message: Message) {
    const lastQueue = queueCalls.get(message.guild.id);
    if (!lastQueue) return;
    const queueEmbed = await getQueue(message);
-   lastQueue.message.edit(queueEmbed);
+   lastQueue.message.edit({ embeds: [queueEmbed] });
    updateQueueMessage(lastQueue);
 }
 
@@ -79,7 +79,7 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;
    };
 
-   const collector = message.createReactionCollector(filter, { time: ms('3h') });
+   const collector = message.createReactionCollector({ filter, time: ms('3h') });
 
    let pageAt = 0;
 
@@ -99,7 +99,7 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
       queueCalls.set(message.guild.id, { message, pageAt });
       reaction.users.remove(user);
       const newEmbed = await createQueueEmbed(message, pages, pageAt, author);
-      message.edit(newEmbed);
+      message.edit({ embeds: [newEmbed] });
    });
 
    collector.on('end', collected => {

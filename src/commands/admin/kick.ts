@@ -34,6 +34,6 @@ export const command: Command = {
          reason: reason
       };
 
-      await message.channel.send(toEmbed(message, eventInfo));
+      await message.channel.send({ embeds: [toEmbed(message, eventInfo)] });
    }
 };

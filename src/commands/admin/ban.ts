@@ -23,7 +23,7 @@ export const command: Command = {
          return sendErrorEmbed(message, `Cannot kick ${member}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(member);
+      const banInfo: { user: User; reason?: string } = await message.guild.bans.fetch(member);
 
       if (banInfo) {
          return sendErrorEmbed(message, `${member} is already banned`);
@@ -53,6 +53,6 @@ export const command: Command = {
          reason: reason
       };
 
-      await message.channel.send(toEmbed(message, eventInfo));
+      await message.channel.send({ embeds: [toEmbed(message, eventInfo)] });
    }
 };

@@ -27,7 +27,7 @@ export const command: Command = {
          .setDescription(currentSong.url);
 
       player.skipSong();
-      const msg = message.channel.send(embed);
+      const msg = message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
       updateLastQueue(message);
    }

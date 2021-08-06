@@ -22,6 +22,6 @@ export const command: Command = {
       embed.setColor(embedColor);
       embed.setTitle(`Queue cleared by ${message.author.username}`);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

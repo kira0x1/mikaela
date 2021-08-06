@@ -32,6 +32,6 @@ export const command: Command = {
       embed.setTitle(`Paused ${player.currentlyPlaying.title}`);
       embed.setColor(embedColor);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

@@ -22,10 +22,10 @@ export const command: Command = {
       // embed.addField('Position', channel.position, true);
 
       if (channel instanceof GuildChannel) {
-         embed.addField('Members', channel.members.size, true);
+         embed.addField('Members', channel.members.size.toString(), true);
       }
 
-      await message.channel.send(embed);
+      await message.channel.send({ embeds: [embed] });
    }
 };
 

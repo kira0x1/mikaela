@@ -31,5 +31,5 @@ async function sendReminder(reminder: IReminder, client: Client) {
    if (!guild) return;
    const channel = guild.channels.cache.find(c => c.id === reminder.channelId);
    if (!channel || !(channel instanceof TextChannel)) return;
-   channel.send(`Reminder: ${reminder.content}`, { reply: reminder.userId });
+   channel.send(`<@${reminder.userId}> Reminder: ${reminder.content}`);
 }

@@ -25,6 +25,6 @@ export const command: Command = {
          .setImage(target.displayAvatarURL({ size: 4096, dynamic: true }));
 
       // Send the embed
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

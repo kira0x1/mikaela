@@ -16,7 +16,7 @@ export const command: Command = {
 
       let before: number = Date.now();
 
-      const msg: Message = await message.channel.send(embed);
+      const msg: Message = await message.channel.send({ embeds: [embed] });
 
       const sendDelay = Date.now() - before;
       embed.addField('Send', `${sendDelay} ms`, true);
@@ -24,6 +24,6 @@ export const command: Command = {
       const msgDelay = msg.createdTimestamp - message.createdTimestamp;
       embed.addField('Message', `${msgDelay} ms`, true);
 
-      await msg.edit(embed);
+      await msg.edit({ embeds: [embed] });
    }
 };

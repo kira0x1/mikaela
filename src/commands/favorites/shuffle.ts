@@ -98,7 +98,7 @@ async function createShuffleCollector(
 ) {
    const pages = getPages(songs);
    const embed = createShuffleEmbed(target, user, amount, pages, 0);
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
@@ -114,7 +114,7 @@ async function createShuffleCollector(
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
    };
 
-   const collector = msg.createReactionCollector(filter, { time: ms('3h') });
+   const collector = msg.createReactionCollector({ filter, time: ms('3h') });
 
    let currentPage = 0;
 
@@ -130,7 +130,7 @@ async function createShuffleCollector(
       reaction.users.remove(userReacted);
 
       const newEmbed = createShuffleEmbed(target, user, amount, pages, currentPage);
-      msg.edit(newEmbed);
+      msg.edit({ embeds: [newEmbed] });
    });
 
    collector.on('end', collected => {

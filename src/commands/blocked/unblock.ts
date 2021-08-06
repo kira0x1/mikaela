@@ -21,6 +21,6 @@ export const command: Command = {
 
       UnBlock(id);
       const embed = createFooter(message).addField(`Unblocked`, `<@${id}>`);
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

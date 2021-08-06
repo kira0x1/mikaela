@@ -62,7 +62,7 @@ async function displayAll(message: Message) {
       if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description, true);
    });
 
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
    createDeleteCollector(msg, message);
 }
 
@@ -90,7 +90,7 @@ async function displayOne(message: Message, query: string) {
       if (command.isDisabled) embed.setTitle('This command is disabled at the moment');
       else InsertCommandEmbed(embed, command);
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
       return;
    }
@@ -109,7 +109,7 @@ async function displayOne(message: Message, query: string) {
    commands.map(cmd => addCommandToEmbed(cmd, embed));
 
    // Send embed
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
 
    // Add reaction to delete embed when user is done
    createDeleteCollector(msg, message);

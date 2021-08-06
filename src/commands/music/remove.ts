@@ -56,7 +56,7 @@ export const command: Command = {
 
          addCodeField(embed, songs.map((s, i) => `${pos + i}: ${s.title}`).join('\n'));
 
-         message.channel.send(embed).then(msg => createDeleteCollector(msg, message));
+         message.channel.send({ embeds: [embed] }).then(msg => createDeleteCollector(msg, message));
          updateLastQueue(message);
          return;
       }
@@ -69,7 +69,7 @@ export const command: Command = {
          .setURL(song.url)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
-      message.channel.send(embed).then(msg => createDeleteCollector(msg, message));
+      message.channel.send({ embeds: [embed] }).then(msg => createDeleteCollector(msg, message));
       updateLastQueue(message);
    }
 };

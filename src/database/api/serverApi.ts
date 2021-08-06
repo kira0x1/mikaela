@@ -138,7 +138,7 @@ export const prefixes: Collection<string, string> = new Collection();
 export const bannedChannels: Collection<string, BannedChannel[]> = new Collection();
 
 export async function initServers(client: Client) {
-   const servers = await getAllServers(client.guilds.cache.array());
+   const servers = await getAllServers(client.guilds.cache.map(v => v));
 
    servers.map(server => {
       const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix;

@@ -24,6 +24,6 @@ export const command: Command = {
          .addField('Duration', song.duration.duration)
          .setURL(song.url);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

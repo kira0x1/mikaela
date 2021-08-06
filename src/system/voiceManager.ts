@@ -1,13 +1,13 @@
-import { Client, VoiceChannel } from 'discord.js';
-import { logger } from '../app';
-import { mainBotId, owner_server_id, isProduction } from '../config';
+import { Client, StageChannel, VoiceChannel } from 'discord.js';
+import { mikaelaId, logger } from '../app';
+import { coders_club_id, isProduction } from '../config';
 import { findPlayer } from '../util/musicUtil';
 import { VoiceRoleManager } from './voiceRoleManager';
 
 export async function initVoiceManager(client: Client) {
    const voiceManager = new VoiceManager(client);
 
-   const codersClubVoiceManager = new VoiceRoleManager(client.guilds.cache.get(owner_server_id));
+   const codersClubVoiceManager = new VoiceRoleManager(client.guilds.cache.get(coders_club_id));
 
    client.on('voiceStateUpdate', (oldMember, newMember) => {
       const member = (oldMember || newMember).member;
@@ -15,6 +15,8 @@ export async function initVoiceManager(client: Client) {
 
       const oldChannel = oldMember.channel;
       const newChannel = newMember.channel;
+
+      if (oldChannel instanceof StageChannel || newChannel instanceof StageChannel) return;
 
       // check if bot changed vc while playing, I.E dragged by a moderator to a different vc
       const player = findPlayer(guildId);
@@ -25,7 +27,7 @@ export async function initVoiceManager(client: Client) {
 
       if (newChannel && player.voiceChannel) {
          if (
-            oldMember?.id === mainBotId &&
+            oldMember?.id === mikaelaId &&
             oldChannel?.id === player.voiceChannel.id &&
             newChannel.id !== player.voiceChannel.id
          ) {
@@ -38,7 +40,7 @@ export async function initVoiceManager(client: Client) {
       if (!oldChannel && newChannel) {
          voiceManager.onVoiceJoin(newChannel);
 
-         if (guildId === owner_server_id && isProduction && client.user.id === mainBotId)
+         if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
             codersClubVoiceManager.emit('voice-join', member);
 
          return;
@@ -48,7 +50,7 @@ export async function initVoiceManager(client: Client) {
       if (!newChannel) {
          voiceManager.onVoiceLeave(oldChannel);
 
-         if (guildId === owner_server_id && isProduction && client.user.id === mainBotId)
+         if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
             codersClubVoiceManager.emit('voice-leave', member);
       }
    });

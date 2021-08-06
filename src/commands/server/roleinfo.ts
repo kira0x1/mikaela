@@ -33,14 +33,14 @@ async function sendEmbed(message: Message, role: Role) {
 
    addFields(embed, role);
 
-   await message.channel.send(embed);
+   await message.channel.send({ embeds: [embed] });
 }
 
 async function addFields(embed: MessageEmbed, role: Role) {
    embed.addField('Role ID', `\`${role.id}\``);
    embed.addField('Created at', role.createdAt.toUTCString());
-   embed.addField('Hoist', role.hoist, true);
-   embed.addField('Mentionable', role.mentionable, true);
-   embed.addField('Position', role.position, true);
-   embed.addField('Members with role', role.members.size, true);
+   embed.addField('Hoist', `${role.hoist}`, true);
+   embed.addField('Mentionable', `${role.mentionable}`, true);
+   embed.addField('Position', role.position.toString(), true);
+   embed.addField('Members with role', role.members.size.toString(), true);
 }

@@ -35,7 +35,7 @@ export const command: Command = {
             .setThumbnail(target.displayAvatarURL({ dynamic: true }))
             .setDescription('Favorites: none')
             .setColor(embedColor);
-         return message.channel.send(embed);
+         return message.channel.send({ embeds: [embed] });
       }
 
       ListFavorites(message, target, user);
@@ -103,7 +103,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
    const embed = createFavListEmbed(target, user, pages);
 
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
    favlistCalls.set(message.author.id, msg);
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
@@ -120,7 +120,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
    };
 
-   const collector = msg.createReactionCollector(filter, { time: ms('3h') });
+   const collector = msg.createReactionCollector({ filter, time: ms('3h') });
 
    let currentPage = 0;
 
@@ -137,7 +137,7 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
       const newEmbed = createFavListEmbed(target, user, pages, currentPage);
 
-      msg.edit(newEmbed);
+      msg.edit({ embeds: [newEmbed] });
    });
 
    collector.on('end', collected => {

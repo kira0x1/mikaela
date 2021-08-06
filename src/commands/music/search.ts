@@ -16,7 +16,7 @@ export const command: Command = {
 
       if (!song) {
          embed.setTitle(`Song "${query}" not found`);
-         return message.channel.send(embed);
+         return message.channel.send({ embeds: [embed] });
       }
 
       if (isPlaylist(song)) {
@@ -28,11 +28,11 @@ export const command: Command = {
             embed.addField(`${i + 1} ${songs[i].title}`, songs[i].url);
          }
 
-         message.channel.send(embed);
+         message.channel.send({ embeds: [embed] });
          return;
       }
 
       embed.setTitle(song.title).setDescription(song.duration.duration);
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

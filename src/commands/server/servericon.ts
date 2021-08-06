@@ -14,6 +14,6 @@ export const command: Command = {
          .setDescription(`Server icon for ${guild}`)
          .setImage(guild.iconURL({ dynamic: true }));
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

@@ -39,7 +39,7 @@ export class VoiceRoleManager extends EventEmitter {
 
    // adds voice role to all members currently in a vc
    async addVoiceRoleToAll() {
-      const states = this.guild.voiceStates.cache.array();
+      const states = this.guild.voiceStates.cache.map(v => v);
       for (const voiceState of states) {
          this.addVoiceRole(voiceState.member);
       }

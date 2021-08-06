@@ -33,6 +33,6 @@ export const command: Command = {
          .setColor(embedColor);
 
       // Send an embed confirming the stream has been paused
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

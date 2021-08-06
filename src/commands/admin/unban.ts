@@ -19,7 +19,7 @@ export const command: Command = {
          return sendErrorEmbed(message, `Could not find user ${args[0]}`);
       }
 
-      const banInfo: { user: User; reason?: string } = await message.guild.fetchBan(user);
+      const banInfo: { user: User; reason?: string } = await message.guild.bans.fetch(user);
 
       if (!banInfo) {
          return sendErrorEmbed(message, `${user} is not banned`);
@@ -36,6 +36,6 @@ export const command: Command = {
          reason: reason
       };
 
-      message.channel.send(toEmbed(message, eventInfo));
+      message.channel.send({ embeds: [toEmbed(message, eventInfo)] });
    }
 };

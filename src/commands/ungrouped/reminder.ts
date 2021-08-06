@@ -37,7 +37,7 @@ export async function setReminder(message: Message, time: string, content: strin
    const embed = createFooter(message).setTitle('Reminder set').setDescription(description);
 
    // Send embed telling the user that the reminder was created
-   message.channel.send(embed);
+   message.channel.send({ embeds: [embed] });
 
    let dbReminder: IReminder | undefined;
    const botId = message.client.user.id;

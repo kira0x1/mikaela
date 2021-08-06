@@ -26,7 +26,7 @@ export const command: Command = {
       // Create embed
       const embed = await createCurrentlyPlayingEmbed(player, message);
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       await createFavoriteCollector(currentSong, msg);
       await createDeleteCollector(msg, message);
    }

@@ -15,7 +15,7 @@ export const command: Command = {
 
       if (!arg) {
          embed.setTitle(`Prefix: ${getPrefix(message)}`);
-         message.channel.send(embed);
+         message.channel.send({ embeds: [embed] });
          return;
       }
 
@@ -23,6 +23,6 @@ export const command: Command = {
 
       embed.setTitle(`Prefix set to ${arg}`).setThumbnail(successIconUrl);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };
