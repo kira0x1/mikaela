@@ -40,11 +40,13 @@
       "lint": "eslint . --ext .ts"
    },
    "dependencies": {
+      "@discordjs/opus": "^0.5.3",
       "@discordjs/voice": "^0.5.6",
       "bufferutil": "^4.0.3",
       "chalk": "^4.1.2",
       "discord-ytdl-core": "^5.0.4",
       "discord.js": "^13.0.1",
+      "libsodium-wrappers": "^0.7.9",
       "minimist": "^1.2.5",
       "mongoose": "^5.13.5",
       "ms": "^2.1.3",
