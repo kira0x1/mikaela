@@ -72,14 +72,6 @@ export async function initPlayers(client: Client) {
       channels.forEach(channel => {
          if (channel instanceof VoiceChannel) voiceChannels.push(channel);
       });
-
-      voiceChannels.forEach(vc => {
-         if (vc.members.has(client.user.id)) {
-            logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`));
-            player.voiceChannel = vc;
-            player.playNext();
-         }
-      });
    }
 }
 

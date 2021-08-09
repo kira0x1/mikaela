@@ -32,20 +32,24 @@ if (config.args['testvc']) logger.info(chalk.bgGray.bold(`Will only join test vc
 
 // Instantiate discord.js client
 const client = new Client({
-   ws: {
-      intents: [
-         'GUILD_MEMBERS',
-         'GUILD_MESSAGE_REACTIONS',
-         'GUILD_MESSAGES',
-         'GUILDS',
-         'GUILD_EMOJIS',
-         'GUILD_VOICE_STATES'
+   intents: [
+      'GUILD_MEMBERS',
+      'GUILD_MESSAGE_REACTIONS',
+      'GUILD_MESSAGES',
+      'GUILDS',
+      'GUILD_EMOJIS_AND_STICKERS',
+      'GUILD_VOICE_STATES'
+   ],
+   presence: {
+      activities: [
+         {
+            name: 'Catgirls',
+            type: 'WATCHING',
+            url: 'https://github.com/kira0x1/mikaela'
+         }
       ]
    },
-   presence: {
-      activity: { name: 'Catgirls', type: 'WATCHING' }
-   },
-   disableMentions: 'everyone'
+   allowedMentions: { parse: ['users'], repliedUser: true }
 });
 
 async function init() {
@@ -89,9 +93,8 @@ client.on('ready', async () => {
 });
 
 // eslint-disable-next-line complexity
-client.on('message', async message => {
-   // check if the server has a custom prefix if not then use the default prefix
-   const prefix = db.prefixes.get(message.guild?.id) || config.prefix;
+client.on('messageCreate', message => {
+   const prefix = prefixes.get(message.guild?.id) || defaultPrefix;
 
    const prefixGiven = message.content.substr(0, prefix.length);
 
@@ -105,20 +108,23 @@ client.on('message', async message => {
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
-   if (message.channel.type === 'dm' && !config.perms.admin.users.includes(message.author.id)) {
+   if (message.channel.type === 'DM' && !perms.admin.users.includes(message.author.id)) {
       return;
    }
 
    // Check if we are able to send messages in this channel
    if (
-      message.channel.type === 'text' &&
+      message.channel.type === 'GUILD_TEXT' &&
       !message.channel.permissionsFor(client.user).has('SEND_MESSAGES')
    ) {
       return;
    }
 
    // Check if user is blocked
-   if (db.blockedUsers.has(message.author.id)) return message.author.send("Sorry you're blocked");
+   if (db.blockedUsers.has(message.author.id)) {
+      message.author.send("Sorry you're blocked");
+      return;
+   }
 
    // Check if this channel is black listed by the server moderators
    const channelId = message.channel.id;
@@ -132,7 +138,8 @@ client.on('message', async message => {
          .createFooter(message)
          .setTitle(`Channel "${bannedChannel.name}" is banned from use`)
          .setDescription(`Banned by <@${bannedChannel.bannedBy}>`);
-      return message.author.send(embed);
+      message.author.send({ embeds: [embed] });
+      return;
    }
 
    if (prefix === '.') {
@@ -196,24 +203,28 @@ client.on('message', async message => {
 
    if (!util.hasPerms(message.member, commandName)) {
       try {
-         return message.author.send(`You do not have permission to use ${util.wrap(command.name)}`);
+         message.author.send(`You do not have permission to use ${util.wrap(command.name)}`);
+         return;
       } catch (e) {}
    }
 
    // If command arguments are required and not given send an error message
-   if (command.args && args.length === 0) return util.sendArgsError(command, message);
+   if (command.args && args.length === 0) {
+      util.sendArgsError(command, message);
+      return;
+   }
 
    // Check if the command is in cooldown
    // if (checkCooldown(command, message)) return;
 
    if (message.guild) {
       // Check bot permissions
-      if (command.botPerms && !message.guild.me.hasPermission(command.botPerms)) {
+      if (command.botPerms && !message.guild.me.permissions.has(command.botPerms)) {
          return util.sendErrorEmbed(message, "I don't have permissions for that");
       }
 
       // Check user permissions
-      if (command.userPerms && !message.member.hasPermission(command.userPerms)) {
+      if (command.userPerms && !message.member.permissions.has(command.userPerms)) {
          return util.sendErrorEmbed(message, `You don\'t have permission to do that`);
       }
    }

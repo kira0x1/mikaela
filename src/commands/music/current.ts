@@ -5,7 +5,6 @@ import {
    createFavoriteCollector,
    getPlayer
 } from '../../util/musicUtil';
-import { quickEmbed } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'Now Playing',

@@ -12,7 +12,7 @@ export const command: Command = {
       const embed = createFooter(message).setTitle(`Players: ${players.size}`);
       const playing = players
          .filter(p => p.isPlaying)
-         .map(p => `server: ${p.guild.name}, channel: ${p.voiceChannel.name}`);
+         .map(p => `server: ${p.guild.name}, channel: ${p.guild.me.voice.channel.name}`);
       if (playing.length > 0) addCodeField(embed, '---Playing---\n\n' + playing.join('\n'));
 
       const notPlaying = players.filter(p => !p.isPlaying).map(p => p.guild.name);
