@@ -7,7 +7,8 @@ export const command: Command = {
    aliases: ['aici'],
    description: 'A command that posts a picture of aiicii 🥰',
 
-   execute(message, args) {
-      message.channel.send(videoUrl);
+   async execute(message, args) {
+      const msg = await message.channel.send(videoUrl);
+      msg.react('🦆');
    }
 };
