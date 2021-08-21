@@ -49,7 +49,10 @@ export async function addFavoriteToUser(member: DiscordUser, song: Song, message
       return;
    }
 
-   quickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`);
+   quickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`, {
+      deleteCollectorOwnerId: member.id,
+      deleteOriginalMessage: false
+   });
 
    user.favorites.push(song);
    return await user.save();
