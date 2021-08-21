@@ -31,6 +31,7 @@ export class Player {
    public lastPlayed: Song | undefined;
    public ytdlHighWaterMark: number = 1 << 30;
    public vcHighWaterMark = 1;
+   public seekTime = 0;
 
    // eslint-disable-next-line no-undef
    public vcTimeout: NodeJS.Timeout;
@@ -204,6 +205,7 @@ export class Player {
       if (!stream) return 0;
 
       let streamTime = (stream.streamTime - stream.pausedTime) / 1000;
+      streamTime += this.seekTime;
       return streamTime;
    }
 
@@ -242,7 +244,8 @@ export class Player {
       return `${prettyTime} / ${duration.duration}`;
    }
 
-   async startStream(song: Song) {
+   async startStream(song: Song, seek = 0) {
+      this.seekTime = seek;
       if (!this.voiceChannel) {
          logger.error('No Voicechannel');
          return;
@@ -254,7 +257,8 @@ export class Player {
             opusEncoded: true,
             highWaterMark: this.ytdlHighWaterMark,
             dlChunkSize: 0,
-            quality: 'highestaudio'
+            quality: 'highestaudio',
+            seek: seek
          });
 
          opusStream.on('error', error => {
@@ -307,6 +311,15 @@ export class Player {
    unpause() {
       if (!(this.currentlyPlaying && this.stream)) return;
       if (this.stream.paused) this.stream.resume();
+   }
+
+   seek(amount: number) {
+      if (!(this.currentlyPlaying && this.stream)) return;
+      const currentTime = this.getStreamTime();
+      let seekAmount = currentTime + amount / 1000;
+      if (seekAmount < 0) seekAmount = 0;
+
+      this.startStream(this.currentlyPlaying, seekAmount);
    }
 
    getStream() {
