@@ -66,6 +66,8 @@ export interface QuickEmbedOptions {
    addFooter?: boolean;
    autoDelete?: boolean;
    deleteDelay?: string;
+   deleteCollectorOwnerId?: string;
+   deleteOriginalMessage?: boolean;
 }
 
 export async function quickEmbed(message: Message, content: string, options?: QuickEmbedOptions) {
@@ -73,6 +75,8 @@ export async function quickEmbed(message: Message, content: string, options?: Qu
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
    const addDeleteCollector = options?.addDeleteCollector || true;
+   const deleteOriginalMessage =
+      options?.deleteOriginalMessage === undefined ? true : options.deleteOriginalMessage;
 
    const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor);
    embed.setTitle(content);
@@ -83,7 +87,7 @@ export async function quickEmbed(message: Message, content: string, options?: Qu
    }
 
    if (addDeleteCollector) {
-      createDeleteCollector(msg, message);
+      createDeleteCollector(msg, message, options?.deleteCollectorOwnerId, deleteOriginalMessage);
    }
 }
 

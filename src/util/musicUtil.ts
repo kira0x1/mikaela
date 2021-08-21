@@ -10,6 +10,7 @@ import {
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
+
 import { logger } from '../app';
 import { Command } from '../classes/Command';
 import { Player } from '../classes/Player';
@@ -158,12 +159,21 @@ function getFavReactionCooldown(user: User, userCooldowns: Collection<string, nu
    return now < expTime;
 }
 
-export async function createDeleteCollector(message: Message | Promise<Message>, previousMessage: Message) {
+export async function createDeleteCollector(
+   message: Message | Promise<Message>,
+   previousMessage: Message,
+   owner?: string,
+   deleteOriginalMessage = true
+) {
    const msg = message instanceof Message ? message : await message;
    await msg.react(trashEmoji.id);
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === trashEmoji.name && !user.bot && user.id === previousMessage.author.id;
+      return (
+         reaction.emoji.name === trashEmoji.name &&
+         !user.bot &&
+         user.id === (owner || previousMessage.author.id)
+      );
    };
 
    const collector = msg.createReactionCollector(filter, { time: collectorTime });
@@ -173,7 +183,7 @@ export async function createDeleteCollector(message: Message | Promise<Message>,
 
       if (msg.deletable) promises.push(msg.delete());
 
-      if (previousMessage.deletable) promises.push(previousMessage.delete());
+      if (deleteOriginalMessage && previousMessage.deletable) promises.push(previousMessage.delete());
 
       Promise.all(promises);
    });
