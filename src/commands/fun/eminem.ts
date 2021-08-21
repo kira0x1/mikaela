@@ -7,7 +7,19 @@ export const command: Command = {
    description: 'Eminem rapping I LOVE YOU 💖',
    aliases: ['iloveyou'],
 
-   execute(message, args) {
-      message.channel.send(videoLink);
+   async execute(message, args) {
+      const msg = await message.channel.send(videoLink);
+
+      const promises = [
+         msg.react('🇮'),
+         msg.react('🇱'),
+         msg.react('🇴'),
+         msg.react('🇻'),
+         msg.react('🇪'),
+         msg.react('🇺'),
+         msg.react('💖')
+      ];
+
+      Promise.all(promises);
    }
 };
