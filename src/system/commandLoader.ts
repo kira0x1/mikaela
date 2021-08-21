@@ -56,7 +56,8 @@ export function initCommands() {
                hidden: info.hidden,
                override: info.override,
                requiresPrefix: info.requiresPrefix,
-               usageName: info.usageName
+               usageName: info.usageName,
+               paginate: info.paginate
             };
             commandInfos.set(newInfo.name.toLowerCase(), newInfo);
          }
