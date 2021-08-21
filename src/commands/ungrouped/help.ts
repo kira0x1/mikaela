@@ -1,6 +1,8 @@
-import { Message, MessageEmbed } from 'discord.js';
-
+import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import ms from 'ms';
+import { logger } from '../../app';
 import { Command } from '../../classes/Command';
+import { CommandInfo } from '../../classes/CommandInfo';
 import { prefix } from '../../config';
 import {
    commandGroups,
@@ -97,6 +99,11 @@ async function displayOne(message: Message, query: string) {
    // Check if the info group has any commands
    if (!info.commands) return;
 
+   if (info.paginate) {
+      createHelpPagination(info, embed, message);
+      return;
+   }
+
    // Loop through all the commands in the CommandInfo class
    const commands = info.commands.filter(cmd => !cmd.isDisabled);
    commands.map(cmd => addCommandToEmbed(cmd, embed));
@@ -106,6 +113,82 @@ async function displayOne(message: Message, query: string) {
 
    // Add reaction to delete embed when user is done
    createDeleteCollector(msg, message);
+}
+
+async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, message: Message) {
+   const commands = info.commands.filter(cmd => !cmd.isDisabled);
+   if (!info.paginate) {
+      commands.map(cmd => addCommandToEmbed(cmd, embed));
+      return;
+   }
+
+   const pages: Collection<number, Command[]> = new Collection();
+   let count = 0;
+   let pageAtInLoop = 0;
+
+   pages.set(0, []);
+
+   for (const command of commands) {
+      if (count >= 5) {
+         count = 0;
+         pageAtInLoop++;
+         pages.set(pageAtInLoop, []);
+      }
+
+      const pageCommands = pages.get(pageAtInLoop);
+      if (pageCommands) pageCommands.push(command);
+
+      count++;
+   }
+
+   const page = pages.get(0);
+   embed.setTitle(`${info.name}\nPage ${1}/${pages.size}`);
+   page.map(command => addCommandToEmbed(command, embed));
+
+   const msg = await message.channel.send(embed);
+
+   // If there are only 1 or none pages then dont add the next, previous page emojis / collector
+   if (pages.size <= 1) {
+      createDeleteCollector(msg, message);
+      return;
+   }
+
+   msg.react('⬅')
+      .then(() => msg.react('➡'))
+      .finally(() => createDeleteCollector(msg, message));
+
+   const filter = (reaction: MessageReaction, userReacted: User) => {
+      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
+   };
+
+   const collector = msg.createReactionCollector(filter, { time: ms('5h') });
+
+   let currentPage = 0;
+
+   collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
+      if (reaction.emoji.name === '➡') {
+         currentPage++;
+         if (currentPage >= pages.size) currentPage = 0;
+      } else if (reaction.emoji.name === '⬅') {
+         currentPage--;
+         if (currentPage < 0) currentPage = pages.size - 1;
+      }
+
+      reaction.users.remove(userReacted);
+      const newEmbed = createFooter(message);
+      newEmbed.setTitle(`${info.name}\nPage ${currentPage + 1}/${pages.size}`);
+
+      const page = pages.get(currentPage);
+      page.map(command => addCommandToEmbed(command, newEmbed));
+
+      msg.edit(newEmbed);
+   });
+
+   collector.on('end', collected => {
+      msg.reactions.removeAll().catch(error => {
+         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
+      });
+   });
 }
 
 function addCommandToEmbed(command: Command, embed: MessageEmbed) {
