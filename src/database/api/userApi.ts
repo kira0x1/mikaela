@@ -42,7 +42,11 @@ export async function addFavoriteToUser(member: DiscordUser, song: Song, message
    const user = await findOrCreate(member);
 
    if (user.favorites?.find(fav => fav.id === song.id)) {
-      return quickEmbed(message, `Sorry **${user.username}** You already have this song as a favorite`);
+      quickEmbed(message, `Sorry **${user.username}** You already have this song as a favorite`, {
+         deleteCollectorOwnerId: member.id,
+         deleteOriginalMessage: false
+      });
+      return;
    }
 
    quickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`);
