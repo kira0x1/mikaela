@@ -5,7 +5,7 @@ const videoUrl = 'https://cdn.discordapp.com/attachments/702091543514710027/8784
 export const command: Command = {
    name: 'aiicii',
    aliases: ['aici'],
-   description: 'A command that posts a picture of aiicii 🥰',
+   description: 'A command that posts a picture of aiicii 🥰🦆',
 
    async execute(message, args) {
       const msg = await message.channel.send(videoUrl);
