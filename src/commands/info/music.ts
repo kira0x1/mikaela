@@ -4,5 +4,6 @@ export const info: CommandInfo = {
    name: 'Music',
    description: 'Plays Music',
    aliases: [],
-   commands: []
+   commands: [],
+   paginate: true
 };
