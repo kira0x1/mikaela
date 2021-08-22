@@ -1,8 +1,7 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-
-import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, token } from './config';
+import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, discordToken } from './config';
 import { bannedChannels, initServers, prefixes, saveAllServersQueue } from './database/api/serverApi';
 import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
@@ -70,7 +69,7 @@ async function init() {
    if (!skipDB) await connectToDB();
 
    // login to discord
-   client.login(token);
+   client.login(discordToken);
 }
 
 client.on('ready', async () => {

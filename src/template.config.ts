@@ -1,29 +1,26 @@
-const production_prefix = '.';
-const development_prefix = '$';
-
-const mikaela_token = 'TOKEN';
-
-export const spotify_tokens = {
+// Tokens
+export const discordToken = 'TOKEN';
+export const spotifyToken = {
    clientId: 'X',
    clientSecret: 'X'
 };
 
+// Arg Parsing
 export const args = require('minimist')(process.argv.slice(2));
+export const isProduction = args['production']; // true if --production is an arg
 
-// Returns true if --production is an argument
-export const isProduction = args['production'];
-
+// Prefix
+const devPrefix = '$';
+const prodPrefix = '.';
 const cmdPrefix = args['prefix'];
+export const prefix = cmdPrefix || isProduction ? prodPrefix : devPrefix;
 
-export const prefix = cmdPrefix || isProduction ? production_prefix : development_prefix;
-
-export const token = mikaela_token;
-
+// Database
 // @ts-ignore
 const prodDB = 'MONGODB URL';
-
 export const dbURI = prodDB;
 
+// Perms
 export const perms = {
    kira: {
       name: 'kira',
