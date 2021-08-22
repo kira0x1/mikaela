@@ -2,20 +2,17 @@ import chalk from 'chalk';
 import ytdl, { getInfo } from 'discord-ytdl-core';
 import { Client, Guild, Message, StreamDispatcher, VoiceChannel } from 'discord.js';
 import ms from 'ms';
-
+import progressbar from 'string-progressbar';
 import { logger } from '../app';
+import { isProduction } from '../config';
+import { bannedChannels } from '../database/api/serverApi';
 import { quickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
-import { args, coders_club_id, isProduction } from '../config';
-import progressbar from 'string-progressbar';
-import { bannedChannels } from '../database/api/serverApi';
 
 const minVolume = 0;
 const maxVolume = 12;
 const vcWaitTime: number = ms('30m');
-
-const testVoiceID = '610883901472243713';
 
 export class Player {
    public guild: Guild;
@@ -43,14 +40,6 @@ export class Player {
       this.guild = guild;
       this.client = client;
       this.queue = new Queue();
-
-      if (guild.id !== coders_club_id) return;
-      this.joinTestVc = args['testvc'];
-
-      if (this.joinTestVc) {
-         const vc = guild.channels.cache.get(testVoiceID);
-         if (vc instanceof VoiceChannel) this.testVc = vc;
-      }
    }
 
    async join(message: Message) {

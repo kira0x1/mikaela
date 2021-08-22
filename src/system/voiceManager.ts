@@ -1,13 +1,9 @@
 import { Client, VoiceChannel } from 'discord.js';
-import { mikaelaId, logger } from '../app';
-import { coders_club_id, isProduction } from '../config';
+import { logger, mikaelaId } from '../app';
 import { findPlayer } from '../util/musicUtil';
-import { VoiceRoleManager } from './voiceRoleManager';
 
 export async function initVoiceManager(client: Client) {
    const voiceManager = new VoiceManager(client);
-
-   const codersClubVoiceManager = new VoiceRoleManager(client.guilds.cache.get(coders_club_id));
 
    client.on('voiceStateUpdate', (oldMember, newMember) => {
       const member = (oldMember || newMember).member;
@@ -37,19 +33,12 @@ export async function initVoiceManager(client: Client) {
       // User joined a vc
       if (!oldChannel && newChannel) {
          voiceManager.onVoiceJoin(newChannel);
-
-         if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
-            codersClubVoiceManager.emit('voice-join', member);
-
          return;
       }
 
       // User left vc
       if (!newChannel) {
          voiceManager.onVoiceLeave(oldChannel);
-
-         if (guildId === coders_club_id && isProduction && client.user.id === mikaelaId)
-            codersClubVoiceManager.emit('voice-leave', member);
       }
    });
 }

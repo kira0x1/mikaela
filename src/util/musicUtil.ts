@@ -21,7 +21,7 @@ import { getAllServers } from '../database/api/serverApi';
 import { addFavoriteToUser } from '../database/api/userApi';
 import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { sendArgsError } from './commandUtil';
-import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
+import { heartEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
 
 const collectorTime = ms('3h');
@@ -46,8 +46,6 @@ export function ConvertDuration(durationSeconds: number | string) {
 }
 
 export async function initPlayers(client: Client) {
-   initEmoji(client);
-
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
       logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
@@ -122,10 +120,10 @@ export async function createCurrentlyPlayingEmbed(player: Player, message: Messa
 }
 
 export async function createFavoriteCollector(song: Song, message: Message) {
-   await message.react(heartEmoji.id);
+   await message.react(heartEmoji);
 
    const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === heartEmoji.name && !user.bot;
+      return reaction.emoji.name === heartEmoji && !user.bot;
    };
 
    const collector = message.createReactionCollector(filter, { time: collectorTime });
@@ -166,13 +164,11 @@ export async function createDeleteCollector(
    deleteOriginalMessage = true
 ) {
    const msg = message instanceof Message ? message : await message;
-   await msg.react(trashEmoji.id);
+   await msg.react(trashEmoji);
 
    const filter = (reaction: MessageReaction, user: User) => {
       return (
-         reaction.emoji.name === trashEmoji.name &&
-         !user.bot &&
-         user.id === (owner || previousMessage.author.id)
+         reaction.emoji.name === trashEmoji && !user.bot && user.id === (owner || previousMessage.author.id)
       );
    };
 

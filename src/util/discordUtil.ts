@@ -1,18 +1,10 @@
-import { Client, Emoji, Guild, Message, User } from 'discord.js';
+import { Guild, Message, User } from 'discord.js';
+
 import { logger } from '../app';
-import { coders_club_id } from '../config';
 import { prefixes } from '../database/api/serverApi';
 
-export let heartEmoji: Emoji;
-export let trashEmoji: Emoji;
-
-export function initEmoji(client: Client) {
-   const coders_club = client.guilds.cache.get(coders_club_id);
-   if (!coders_club) return;
-
-   heartEmoji = getEmojiFromGuild(coders_club, 'heart');
-   trashEmoji = getEmojiFromGuild(coders_club, 'delete');
-}
+export const heartEmoji = '💖';
+export const trashEmoji = '✖';
 
 export function getEmojiFromGuild(guild: Guild, emojiName: string) {
    const emoji = guild.emojis.cache.find(em => em.name.toLowerCase() === emojiName.toLowerCase());

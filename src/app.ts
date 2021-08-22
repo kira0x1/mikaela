@@ -1,14 +1,13 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
+
 import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, token } from './config';
-import { initServers, saveAllServersQueue, prefixes, bannedChannels } from './database/api/serverApi';
+import { bannedChannels, initServers, prefixes, saveAllServersQueue } from './database/api/serverApi';
 import { connectToDB, db } from './database/dbConnection';
 import { blockedUsers } from './database/models/Blocked';
 import { initCommands } from './system/commandLoader';
-import { initGreeter } from './system/serverGreeter';
 import { syncReminders } from './system/syncReminders';
-import { syncRoles } from './system/syncRoles';
 import { initVoiceManager } from './system/voiceManager';
 import {
    findCommand,
@@ -18,7 +17,7 @@ import {
    sendArgsError
 } from './util/commandUtil';
 import { initPlayers, players } from './util/musicUtil';
-import { sendErrorEmbed, wrap, createFooter } from './util/styleUtil';
+import { createFooter, sendErrorEmbed, wrap } from './util/styleUtil';
 
 export const mikaelaId = '585874337618460672';
 
@@ -83,15 +82,6 @@ client.on('ready', async () => {
 
    // Add event listener to add/remove voice role
    initVoiceManager(client);
-
-   // Make sure were in production, and not on mikaela 2
-   if (isProduction && client.user.id === mikaelaId) {
-      // Add event listeners to #roles
-      syncRoles(client);
-
-      // Add event listener to welcome new members
-      initGreeter(client);
-   }
 
    syncReminders(client);
 
