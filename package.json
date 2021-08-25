@@ -43,6 +43,7 @@
       "@discordjs/opus": "^0.6.0",
       "bufferutil": "^4.0.3",
       "chalk": "^4.1.2",
+      "discord-banner": "^1.6.7",
       "discord-paginationembed": "^2.1.0",
       "discord-ytdl-core": "^5.0.4",
       "discord.js": "^12.5.3",
