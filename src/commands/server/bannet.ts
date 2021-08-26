@@ -1,9 +1,9 @@
+import { getUserBanner } from 'discord-banner';
 import { MessageEmbed } from 'discord.js';
 import { Command } from '../../classes/Command';
-import { createFooter, quickEmbed } from '../../util/styleUtil';
-import { getTarget } from '../../util/discordUtil';
-import { getUserBanner } from 'discord-banner';
 import { token } from '../../config';
+import { getTarget } from '../../util/discordUtil';
+import { createFooter, quickEmbed } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'banner',
@@ -22,10 +22,13 @@ export const command: Command = {
       const banner = await getUserBanner(target.id, { format: 'gif', size: 1024, token: token });
 
       // Create the embed
-      const embed: MessageEmbed = createFooter(message)
-         .setTitle('Banner')
-         .setDescription(`Banner of ${target}`)
-         .setImage(banner.url);
+      const embed: MessageEmbed = createFooter(message).setTitle('Banner');
+
+      if (!banner.url) {
+         embed.setDescription(`${target} does not have a banner`);
+      } else {
+         embed.setDescription(`Banner of ${target}`).setImage(banner.url);
+      }
 
       // Send the embed
       message.channel.send(embed);
