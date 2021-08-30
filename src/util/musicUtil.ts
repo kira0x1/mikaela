@@ -23,7 +23,6 @@ import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { sendArgsError } from './commandUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
-
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
 
