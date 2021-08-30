@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { connect, connection } from 'mongoose';
-
 import { logger } from '../app';
 import { dbURI } from '../config';
 import { CacheBlockedList } from './models/Blocked';
