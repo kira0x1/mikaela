@@ -288,7 +288,6 @@ export class Player {
             logger.error(`stream error: ${error}`);
          });
       } catch (error) {
-         this.playNext();
          logger.error(error.stack);
       }
    }
