@@ -284,11 +284,11 @@ export class Player {
          });
 
          this.stream.on('error', error => {
-            // this.playNext();
+            this.playNext();
             logger.error(`stream error: ${error}`);
          });
       } catch (error) {
-         // this.playNext();
+         this.playNext();
          logger.error(error.stack);
       }
    }
