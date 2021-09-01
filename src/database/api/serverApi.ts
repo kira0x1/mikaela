@@ -89,6 +89,7 @@ export async function setServerPrefix(message: Message, prefix: string) {
    }
 
    prefixes.set(message.guild.id, prefix);
+   server.markModified('prefixes');
    await server.save();
 }
 
@@ -111,6 +112,7 @@ export async function setBannedChannel(message: Message, channel: GuildChannel) 
    channelsBanned.push(newBannedChannel);
    bannedChannels.set(server.serverId, channelsBanned);
 
+   server.markModified('bannedChannels');
    await server.save();
    return true;
 }
@@ -128,6 +130,7 @@ export async function unbanChannel(message: Message, channel: GuildChannel) {
    }
 
    bannedChannels.set(server.serverId, server.bannedChannels);
+   server.markModified('bannedChannels');
    await server.save();
 }
 

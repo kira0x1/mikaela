@@ -36,6 +36,7 @@ async function RemoveByIndex(args: string[], message: Message) {
       .splice(index - 1, 1)
       .shift();
 
+   user.favorites.reverse();
    user.save();
 
    if (!song) {

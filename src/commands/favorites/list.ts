@@ -98,8 +98,8 @@ export function getPages(songs: Song[]) {
 }
 
 async function ListFavorites(message: Message, target: User, user: IUser) {
-   const songs = user.favorites.reverse();
-   const pages = getPages(songs);
+   const songs = user.favorites;
+   const pages = getPages(songs.reverse());
 
    const embed = createFavListEmbed(target, user, pages);
 
