@@ -9,8 +9,15 @@ export const command: Command = {
    isSubCommand: true,
 
    async execute(message, args) {
-      const title = args.join('');
+      let description = '';
+
+      const argsGiven = args.join(' ').split(',');
+      const title = argsGiven[0];
+      if (argsGiven.length > 1) {
+         description = argsGiven[1];
+      }
+
       const author = await findOrCreate(message.author);
-      createPlaylist(author._id, title);
+      createPlaylist(author._id, title, description);
    }
 };
