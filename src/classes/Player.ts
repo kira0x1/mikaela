@@ -223,6 +223,12 @@ export class Player {
       }
 
       const current = streamTime;
+
+      if (!current || !total) {
+         logger.warn(`failed to create progressbar\ncurrent: ${current}, total: ${total}`);
+         return;
+      }
+
       const songBar = progressbar.splitBar(total, current, 20)[0];
 
       return songBar;
@@ -288,7 +294,7 @@ export class Player {
             logger.error(`stream error: ${error}`);
          });
       } catch (error) {
-         logger.error(error.stack);
+         logger.error(error);
       }
    }
 
