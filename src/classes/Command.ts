@@ -9,7 +9,13 @@ export interface Command {
    args?: boolean;
    hidden?: boolean;
    perms?: Permission[];
+
+   // If this is true then the command group's prefix must be called first
+   // for example if favorites/play.ts is set to true
+   // then .fav play 3 must be called to call that command
+   // this helps with conflicting commands. ( we have music/play.ts and favorites/play.ts )
    isSubCommand?: boolean;
+
    isDisabled?: boolean;
    userPerms?: PermissionResolvable;
    botPerms?: PermissionResolvable;
