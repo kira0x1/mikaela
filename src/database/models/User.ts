@@ -14,7 +14,7 @@ export const UserSchema = new Schema({
    id: { type: String, required: true },
    tag: { type: String, required: true },
    favorites: { type: Array<Song>(), required: false },
-   createdAt: Date
+   createdAt: { type: Date, default: Date.now() }
 });
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
