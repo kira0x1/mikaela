@@ -30,7 +30,7 @@ export const command: Command = {
 
       try {
          pos = checkPos(arg1, player);
-      } catch (error) {
+      } catch (error: any) {
          return quickEmbed(message, error.message);
       }
 
@@ -39,7 +39,7 @@ export const command: Command = {
       if (arg2) {
          try {
             pos2 = checkPos(arg2, player);
-         } catch (error) {
+         } catch (error: any) {
             return quickEmbed(message, error.message);
          }
       }

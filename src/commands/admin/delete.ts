@@ -1,7 +1,7 @@
 import { Constants } from 'discord.js';
 import { logger } from '../../app';
 import { Command } from '../../classes/Command';
-import { createFooter, addCodeField, errorIconUrl, successIconUrl } from '../../util/styleUtil';
+import { addCodeField, createFooter, errorIconUrl, successIconUrl } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'delete',
@@ -47,7 +47,7 @@ export const command: Command = {
 
          addCodeField(embed, deletedMessagesPretty);
          author.send(embed);
-      } catch (error) {
+      } catch (error: any) {
          if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return;
          logger.error(error);
 

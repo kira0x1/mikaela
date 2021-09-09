@@ -43,7 +43,7 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
       if (!details) return;
 
       return convertDetailsToSong(details);
-   } catch (error) {
+   } catch (error: any) {
       logger.error(error.stack);
    }
 }
@@ -92,7 +92,7 @@ async function getSongDetails(link: string) {
 
       if (!info) return;
       return info.videoDetails;
-   } catch (error) {
+   } catch (error: any) {
       logger.error(error.stack);
    }
 }
