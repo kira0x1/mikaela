@@ -4,5 +4,6 @@ export const info: CommandInfo = {
    name: 'Playlists',
    description: 'Users playlists',
    commands: [],
-   aliases: ['pl', 'plist']
+   aliases: ['pl', 'plist'],
+   override: 'list'
 };
