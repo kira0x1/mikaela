@@ -10,7 +10,6 @@ import {
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
-
 import { logger } from '../app';
 import { Command } from '../classes/Command';
 import { Player } from '../classes/Player';
@@ -19,7 +18,7 @@ import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
 import { getAllServers } from '../database/api/serverApi';
 import { addFavoriteToUser } from '../database/api/userApi';
-import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
+import { getSong } from './apiUtil';
 import { sendArgsError } from './commandUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
@@ -255,29 +254,29 @@ export async function onSongRequest(
       return;
    }
 
-   if (isPlaylist(song)) {
-      const playlistSongs = await convertPlaylistToSongs(song);
+   // if (isPlaylist(song)) {
+   //    const playlistSongs = await convertPlaylistToSongs(song);
 
-      const firstSong = playlistSongs[0];
-      player.addSong(firstSong, message, onlyAddToQueue);
+   //    const firstSong = playlistSongs[0];
+   //    player.addSong(firstSong, message, onlyAddToQueue);
 
-      const embed = createFooter(message)
-         .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
-         .setDescription(
-            `Playing ${firstSong.title}\n${
-               firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url
-            }\n\u200b`
-         );
+   //    const embed = createFooter(message)
+   //       .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
+   //       .setDescription(
+   //          `Playing ${firstSong.title}\n${
+   //             firstSong.spotifyUrl ? firstSong.spotifyUrl : firstSong.url
+   //          }\n\u200b`
+   //       );
 
-      for (let i = 1; i < playlistSongs.length && i < 20; i++) {
-         const psong = playlistSongs[i];
-         embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
-         player.queue.addSong(psong);
-      }
+   //    for (let i = 1; i < playlistSongs.length && i < 20; i++) {
+   //       const psong = playlistSongs[i];
+   //       embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
+   //       player.queue.addSong(psong);
+   //    }
 
-      message.channel.send(embed);
-      return;
-   }
+   //    message.channel.send(embed);
+   //    return;
+   // }
 
    // Otherwise play the song
    playSong(message, song, onlyAddToQueue);

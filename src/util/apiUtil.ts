@@ -1,9 +1,8 @@
 import { Message, Util } from 'discord.js';
 import spotifyURI from 'spotify-uri';
 import spotify from 'spotify-url-info';
-import YouTube from 'youtube-sr';
+import YouTube, { Playlist as YtPlaylist } from 'youtube-sr';
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
-import ytpl from 'ytpl';
 import { logger } from '../app';
 import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
@@ -13,7 +12,7 @@ export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
 
-export async function getSong(query: string, allowPlaylists = false): Promise<Song | ytpl.Result | Song[]> {
+export async function getSong(query: string, allowPlaylists = false): Promise<Song | Song[]> {
    try {
       // Check if spotify song
       if (isSpotify(query)) {
@@ -28,11 +27,11 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
       }
 
       // Check if the query is a link to a youtube playlist
-      // if (ytpl.validateID(query)) {
-      //     const playlist = await ytpl(query)
-      //     if (!playlist) return
-      //     return playlist
-      // }
+      if (YouTube.isPlaylist(query)) {
+         const playlist = await YouTube.getPlaylist(query);
+         if (!playlist) return;
+         return convertPlaylistToSongs(playlist);
+      }
 
       // Search for a youtube for the video
       const songSearch = await YouTube.searchOne(query, 'video');
@@ -56,8 +55,8 @@ function isSpotify(query: string) {
 }
 
 // Returns true if its a playlist
-export function isPlaylist(song: Song | ytpl.Result): song is ytpl.Result {
-   return (song as ytpl.Result).items !== undefined;
+export function isPlaylist(song: Song | YtPlaylist): song is YtPlaylist {
+   return (song as YtPlaylist) !== undefined;
 }
 
 // Convertts the video details to ISong
@@ -72,13 +71,20 @@ function convertDetailsToSong(details: MoreVideoDetails): Song {
 }
 
 // Converts a playlist retrieved from ytpl to an array of ISong
-export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Song[]> {
+export async function convertPlaylistToSongs(playlist: YtPlaylist): Promise<Song[]> {
    const res: Song[] = [];
 
-   for (let i = 0; i < playlist.items.length && i < 20; i++) {
-      const item = playlist.items[i];
-      const info = await getInfo(item.shortUrl);
-      res.push(convertDetailsToSong(info.videoDetails));
+   for (const video of playlist.videos) {
+      if (!video) continue;
+      res.push({
+         ...video,
+         id: video.id || '',
+         title: video.title || '',
+         url: video.url,
+         duration: ConvertDuration(video.duration)
+      });
+      // const info = await getInfo(item.shortUrl);
+      // res.push(convertDetailsToSong(info.videoDetails));
    }
 
    return res;
