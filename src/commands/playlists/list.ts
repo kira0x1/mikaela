@@ -21,6 +21,12 @@ export const command: Command = {
       try {
          const res = await findPlaylist(message, args);
          if (!res) return;
+
+         if (!res.playlist) {
+            ListUserPlaylists(message, res.target, res.playlists);
+            return;
+         }
+
          ListPlaylist(message, res.target, res.playlist);
       } catch (error: any) {
          sendErrorEmbed(message, error.message);
@@ -212,7 +218,7 @@ function createPlaylistEmbed(
    return embed;
 }
 
-async function findPlaylist(message: Message, args: string[]) {
+export async function findPlaylist(message: Message, args: string[]) {
    let playlistIndex: number | undefined;
 
    for (let i = 0; i < args.length; i++) {
@@ -236,8 +242,7 @@ async function findPlaylist(message: Message, args: string[]) {
    if (playlists.length === 0) throw new Error(`${target} has no playlists`);
 
    if (playlistIndex === undefined) {
-      ListUserPlaylists(message, target, playlists);
-      return;
+      return { target: target, playlists: playlists };
    }
 
    playlistIndex--;
