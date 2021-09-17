@@ -73,7 +73,7 @@ export const command: Command = {
          }
 
          message.channel.send({ embeds: [embed] });
-      } catch (error) {
+      } catch (error: any) {
          sendErrorEmbed(message, error.message);
       }
    }

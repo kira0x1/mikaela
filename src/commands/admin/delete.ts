@@ -47,7 +47,7 @@ export const command: Command = {
 
          addCodeField(embed, deletedMessagesPretty);
          author.send({ embeds: [embed] });
-      } catch (error) {
+      } catch (error: any) {
          if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return;
          logger.error(error);
 
