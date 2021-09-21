@@ -2,6 +2,7 @@ import { Client, Emoji, Guild, Message, User } from 'discord.js';
 import { logger } from '../app';
 import { coders_club_id } from '../config';
 import { prefixes } from '../database/api/serverApi';
+import axios, { AxiosRequestConfig } from 'axios';
 
 export let heartEmoji: Emoji;
 export let trashEmoji: Emoji;
@@ -57,4 +58,35 @@ export function findRole(message: Message, query: string) {
 
 export function getPrefix(message: Message) {
    return prefixes.get(message.guild.id);
+}
+
+export interface BannerOptions {
+   format?: 'png' | 'jpg' | 'gif';
+   size?: 256 | 512 | 1024 | 2048 | 4096;
+}
+
+export async function getBanner(userId: string, token: string, options?: BannerOptions) {
+   const config: AxiosRequestConfig = {
+      url: `https://discord.com/api/v8/users/${userId}`,
+      headers: {
+         Authorization: `Bot ${token}`
+      },
+      method: 'GET'
+   };
+
+   const response = await axios.request(config);
+
+   const data = response.data;
+   const status = response.status;
+
+   if (status === 401) throw new Error(`Failed to authorize, make sure the bot token is correct`);
+   if (status === 404) throw new Error(`Could not find user with id: ${userId}`);
+
+   const banner = data.banner;
+   if (!banner) return null;
+
+   const format = banner.startsWith('a_') ? 'gif' : options?.format ? options.format : 'png';
+   const size = options?.size ? options.size : '4096';
+
+   return `https://cdn.discordapp.com/banners/${userId}/${banner}.${format}?size=${size}`;
 }
