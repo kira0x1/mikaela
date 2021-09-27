@@ -35,7 +35,7 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.searchOne(query, 'video');
+      const songSearch = await YouTube.searchOne(query, 'video', false);
       if (!songSearch) return;
 
       // If a video is found then get details and convert it to ISong
