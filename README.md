@@ -5,29 +5,3 @@
 
 **[Click this to invite mikaela to your server.](https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=37038144&scope=bot)**
 If you want to add a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot) to invite mikaela-2
-
-## Commands
-
-### Help
-
-> **Description**: lists all commands.
-
-### Music
-
-> **Description**: Plays music via links or youtube searches.
-
-### Favorites
-
-> **Description**: Saves a list of user's favorite songs, and can shuffle through them.
-
-### Fun
-
-> **Description**: A few fun commands
-
-### Vote
-
-> **Description**: Create a strawpoll.
-
-### Reminder
-
-> **Description**: Set a reminder.
