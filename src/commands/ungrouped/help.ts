@@ -236,7 +236,7 @@ function InsertCommandEmbed(embed: MessageEmbed, command: Command) {
    }
 
    if (command.aliases) {
-      const aliasesString = wrap(command.aliases, '`');
+      const aliasesString = command.aliases.length > 0 ? wrap(command.aliases, '`') : wrap('none', '`');
       embed.addField('aliases: ', aliasesString);
    }
 
