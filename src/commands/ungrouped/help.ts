@@ -142,7 +142,9 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
    }
 
    const page = pages.get(0);
-   embed.setTitle(`${info.name}\nPage ${1}/${pages.size}`);
+   embed.setTitle(createPageEmbedTitle(info, pages, commands, 1));
+   embed.setDescription(`Commands: ${commands.length}`);
+
    page.map(command => addCommandToEmbed(command, embed));
 
    const msg = await message.channel.send(embed);
@@ -176,7 +178,9 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
 
       reaction.users.remove(userReacted);
       const newEmbed = createFooter(message);
-      newEmbed.setTitle(`${info.name}\nPage ${currentPage + 1}/${pages.size}`);
+
+      newEmbed.setTitle(createPageEmbedTitle(info, pages, commands, currentPage + 1));
+      newEmbed.setDescription(`***${commands.length} commands***`);
 
       const page = pages.get(currentPage);
       page.map(command => addCommandToEmbed(command, newEmbed));
@@ -241,4 +245,13 @@ function InsertCommandEmbed(embed: MessageEmbed, command: Command) {
    }
 
    return embed;
+}
+
+function createPageEmbedTitle(
+   info: CommandInfo,
+   pages: Collection<number, Command[]>,
+   commands: Command[],
+   pageAt: number = 1
+) {
+   return `${info.name}\nPage ${pageAt}/${pages.size}`;
 }
