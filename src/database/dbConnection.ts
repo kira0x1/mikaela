@@ -9,11 +9,11 @@ export async function connectToDB() {
    connect(dbURI);
 }
 
-export const db = connection;
+export const dbConnection = connection;
 
-db.on('error', err => logger.error(err));
+dbConnection.on('error', err => logger.error(err));
 
-db.on('open', () => {
+dbConnection.on('open', () => {
    logger.info(chalk.bgGreen.bold('Connected to MongoDB'));
    CacheBlockedList();
 });

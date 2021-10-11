@@ -1,6 +1,6 @@
 import { Client, VoiceChannel } from 'discord.js';
-import { mikaelaId, logger } from '../app';
-import { coders_club_id, isProduction } from '../config';
+import { logger } from '../app';
+import { mikaelaId, coders_club_id, isProduction } from '../config';
 import { findPlayer } from '../util/musicUtil';
 import { VoiceRoleManager } from './voiceRoleManager';
 

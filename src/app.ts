@@ -1,26 +1,11 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
 import { createLogger, format, transports } from 'winston';
-import { args as cmdArgs, isProduction, perms, prefix as defaultPrefix, token } from './config';
-import { initServers, saveAllServersQueue, prefixes, bannedChannels } from './database/api/serverApi';
-import { connectToDB, db } from './database/dbConnection';
-import { blockedUsers } from './database/models/Blocked';
-import { initCommands } from './system/commandLoader';
-import { initGreeter } from './system/serverGreeter';
-import { syncReminders } from './system/syncReminders';
-import { syncRoles } from './system/syncRoles';
-import { initVoiceManager } from './system/voiceManager';
-import {
-   findCommand,
-   findCommandGroup,
-   getCommandOverride,
-   hasPerms,
-   sendArgsError
-} from './util/commandUtil';
-import { initPlayers, players } from './util/musicUtil';
-import { sendErrorEmbed, wrap, createFooter } from './util/styleUtil';
 
-export const mikaelaId = '585874337618460672';
+import * as config from './config';
+import * as db from './database';
+import * as sys from './system';
+import * as util from './util';
 
 // Create logger
 export const logger = createLogger({
@@ -28,18 +13,22 @@ export const logger = createLogger({
    format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
 });
 
-// print args - production, skipdb, etc
-const envString = isProduction ? '-------production-------' : '-------development-------';
-const dbString =
-   isProduction || cmdArgs['prodDB'] ? '-------production DB-------' : '-------development DB-------';
-logger.info(chalk.bgRed.bold(envString));
-logger.info(chalk.bgRed.bold(dbString));
+// print environment - production / development
+logger.info(
+   chalk.bgRed.bold(config.isProduction ? '-------production-------' : '-------development-------')
+);
+
+// print database - production db / development db
+logger.info(
+   chalk.bgRed.bold(
+      config.isProduction || config.args['prodDB']
+         ? '-------production DB-------'
+         : '-------development DB-------'
+   )
+);
 
 // print testvc arg
-cmdArgs['testvc'] && logger.info(chalk.bgGray.bold(`Will only join test vc`));
-
-// print prefix
-// logger.info(chalk`{bold prefix:} {bgMagenta.bold ${prefix}}`);
+if (config.args['testvc']) logger.info(chalk.bgGray.bold(`Will only join test vc`));
 
 // Instantiate discord.js client
 const client = new Client({
@@ -55,55 +44,55 @@ const client = new Client({
    },
    presence: {
       activity: {
-         name: 'Catgirls',
-         type: 'WATCHING',
-         url: 'https://github.com/kira0x1/mikaela'
+         name: 'Catgirls\nInvite mikaela: https://github.com/kira0x1/mikaela',
+         type: 'WATCHING'
       }
    },
    disableMentions: 'everyone'
 });
 
 async function init() {
-   const skipDB: boolean = cmdArgs['skipDB'];
+   const skipDB: boolean = config.args['skipDB'];
    if (skipDB) logger.log('info', chalk.bgMagenta.bold('----SKIPPING DB----\n'));
 
    // if skipdb flag is false then connect to mongodb
-   if (!skipDB) await connectToDB();
+   if (!skipDB) await db.connectToDB();
 
    // login to discord
-   client.login(token);
+   client.login(config.token);
 }
 
 client.on('ready', async () => {
    // Setup Prefixes
-   await initServers(client);
+   await db.initServers(client);
 
    // Setup players
-   initPlayers(client);
+   util.initPlayers(client);
 
    // Add event listener to add/remove voice role
-   initVoiceManager(client);
+   sys.initVoiceManager(client);
 
    // Make sure were in production, and not on mikaela 2
-   if (isProduction && client.user.id === mikaelaId) {
+   if (config.isProduction && client.user.id === config.mikaelaId) {
       // Add event listeners to #roles
-      syncRoles(client);
+      sys.syncRoles(client);
 
       // Add event listener to welcome new members
-      initGreeter(client);
+      sys.initGreeter(client);
    }
 
-   syncReminders(client);
+   sys.syncReminders(client);
 
    // Read command files and create a collection for the commands
-   initCommands();
+   sys.initCommands();
 
    logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
 });
 
 // eslint-disable-next-line complexity
 client.on('message', async message => {
-   const prefix = prefixes.get(message.guild?.id) || defaultPrefix;
+   // check if the server has a custom prefix if not then use the default prefix
+   const prefix = db.prefixes.get(message.guild?.id) || config.prefix;
 
    const prefixGiven = message.content.substr(0, prefix.length);
 
@@ -117,7 +106,7 @@ client.on('message', async message => {
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
-   if (message.channel.type === 'dm' && !perms.admin.users.includes(message.author.id)) {
+   if (message.channel.type === 'dm' && !config.perms.admin.users.includes(message.author.id)) {
       return;
    }
 
@@ -130,17 +119,18 @@ client.on('message', async message => {
    }
 
    // Check if user is blocked
-   if (blockedUsers.has(message.author.id)) return message.author.send("Sorry you're blocked");
+   if (db.blockedUsers.has(message.author.id)) return message.author.send("Sorry you're blocked");
 
    // Check if this channel is black listed by the server moderators
    const channelId = message.channel.id;
    const guildId = message.guild.id;
 
-   const blackListedChannels = bannedChannels.get(guildId);
+   const blackListedChannels = db.bannedChannels.get(guildId);
    const bannedChannel = blackListedChannels?.find(c => c.id === channelId);
 
    if (bannedChannel) {
-      const embed = createFooter(message)
+      const embed = util
+         .createFooter(message)
          .setTitle(`Channel "${bannedChannel.name}" is banned from use`)
          .setDescription(`Banned by <@${bannedChannel.bannedBy}>`);
       return message.author.send(embed);
@@ -168,12 +158,12 @@ client.on('message', async message => {
    commandName = commandName.toLowerCase();
 
    // Search for the command
-   let command = findCommand(commandName);
+   let command = util.findCommand(commandName);
 
    // If the command wasnt found check if its in a commandgroup
    if (!command) {
       // Get the sub-command input given by the user
-      const grp = findCommandGroup(commandName);
+      const grp = util.findCommandGroup(commandName);
 
       if (grp) {
          // Get the sub-command input given by the user
@@ -188,7 +178,7 @@ client.on('message', async message => {
 
          // If the command-group doesnt contain the command then check if the command-group has it set as an override
          if (!command) {
-            command = getCommandOverride(commandName);
+            command = util.getCommandOverride(commandName);
          } else {
             // If the command is not an overdrive command then remove the first argument, since its a subcommand
             args.shift();
@@ -205,14 +195,14 @@ client.on('message', async message => {
    // If the command is disabled then return
    if (command.isDisabled) return;
 
-   if (!hasPerms(message.member, commandName)) {
+   if (!util.hasPerms(message.member, commandName)) {
       try {
-         return message.author.send(`You do not have permission to use ${wrap(command.name)}`);
+         return message.author.send(`You do not have permission to use ${util.wrap(command.name)}`);
       } catch (e) {}
    }
 
    // If command arguments are required and not given send an error message
-   if (command.args && args.length === 0) return sendArgsError(command, message);
+   if (command.args && args.length === 0) return util.sendArgsError(command, message);
 
    // Check if the command is in cooldown
    // if (checkCooldown(command, message)) return;
@@ -220,12 +210,12 @@ client.on('message', async message => {
    if (message.guild) {
       // Check bot permissions
       if (command.botPerms && !message.guild.me.hasPermission(command.botPerms)) {
-         return sendErrorEmbed(message, "I don't have permissions for that");
+         return util.sendErrorEmbed(message, "I don't have permissions for that");
       }
 
       // Check user permissions
       if (command.userPerms && !message.member.hasPermission(command.userPerms)) {
-         return sendErrorEmbed(message, `You don\'t have permission to do that`);
+         return util.sendErrorEmbed(message, `You don\'t have permission to do that`);
       }
    }
 
@@ -242,9 +232,11 @@ client.on('message', async message => {
 process.on('message', async (msg: string) => {
    if (msg !== 'shutdown') return;
    logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`));
-   players.map(p => p.saveQueueState());
-   await saveAllServersQueue();
-   await db.close();
+
+   util.players.map(p => p.saveQueueState());
+
+   await db.saveAllServersQueue();
+   await db.dbConnection.close();
    process.exit(0);
 });
 

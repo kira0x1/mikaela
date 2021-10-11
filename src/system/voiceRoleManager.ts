@@ -1,8 +1,8 @@
 import EventEmitter from 'events';
 import { Guild, GuildMember, Role } from 'discord.js';
-import { logger, mikaelaId } from '../app';
+import { logger } from '../app';
 import chalk from 'chalk';
-import { isProduction } from '../config';
+import { isProduction, mikaelaId } from '../config';
 
 export class VoiceRoleManager extends EventEmitter {
    public guild: Guild;
