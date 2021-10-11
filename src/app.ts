@@ -43,10 +43,7 @@ const client = new Client({
       ]
    },
    presence: {
-      activity: {
-         name: 'Catgirls\nInvite mikaela: https://github.com/kira0x1/mikaela',
-         type: 'WATCHING'
-      }
+      activity: { name: 'Catgirls', type: 'WATCHING' }
    },
    disableMentions: 'everyone'
 });
