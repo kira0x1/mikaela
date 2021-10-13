@@ -251,7 +251,7 @@ function createPageEmbedTitle(
    info: CommandInfo,
    pages: Collection<number, Command[]>,
    commands: Command[],
-   pageAt: number = 1
+   pageAt = 1
 ) {
    return `${info.name}\nPage ${pageAt}/${pages.size}`;
 }

@@ -61,21 +61,10 @@
     ],
     "no-unused-vars": [
       "off"
-    ],
-    "unused-imports/no-unused-imports": "error",
-    "unused-imports/no-unused-vars": [
-      "off",
-      {
-        "vars": "all",
-        "varsIgnorePattern": "^_",
-        "args": "after-used",
-        "argsIgnorePattern": "^_"
-      }
     ]
   },
   "plugins": [
-    "import",
-    "unused-imports"
+    "import"
   ],
   "extends": [
     "alloy",
