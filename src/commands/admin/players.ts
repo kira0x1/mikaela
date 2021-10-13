@@ -10,10 +10,19 @@ export const command: Command = {
 
    execute(message, args) {
       const embed = createFooter(message).setTitle(`Players: ${players.size}`);
-      const playing = players
-         .filter(p => p.isPlaying)
-         .map(p => `server: ${p.guild.name}, channel: ${p.voiceChannel.name}`);
-      if (playing.length > 0) addCodeField(embed, '---Playing---\n\n' + playing.join('\n'));
+      const playing = players.filter(p => p.isPlaying).array();
+
+      let content = '';
+
+      for (const player of playing) {
+         const queueLength = player.queue.songs.length;
+         let field = `server: ${player.guild.name}, channel: ${player.voiceChannel.name}\n`;
+         field += `queue: ${queueLength}\n`;
+         field += `current: ${player.currentlyPlaying?.title}, duration: ${player.currentlyPlaying?.duration.duration}\n\n`;
+         content += field;
+      }
+
+      if (playing.length > 0) addCodeField(embed, '---Playing---\n\n' + content);
 
       const notPlaying = players.filter(p => !p.isPlaying).map(p => p.guild.name);
       if (notPlaying.length > 0) addCodeField(embed, '---Not Playing---\n\n' + notPlaying.join('\n'));
