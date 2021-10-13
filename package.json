@@ -41,7 +41,7 @@
    },
    "dependencies": {
       "@discordjs/opus": "^0.6.0",
-      "axios": "^0.22.0",
+      "axios": "^0.23.0",
       "bufferutil": "^4.0.4",
       "chalk": "^4.1.2",
       "discord-paginationembed": "^2.1.0",
@@ -64,18 +64,17 @@
    },
    "devDependencies": {
       "@types/ms": "^0.7.31",
-      "@types/node": "^16.10.3",
-      "@typescript-eslint/eslint-plugin": "^4.33.0",
-      "@typescript-eslint/parser": "^4.33.0",
+      "@types/node": "^16.10.5",
+      "@typescript-eslint/eslint-plugin": "^5.0.0",
+      "@typescript-eslint/parser": "^5.0.0",
       "eslint": "^8.0.0",
-      "eslint-config-alloy": "^4.3.0",
+      "eslint-config-alloy": "^4.4.0",
       "eslint-config-prettier": "^8.3.0",
-      "eslint-plugin-import": "^2.24.2",
+      "eslint-plugin-import": "^2.25.2",
       "eslint-plugin-prettier": "^4.0.0",
-      "eslint-plugin-unused-imports": "^1.1.5",
       "prettier": "^2.4.1",
       "rimraf": "^3.0.2",
-      "typescript": "^4.4.3"
+      "typescript": "^4.4.4"
    },
    "nodemonConfig": {
       "events": {

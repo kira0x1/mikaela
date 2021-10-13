@@ -76,13 +76,13 @@ export async function getBanner(userId: string, token: string, options?: BannerO
 
    const response = await axios.request(config);
 
-   const data = response.data;
+   const data: any = response.data;
    const status = response.status;
 
    if (status === 401) throw new Error(`Failed to authorize, make sure the bot token is correct`);
    if (status === 404) throw new Error(`Could not find user with id: ${userId}`);
 
-   const banner = data.banner;
+   const banner = data?.banner;
    if (!banner) return null;
 
    const format = banner.startsWith('a_') ? 'gif' : options?.format ? options.format : 'png';
