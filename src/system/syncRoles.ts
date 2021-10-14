@@ -11,14 +11,14 @@ import {
    User
 } from 'discord.js';
 import { logger } from '../app';
-import { coders_club_id } from '../config';
+import { owner_server_id } from '../config';
 import { getEmojiFromGuild } from '../util/discordUtil';
 
 const customRoles = require('../../customRoles.json');
 const sections: RoleSection[] = customRoles.sections;
 
 export async function syncRoles(client: Client) {
-   const guild = client.guilds.cache.get(coders_club_id);
+   const guild = client.guilds.cache.get(owner_server_id);
    if (!guild) return;
    const channel = guild.channels.cache.get('618438576119742464');
    if (!channel) return;

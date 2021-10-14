@@ -1,5 +1,5 @@
 import { GuildMember, Client, PartialGuildMember, TextChannel } from 'discord.js';
-import { coders_club_id } from '../config';
+import { owner_server_id } from '../config';
 
 export function initGreeter(client: Client) {
    client.on('guildMemberAdd', member => greetMember(member));
@@ -7,7 +7,7 @@ export function initGreeter(client: Client) {
 
 function greetMember(member: GuildMember | PartialGuildMember) {
    // Check if member is from coders club
-   if (member.guild.id !== coders_club_id) return;
+   if (member.guild.id !== owner_server_id) return;
 
    // setup content message
    let content = `>>> Welcome **${member.toString()}**`;

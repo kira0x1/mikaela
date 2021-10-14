@@ -70,7 +70,7 @@ client.on('ready', async () => {
    sys.initVoiceManager(client);
 
    // Make sure were in production, and not on mikaela 2
-   if (config.isProduction && client.user.id === config.mikaelaId) {
+   if (config.isProduction && client.user.id === config.mainBotId) {
       // Add event listeners to #roles
       sys.syncRoles(client);
 

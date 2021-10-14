@@ -1,6 +1,6 @@
 import { Client, Emoji, Guild, Message, User } from 'discord.js';
 import { logger } from '../app';
-import { coders_club_id } from '../config';
+import { owner_server_id } from '../config';
 import { prefixes } from '../database/api/serverApi';
 import axios, { AxiosRequestConfig } from 'axios';
 
@@ -8,7 +8,7 @@ export let heartEmoji: Emoji;
 export let trashEmoji: Emoji;
 
 export function initEmoji(client: Client) {
-   const coders_club = client.guilds.cache.get(coders_club_id);
+   const coders_club = client.guilds.cache.get(owner_server_id);
    if (!coders_club) return;
 
    heartEmoji = getEmojiFromGuild(coders_club, 'heart');

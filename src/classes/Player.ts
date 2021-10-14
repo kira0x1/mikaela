@@ -7,7 +7,7 @@ import { logger } from '../app';
 import { quickEmbed } from '../util/styleUtil';
 import { Queue } from './Queue';
 import { Song } from './Song';
-import { args, coders_club_id, isProduction } from '../config';
+import { args, owner_server_id, isProduction } from '../config';
 import progressbar from 'string-progressbar';
 import { bannedChannels } from '../database/api/serverApi';
 
@@ -44,7 +44,7 @@ export class Player {
       this.client = client;
       this.queue = new Queue();
 
-      if (guild.id !== coders_club_id) return;
+      if (guild.id !== owner_server_id) return;
       this.joinTestVc = args['testvc'];
 
       if (this.joinTestVc) {

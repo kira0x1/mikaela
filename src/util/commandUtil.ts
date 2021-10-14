@@ -86,7 +86,7 @@ export function hasPermission(member: GuildMember, permission: Permission) {
       case 'mod':
          return member.permissions.any(modperms, true);
       case 'kira':
-         return member.id === perms.kira.users[0];
+         return member.id === perms.owner.users[0];
    }
 }
 
