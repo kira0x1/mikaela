@@ -9,8 +9,6 @@ import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
 import { quickEmbed, wrap } from './styleUtil';
 
-const youtubeCookies = process.env.YOUTUBE_COOKIES;
-
 export function rand(max: number) {
    return Math.floor(Math.random() * max);
 }
@@ -37,10 +35,7 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.searchOne(query, 'video', false, {
-         headers: { set: youtubeCookies }
-      });
-
+      const songSearch = await YouTube.searchOne(query, 'video', false);
       if (!songSearch) return;
 
       // If a video is found then get details and convert it to ISong
