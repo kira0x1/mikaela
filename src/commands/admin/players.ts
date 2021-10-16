@@ -28,8 +28,8 @@ export const command: Command = {
 
       if (playing.length > 0) addCodeField(embed, '---Playing---\n\n' + content);
 
-      const notPlaying = players.filter(p => !p.isPlaying).map(p => p.guild.name);
-      if (notPlaying.length > 0) addCodeField(embed, '---Not Playing---\n\n' + notPlaying.join('\n'));
+      const notPlayingLength = players.filter(p => !p.isPlaying).size;
+      addCodeField(embed, `---Not Playing---\n\nPlayers: ${notPlayingLength}`);
       message.channel.send(embed);
    }
 };
