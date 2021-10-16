@@ -17,7 +17,14 @@ export const command: Command = {
 
       for (const player of playing) {
          const songDuration = player.currentlyPlaying?.duration.duration;
-         const songStreamTime = ms(player.getStreamTime(), { long: true });
+
+         let streamTime = player.getStreamTime();
+
+         if (streamTime > 0) {
+            streamTime *= 1000;
+         }
+
+         const songStreamTime = ms(streamTime, { long: true });
 
          const queueLength = player.queue.songs.length;
          let field = `server: ${player.guild.name}, channel: ${player.voiceChannel.name}\n`;
