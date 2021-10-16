@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { Command } from '../../classes/Command';
 import { players } from '../../util/musicUtil';
 import { addCodeField, createFooter } from '../../util/styleUtil';
@@ -15,10 +16,13 @@ export const command: Command = {
       let content = '';
 
       for (const player of playing) {
+         const songDuration = player.currentlyPlaying?.duration.duration;
+         const songStreamTime = ms(player.getStreamTime(), { long: true });
+
          const queueLength = player.queue.songs.length;
          let field = `server: ${player.guild.name}, channel: ${player.voiceChannel.name}\n`;
          field += `queue: ${queueLength}\n`;
-         field += `current: ${player.currentlyPlaying?.title}, duration: ${player.currentlyPlaying?.duration.duration}\n\n`;
+         field += `current: ${player.currentlyPlaying?.title}, duration: ${songDuration} / ${songStreamTime}}\n\n`;
          content += field;
       }
 
