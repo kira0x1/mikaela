@@ -27,9 +27,9 @@ export const command: Command = {
          const songStreamTime = ms(streamTime, { long: true });
 
          const queueLength = player.queue.songs.length;
-         let field = `server: ${player.guild.name}, channel: ${player.voiceChannel.name}\n`;
+         let field = `server: ${player.guild.name}\nchannel: ${player.voiceChannel.name}\n\n`;
          field += `queue: ${queueLength}\n`;
-         field += `current: ${player.currentlyPlaying?.title}, duration: ${songDuration} / ${songStreamTime}}\n\n`;
+         field += `current: ${player.currentlyPlaying?.title}\n duration: ${songStreamTime} / ${songDuration}\n\n`;
          content += field;
       }
 
