@@ -237,11 +237,11 @@ export async function onSongRequest(
    if (!song) return quickEmbed(message, 'Song not found');
 
    if (song instanceof Array) {
-      if (song.length === 0) return quickEmbed(message, 'Song not found');
+      const firstSong = song[0];
+      if (song.length === 0 || !firstSong) return quickEmbed(message, 'Song not found');
 
-      song[0].playedBy = message.author.id;
-
-      player.addSong(song[0], message);
+      firstSong.playedBy = message.author.id;
+      player.addSong(firstSong, message);
 
       let songCount = 1;
 
