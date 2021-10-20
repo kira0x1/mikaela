@@ -211,6 +211,8 @@ export class Player {
 
    // Returns string representation of the current songs duration
    async getProgressBar(): Promise<string> {
+      if (!this.currentlyPlaying || !this.currentlyPlaying.duration) return;
+
       const streamTime = this.getStreamTime();
 
       const duration = this.currentlyPlaying.duration;
@@ -230,7 +232,6 @@ export class Player {
       }
 
       const songBar = progressbar.splitBar(total, current, 20)[0];
-
       return songBar;
    }
 
