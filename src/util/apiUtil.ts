@@ -1,7 +1,7 @@
 import { Message, Util } from 'discord.js';
 import spotifyURI from 'spotify-uri';
 import spotify from 'spotify-url-info';
-import YouTube from 'youtube-sr';
+const youtubeSearch = require('yt-search');
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
 import { logger } from '../app';
@@ -35,11 +35,12 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
       // }
 
       // Search for a youtube for the video
-      const songSearch = await YouTube.searchOne(query, 'video', false);
-      if (!songSearch) return;
+      const songSearch = await youtubeSearch(query);
+      const songFound = songSearch?.videos?.shift();
+      if (!songFound) return;
 
       // If a video is found then get details and convert it to ISong
-      const details = await getSongDetails(songSearch.id);
+      const details = await getSongDetails(songFound.videoId);
       if (!details) return;
 
       return convertDetailsToSong(details);
@@ -113,10 +114,11 @@ async function handleSpotify(query: string, allowPlaylists = false) {
 
 async function getSpotifySong(data: any) {
    const track = `${data.name} ${data.artists.map(a => a.name).join(' ')}`;
-   const searchRes = await YouTube.searchOne(track, 'video');
-   if (!searchRes) return;
+   const searchRes = await youtubeSearch(track);
+   const songFound = searchRes?.videos?.shift();
+   if (!songFound) return;
 
-   const details = await getSongDetails(searchRes.id);
+   const details = await getSongDetails(songFound.videoId);
    if (!details) return;
 
    const song = convertDetailsToSong(details);
