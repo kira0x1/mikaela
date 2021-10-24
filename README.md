@@ -6,28 +6,49 @@
 **[Click this to invite mikaela to your server.](https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=37038144&scope=bot)**
 If you want to add a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot) to invite mikaela-2
 
-## Commands
+---
+## Setup
 
-### Help
+Make sure you have node v16+ installed.
+<br/>
+#### 1. cd into the folder, and install all the modules.
+```bash
+$ npm install
+```
 
-> **Description**: lists all commands.
 
-### Music
+#### 2. Enter the required fields needed in .env.example.
+ When you're done, make sure to rename `.env.example` to `.env`.
 
-> **Description**: Plays music via links or youtube searches.
+#### 3. make sure you have typescript installed globaly, if you dont then just run
+```bash
+$ npm install -g typescript
+```
+otherwise, just run to compile the typescript.
 
-### Favorites
+```bash
+$ tsc
+```
 
-> **Description**: Saves a list of user's favorite songs, and can shuffle through them.
+#### 4. The last step is just to run the bot
+```bash
+$ npm start
+```
 
-### Fun
+## Otional Flags
+#### Production / Development
+To run the bot using development db / development bot token, just add the development flag, and vice versa.
 
-> **Description**: A few fun commands
+```bash
+$ node . --development
+```
+```bash
+$ node . --production
+```
 
-### Vote
+#### Test VC
+If you want the bot to join a test vc automatically instead of joining the vc you're in ( so you could test the bot without actually joining a vc ) 
 
-> **Description**: Create a strawpoll.
-
-### Reminder
-
-> **Description**: Set a reminder.
+```bash
+npm run testvc
+```
