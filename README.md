@@ -9,18 +9,22 @@ If you want to add a second instance of mikaela, click [here](https://discord.co
 ---
 ## Setup
 
-Make sure you have node v16+ installed.
-<br/>
-#### 1. cd into the folder, and install all the modules.
+Make sure you have node v16+ installed, and windows-build-tools.
+
+### 1. Installing windows-build-tools
+```bash
+$ npm install --global --production windows-build-tools
+```
+
+#### 2. cd into the folder, and install all the modules.
 ```bash
 $ npm install
 ```
 
-
-#### 2. Enter the required fields needed in .env.example.
+#### 3. Enter the required fields needed in .env.example.
  When you're done, make sure to rename `.env.example` to `.env`.
 
-#### 3. make sure you have typescript installed globaly, if you dont then just run
+#### 4. make sure you have typescript installed globaly, if you dont then just run
 ```bash
 $ npm install -g typescript
 ```
@@ -30,7 +34,7 @@ otherwise, just run to compile the typescript.
 $ tsc
 ```
 
-#### 4. The last step is just to run the bot
+#### 5. The last step is just to run the bot
 ```bash
 $ npm start
 ```
