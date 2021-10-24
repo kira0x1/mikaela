@@ -44,7 +44,6 @@
       "axios": "^0.23.0",
       "bufferutil": "^4.0.5",
       "chalk": "^4.1.2",
-      "discord-paginationembed": "^2.1.0",
       "discord-ytdl-core": "^5.0.4",
       "discord.js": "^12.5.3",
       "dotenv": "^10.0.0",
