@@ -49,7 +49,7 @@ export const command: Command = {
       const msg = await message.channel.send(embed);
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
-      if (pages.length <= 1) {
+      if (pages.length === 0) {
          createDeleteCollector(msg, message);
          return;
       }
