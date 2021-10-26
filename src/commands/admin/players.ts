@@ -39,7 +39,7 @@ export const command: Command = {
       const notPlayingLength = players.filter(p => !p.isPlaying).size;
 
       const embed = createFooter(message).setTitle(
-         `Players: ${players.size}\n**Page 1 / ${pages.length + 1}**`
+         `Players: ${players.size}\n**Page 1 / ${pages.length}**`
       );
 
       embed.setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
@@ -78,7 +78,7 @@ export const command: Command = {
          reaction.users.remove(userReacted);
 
          const newEmbed = createFooter(message).setTitle(
-            `Players: ${players.size}\n**Page ${currentPage + 1} / ${pages.length + 1}**`
+            `Players: ${players.size}\n**Page ${currentPage + 1} / ${pages.length}**`
          );
 
          newEmbed.setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
