@@ -39,7 +39,7 @@ export const command: Command = {
       const notPlayingLength = players.filter(p => !p.isPlaying).size;
 
       const embed = createFooter(message).setTitle(
-         `Players: ${players.size}\n**Page 1 / ${pages.length}**`
+         `Players: ${players.size}\n**Page 1 / ${pages.length === 0 ? 1 : pages.length}**`
       );
 
       embed.setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
@@ -49,7 +49,7 @@ export const command: Command = {
       const msg = await message.channel.send(embed);
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
-      if (pages.length === 0) {
+      if (pages.length <= 1) {
          createDeleteCollector(msg, message);
          return;
       }
