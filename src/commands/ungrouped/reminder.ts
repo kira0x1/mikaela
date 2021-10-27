@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import moment from 'moment';
 import ms from 'ms';
 import { Command } from '../../classes/Command';
 import { createReminder } from '../../database/api/reminderApi';
@@ -46,11 +47,18 @@ export async function setReminder(message: Message, time: string, content: strin
    }
 
    // Create reminder time out
-   setTimeout(() => onReminder(message, content, dbReminder), msTime);
+   setTimeout(() => onReminder(message, content, msTime, dbReminder), msTime);
 }
 
-export function onReminder(message: Message, content: string, dbReminder?: IReminder) {
-   message.reply(`Reminder to ${content}`);
+export function onReminder(message: Message, content: string, time: number, dbReminder?: IReminder) {
+   if (content === '') {
+      const prettyTime = ms(time, { long: true });
+      const prettyDate = moment().subtract(time).calendar();
+
+      message.reply(`\n**Reminder**\n**\`${prettyTime}\`** have passed.\nSince: \`${prettyDate}\``);
+   } else {
+      message.reply(`Reminder to ${content}`);
+   }
 
    if (dbReminder) {
       dbReminder.delete();
