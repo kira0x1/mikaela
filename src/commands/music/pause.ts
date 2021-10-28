@@ -8,7 +8,7 @@ export const command: Command = {
    name: 'Pause',
    description: 'Pause the currently playing song',
    aliases: ['ps'],
-   hidden: true,
+   isDisabled: true,
 
    async execute(message, args) {
       // Get the guilds player

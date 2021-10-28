@@ -1,7 +1,8 @@
-import { Constants, MessageReaction, User } from 'discord.js';
+import { Collection, Constants, Message, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
 import { logger } from '../../app';
 import { Command } from '../../classes/Command';
+import { Player } from '../../classes/Player';
 import { createDeleteCollector, players } from '../../util/musicUtil';
 import { addCodeField, createFooter } from '../../util/styleUtil';
 
@@ -14,42 +15,26 @@ export const command: Command = {
    async execute(message, args) {
       const playing = players.filter(p => p.isPlaying).array();
 
-      const pages: string[] = [];
+      const pages: Collection<number, string> = new Collection();
 
+      let i = 0;
       for (const player of playing) {
-         const songDuration = player.currentlyPlaying?.duration.duration;
-
-         let streamTime = player.getStreamTime();
-
-         if (streamTime > 0) {
-            streamTime *= 1000;
-         }
-
-         const songStreamTime = ms(streamTime, { long: true });
-
          const queueLength = player.queue.songs.length;
 
          let field = `server: ${player.guild.name}\nchannel: ${player.voiceChannel.name}\n`;
          field += `queue: ${queueLength}\n`;
-         field += `current: ${player.currentlyPlaying?.title}\n duration: ${songStreamTime} / ${songDuration}\n`;
+         field += `current: ${player.currentlyPlaying?.title}\n duration: ${player.getDurationPretty()}\n`;
          field += `-----------------------------\n\n`;
-         pages.push(field);
+         pages.set(i, field);
+         i++;
       }
 
       const notPlayingLength = players.filter(p => !p.isPlaying).size;
-
-      const embed = createFooter(message).setTitle(
-         `Players: ${players.size}\n**Page 1 / ${pages.length === 0 ? 1 : pages.length}**`
-      );
-
-      embed.setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
-
-      if (pages.length > 0) addCodeField(embed, pages[0]);
-
+      const embed = createPlayerEmbed(message, playing, notPlayingLength, pages, 0);
       const msg = await message.channel.send(embed);
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
-      if (pages.length <= 1) {
+      if (pages.size <= 1) {
          createDeleteCollector(msg, message);
          return;
       }
@@ -69,21 +54,15 @@ export const command: Command = {
       collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
          if (reaction.emoji.name === '➡') {
             currentPage++;
-            if (currentPage >= pages.length) currentPage = 0;
+            if (currentPage >= pages.size) currentPage = 0;
          } else if (reaction.emoji.name === '⬅') {
             currentPage--;
-            if (currentPage < 0) currentPage = pages.length - 1;
+            if (currentPage < 0) currentPage = pages.size - 1;
          }
 
          reaction.users.remove(userReacted);
 
-         const newEmbed = createFooter(message).setTitle(
-            `Players: ${players.size}\n**Page ${currentPage + 1} / ${pages.length}**`
-         );
-
-         newEmbed.setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
-
-         addCodeField(newEmbed, pages[currentPage]);
+         const newEmbed = createPlayerEmbed(message, playing, notPlayingLength, pages, currentPage);
          msg.edit(newEmbed);
       });
 
@@ -94,3 +73,20 @@ export const command: Command = {
       });
    }
 };
+
+function createPlayerEmbed(
+   message: Message,
+   playing: Player[],
+   notPlayingLength: number,
+   pages: Collection<number, string>,
+   currentPage: number
+) {
+   const embed = createFooter(message)
+      .setTitle(
+         `Players: ${players.size}\n**Page ${currentPage + 1} / ${pages.size === 0 ? 1 : pages.size}**`
+      )
+      .setDescription(`Playing: ${playing.length}\nNot Playing: ${notPlayingLength}`);
+
+   if (pages.size > 0) addCodeField(embed, pages.get(currentPage));
+   return embed;
+}
