@@ -34,7 +34,7 @@ export const command: Command = {
       }
 
       const embed = createInfoEmbed(message, guilds, pages, 0);
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
       if (pages.size <= 1) {
@@ -53,7 +53,7 @@ export const command: Command = {
          return filterReactions.includes(reaction.emoji.name) && !userReacted.bot;
       };
 
-      const collector = msg.createReactionCollector(filter, { time: ms('1h') });
+      const collector = msg.createReactionCollector({ filter, time: ms('1h') });
 
       let currentPage = 0;
 
@@ -78,7 +78,7 @@ export const command: Command = {
          reaction.users.remove(userReacted);
 
          const newEmbed = createInfoEmbed(message, guilds, pages, currentPage);
-         msg.edit(newEmbed);
+         msg.edit({ embeds: [newEmbed] });
       });
 
       collector.on('end', collected => {
