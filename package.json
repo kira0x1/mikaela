@@ -83,6 +83,6 @@
       "events": {
          "start": "cls || clear"
       },
-      "delay": 1000
+      "delay": 500
    }
 }
