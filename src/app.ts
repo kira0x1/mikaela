@@ -78,7 +78,7 @@ client.on('ready', async () => {
    // Make sure were in production, and not on mikaela 2
    if (config.isProduction && client.user.id === config.mainBotId) {
       // Add event listeners to #roles
-      // sys.syncRoles(client);
+      sys.syncRoles(client);
 
       // Add event listener to welcome new members
       sys.initGreeter(client);
