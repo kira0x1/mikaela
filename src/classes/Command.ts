@@ -1,4 +1,4 @@
-import { Message, PermissionResolvable } from 'discord.js';
+import { Interaction, Message, PermissionResolvable } from 'discord.js';
 
 export interface Command {
    name: string;
@@ -15,6 +15,7 @@ export interface Command {
    botPerms?: PermissionResolvable;
 
    execute: (message: Message, args: string[]) => void;
+   executeInteraction?: (interaction: Interaction) => void;
 }
 
 export declare type Permission = 'admin' | 'mod' | 'kira';
