@@ -1,13 +1,10 @@
-import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
-import ms from 'ms';
-
+import { Collection, Message, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
 import { logger } from '../../app';
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
 import { IUser } from '../../database/models/User';
 import { getTarget } from '../../util/discordUtil';
-import { createDeleteCollector } from '../../util/musicUtil';
 import { createFooter, embedColor, quickEmbed } from '../../util/styleUtil';
 
 const favlistCalls: Collection<string, Message> = new Collection();
@@ -103,46 +100,36 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
    const embed = createFavListEmbed(target, user, pages);
 
-   const msg = await message.channel.send({ embeds: [embed] });
+   const row = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId('back').setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId('next').setLabel('Next').setStyle('PRIMARY')
+   );
+
+   const msg = await message.channel.send({ embeds: [embed], components: [row] });
    favlistCalls.set(message.author.id, msg);
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
-      createDeleteCollector(msg, message);
       return;
    }
 
-   msg.react('⬅')
-      .then(() => msg.react('➡'))
-      .finally(() => createDeleteCollector(msg, message));
-
-   const filter = (reaction: MessageReaction, userReacted: User) => {
-      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
-   };
-
-   const collector = msg.createReactionCollector({ filter, time: ms('3h') });
+   const filter = i => i.customId === 'next' || i.customId === 'back';
+   const collector = msg.channel.createMessageComponentCollector({ filter });
 
    let currentPage = 0;
 
-   collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
-      if (reaction.emoji.name === '➡') {
+   collector.on('collect', async i => {
+      if (!i.isButton()) return;
+      if (i.customId === 'next') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (reaction.emoji.name === '⬅') {
+      } else if (i.customId === 'back') {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
 
-      reaction.users.remove(userReacted);
-
       const newEmbed = createFavListEmbed(target, user, pages, currentPage);
 
-      msg.edit({ embeds: [newEmbed] });
-   });
-
-   collector.on('end', collected => {
-      msg.reactions.removeAll().catch(error => {
-         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
-      });
+      await i.update({ embeds: [newEmbed] });
    });
 }
