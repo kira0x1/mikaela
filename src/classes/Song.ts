@@ -1,4 +1,5 @@
 export interface Song {
+   discriminator: 'SONG';
    title: string;
    id: string;
    url: string;
@@ -18,4 +19,8 @@ export interface IDuration {
    hours: string;
    duration: string;
    totalSeconds: number;
+}
+
+export function instanceOfSong(object: any): object is Song {
+   return object.discriminator === 'SONG';
 }

@@ -64,6 +64,7 @@ export function isPlaylist(song: Song | ytpl.Result): song is ytpl.Result {
 // Convertts the video details to ISong
 function convertDetailsToSong(details: MoreVideoDetails): Song {
    return {
+      discriminator: 'SONG',
       title: Util.escapeMarkdown(details.title),
       id: details.videoId,
       url: details.video_url,

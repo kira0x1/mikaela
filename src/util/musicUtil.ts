@@ -10,7 +10,6 @@ import {
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
-
 import { logger } from '../app';
 import { Command } from '../classes/Command';
 import { Player } from '../classes/Player';
@@ -23,6 +22,7 @@ import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
 import { sendArgsError } from './commandUtil';
 import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
 import { createFooter, embedColor, quickEmbed } from './styleUtil';
+
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
 
