@@ -30,6 +30,6 @@ export const command: Command = {
       }
 
       // Send the embed
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

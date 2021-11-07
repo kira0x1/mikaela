@@ -73,12 +73,12 @@ client.on('ready', async () => {
    util.initPlayers(client);
 
    // Add event listener to add/remove voice role
-   sys.initVoiceManager(client);
+   // sys.initVoiceManager(client);
 
    // Make sure were in production, and not on mikaela 2
    if (config.isProduction && client.user.id === config.mainBotId) {
       // Add event listeners to #roles
-      sys.syncRoles(client);
+      // sys.syncRoles(client);
 
       // Add event listener to welcome new members
       sys.initGreeter(client);
@@ -94,7 +94,8 @@ client.on('ready', async () => {
 
 // eslint-disable-next-line complexity
 client.on('messageCreate', message => {
-   const prefix = prefixes.get(message.guild?.id) || defaultPrefix;
+   // check if the server has a custom prefix if not then use the default prefix
+   const prefix = db.prefixes.get(message.guild?.id) || config.prefix;
 
    const prefixGiven = message.content.substr(0, prefix.length);
 
@@ -108,7 +109,7 @@ client.on('messageCreate', message => {
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
-   if (message.channel.type === 'DM' && !perms.admin.users.includes(message.author.id)) {
+   if (message.channel.type === 'DM' && !config.perms.admin.users.includes(message.author.id)) {
       return;
    }
 
