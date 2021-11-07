@@ -1,4 +1,5 @@
 import { Command } from '../../classes/Command';
+import { quickEmbed } from '../../util';
 import {
    createCurrentlyPlayingEmbed,
    createDeleteCollector,
