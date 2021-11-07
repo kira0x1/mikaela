@@ -1,9 +1,8 @@
-import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import { Collection, Message, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
-import { createDeleteCollector, getPlayer, getSongSourceInfo } from '../../util/musicUtil';
+import { getPlayer, getSongSourceInfo } from '../../util/musicUtil';
 import { createFooter, wrap } from '../../util/styleUtil';
 import { getPages } from '../favorites/list';
 
@@ -26,14 +25,22 @@ export const command: Command = {
 
 export async function sendQueueEmbed(message: Message) {
    const embed = await getQueue(message);
-   const lastQueueCall = await message.channel.send({ embeds: [embed] });
-
-   queueCalls.set(message.guild.id, { message: lastQueueCall, pageAt: 0 });
 
    const songs = getPlayer(message).getSongs();
 
+   const row = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId('back').setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId('next').setLabel('Next').setStyle('PRIMARY')
+   );
+
+   const lastQueueCall = await message.channel.send({
+      embeds: [embed],
+      components: songs.length > 5 ? [row] : []
+   });
+
+   queueCalls.set(message.guild.id, { message: lastQueueCall, pageAt: 0 });
+
    if (songs.length > 5) await createQueuePagination(lastQueueCall, embed, message.author);
-   createDeleteCollector(lastQueueCall, message);
 }
 
 export async function getQueue(message: Message) {
@@ -52,60 +59,33 @@ export async function updateLastQueue(message: Message) {
    if (!lastQueue) return;
    const queueEmbed = await getQueue(message);
    lastQueue.message.edit({ embeds: [queueEmbed] });
-   updateQueueMessage(lastQueue);
-}
-
-export async function updateQueueMessage(queueCall: QueueCall) {
-   const message = queueCall.message;
-   queueCall.pageAt = 0;
-   const player = getPlayer(message);
-   const songs = player.getSongs();
-
-   if (songs.length > 5) return;
-
-   const emojis = ['⬅', '➡'];
-   const reactions = message.reactions.cache
-      .filter(r => r.me && emojis.includes(r.emoji.name))
-      .map(r => r.remove());
-
-   Promise.all(reactions);
 }
 
 async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
-   const promises = [message.react('⬅'), message.react('➡')];
-   await Promise.all(promises);
+   const filter = i => i.customId === 'next' || i.customId === 'back';
 
-   const filter = (reaction: MessageReaction, user: User) => {
-      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !user.bot;
-   };
-
-   const collector = message.createReactionCollector({ filter, time: ms('3h') });
+   const collector = message.createMessageComponentCollector({ filter, time: ms('3h') });
 
    let pageAt = 0;
 
-   collector.on('collect', async (reaction: MessageReaction, user: User) => {
+   collector.on('collect', async i => {
+      if (!i.isButton()) return;
+
       const songs = getPlayer(message).getSongs();
       const pages = getPages(songs);
       pageAt = queueCalls.get(message.guild.id)?.pageAt || 0;
 
-      if (reaction.emoji.name === '➡') {
+      if (i.customId === 'next') {
          pageAt++;
          if (pageAt >= pages.size) pageAt = 0;
-      } else if (reaction.emoji.name === '⬅') {
+      } else if (i.customId === 'back') {
          pageAt--;
          if (pageAt < 0) pageAt = pages.size - 1;
       }
 
       queueCalls.set(message.guild.id, { message, pageAt });
-      reaction.users.remove(user);
       const newEmbed = await createQueueEmbed(message, pages, pageAt, author);
-      message.edit({ embeds: [newEmbed] });
-   });
-
-   collector.on('end', collected => {
-      message.reactions.removeAll().catch(error => {
-         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
-      });
+      await i.update({ embeds: [newEmbed] });
    });
 }
 
