@@ -38,7 +38,7 @@ export const command: Command = {
       }
 
       if (amount) {
-         player.changeVolume(amount, message);
+         player.setVolume(amount, message);
       }
    }
 };
