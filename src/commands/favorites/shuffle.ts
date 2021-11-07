@@ -20,6 +20,10 @@ export const command: Command = {
    cooldown: 1,
 
    async execute(message, args) {
+      if (!message.member.voice?.channel) {
+         return quickEmbed(message, 'You must be in a voice channel to use this command');
+      }
+
       let amount = 1;
 
       args.find((arg, pos) => {
