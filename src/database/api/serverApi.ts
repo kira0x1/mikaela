@@ -142,7 +142,8 @@ export async function initServers(client: Client) {
 
    servers.map(server => {
       const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix;
-      if (serverPrefix) logger.info(`prefix for ${server.serverName}: ${serverPrefix}`);
+      // if (serverPrefix) logger.info(`prefix for ${server.serverName}: ${serverPrefix}`);
+
       prefixes.set(server.serverId, serverPrefix || defaultPrefix);
 
       // Set banned channels to collection

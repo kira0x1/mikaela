@@ -60,8 +60,10 @@ async function init() {
 }
 
 client.on('ready', async () => {
+   const skipDB: boolean = config.args['skipDB'];
+
    // Setup Prefixes
-   await db.initServers(client);
+   if (!skipDB) await db.initServers(client);
 
    // Setup players
    util.initPlayers(client);
@@ -83,7 +85,7 @@ client.on('ready', async () => {
    // Read command files and create a collection for the commands
    sys.initCommands();
 
-   logger.log('info', chalk.bgCyan.bold(`${client.user.username} online!`));
+   logger.info(chalk.bgCyan.bold(`${client.user.username} online in ${client.guilds.cache.size} servers!`));
 });
 
 // eslint-disable-next-line complexity
