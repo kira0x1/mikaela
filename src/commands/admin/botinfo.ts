@@ -1,9 +1,12 @@
-import { Command } from '../../classes/Command';
-import { addCodeField, createFooter } from '../../util/styleUtil';
-import { Collection, Constants, MessageReaction, User } from 'discord.js';
-import { createDeleteCollector } from '../../util';
+import { Collection, Constants, Guild, Message, MessageReaction, User } from 'discord.js';
+import moment from 'moment';
 import ms from 'ms';
 import { logger } from '../../app';
+import { Command } from '../../classes/Command';
+import { createDeleteCollector } from '../../util';
+import { createFooter } from '../../util/styleUtil';
+
+const pageSize = 5;
 
 export const command: Command = {
    name: 'BotInfo',
@@ -11,11 +14,9 @@ export const command: Command = {
    perms: ['kira'],
 
    async execute(message, args) {
-      const guilds = message.client.guilds.cache;
+      const guilds = message.client.guilds.cache.sort((g1, g2) => g2.joinedTimestamp - g1.joinedTimestamp);
 
-      const pageSize = 20;
-
-      const pages: Collection<number, string[]> = new Collection();
+      const pages: Collection<number, Guild[]> = new Collection();
       pages.set(0, []);
       let count = 0;
       let pageAt = 0;
@@ -28,16 +29,11 @@ export const command: Command = {
          }
 
          const pageGuilds = pages.get(pageAt);
-         if (pageGuilds) pageGuilds.push(guild.name);
+         if (pageGuilds) pageGuilds.push(guild);
          count++;
       }
 
-      const embed = createFooter(message).setTitle(
-         `Info\nServers: ${guilds.size}\n**Page 1 / ${pages.size}**`
-      );
-
-      addCodeField(embed, '---Servers---\n\n' + pages.get(0).join('\n'));
-
+      const embed = createInfoEmbed(message, guilds, pages, 0);
       const msg = await message.channel.send(embed);
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
@@ -46,12 +42,15 @@ export const command: Command = {
          return;
       }
 
-      msg.react('⬅')
+      msg.react('⏮️')
+         .then(() => msg.react('⬅'))
          .then(() => msg.react('➡'))
+         .then(() => msg.react('⏭️'))
          .finally(() => createDeleteCollector(msg, message));
 
+      const filterReactions = ['⏮️', '⏭️', '⬅', '➡'];
       const filter = (reaction: MessageReaction, userReacted: User) => {
-         return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
+         return filterReactions.includes(reaction.emoji.name) && !userReacted.bot;
       };
 
       const collector = msg.createReactionCollector(filter, { time: ms('1h') });
@@ -59,21 +58,26 @@ export const command: Command = {
       let currentPage = 0;
 
       collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
-         if (reaction.emoji.name === '➡') {
-            currentPage++;
-            if (currentPage >= pages.size) currentPage = 0;
-         } else if (reaction.emoji.name === '⬅') {
-            currentPage--;
-            if (currentPage < 0) currentPage = pages.size - 1;
+         switch (reaction.emoji.name) {
+            case '➡':
+               currentPage++;
+               if (currentPage >= pages.size) currentPage = 0;
+               break;
+            case '⬅':
+               currentPage--;
+               if (currentPage < 0) currentPage = pages.size - 1;
+               break;
+            case '⏮️':
+               currentPage = 0;
+               break;
+            case '⏭️':
+               currentPage = pages.size - 1;
+               break;
          }
 
          reaction.users.remove(userReacted);
 
-         const newEmbed = createFooter(message).setTitle(
-            `Info\nServers: ${guilds.size}\n**Page ${currentPage + 1} / ${pages.size}**`
-         );
-
-         addCodeField(newEmbed, '---Servers---\n\n' + pages.get(currentPage).join('\n'));
+         const newEmbed = createInfoEmbed(message, guilds, pages, currentPage);
          msg.edit(newEmbed);
       });
 
@@ -84,3 +88,23 @@ export const command: Command = {
       });
    }
 };
+
+function createInfoEmbed(
+   message: Message,
+   guilds: Collection<string, Guild>,
+   pages: Collection<number, Guild[]>,
+   pageAt = 0
+) {
+   const embed = createFooter(message).setTitle(
+      `Info\nServers: ${guilds.size}\n**Page ${pageAt + 1} / ${pages.size}**\n\u200b`
+   );
+
+   let count = pageAt * pageSize;
+   for (const g of pages.get(pageAt)) {
+      count++;
+      const joinedAt = moment(g.joinedAt).format('MMM Do YYYY');
+      embed.addField(`**[${count}]**\t\t${g.name}`, `Joined:    **${joinedAt}**\n\u200b`);
+   }
+
+   return embed;
+}
