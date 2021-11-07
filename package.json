@@ -37,7 +37,8 @@
       "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
       "clean:all": "npm run clean && npm run clean:node",
       "prettier": "prettier --write **.ts",
-      "lint": "eslint . --ext .ts"
+      "lint": "eslint . --ext .ts",
+      "voiceReport": "node scripts/dependancyReport.js"
    },
    "dependencies": {
       "@discordjs/opus": "^0.6.0",
