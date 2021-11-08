@@ -49,7 +49,6 @@ export async function initPlayers(client: Client) {
 
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
-      // logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
       players.set(guildResolved.id, new Player(guildResolved, client));
    });
 

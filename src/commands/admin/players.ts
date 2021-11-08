@@ -13,14 +13,13 @@ export const command: Command = {
    perms: ['kira'],
 
    async execute(message, args) {
-      const playing = players.map(p => {
-         if (p.queue && p.isPlaying) return p;
-      });
-
       const pages: Collection<number, string> = new Collection();
+      const playing: Player[] = [];
 
       let i = 0;
-      for (const player of playing) {
+      for (const { '1': player } of players) {
+         if (!player.isPlaying) continue;
+         playing.push(player);
          const queueLength = player.queue.songs.length;
 
          let field = `server: ${player.guild.name}\nchannel: \n`;

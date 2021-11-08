@@ -52,7 +52,6 @@ export const command: Command = {
       if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
       if (amount > maxShuffleAmount) {
-         // embed.setFooter(`Max Amount is ${maxShuffleAmount}!`);
          amount = maxShuffleAmount;
       }
 
