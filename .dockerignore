@@ -1,0 +1,11 @@
+# node
+node_modules
+out/
+npm-debug.log
+
+# git files
+.git
+.github
+.gitignore
+LICENSE
+README.md
