@@ -29,8 +29,8 @@ export async function sendQueueEmbed(message: Message) {
    const songs = getPlayer(message).getSongs();
 
    const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId('back').setLabel('Back').setStyle('PRIMARY'),
-      new MessageButton().setCustomId('next').setLabel('Next').setStyle('PRIMARY')
+      new MessageButton().setCustomId('backQueue').setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId('nextQueue').setLabel('Next').setStyle('PRIMARY')
    );
 
    const lastQueueCall = await message.channel.send({
@@ -62,7 +62,7 @@ export async function updateLastQueue(message: Message) {
 }
 
 async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
-   const filter = i => i.customId === 'next' || i.customId === 'back';
+   const filter = i => i.customId === 'nextQueue' || i.customId === 'backQueue';
 
    const collector = message.createMessageComponentCollector({ filter, time: ms('3h') });
 
@@ -75,10 +75,10 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
       const pages = getPages(songs);
       pageAt = queueCalls.get(message.guild.id)?.pageAt || 0;
 
-      if (i.customId === 'next') {
+      if (i.customId === 'nextQueue') {
          pageAt++;
          if (pageAt >= pages.size) pageAt = 0;
-      } else if (i.customId === 'back') {
+      } else if (i.customId === 'backQueue') {
          pageAt--;
          if (pageAt < 0) pageAt = pages.size - 1;
       }

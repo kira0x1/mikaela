@@ -101,8 +101,8 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
    const embed = createFavListEmbed(target, user, pages);
 
    const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId('back').setLabel('Back').setStyle('PRIMARY'),
-      new MessageButton().setCustomId('next').setLabel('Next').setStyle('PRIMARY')
+      new MessageButton().setCustomId('backFav').setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId('nextFav').setLabel('Next').setStyle('PRIMARY')
    );
 
    const msg = await message.channel.send({ embeds: [embed], components: [row] });
@@ -113,17 +113,17 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       return;
    }
 
-   const filter = i => i.customId === 'next' || i.customId === 'back';
+   const filter = i => i.customId === 'nextFav' || i.customId === 'backFav';
    const collector = msg.channel.createMessageComponentCollector({ filter });
 
    let currentPage = 0;
 
    collector.on('collect', async i => {
       if (!i.isButton()) return;
-      if (i.customId === 'next') {
+      if (i.customId === 'nextFav') {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (i.customId === 'back') {
+      } else if (i.customId === 'backFav') {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
