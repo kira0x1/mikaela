@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+   mikaela:
+      build:
+         context: .
+         dockerfile: Dockerfile
+      env_file: .env
+      init: true
+      restart: unless-stopped
+      environment:
+         - NODE_ENV=production
