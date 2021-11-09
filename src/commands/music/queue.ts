@@ -1,4 +1,13 @@
-import { Collection, Message, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
+import { randomUUID } from 'crypto';
+import {
+   ButtonInteraction,
+   CacheType,
+   Collection,
+   Message,
+   MessageActionRow,
+   MessageButton,
+   User
+} from 'discord.js';
 import ms from 'ms';
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
@@ -28,19 +37,22 @@ export async function sendQueueEmbed(message: Message) {
 
    const songs = getPlayer(message).getSongs();
 
-   const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId('backQueue').setLabel('Back').setStyle('PRIMARY'),
-      new MessageButton().setCustomId('nextQueue').setLabel('Next').setStyle('PRIMARY')
-   );
+   const nextId = randomUUID();
+   const backId = randomUUID();
 
-   const lastQueueCall = await message.channel.send({
-      embeds: [embed],
-      components: songs.length > 5 ? [row] : []
-   });
+   const components = [];
 
-   queueCalls.set(message.guild.id, { message: lastQueueCall, pageAt: 0 });
+   if (songs.length > 5) {
+      const row = new MessageActionRow().addComponents(
+         new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
+         new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
+      );
 
-   if (songs.length > 5) await createQueuePagination(lastQueueCall, embed, message.author);
+      components.push(row);
+   }
+
+   const msg = await message.channel.send({ embeds: [embed], components });
+   if (songs.length > 5) await createQueuePagination(msg, nextId, backId, message.author);
 }
 
 export async function getQueue(message: Message) {
@@ -61,10 +73,16 @@ export async function updateLastQueue(message: Message) {
    lastQueue.message.edit({ embeds: [queueEmbed] });
 }
 
-async function createQueuePagination(message: Message, embed: MessageEmbed, author: User) {
-   const filter = i => i.customId === 'nextQueue' || i.customId === 'backQueue';
+async function createQueuePagination(message: Message, nextId: string, backId: string, author: User) {
+   const filter = (i: ButtonInteraction<CacheType>) => {
+      return i.customId === nextId || i.customId === backId;
+   };
 
-   const collector = message.createMessageComponentCollector({ filter, time: ms('3h') });
+   const collector = message.channel.createMessageComponentCollector({
+      filter,
+      componentType: 'BUTTON',
+      time: ms('3h')
+   });
 
    let pageAt = 0;
 
@@ -75,15 +93,16 @@ async function createQueuePagination(message: Message, embed: MessageEmbed, auth
       const pages = getPages(songs);
       pageAt = queueCalls.get(message.guild.id)?.pageAt || 0;
 
-      if (i.customId === 'nextQueue') {
+      if (i.customId === nextId) {
          pageAt++;
          if (pageAt >= pages.size) pageAt = 0;
-      } else if (i.customId === 'backQueue') {
+      } else if (i.customId === backId) {
          pageAt--;
          if (pageAt < 0) pageAt = pages.size - 1;
       }
 
       queueCalls.set(message.guild.id, { message, pageAt });
+
       const newEmbed = await createQueueEmbed(message, pages, pageAt, author);
       await i.update({ embeds: [newEmbed] });
    });

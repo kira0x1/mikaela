@@ -1,4 +1,15 @@
-import { Collection, Message, MessageActionRow, MessageButton, MessageEmbed, User } from 'discord.js';
+import { randomUUID } from 'crypto';
+import {
+   ButtonInteraction,
+   CacheType,
+   Collection,
+   Message,
+   MessageActionRow,
+   MessageButton,
+   MessageEmbed,
+   User
+} from 'discord.js';
+import ms from 'ms';
 import { logger } from '../../app';
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
@@ -100,15 +111,20 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
    const embed = createFavListEmbed(target, user, pages);
 
-   const nextId = `next${user.id}`;
-   const backId = `back${user.id}`;
+   const nextId = randomUUID();
+   const backId = randomUUID();
 
-   const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
-      new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
-   );
+   const components = [];
 
-   const msg = await message.channel.send({ embeds: [embed], components: [row] });
+   if (pages.size > 1) {
+      const row = new MessageActionRow().addComponents(
+         new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
+         new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
+      );
+      components.push(row);
+   }
+
+   const msg = await message.channel.send({ embeds: [embed], components });
    favlistCalls.set(message.author.id, msg);
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
@@ -116,13 +132,21 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       return;
    }
 
-   const filter = i => i.customId === nextId || i.customId === backId;
-   const collector = msg.channel.createMessageComponentCollector({ filter });
+   const filter = (i: ButtonInteraction<CacheType>) => {
+      return i.customId === nextId || i.customId === backId;
+   };
+
+   const collector = msg.channel.createMessageComponentCollector({
+      filter,
+      componentType: 'BUTTON',
+      time: ms('3h')
+   });
 
    let currentPage = 0;
 
    collector.on('collect', async i => {
       if (!i.isButton()) return;
+
       if (i.customId === nextId) {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
@@ -132,7 +156,6 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       }
 
       const newEmbed = createFavListEmbed(target, user, pages, currentPage);
-
       await i.update({ embeds: [newEmbed] });
    });
 }
