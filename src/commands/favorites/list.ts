@@ -100,9 +100,12 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
 
    const embed = createFavListEmbed(target, user, pages);
 
+   const nextId = `next${user.id}`;
+   const backId = `back${user.id}`;
+
    const row = new MessageActionRow().addComponents(
-      new MessageButton().setCustomId('backFav').setLabel('Back').setStyle('PRIMARY'),
-      new MessageButton().setCustomId('nextFav').setLabel('Next').setStyle('PRIMARY')
+      new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
    );
 
    const msg = await message.channel.send({ embeds: [embed], components: [row] });
@@ -113,17 +116,17 @@ async function ListFavorites(message: Message, target: User, user: IUser) {
       return;
    }
 
-   const filter = i => i.customId === 'nextFav' || i.customId === 'backFav';
+   const filter = i => i.customId === nextId || i.customId === backId;
    const collector = msg.channel.createMessageComponentCollector({ filter });
 
    let currentPage = 0;
 
    collector.on('collect', async i => {
       if (!i.isButton()) return;
-      if (i.customId === 'nextFav') {
+      if (i.customId === nextId) {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (i.customId === 'backFav') {
+      } else if (i.customId === backId) {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
