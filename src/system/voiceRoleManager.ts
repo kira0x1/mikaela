@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
 import { Guild, GuildMember, Role } from 'discord.js';
 import { logger } from '../system';
-import chalk from 'chalk';
 import { isProduction, mainBotId } from '../config';
 
 export class VoiceRoleManager extends EventEmitter {
@@ -55,14 +54,12 @@ export class VoiceRoleManager extends EventEmitter {
    removVoiceRole(member: GuildMember) {
       member.roles
          .remove(this.voiceRole)
-         .catch(err => logger.error(chalk.bgRed(`Failed to remove voice role\nREASON: ${err.message}`)));
+         .catch(err => logger.error(`Failed to remove voice role\nREASON: ${err.message}`));
    }
 
    addVoiceRole(member: GuildMember) {
       member.roles
          .add(this.voiceRole)
-         .catch(err =>
-            logger.error(chalk.bgRed.bold(`Error trying to add vc role\nREASON: ${err.message}`))
-         );
+         .catch(err => logger.error(`Error trying to add vc role\nREASON: ${err.message}`));
    }
 }

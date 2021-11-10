@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { Client } from 'discord.js';
 import * as config from './config';
 import * as db from './database';
@@ -7,21 +6,17 @@ import { logger } from './system';
 import * as util from './util';
 
 // print environment - production / development
-logger.info(
-   chalk.bgRed.bold(config.isProduction ? '-------production-------' : '-------development-------')
-);
+logger.info(config.isProduction ? '-------production-------' : '-------development-------');
 
 // print database - production db / development db
 logger.info(
-   chalk.bgRed.bold(
-      config.isProduction || config.args['prodDB']
-         ? '-------production DB-------'
-         : '-------development DB-------'
-   )
+   config.isProduction || config.args['prodDB']
+      ? '-------production DB-------'
+      : '-------development DB-------'
 );
 
 // print testvc arg
-if (config.args['testvc']) logger.info(chalk.bgGray.bold(`Will only join test vc`));
+if (config.args['testvc']) logger.info(`Will only join test vc`);
 
 // Instantiate discord.js client
 const client = new Client({
@@ -47,7 +42,7 @@ const client = new Client({
 
 async function init() {
    const skipDB: boolean = config.args['skipDB'];
-   if (skipDB) logger.log('info', chalk.bgMagenta.bold('----SKIPPING DB----\n'));
+   if (skipDB) logger.info('----SKIPPING DB----\n');
 
    // if skipdb flag is false then connect to mongodb
    if (!skipDB) await db.connectToDB();
@@ -82,7 +77,7 @@ client.on('ready', async () => {
    // Read command files and create a collection for the commands
    sys.initCommands();
 
-   logger.info(chalk.bgCyan.bold(`${client.user.username} online in ${client.guilds.cache.size} servers!`));
+   logger.info(`${client.user.username} online in ${client.guilds.cache.size} servers!`);
 });
 
 // eslint-disable-next-line complexity
@@ -235,7 +230,7 @@ client.on('messageCreate', message => {
 // so we can play the queue after restart
 process.on('message', async (msg: string) => {
    if (msg !== 'shutdown') return;
-   logger.info(chalk.bgMagenta.bold(`Gracefuly Stopping`));
+   logger.info(`Gracefuly Stopping`);
 
    util.players.map(p => p.saveQueueState());
 

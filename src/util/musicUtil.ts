@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import {
    Client,
    Collection,
@@ -58,7 +57,7 @@ export async function initPlayers(client: Client) {
    });
 
    if (args['skipDB']) {
-      logger.info(chalk.bgMagenta.bold(`Persistant Queue disabled, due to skipDB flag`));
+      logger.info(`Persistant Queue disabled, due to skipDB flag`);
       return;
    }
 

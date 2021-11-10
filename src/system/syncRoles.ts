@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import {
    Client,
    Collection,
@@ -101,16 +100,14 @@ async function updateRoles(messages: Collection<string, Message>) {
       if (msgReactions.size === sectionRolesAmount && msg.embeds[0].fields.length === sectionRolesAmount)
          continue;
 
-      logger.info(
-         chalk.bgMagenta.bold(`msg roles: ${msgReactions.size}, section roles: ${msgSection.roles.length}`)
-      );
+      logger.info(`msg roles: ${msgReactions.size}, section roles: ${msgSection.roles.length}`);
 
       const missingReactions = msgSection.roles.filter(
          role => !msgReactions.find(r => r.emoji.name === role.reactionName)
       );
 
-      logger.info(chalk.bgCyan.bold(`Missing reactions for: ${msgSection.name}`));
-      missingReactions.map(mr => console.log(chalk.bgBlue.bold(mr.name)));
+      logger.info(`Missing reactions for: ${msgSection.name}`);
+      missingReactions.map(mr => logger.info(mr.name));
       logger.info(`\n`);
 
       if (msgReactions.size !== sectionRolesAmount) {
@@ -176,7 +173,7 @@ function getSection(reaction: MessageReaction): RoleSection {
 // }
 
 function createSectionRolesEmbed(guild: Guild, section: RoleSection) {
-   console.log(`editing section: ${section.name}`);
+   logger.info(`editing section: ${section.name}`);
 
    const embed = new MessageEmbed();
 

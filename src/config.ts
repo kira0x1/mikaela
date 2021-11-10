@@ -39,3 +39,7 @@ export const perms = {
 };
 
 export const mainBotId = process.env.BOT_ID;
+
+export const elasticServer = process.env.ELASTIC_SERVER;
+export const elasticUser = process.env.ELASTIC_USERNAME;
+export const elasticPass = process.env.ELASTIC_PASSWORD;
