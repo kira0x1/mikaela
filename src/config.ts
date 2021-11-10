@@ -22,6 +22,7 @@ export const token = isProduction ? production_token : dev_token;
 
 /**
  * The discord id of the bot's owner
+ * This is used to get emojis ( this will be replaced with buttons soon )
  */
 export const owner_server_id = process.env.OWNER_SERVER_ID;
 

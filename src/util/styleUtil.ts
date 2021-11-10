@@ -1,14 +1,9 @@
-import { Message, MessageEmbed, User } from 'discord.js';
 import ms from 'ms';
-
+import { Message, MessageEmbed, User } from 'discord.js';
 import { logger } from '../system';
 import { createDeleteCollector } from './musicUtil';
 
-const redColor = 0xcf274e;
-// const blueColor = 0x4e74e6;
-// const oldBlueColor = 0x6788eb;
-
-export const embedColor = redColor;
+export const embedColor = 0xcf274e;
 
 export function darken(...content: string[]): string {
    const tag = `\``;

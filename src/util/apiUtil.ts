@@ -27,13 +27,6 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
          return convertDetailsToSong(details);
       }
 
-      // Check if the query is a link to a youtube playlist
-      // if (ytpl.validateID(query)) {
-      //     const playlist = await ytpl(query)
-      //     if (!playlist) return
-      //     return playlist
-      // }
-
       // Search for a youtube for the video
       const songSearch = await youtubeSearch(query);
       const songFound = songSearch?.videos?.shift();

@@ -9,23 +9,20 @@ import {
    joinVoiceChannel,
    VoiceConnectionStatus
 } from '@discordjs/voice';
-import chalk from 'chalk';
-import ytdl, { getInfo } from 'ytdl-core';
-import { Client, Guild, Message, VoiceChannel } from 'discord.js';
+import { Client, Guild, Message } from 'discord.js';
 import ms from 'ms';
+import progressbar from 'string-progressbar';
+import ytdl, { getInfo } from 'ytdl-core';
+import { isProduction } from '../config';
+import { bannedChannels } from '../database/api/serverApi';
+import { logger } from '../system';
 import { quickEmbed } from '../util';
 import { Queue } from './Queue';
 import { Song } from './Song';
-import { args, owner_server_id, isProduction } from '../config';
-import progressbar from 'string-progressbar';
-import { bannedChannels } from '../database/api/serverApi';
-import { logger } from '../system';
 
 const minVolume = 0;
 const maxVolume = 12;
 const vcWaitTime: number = ms('30m');
-
-const testVoiceID = '610883901472243713';
 
 export class Player {
    public guild: Guild;
@@ -45,41 +42,31 @@ export class Player {
    // eslint-disable-next-line no-undef
    public vcTimeout: NodeJS.Timeout;
 
-   public joinTestVc = false;
-   public testVc?: VoiceChannel;
-
    private resource: AudioResource;
 
    constructor(guild: Guild, client: Client) {
       this.guild = guild;
       this.client = client;
       this.queue = new Queue();
-
-      if (guild.id !== owner_server_id) return;
-      this.joinTestVc = args['testvc'];
-
-      if (this.joinTestVc) {
-         const vc = guild.channels.cache.get(testVoiceID);
-         if (vc instanceof VoiceChannel) this.testVc = vc;
-      }
    }
 
-   async join(message?: Message) {
-      const vc = this.joinTestVc ? this.testVc : message?.member.voice.channel;
+   join(message: Message) {
+      const vc = message.member.voice.channel;
 
-      if (message) {
-         if (!vc) return quickEmbed(message, `You must be in a voice channel to play music`);
-         if (!vc.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
-
-         if (bannedChannels.get(message.guild.id)?.find(c => c.id === vc.id)) {
-            return quickEmbed(
-               message,
-               `The voice channel ${vc.name} has been blocked for use by a moderator`
-            );
-         }
+      if (!vc) {
+         quickEmbed(message, `You must be in a voice channel to play music`);
+         return;
       }
 
-      // logger.info(`vc: ${vc.name}\nid: ${vc.id}\nguildId: ${vc.guildId}`);
+      if (!vc.joinable) {
+         quickEmbed(message, 'I dont have permission to join that voice-channel');
+         return;
+      }
+
+      if (bannedChannels.get(message.guild.id)?.find(c => c.id === vc.id)) {
+         quickEmbed(message, `The voice channel ${vc.name} has been blocked for use by a moderator`);
+         return;
+      }
 
       try {
          joinVoiceChannel({
@@ -87,7 +74,6 @@ export class Player {
             guildId: message.guildId,
             adapterCreator: vc.guild.voiceAdapterCreator
          });
-         // this.startVcTimeout();
       } catch (err: any) {
          logger.error(`Error on joining\n${err.stack}`);
       }
@@ -137,6 +123,20 @@ export class Player {
          this.queue.clear();
       } catch (error) {
          logger.warn(`Error trying to leave vc in: ${this.guild.name}`);
+         logger.error(error);
+      }
+   }
+
+   stopPlayer() {
+      try {
+         this.clearVoiceTimeout();
+
+         if (this.isPlaying) {
+            this.player?.stop();
+            this.isPlaying = false;
+         }
+      } catch (error) {
+         logger.error(error);
       }
    }
 
@@ -163,13 +163,12 @@ export class Player {
       }
 
       // if no songs next then start timeout
-      this.isPlaying = false;
+      this.stopPlayer();
       if (!this.vcTimeout) this.startVcTimeout();
    }
 
    async startVcTimeout() {
-      if (!isProduction)
-         logger.info(chalk.bgMagenta.bold(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`));
+      if (!isProduction) logger.info(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`);
 
       this.clearVoiceTimeout();
 
@@ -191,7 +190,7 @@ export class Player {
          return;
       }
 
-      if (!isProduction) logger.info(chalk.bgMagenta.bold(`leaving vc after timeout`));
+      if (!isProduction) logger.info(`leaving vc after timeout`);
       this.leave();
    }
 
@@ -200,26 +199,13 @@ export class Player {
    }
 
    skipSong() {
-      if (!this.player) return;
-      // this.player.state.status = AudioPlayerStatus.Idle;
       this.playNext();
-      // this.player.stop(true);
    }
 
-   play(song: Song, message: Message) {
+   async play(song: Song, message: Message) {
       if (this.currentlyPlaying) return;
-
-      const vc = this.joinTestVc ? this.testVc : message.member.voice.channel;
       this.join(message);
-
-      if (bannedChannels.get(message.guild.id)?.find(c => c.id === vc.id)) {
-         this.leave();
-         return quickEmbed(message, `The voice channel ${vc.name} has been blocked for use by a moderator`);
-      }
-
       this.currentlyPlaying = this.queue.getNext();
-
-      if (!vc?.joinable) return quickEmbed(message, 'I dont have permission to join that voice-channel');
       if (!this.isPlaying) this.startStream(song);
    }
 
@@ -279,12 +265,6 @@ export class Player {
    }
 
    async startStream(song: Song) {
-      if (!getVoiceConnection(this.guild.id)) {
-         this.join();
-         logger.error('No Voicechannel');
-         return;
-      }
-
       const connection = getVoiceConnection(this.guild.id);
 
       try {
@@ -311,21 +291,15 @@ export class Player {
 
          this.player.on(AudioPlayerStatus.Idle, () => {
             setTimeout(() => {
-               // logger.info(`\nAudio player status after 5s of idling: ${this.player.state.status}\n`);
                if (this.player.state.status !== AudioPlayerStatus.Idle) return;
-               // logger.info(chalk`{bgRed.bold Player Idle}: going to next song`);
-               // logger.info(chalk`From: {bold ${this.currentlyPlaying.title}}`);
-               // logger.info(chalk`To: {bold ${this.queue.songs[0]?.title}}\n`);
                this.playNext();
-            }, ms('1.5s'));
+            }, ms('1s'));
          });
 
          this.player.on('error', error => {
             const metadata: any = error.resource.metadata;
 
-            logger.error(
-               chalk.bgRed.bold(`Player Error: ${error.message} with resource ${metadata.title}`)
-            );
+            logger.error(`Player Error: ${error.message} with resource ${metadata.title}`);
          });
       } catch (error: any) {
          this.playNext();
@@ -334,7 +308,13 @@ export class Player {
    }
 
    async resumeQueue(message: Message) {
-      this.play(this.currentlyPlaying || this.queue.songs[0], message);
+      const song = this.currentlyPlaying || this.queue.songs[0];
+
+      if (!song) {
+         return;
+      }
+
+      this.play(song, message);
    }
 
    async addSong(song: Song, message: Message, onlyAddToQueue = false) {
@@ -361,10 +341,6 @@ export class Player {
 
    //    this.startStream(this.currentlyPlaying, seekAmount);
    // }
-
-   getStream() {
-      // return this.stream;
-   }
 
    getSongAt(position: number): Song {
       return this.queue.songs[position];

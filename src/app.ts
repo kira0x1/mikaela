@@ -15,9 +15,6 @@ logger.info(
       : '-------development DB-------'
 );
 
-// print testvc arg
-if (config.args['testvc']) logger.info(`Will only join test vc`);
-
 // Instantiate discord.js client
 const client = new Client({
    intents: [
@@ -220,9 +217,9 @@ process.on('message', async (msg: string) => {
    if (msg !== 'shutdown') return;
    logger.info(`Gracefuly Stopping`);
 
-   util.players.map(p => p.saveQueueState());
+   // util.players.map(p => p.saveQueueState());
+   // await db.saveAllServersQueue();
 
-   await db.saveAllServersQueue();
    await db.dbConnection.close();
    process.exit(0);
 });

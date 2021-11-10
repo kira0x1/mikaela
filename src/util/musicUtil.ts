@@ -212,7 +212,7 @@ export async function onSongRequest(
    const player = getPlayer(message);
 
    // Make sure the user is in voice
-   if (!message.member.voice.channel && !player.testVc) {
+   if (!message.member.voice.channel) {
       return quickEmbed(message, `You must be in a voice channel to play music`);
    }
 
@@ -302,7 +302,6 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue = fa
 async function resumeQueue(message: Message, player: Player) {
    if (!player.hasSongs()) {
       const embed = new MessageEmbed().setColor(embedColor).setTitle('Queue Empty, please add a song');
-
       message.channel.send({ embeds: [embed] });
       return;
    }

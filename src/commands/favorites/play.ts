@@ -20,7 +20,7 @@ export const command: Command = {
       const player = getPlayer(message);
       if (!player) return;
 
-      if (!player.testVc && !player.inVoice && !message.member.voice.channel)
+      if (!player.inVoice && !message.member.voice.channel)
          return quickEmbed(message, `You must be in a voice channel to play music`);
 
       try {
