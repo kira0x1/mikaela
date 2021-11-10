@@ -205,9 +205,10 @@ client.on('messageCreate', message => {
 
    // Finally if all checks have passed then try executing the command.
    try {
+      logger.info(`Executing command: ${commandName}, guild: ${message.guild.name}`);
       command.execute(message, args);
-   } catch (err) {
-      logger.log('error', err);
+   } catch (error) {
+      logger.error(`error on command: ${commandName}, guild: ${message.guild.name}\n${error}`);
    }
 });
 
