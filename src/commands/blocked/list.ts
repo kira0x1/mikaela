@@ -22,7 +22,7 @@ export const command: Command = {
          count++;
       });
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
    }
 };

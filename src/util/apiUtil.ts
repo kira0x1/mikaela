@@ -4,7 +4,7 @@ import spotify from 'spotify-url-info';
 const youtubeSearch = require('yt-search');
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
-import { logger } from '../app';
+import { logger } from '../system';
 import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
 import { quickEmbed, wrap } from './styleUtil';
@@ -64,6 +64,7 @@ export function isPlaylist(song: Song | ytpl.Result): song is ytpl.Result {
 // Convertts the video details to ISong
 function convertDetailsToSong(details: MoreVideoDetails): Song {
    return {
+      discriminator: 'SONG',
       title: Util.escapeMarkdown(details.title),
       id: details.videoId,
       url: details.video_url,

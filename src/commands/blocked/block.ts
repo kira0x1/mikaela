@@ -1,4 +1,4 @@
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { AddBlocked, blockedUsers } from '../../database/models/Blocked';
 import { getTarget } from '../../util/discordUtil';
@@ -27,6 +27,6 @@ export const command: Command = {
       }
 
       const embed = createFooter(message).setTitle(`Blocked: \"${target.tag}\"`).setDescription(target.id);
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

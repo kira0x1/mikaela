@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import {
    Client,
    Collection,
@@ -10,19 +9,23 @@ import {
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
-
-import { logger } from '../app';
-import { Command } from '../classes/Command';
-import { Player } from '../classes/Player';
-import { IDuration, Song } from '../classes/Song';
-import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
-import { getAllServers } from '../database/api/serverApi';
-import { addFavoriteToUser } from '../database/api/userApi';
-import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
-import { sendArgsError } from './commandUtil';
-import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
-import { createFooter, embedColor, quickEmbed } from './styleUtil';
+import { logger } from '../system';
+import { Command, Player, IDuration, Song } from '../classes';
+import { getAllServers, addFavoriteToUser } from '../database';
+import { sendQueueEmbed } from '../commands/music/queue';
+import {
+   heartEmoji,
+   initEmoji,
+   trashEmoji,
+   createFooter,
+   embedColor,
+   quickEmbed,
+   sendArgsError,
+   convertPlaylistToSongs,
+   getSong,
+   isPlaylist
+} from '.';
 
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
@@ -50,16 +53,15 @@ export async function initPlayers(client: Client) {
 
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
-      // logger.log('info', chalk.bgBlue.bold(`${guildResolved.name}, ${guildResolved.id}`));
       players.set(guildResolved.id, new Player(guildResolved, client));
    });
 
    if (args['skipDB']) {
-      logger.info(chalk.bgMagenta.bold(`Persistant Queue disabled, due to skipDB flag`));
+      logger.info(`Persistant Queue disabled, due to skipDB flag`);
       return;
    }
 
-   const servers = await getAllServers(client.guilds.cache.array());
+   const servers = await getAllServers(client.guilds.cache.map(server => server));
    const serverWithSongs = servers.filter(server => server.queue && server.queue.length > 0);
 
    for (const server of serverWithSongs) {
@@ -71,14 +73,6 @@ export async function initPlayers(client: Client) {
 
       channels.forEach(channel => {
          if (channel instanceof VoiceChannel) voiceChannels.push(channel);
-      });
-
-      voiceChannels.forEach(vc => {
-         if (vc.members.has(client.user.id)) {
-            logger.info(chalk.bgRed.bold(`Found Mikaela in ${vc.name}`));
-            player.voiceChannel = vc;
-            player.playNext();
-         }
       });
    }
 }
@@ -128,7 +122,7 @@ export async function createFavoriteCollector(song: Song, message: Message) {
       return reaction.emoji.name === heartEmoji.name && !user.bot;
    };
 
-   const collector = message.createReactionCollector(filter, { time: collectorTime });
+   const collector = message.createReactionCollector({ filter, time: collectorTime });
    const userCooldowns: Collection<string, number> = new Collection();
 
    collector.on('collect', async (reaction, reactionCollector) => {
@@ -176,7 +170,7 @@ export async function createDeleteCollector(
       );
    };
 
-   const collector = msg.createReactionCollector(filter, { time: collectorTime });
+   const collector = msg.createReactionCollector({ filter, time: collectorTime });
 
    collector.on('collect', async (reaction, reactionCollector) => {
       const promises = [];
@@ -253,7 +247,7 @@ export async function onSongRequest(
       }
 
       const embed = createFooter(message).setTitle(`Added ${songCount} songs to queue`);
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
       return;
    }
 
@@ -277,7 +271,7 @@ export async function onSongRequest(
          player.queue.addSong(psong);
       }
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
       return;
    }
 
@@ -301,7 +295,7 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue = fa
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
       .setURL(song.spotifyUrl ? song.spotifyUrl : song.url);
 
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
    createFavoriteCollector(song, msg);
 }
 
@@ -309,13 +303,13 @@ async function resumeQueue(message: Message, player: Player) {
    if (!player.hasSongs()) {
       const embed = new MessageEmbed().setColor(embedColor).setTitle('Queue Empty, please add a song');
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
       return;
    }
 
    player.resumeQueue(message);
    const embed = createFooter(message).setTitle('Resuming Queue!');
-   await message.channel.send(embed);
+   await message.channel.send({ embeds: [embed] });
    sendQueueEmbed(message);
 }
 

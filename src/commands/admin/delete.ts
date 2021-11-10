@@ -1,7 +1,7 @@
 import { Constants } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
-import { addCodeField, createFooter, errorIconUrl, successIconUrl } from '../../util/styleUtil';
+import { createFooter, addCodeField, errorIconUrl, successIconUrl } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'delete',
@@ -25,28 +25,28 @@ export const command: Command = {
       });
 
       // If the channel is not a text channel then we cant bulkdelete so return
-      if (message.channel.type !== 'text') return;
+      if (message.channel.type !== 'GUILD_TEXT') return;
       const author = message.author;
 
       try {
-         const messagesDeleted = await (await message.channel.bulkDelete(amount)).array().reverse();
+         const messagesDeleted = await message.channel.bulkDelete(amount);
          if (!messagesDeleted) return;
 
          const embed = createFooter(message)
-            .setTitle(`${author.username} deleted ${messagesDeleted.length} messages`)
+            .setTitle(`${author.username} deleted ${messagesDeleted.size} messages`)
             .addField(`Guild`, message.guild.name, true)
             .addField(`Channel`, message.channel.name, true)
             .setThumbnail(successIconUrl);
 
          let deletedMessagesPretty = '';
 
-         for (let i = 1; i < messagesDeleted.length; i++) {
+         for (let i = 1; i < messagesDeleted.size; i++) {
             const msg = messagesDeleted[i];
             deletedMessagesPretty += `(${i})\nAuthor: ${msg.author.username}\ncontent: ${msg.content}\n\n`;
          }
 
          addCodeField(embed, deletedMessagesPretty);
-         author.send(embed);
+         author.send({ embeds: [embed] });
       } catch (error: any) {
          if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return;
          logger.error(error);
@@ -61,7 +61,7 @@ export const command: Command = {
 
          addCodeField(embed, error.message);
 
-         author.send(embed);
+         author.send({ embeds: [embed] });
       }
    }
 };

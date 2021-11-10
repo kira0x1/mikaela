@@ -12,7 +12,7 @@ export const cooldowns: Collection<string, Collection<string, number>> = new Col
 export function findCommand(query: string): Command | undefined {
    let command = commands.get(query.toLowerCase());
    if (!command) {
-      const cmdArray = commands.array();
+      const cmdArray = commands.map(cmd => cmd);
       command = cmdArray.find(cmd => cmd.aliases?.find(al => al.toLowerCase() === query.toLowerCase()));
    }
 
@@ -79,10 +79,7 @@ export function hasPerms(member: GuildMember, query: string): boolean {
 export function hasPermission(member: GuildMember, permission: Permission) {
    switch (permission) {
       case 'admin':
-         return member.hasPermission('ADMINISTRATOR', {
-            checkAdmin: true,
-            checkOwner: true
-         });
+         return member.permissions.has('ADMINISTRATOR', true);
       case 'mod':
          return member.permissions.any(modperms, true);
       case 'kira':
@@ -131,5 +128,5 @@ export function sendArgsError(command: Command, message: Message) {
    }
 
    embed.addField('Arguments Required', usageString);
-   return message.channel.send(embed);
+   return message.channel.send({ embeds: [embed] });
 }

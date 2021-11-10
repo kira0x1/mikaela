@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
 import { embedColor } from '../../util/styleUtil';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 export const command: Command = {
    name: 'clear',
@@ -22,6 +22,6 @@ export const command: Command = {
       embed.setColor(embedColor);
       embed.setTitle(`Queue cleared by ${message.author.username}`);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

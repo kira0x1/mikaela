@@ -1,7 +1,4 @@
-import chalk from 'chalk';
 import { Message } from 'discord.js';
-
-import { logger } from '../../app';
 import { Command } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getSong, sendSongNotFoundEmbed } from '../../util/apiUtil';
@@ -47,7 +44,6 @@ async function RemoveByIndex(args: string[], message: Message) {
 }
 
 async function RemoveBySearch(query: string, message: Message) {
-   logger.info(chalk.bgRed.bold(`Removing by search: ${query}`));
    const user = await findOrCreate(message.author);
    const song = await getSong(query);
    if (song instanceof Array) return;
@@ -64,7 +60,6 @@ async function RemoveBySearch(query: string, message: Message) {
 
       const songRemoved = user.favorites.splice(i, 1).shift();
       if (!songRemoved) return quickEmbed(message, `Error while trying to remove song at ${i}`);
-      logger.info(chalk.bgGreen.bold(`Deleting song ${s.title}`));
       user.save();
       hasRemovedSong = true;
       break;

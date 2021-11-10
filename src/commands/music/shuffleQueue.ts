@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
 import { embedColor, createFooter } from '../../util/styleUtil';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { updateLastQueue } from './queue';
 
 export const command: Command = {
@@ -20,7 +20,7 @@ export const command: Command = {
             .setTitle(`No songs currently playing to shuffle`)
             .setColor(embedColor);
 
-         const msg = message.channel.send(embed);
+         const msg = message.channel.send({ embeds: [embed] });
          createDeleteCollector(msg, message);
          return;
       }
@@ -32,7 +32,7 @@ export const command: Command = {
          .setTitle(`Shuffled The Queue!`)
          .setDescription(`Shuffled ${player.getSongs().length} songs`);
 
-      const msg = message.channel.send(embed);
+      const msg = message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
 
       updateLastQueue(message);

@@ -1,4 +1,4 @@
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { addFavoriteToUser } from '../../database/api/userApi';
 import { getSong, isPlaylist } from '../../util/apiUtil';

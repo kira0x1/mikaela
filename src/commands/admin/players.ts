@@ -1,6 +1,6 @@
 import { Collection, Constants, Message, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { Player } from '../../classes/Player';
 import { createDeleteCollector, players } from '../../util/musicUtil';
@@ -13,15 +13,16 @@ export const command: Command = {
    perms: ['kira'],
 
    async execute(message, args) {
-      const playing = players.filter(p => p.isPlaying).array();
-
       const pages: Collection<number, string> = new Collection();
+      const playing: Player[] = [];
 
       let i = 0;
-      for (const player of playing) {
+      for (const { '1': player } of players) {
+         if (!player.isPlaying) continue;
+         playing.push(player);
          const queueLength = player.queue.songs.length;
 
-         let field = `server: ${player.guild.name}\nchannel: ${player.voiceChannel.name}\n`;
+         let field = `server: ${player.guild.name}\nchannel: \n`;
          field += `queue: ${queueLength}\n`;
          field += `current: ${player.currentlyPlaying?.title}\n duration: ${player.getDurationPretty()}\n`;
          field += `-----------------------------\n\n`;
@@ -31,7 +32,7 @@ export const command: Command = {
 
       const notPlayingLength = players.filter(p => !p.isPlaying).size;
       const embed = createPlayerEmbed(message, playing, notPlayingLength, pages, 0);
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
       if (pages.size <= 1) {
@@ -47,7 +48,7 @@ export const command: Command = {
          return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
       };
 
-      const collector = msg.createReactionCollector(filter, { time: ms('1h') });
+      const collector = msg.createReactionCollector({ filter, time: ms('1h') });
 
       let currentPage = 0;
 
@@ -63,7 +64,7 @@ export const command: Command = {
          reaction.users.remove(userReacted);
 
          const newEmbed = createPlayerEmbed(message, playing, notPlayingLength, pages, currentPage);
-         msg.edit(newEmbed);
+         msg.edit({ embeds: [newEmbed] });
       });
 
       collector.on('end', collected => {

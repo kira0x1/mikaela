@@ -47,7 +47,7 @@ export function toEmbed(message: Message, eventInfo: UserEventInfo) {
       embed.setColor(eventInfo.color);
    }
    if (eventInfo.deleteMessageDays) {
-      embed.addField('Delete message days', eventInfo.deleteMessageDays);
+      embed.addField('Delete message days', eventInfo.deleteMessageDays.toString());
    }
 
    return embed;

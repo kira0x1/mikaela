@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, ThreadChannel } from 'discord.js';
 import { Command } from '../../classes/Command';
 import { setBannedChannel, bannedChannels } from '../../database/api/serverApi';
 import { sendErrorEmbed, wrap, createFooter, successIconUrl } from '../../util/styleUtil';
@@ -24,6 +24,10 @@ export const command: Command = {
          return sendErrorEmbed(message, `Could not find a channel that has the id ${wrap(channelId)}`);
       }
 
+      if (channel instanceof ThreadChannel) {
+         return sendErrorEmbed(message, `Thread's are not supported`);
+      }
+
       const savedChannel = await setBannedChannel(message, channel);
       if (!savedChannel) {
          return sendErrorEmbed(message, `Channel is already banned`);
@@ -33,7 +37,7 @@ export const command: Command = {
          .setThumbnail(successIconUrl)
          .setTitle(`Banned Channel: ${channel.name}`);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };
 
@@ -46,5 +50,5 @@ async function listBlockedChannels(message: Message) {
 
    blockedChannels?.forEach(channel => embed.addField(channel.name, `Blocked by: <@${channel.bannedBy}>`));
 
-   message.channel.send(embed);
+   message.channel.send({ embeds: [embed] });
 }

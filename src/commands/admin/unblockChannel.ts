@@ -1,6 +1,7 @@
 import { Command } from '../../classes/Command';
 import { createFooter, sendErrorEmbed, successIconUrl, wrap } from '../../util/styleUtil';
 import { bannedChannels, unbanChannel } from '../../database/api/serverApi';
+import { ThreadChannel } from 'discord.js';
 export const command: Command = {
    name: 'unblockChannel',
    description: 'Unblock a channel',
@@ -18,6 +19,10 @@ export const command: Command = {
          return sendErrorEmbed(message, `Could not find a channel that has the id ${wrap(channelId)}`);
       }
 
+      if (channel instanceof ThreadChannel) {
+         return sendErrorEmbed(message, `Thread's are not supported`);
+      }
+
       const channels = bannedChannels.get(guild.id);
       if (!channels || !channels.find(c => c.id === channelId)) {
          return sendErrorEmbed(message, `Channel ${wrap(channel.name)} is not banned`);
@@ -29,6 +34,6 @@ export const command: Command = {
          .setThumbnail(successIconUrl)
          .setTitle(`UnBlocked Channel: ${channel.name}`);
 
-      message.channel.send(embed);
+      message.channel.send({ embeds: [embed] });
    }
 };

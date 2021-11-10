@@ -1,6 +1,6 @@
 import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { CommandInfo } from '../../classes/CommandInfo';
 import { prefix } from '../../config';
@@ -62,7 +62,7 @@ async function displayAll(message: Message) {
       if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description, true);
    });
 
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
    createDeleteCollector(msg, message);
 }
 
@@ -90,7 +90,7 @@ async function displayOne(message: Message, query: string) {
       if (command.isDisabled) embed.setTitle('This command is disabled at the moment');
       else InsertCommandEmbed(embed, command);
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       createDeleteCollector(msg, message);
       return;
    }
@@ -109,7 +109,7 @@ async function displayOne(message: Message, query: string) {
    commands.map(cmd => addCommandToEmbed(cmd, embed));
 
    // Send embed
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
 
    // Add reaction to delete embed when user is done
    createDeleteCollector(msg, message);
@@ -147,7 +147,7 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
 
    page.map(command => addCommandToEmbed(command, embed));
 
-   const msg = await message.channel.send(embed);
+   const msg = await message.channel.send({ embeds: [embed] });
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
@@ -163,7 +163,7 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
    };
 
-   const collector = msg.createReactionCollector(filter, { time: ms('5h') });
+   const collector = msg.createReactionCollector({ filter, time: ms('5h') });
 
    let currentPage = 0;
 
@@ -185,7 +185,7 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
       const page = pages.get(currentPage);
       page.map(command => addCommandToEmbed(command, newEmbed));
 
-      msg.edit(newEmbed);
+      msg.edit({ embeds: [newEmbed] });
    });
 
    collector.on('end', collected => {

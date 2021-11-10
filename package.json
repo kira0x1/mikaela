@@ -26,7 +26,7 @@
    },
    "scripts": {
       "start": "node .",
-      "start-prod": "node . --production",
+      "start-prod": "node . --env=production",
       "skipdb": "node . --skipDB",
       "testvc": "node . --testvc",
       "prebuild": "npm run clean",
@@ -37,16 +37,17 @@
       "clean:node": "rimraf 'node_modules/!(rimraf|.bin)'",
       "clean:all": "npm run clean && npm run clean:node",
       "prettier": "prettier --write **.ts",
-      "lint": "eslint . --ext .ts"
+      "lint": "eslint . --ext .ts",
+      "voiceReport": "node scripts/dependancyReport.js"
    },
    "dependencies": {
       "@discordjs/opus": "^0.6.0",
+      "@discordjs/voice": "^0.7.2",
       "axios": "^0.24.0",
       "bufferutil": "^4.0.5",
-      "chalk": "^4.1.2",
-      "discord-ytdl-core": "^5.0.4",
-      "discord.js": "^12.5.3",
+      "discord.js": "^13.3.1",
       "dotenv": "^10.0.0",
+      "ffmpeg-static": "^4.4.0",
       "minimist": "^1.2.5",
       "moment": "^2.29.1",
       "mongoose": "^6.0.12",
@@ -58,6 +59,7 @@
       "tslib": "^2.3.1",
       "utf-8-validate": "^5.0.7",
       "winston": "^3.3.3",
+      "winston-elasticsearch": "^0.15.9",
       "ws": "^8.2.3",
       "yt-search": "^2.10.2",
       "ytdl-core": "^4.9.1",
@@ -66,9 +68,9 @@
    "devDependencies": {
       "@types/ms": "^0.7.31",
       "@types/node": "^16.11.6",
-      "@typescript-eslint/eslint-plugin": "^5.2.0",
-      "@typescript-eslint/parser": "^5.2.0",
-      "eslint": "^8.1.0",
+      "@typescript-eslint/eslint-plugin": "^5.3.0",
+      "@typescript-eslint/parser": "^5.3.0",
+      "eslint": "^8.2.0",
       "eslint-config-alloy": "^4.4.0",
       "eslint-config-prettier": "^8.3.0",
       "eslint-plugin-import": "^2.25.2",
@@ -81,6 +83,6 @@
       "events": {
          "start": "cls || clear"
       },
-      "delay": 1000
+      "delay": 500
    }
 }

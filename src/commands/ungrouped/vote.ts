@@ -1,5 +1,5 @@
 import { MessageEmbed } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';
@@ -49,7 +49,7 @@ export const command: Command = {
       }
 
       try {
-         const messageSent = await message.channel.send(embed);
+         const messageSent = await message.channel.send({ embeds: [embed] });
          for (let i = 0; i < votes.length; i++) {
             const emoji = messageSent.client.emojis.cache.find(emoji => emoji.name === voteEmojis[i].name);
             await messageSent.react(emoji.id);

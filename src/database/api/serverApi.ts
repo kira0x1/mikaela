@@ -1,5 +1,5 @@
 import { Client, Collection, Guild, Message, GuildChannel } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Queue } from '../../classes/Queue';
 import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';
@@ -89,7 +89,6 @@ export async function setServerPrefix(message: Message, prefix: string) {
    }
 
    prefixes.set(message.guild.id, prefix);
-   server.markModified('prefixes');
    await server.save();
 }
 
@@ -112,7 +111,6 @@ export async function setBannedChannel(message: Message, channel: GuildChannel) 
    channelsBanned.push(newBannedChannel);
    bannedChannels.set(server.serverId, channelsBanned);
 
-   server.markModified('bannedChannels');
    await server.save();
    return true;
 }
@@ -130,7 +128,6 @@ export async function unbanChannel(message: Message, channel: GuildChannel) {
    }
 
    bannedChannels.set(server.serverId, server.bannedChannels);
-   server.markModified('bannedChannels');
    await server.save();
 }
 
@@ -138,7 +135,7 @@ export const prefixes: Collection<string, string> = new Collection();
 export const bannedChannels: Collection<string, BannedChannel[]> = new Collection();
 
 export async function initServers(client: Client) {
-   const servers = await getAllServers(client.guilds.cache.array());
+   const servers = await getAllServers(client.guilds.cache.map(v => v));
 
    servers.map(server => {
       const serverPrefix = server.prefixes.find(s => s.botId === client.user.id)?.prefix;

@@ -1,11 +1,11 @@
 import { Command } from '../../classes/Command';
+import { quickEmbed } from '../../util';
 import {
    createCurrentlyPlayingEmbed,
    createDeleteCollector,
    createFavoriteCollector,
    getPlayer
 } from '../../util/musicUtil';
-import { quickEmbed } from '../../util/styleUtil';
 
 export const command: Command = {
    name: 'Now Playing',
@@ -26,7 +26,7 @@ export const command: Command = {
       // Create embed
       const embed = await createCurrentlyPlayingEmbed(player, message);
 
-      const msg = await message.channel.send(embed);
+      const msg = await message.channel.send({ embeds: [embed] });
       await createFavoriteCollector(currentSong, msg);
       await createDeleteCollector(msg, message);
    }

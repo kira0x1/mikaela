@@ -1,4 +1,5 @@
 import { Message, User } from 'discord.js';
+
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';
@@ -71,7 +72,7 @@ export const command: Command = {
             player.queue.addSong(song);
          }
 
-         message.channel.send(embed);
+         message.channel.send({ embeds: [embed] });
       } catch (error: any) {
          sendErrorEmbed(message, error.message);
       }
@@ -82,6 +83,7 @@ export async function findFavorite(
    message: Message,
    args: string[]
 ): Promise<{ target: User; song: Song | Song[] }> {
+   let songArg = '';
    let songIndex: number | undefined;
 
    const songRanges: number[] = [];
@@ -132,7 +134,6 @@ export async function findFavorite(
    if (songIndex === undefined) throw new Error(`no song index given`);
 
    songIndex--;
-   if (fav.length < songIndex || !fav[songIndex])
-      throw new Error(`song at index \"${songIndex++}\" not found`);
+   if (fav.length < songIndex || !fav[songIndex]) throw new Error(`song at index \"${songArg}\" not found`);
    return { target: target, song: fav[songIndex] };
 }

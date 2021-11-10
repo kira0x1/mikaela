@@ -1,7 +1,6 @@
-import chalk from 'chalk';
 import { Collection } from 'discord.js';
 import { model, Schema, Document } from 'mongoose';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 // A list of user id's
 export const blockedUsers: Collection<string, string> = new Collection();
@@ -24,7 +23,7 @@ export const BlockedModel = model<IBlocked>('BlockedUsers', BlockedListSchema);
 export async function AddBlocked(name: string, id: string) {
    try {
       if (await BlockedModel.findOne({ id: id })) {
-         return logger.log('info', chalk.bgMagenta.bold('User already exists'));
+         return logger.info('User already exists');
       }
       blockedUsers.set(id, name);
       return await new BlockedModel({ name: name, id: id }).save();

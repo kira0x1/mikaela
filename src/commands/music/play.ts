@@ -13,10 +13,10 @@ export const command: Command = {
       // if no arguments given then attempt to play whats in the queue
       if (args.join('').trim() === '') {
          getPlayer(message).resumeQueue(message);
-         // TODO provide feedback
          return;
       }
 
+      // If there were arguments, then process the input and play the song
       onSongRequest(message, args, this);
    }
 };

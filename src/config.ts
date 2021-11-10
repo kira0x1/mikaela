@@ -4,25 +4,40 @@ const production_prefix = process.env.PROD_PREFIX;
 const development_prefix = process.env.DEV_PREFIX;
 
 const dev_token = process.env.DEV_TOKEN;
-const mikaela_token = process.env.PROD_TOKEN;
+const production_token = process.env.PROD_TOKEN;
 
 export const args = require('minimist')(process.argv.slice(2));
 
 // Returns true if --production is an argument
-export const isProduction = args['production'];
+export const isProduction = process.env.NODE_ENV === 'production';
 
 const cmdPrefix = args['prefix'];
 
+/**
+ * Default prefix when the server have not set a custom prefix
+ */
 export const prefix = cmdPrefix || isProduction ? production_prefix : development_prefix;
 
-export const token = isProduction ? mikaela_token : dev_token;
+export const token = isProduction ? production_token : dev_token;
 
+/**
+ * The discord id of the bot's owner
+ */
 export const owner_server_id = process.env.OWNER_SERVER_ID;
 
+/**
+ *  The mongodb uri to use in production
+ */
 const prodDB = process.env.PROD_DB;
 
-export const devDB = process.env.DEV_DB;
+/**
+ * The mongodb uri to use in development
+ */
+const devDB = process.env.DEV_DB;
 
+/**
+ * MongoDB URI
+ */
 export const dbURI = isProduction || args['prodDB'] ? prodDB : devDB;
 
 export const perms = {
@@ -38,4 +53,6 @@ export const perms = {
    }
 };
 
-export const mainBotId = process.env.BOT_ID;
+export const elasticServer = process.env.ELASTIC_SERVER;
+export const elasticUser = process.env.ELASTIC_USERNAME;
+export const elasticPass = process.env.ELASTIC_PASSWORD;

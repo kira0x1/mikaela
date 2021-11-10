@@ -6,6 +6,7 @@ import { commands, commandGroups, commandInfos } from '../util/commandUtil';
 
 export function initCommands() {
    const infos: CommandInfo[] = [];
+
    readdirSync(path.join(__dirname, '..', 'commands', 'info'))
       .filter(file => file.endsWith('js'))
       .map(file => {
@@ -18,6 +19,7 @@ export function initCommands() {
       .map(file => {
          const { command } = require(path.join(__dirname, '..', 'commands', file));
          const cmd: Command = command;
+
          commands.set(cmd.name, cmd);
       });
 

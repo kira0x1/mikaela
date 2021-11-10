@@ -1,7 +1,7 @@
 import { Command } from '../../classes/Command';
-import { findPlayer } from '../../util/musicUtil';
-import { quickEmbed } from '../../util/styleUtil';
-import ms from 'ms';
+// import { findPlayer } from '../../util/musicUtil';
+// import { quickEmbed } from '../../util/styleUtil';
+// import ms from 'ms';
 
 export const command: Command = {
    name: 'Seek',
@@ -11,11 +11,10 @@ export const command: Command = {
    args: true,
 
    async execute(message, args) {
-      const arg = args.shift();
-      const seekAmount = ms(arg);
-      if (!seekAmount) return quickEmbed(message, `\`${arg}\` is not a valid amount`);
-
-      const player = findPlayer(message.guild.id);
-      player.seek(seekAmount);
+      // const arg = args.shift();
+      // const seekAmount = ms(arg);
+      // if (!seekAmount) return quickEmbed(message, `\`${arg}\` is not a valid amount`);
+      // const player = findPlayer(message.guild.id);
+      // player.seek(seekAmount);
    }
 };

@@ -27,7 +27,7 @@ export const command: Command = {
             .setURL(lastPlayed.url)
             .setColor(embedColor);
 
-         message.channel.send(embed);
+         message.channel.send({ embeds: [embed] });
       } else {
          quickEmbed(message, `No song was played previously`);
       }
