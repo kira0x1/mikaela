@@ -4,7 +4,8 @@
 [![discord badge](https://img.shields.io/discord/585850878532124672?color=7289da&logo=discord&logoColor=white)](https://discord.gg/6fzTAReQtj)
 
 **[Click this to invite mikaela to your server.](https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=37038144&scope=bot)**
-If you want to add a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot) to invite mikaela-2
+
+> To invite a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot)
 
 ---
 ## Setup
