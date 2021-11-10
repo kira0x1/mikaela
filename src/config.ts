@@ -9,7 +9,7 @@ const production_token = process.env.PROD_TOKEN;
 export const args = require('minimist')(process.argv.slice(2));
 
 // Returns true if --production is an argument
-export const isProduction = args['production'];
+export const isProduction = process.env.NODE_ENV === 'production';
 
 const cmdPrefix = args['prefix'];
 
