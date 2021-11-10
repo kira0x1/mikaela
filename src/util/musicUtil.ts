@@ -10,18 +10,23 @@ import {
    VoiceChannel
 } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../app';
-import { Command } from '../classes/Command';
-import { Player } from '../classes/Player';
-import { IDuration, Song } from '../classes/Song';
-import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
-import { getAllServers } from '../database/api/serverApi';
-import { addFavoriteToUser } from '../database/api/userApi';
-import { convertPlaylistToSongs, getSong, isPlaylist } from './apiUtil';
-import { sendArgsError } from './commandUtil';
-import { heartEmoji, initEmoji, trashEmoji } from './discordUtil';
-import { createFooter, embedColor, quickEmbed } from './styleUtil';
+import { logger } from '../system';
+import { Command, Player, IDuration, Song } from '../classes';
+import { getAllServers, addFavoriteToUser } from '../database';
+import { sendQueueEmbed } from '../commands/music/queue';
+import {
+   heartEmoji,
+   initEmoji,
+   trashEmoji,
+   createFooter,
+   embedColor,
+   quickEmbed,
+   sendArgsError,
+   convertPlaylistToSongs,
+   getSong,
+   isPlaylist
+} from '.';
 
 const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();

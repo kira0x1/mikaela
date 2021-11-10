@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
 import { embedColor, createFooter } from '../../util/styleUtil';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { updateLastQueue } from './queue';
 
 export const command: Command = {

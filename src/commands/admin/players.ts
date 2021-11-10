@@ -1,6 +1,6 @@
 import { Collection, Constants, Message, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { Player } from '../../classes/Player';
 import { createDeleteCollector, players } from '../../util/musicUtil';

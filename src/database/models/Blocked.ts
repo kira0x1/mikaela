@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Collection } from 'discord.js';
 import { model, Schema, Document } from 'mongoose';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 // A list of user id's
 export const blockedUsers: Collection<string, string> = new Collection();

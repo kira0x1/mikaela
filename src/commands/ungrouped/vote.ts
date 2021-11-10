@@ -1,5 +1,5 @@
 import { MessageEmbed } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 import { Command } from '../../classes/Command';
 import { embedColor, quickEmbed } from '../../util/styleUtil';

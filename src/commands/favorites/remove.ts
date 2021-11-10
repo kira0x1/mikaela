@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Message } from 'discord.js';
 
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { findOrCreate } from '../../database/api/userApi';
 import { getSong, sendSongNotFoundEmbed } from '../../util/apiUtil';

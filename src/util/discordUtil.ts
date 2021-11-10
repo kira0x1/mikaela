@@ -1,5 +1,5 @@
 import { Client, Emoji, Guild, Message, User } from 'discord.js';
-import { logger } from '../app';
+import { logger } from '../system';
 import { owner_server_id } from '../config';
 import { prefixes } from '../database/api/serverApi';
 import axios, { AxiosRequestConfig } from 'axios';

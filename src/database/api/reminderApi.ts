@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { IReminder, Reminder } from '../models/Reminders';
 
 export async function getReminders(userId: string): Promise<IReminder[]> {

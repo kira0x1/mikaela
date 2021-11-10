@@ -1,17 +1,10 @@
 import chalk from 'chalk';
 import { Client } from 'discord.js';
-import { createLogger, format, transports } from 'winston';
-
 import * as config from './config';
 import * as db from './database';
 import * as sys from './system';
+import { logger } from './system';
 import * as util from './util';
-
-// Create logger
-export const logger = createLogger({
-   transports: [new transports.Console()],
-   format: format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`)
-});
 
 // print environment - production / development
 logger.info(

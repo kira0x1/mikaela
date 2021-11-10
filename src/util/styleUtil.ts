@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, User } from 'discord.js';
 import ms from 'ms';
 
-import { logger } from '../app';
+import { logger } from '../system';
 import { createDeleteCollector } from './musicUtil';
 
 const redColor = 0xcf274e;

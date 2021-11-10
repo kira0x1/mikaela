@@ -1,4 +1,4 @@
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { hasPerms } from '../../util/commandUtil';
 import { getPlayer } from '../../util/musicUtil';

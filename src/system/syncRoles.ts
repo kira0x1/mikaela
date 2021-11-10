@@ -10,7 +10,7 @@ import {
    TextChannel,
    User
 } from 'discord.js';
-import { logger } from '../app';
+import { logger } from '../system';
 import { owner_server_id } from '../config';
 import { getEmojiFromGuild } from '../util/discordUtil';
 

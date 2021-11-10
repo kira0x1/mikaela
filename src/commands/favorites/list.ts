@@ -10,7 +10,7 @@ import {
    User
 } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
 import { findOrCreate } from '../../database/api/userApi';

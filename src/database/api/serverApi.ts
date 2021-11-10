@@ -1,5 +1,5 @@
 import { Client, Collection, Guild, Message, GuildChannel } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Queue } from '../../classes/Queue';
 import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';

@@ -1,4 +1,4 @@
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { AddBlocked, blockedUsers } from '../../database/models/Blocked';
 import { getTarget } from '../../util/discordUtil';

@@ -4,7 +4,7 @@ import spotify from 'spotify-url-info';
 const youtubeSearch = require('yt-search');
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
-import { logger } from '../app';
+import { logger } from '../system';
 import { Song } from '../classes/Song';
 import { ConvertDuration } from './musicUtil';
 import { quickEmbed, wrap } from './styleUtil';

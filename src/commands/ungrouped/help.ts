@@ -1,6 +1,6 @@
 import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { CommandInfo } from '../../classes/CommandInfo';
 import { prefix } from '../../config';

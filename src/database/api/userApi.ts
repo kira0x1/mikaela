@@ -1,5 +1,5 @@
 import { Message, User as DiscordUser } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Song } from '../../classes/Song';
 import { quickEmbed } from '../../util/styleUtil';
 import { IUser, User } from '../models/User';

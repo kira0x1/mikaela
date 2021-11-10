@@ -1,7 +1,7 @@
 import { Collection, Constants, Guild, Message, MessageReaction, User } from 'discord.js';
 import moment from 'moment';
 import ms from 'ms';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { createDeleteCollector } from '../../util';
 import { createFooter } from '../../util/styleUtil';

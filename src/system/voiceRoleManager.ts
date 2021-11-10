@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { Guild, GuildMember, Role } from 'discord.js';
-import { logger } from '../app';
+import { logger } from '../system';
 import chalk from 'chalk';
 import { isProduction, mainBotId } from '../config';
 

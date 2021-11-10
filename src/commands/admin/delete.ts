@@ -1,5 +1,5 @@
 import { Constants } from 'discord.js';
-import { logger } from '../../app';
+import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { createFooter, addCodeField, errorIconUrl, successIconUrl } from '../../util/styleUtil';
 

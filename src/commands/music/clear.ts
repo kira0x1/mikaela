@@ -3,7 +3,7 @@ import { MessageEmbed } from 'discord.js';
 import { getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
 import { embedColor } from '../../util/styleUtil';
-import { logger } from '../../app';
+import { logger } from '../../system';
 
 export const command: Command = {
    name: 'clear',
