@@ -60,18 +60,6 @@ client.on('ready', async () => {
    // Setup players
    util.initPlayers(client);
 
-   // Add event listener to add/remove voice role
-   // sys.initVoiceManager(client);
-
-   // Make sure were in production, and not on mikaela 2
-   if (config.isProduction && client.user.id === config.mainBotId) {
-      // Add event listeners to #roles
-      sys.syncRoles(client);
-
-      // Add event listener to welcome new members
-      sys.initGreeter(client);
-   }
-
    sys.syncReminders(client);
 
    // Read command files and create a collection for the commands
