@@ -9,10 +9,10 @@ RUN apt-get update && \
     g++
 
 WORKDIR /mikaela
-COPY ["package.json", "package-lock.json*", "./"]
+COPY ["package.json", "yarn.lock", "./"]
 
 RUN npm install -g npm@latest node-gyp
-RUN npm install
+RUN yarn
 
 ##### RUNNER #####
 FROM node:16-slim
@@ -26,4 +26,4 @@ COPY . .
 
 RUN npx tsc
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
