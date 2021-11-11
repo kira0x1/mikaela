@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import {
    ButtonInteraction,
    CacheType,
@@ -7,9 +8,9 @@ import {
    MessageActionRow,
    MessageButton,
    MessageEmbed,
-   User,
-   VoiceChannel
+   User
 } from 'discord.js';
+import ms from 'ms';
 import {
    convertPlaylistToSongs,
    createFooter,
@@ -19,13 +20,11 @@ import {
    quickEmbed,
    sendArgsError
 } from '.';
-import ms from 'ms';
 import { Command, IDuration, Player, Song } from '../classes';
 import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
-import { addFavoriteToUser, getAllServers } from '../database';
+import { addFavoriteToUser } from '../database';
 import { logger } from '../system';
-import { randomUUID } from 'crypto';
 
 export const players: Collection<string, Player> = new Collection();
 
@@ -58,20 +57,20 @@ export async function initPlayers(client: Client) {
       return;
    }
 
-   const servers = await getAllServers(client.guilds.cache.map(server => server));
-   const serverWithSongs = servers.filter(server => server.queue && server.queue.length > 0);
+   // const servers = await getAllServers(client.guilds.cache.map(server => server));
+   // const serverWithSongs = servers.filter(server => server.queue && server.queue.length > 0);
 
-   for (const server of serverWithSongs) {
-      const player = findPlayer(server.serverId);
-      player.queue.songs = server.queue;
+   // for (const server of serverWithSongs) {
+   //    const player = findPlayer(server.serverId);
+   //    player.queue.songs = server.queue;
 
-      const channels = player.guild.channels.cache;
-      const voiceChannels: VoiceChannel[] = [];
+   //    const channels = player.guild.channels.cache;
+   //    const voiceChannels: VoiceChannel[] = [];
 
-      channels.forEach(channel => {
-         if (channel instanceof VoiceChannel) voiceChannels.push(channel);
-      });
-   }
+   //    channels.forEach(channel => {
+   //       if (channel instanceof VoiceChannel) voiceChannels.push(channel);
+   //    });
+   // }
 }
 
 export function getPlayer(message: Message): Player {
