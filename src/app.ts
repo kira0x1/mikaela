@@ -2,7 +2,7 @@ import { Client } from 'discord.js';
 import * as config from './config';
 import * as db from './database';
 import * as sys from './system';
-import { logger } from './system';
+import { getContextLogger, logger } from './system';
 import * as util from './util';
 
 // print environment - production / development
@@ -203,12 +203,14 @@ client.on('messageCreate', message => {
       }
    }
 
+   const ctxLogger = getContextLogger(message, commandName);
+
    // Finally if all checks have passed then try executing the command.
    try {
-      logger.info(`Executing command: ${commandName}, guild: ${message.guild.name}`);
+      ctxLogger.info(`Executing command: ${commandName}`);
       command.execute(message, args);
    } catch (error) {
-      logger.error(`error on command: ${commandName}, guild: ${message.guild.name}\n${error}`);
+      ctxLogger.error(`Error on command: ${commandName}\n${error}`);
    }
 });
 
