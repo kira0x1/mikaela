@@ -203,14 +203,14 @@ client.on('messageCreate', message => {
       }
    }
 
-   const ctxLogger = getContextLogger(message, commandName);
+   const ctxLogger = getContextLogger(message, command.name);
 
    // Finally if all checks have passed then try executing the command.
    try {
-      ctxLogger.info(`Executing command: ${commandName}`);
+      ctxLogger.info(`Executing command: ${command.name}`);
       command.execute(message, args);
    } catch (error) {
-      ctxLogger.error(`Error on command: ${commandName}\n${error}`);
+      ctxLogger.error(`Error on command: ${command.name}\n${error}`);
    }
 });
 
