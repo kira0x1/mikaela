@@ -1,8 +1,6 @@
 import { MessageEmbed } from 'discord.js';
-
-import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
-import { embedColor, createFooter } from '../../util/styleUtil';
+import { embedColor, createFooter, getPlayer } from '../../util';
 import { logger } from '../../system';
 import { updateLastQueue } from './queue';
 
@@ -20,8 +18,7 @@ export const command: Command = {
             .setTitle(`No songs currently playing to shuffle`)
             .setColor(embedColor);
 
-         const msg = message.channel.send({ embeds: [embed] });
-         createDeleteCollector(msg, message);
+         message.channel.send({ embeds: [embed] });
          return;
       }
 
@@ -32,8 +29,7 @@ export const command: Command = {
          .setTitle(`Shuffled The Queue!`)
          .setDescription(`Shuffled ${player.getSongs().length} songs`);
 
-      const msg = message.channel.send({ embeds: [embed] });
-      createDeleteCollector(msg, message);
+      message.channel.send({ embeds: [embed] });
 
       updateLastQueue(message);
    }

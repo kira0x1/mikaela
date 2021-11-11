@@ -1,5 +1,5 @@
-import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import ms from 'ms';
+import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { CommandInfo } from '../../classes/CommandInfo';
@@ -9,10 +9,10 @@ import {
    commandInfos,
    findCommand,
    findCommandInfo,
-   hasPerms
-} from '../../util/commandUtil';
-import { createDeleteCollector } from '../../util/musicUtil';
-import { createFooter, wrap } from '../../util/styleUtil';
+   hasPerms,
+   createFooter,
+   wrap
+} from '../../util';
 
 export const command: Command = {
    name: 'Help',
@@ -62,8 +62,7 @@ async function displayAll(message: Message) {
       if (hasPerms(message.member, info.name)) embed.addField(info.name, info.description, true);
    });
 
-   const msg = await message.channel.send({ embeds: [embed] });
-   createDeleteCollector(msg, message);
+   message.channel.send({ embeds: [embed] });
 }
 
 async function displayOne(message: Message, query: string) {
@@ -90,8 +89,7 @@ async function displayOne(message: Message, query: string) {
       if (command.isDisabled) embed.setTitle('This command is disabled at the moment');
       else InsertCommandEmbed(embed, command);
 
-      const msg = await message.channel.send({ embeds: [embed] });
-      createDeleteCollector(msg, message);
+      message.channel.send({ embeds: [embed] });
       return;
    }
 
@@ -109,10 +107,7 @@ async function displayOne(message: Message, query: string) {
    commands.map(cmd => addCommandToEmbed(cmd, embed));
 
    // Send embed
-   const msg = await message.channel.send({ embeds: [embed] });
-
-   // Add reaction to delete embed when user is done
-   createDeleteCollector(msg, message);
+   message.channel.send({ embeds: [embed] });
 }
 
 async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, message: Message) {
@@ -151,13 +146,10 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
-      createDeleteCollector(msg, message);
       return;
    }
 
-   msg.react('⬅')
-      .then(() => msg.react('➡'))
-      .finally(() => createDeleteCollector(msg, message));
+   msg.react('⬅').then(() => msg.react('➡'));
 
    const filter = (reaction: MessageReaction, userReacted: User) => {
       return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;

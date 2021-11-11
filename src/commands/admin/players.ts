@@ -3,8 +3,7 @@ import ms from 'ms';
 import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { Player } from '../../classes/Player';
-import { createDeleteCollector, players } from '../../util/musicUtil';
-import { addCodeField, createFooter } from '../../util/styleUtil';
+import { addCodeField, createFooter, players } from '../../util';
 
 export const command: Command = {
    name: 'Players',
@@ -36,13 +35,10 @@ export const command: Command = {
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
       if (pages.size <= 1) {
-         createDeleteCollector(msg, message);
          return;
       }
 
-      msg.react('⬅')
-         .then(() => msg.react('➡'))
-         .finally(() => createDeleteCollector(msg, message));
+      msg.react('⬅').then(() => msg.react('➡'));
 
       const filter = (reaction: MessageReaction, userReacted: User) => {
          return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;

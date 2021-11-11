@@ -26,8 +26,7 @@ export async function setReminder(message: Message, time: string, content: strin
    const msTime = ms(time);
    const prettyTime = ms(msTime, { long: true });
 
-   if (msTime > ms('3w'))
-      return quickEmbed(message, `Time cannot exceed 3 weeks`, { addDeleteCollector: true });
+   if (msTime > ms('3w')) return quickEmbed(message, `Time cannot exceed 3 weeks`);
 
    let description = `remind ${message.author.username} `;
    if (content) description += `to ${content} `;

@@ -1,33 +1,32 @@
 import {
+   ButtonInteraction,
+   CacheType,
    Client,
    Collection,
-   Constants,
    Message,
+   MessageActionRow,
+   MessageButton,
    MessageEmbed,
-   MessageReaction,
    User,
    VoiceChannel
 } from 'discord.js';
-import ms from 'ms';
-import { args } from '../config';
-import { logger } from '../system';
-import { Command, Player, IDuration, Song } from '../classes';
-import { getAllServers, addFavoriteToUser } from '../database';
-import { sendQueueEmbed } from '../commands/music/queue';
 import {
-   heartEmoji,
-   initEmoji,
-   trashEmoji,
+   convertPlaylistToSongs,
    createFooter,
    embedColor,
-   quickEmbed,
-   sendArgsError,
-   convertPlaylistToSongs,
    getSong,
-   isPlaylist
+   isPlaylist,
+   quickEmbed,
+   sendArgsError
 } from '.';
+import ms from 'ms';
+import { Command, IDuration, Player, Song } from '../classes';
+import { sendQueueEmbed } from '../commands/music/queue';
+import { args } from '../config';
+import { addFavoriteToUser, getAllServers } from '../database';
+import { logger } from '../system';
+import { randomUUID } from 'crypto';
 
-const collectorTime = ms('3h');
 export const players: Collection<string, Player> = new Collection();
 
 export function ConvertDuration(durationSeconds: number | string) {
@@ -49,8 +48,6 @@ export function ConvertDuration(durationSeconds: number | string) {
 }
 
 export async function initPlayers(client: Client) {
-   initEmoji(client);
-
    client.guilds.cache.map(async guild => {
       const guildResolved = await client.guilds.fetch(guild.id);
       players.set(guildResolved.id, new Player(guildResolved, client));
@@ -115,29 +112,31 @@ export async function createCurrentlyPlayingEmbed(player: Player, message: Messa
       );
 }
 
-export async function createFavoriteCollector(song: Song, message: Message) {
-   await message.react(heartEmoji.id);
-
-   const filter = (reaction: MessageReaction, user: User) => {
-      return reaction.emoji.name === heartEmoji.name && !user.bot;
+export async function createFavoriteCollector(song: Song, message: Message, btnId: string) {
+   const filter = (i: ButtonInteraction<CacheType>) => {
+      return i.customId === btnId;
    };
 
-   const collector = message.createReactionCollector({ filter, time: collectorTime });
+   const collector = message.createMessageComponentCollector({
+      filter,
+      componentType: 'BUTTON',
+      time: ms('6h')
+   });
+
    const userCooldowns: Collection<string, number> = new Collection();
 
-   collector.on('collect', async (reaction, reactionCollector) => {
-      const user = reaction.users.cache.last();
+   collector.on('collect', async i => {
+      if (!i.isButton()) return;
 
+      const user = i.user;
       const inCooldown = getFavReactionCooldown(user, userCooldowns);
 
       if (!inCooldown) {
          userCooldowns.set(user.id, Date.now());
          addFavoriteToUser(user, song, message);
       }
-   });
 
-   collector.on('end', collected => {
-      message.reactions.removeAll().catch(err => logger.error(err));
+      i.update({});
    });
 }
 
@@ -151,42 +150,6 @@ function getFavReactionCooldown(user: User, userCooldowns: Collection<string, nu
 
    const expTime = userCooldowns.get(user.id) + ms('5m');
    return now < expTime;
-}
-
-export async function createDeleteCollector(
-   message: Message | Promise<Message>,
-   previousMessage: Message,
-   owner?: string,
-   deleteOriginalMessage = true
-) {
-   const msg = message instanceof Message ? message : await message;
-   await msg.react(trashEmoji.id);
-
-   const filter = (reaction: MessageReaction, user: User) => {
-      return (
-         reaction.emoji.name === trashEmoji.name &&
-         !user.bot &&
-         user.id === (owner || previousMessage.author.id)
-      );
-   };
-
-   const collector = msg.createReactionCollector({ filter, time: collectorTime });
-
-   collector.on('collect', async (reaction, reactionCollector) => {
-      const promises = [];
-
-      if (msg.deletable) promises.push(msg.delete());
-
-      if (deleteOriginalMessage && previousMessage.deletable) promises.push(previousMessage.delete());
-
-      Promise.all(promises);
-   });
-
-   collector.on('end', collected => {
-      msg.reactions.removeAll().catch(error => {
-         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
-      });
-   });
 }
 
 export function randomUniqueArray<T>(array: Array<T>) {
@@ -295,8 +258,13 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue = fa
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
       .setURL(song.spotifyUrl ? song.spotifyUrl : song.url);
 
-   const msg = await message.channel.send({ embeds: [embed] });
-   createFavoriteCollector(song, msg);
+   const btnId = randomUUID();
+   const row = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId(btnId).setLabel('Add To Favorites').setStyle('PRIMARY')
+   );
+
+   const msg = await message.channel.send({ embeds: [embed], components: [row] });
+   createFavoriteCollector(song, msg, btnId);
 }
 
 async function resumeQueue(message: Message, player: Player) {

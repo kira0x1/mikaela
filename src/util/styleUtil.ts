@@ -1,7 +1,6 @@
 import ms from 'ms';
 import { Message, MessageEmbed, User } from 'discord.js';
 import { logger } from '../system';
-import { createDeleteCollector } from './musicUtil';
 
 export const embedColor = 0xcf274e;
 
@@ -41,8 +40,7 @@ export async function sendErrorEmbed(message: Message, errorMessage: string, opt
 
    if (options.errorTitle) embed.setTitle(options.errorTitle);
 
-   const msg = await message.channel.send({ embeds: [embed] });
-   createDeleteCollector(msg, message);
+   message.channel.send({ embeds: [embed] });
 }
 
 export function createFooter(message: Message, overrideAuthor?: User): MessageEmbed {
@@ -57,32 +55,22 @@ export function createFooter(message: Message, overrideAuthor?: User): MessageEm
 }
 
 export interface QuickEmbedOptions {
-   addDeleteCollector?: boolean;
    addFooter?: boolean;
    autoDelete?: boolean;
    deleteDelay?: string;
-   deleteCollectorOwnerId?: string;
-   deleteOriginalMessage?: boolean;
 }
 
 export async function quickEmbed(message: Message, content: string, options?: QuickEmbedOptions) {
    const addFooter = options?.addFooter || true;
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
-   const addDeleteCollector = options?.addDeleteCollector || true;
-   const deleteOriginalMessage =
-      options?.deleteOriginalMessage === undefined ? true : options.deleteOriginalMessage;
 
    const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor);
    embed.setTitle(content);
-   const msg = await message.channel.send({ embeds: [embed] });
+   message.channel.send({ embeds: [embed] });
 
    if (autoDelete) {
       autoDeleteMessage(message, deleteDelay);
-   }
-
-   if (addDeleteCollector) {
-      createDeleteCollector(msg, message, options?.deleteCollectorOwnerId, deleteOriginalMessage);
    }
 }
 

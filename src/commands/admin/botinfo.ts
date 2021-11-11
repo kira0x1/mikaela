@@ -3,7 +3,6 @@ import moment from 'moment';
 import ms from 'ms';
 import { logger } from '../../system';
 import { Command } from '../../classes/Command';
-import { createDeleteCollector } from '../../util';
 import { createFooter } from '../../util/styleUtil';
 
 const pageSize = 5;
@@ -38,15 +37,13 @@ export const command: Command = {
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
       if (pages.size <= 1) {
-         createDeleteCollector(msg, message);
          return;
       }
 
       msg.react('⏮️')
          .then(() => msg.react('⬅'))
          .then(() => msg.react('➡'))
-         .then(() => msg.react('⏭️'))
-         .finally(() => createDeleteCollector(msg, message));
+         .then(() => msg.react('⏭️'));
 
       const filterReactions = ['⏮️', '⏭️', '⬅', '➡'];
       const filter = (reaction: MessageReaction, userReacted: User) => {

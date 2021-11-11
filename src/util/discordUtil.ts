@@ -1,25 +1,6 @@
-import { Client, Emoji, Guild, Message, User } from 'discord.js';
-import { logger } from '../system';
-import { owner_server_id } from '../config';
-import { prefixes } from '../database/api/serverApi';
 import axios, { AxiosRequestConfig } from 'axios';
-
-export let heartEmoji: Emoji;
-export let trashEmoji: Emoji;
-
-export function initEmoji(client: Client) {
-   const coders_club = client.guilds.cache.get(owner_server_id);
-   if (!coders_club) return;
-
-   heartEmoji = getEmojiFromGuild(coders_club, 'heart');
-   trashEmoji = getEmojiFromGuild(coders_club, 'delete');
-}
-
-export function getEmojiFromGuild(guild: Guild, emojiName: string) {
-   const emoji = guild.emojis.cache.find(em => em.name.toLowerCase() === emojiName.toLowerCase());
-   if (!emoji) logger.warn(`emoji not found`);
-   return emoji;
-}
+import { Guild, Message, User } from 'discord.js';
+import { prefixes } from '../database/api/serverApi';
 
 export async function getTargetMember(message: Message, query: string) {
    query = query.toLowerCase();

@@ -20,8 +20,7 @@ export const command: Command = {
       // if (!member.voice.channel) return quickEmbed(message, `You must be in a voice channel to play music`);
 
       if (!player) return logger.warn('info', 'no player found while using volume command');
-      if (!arg)
-         return quickEmbed(message, `Volume is currently ${player.volume}`, { addDeleteCollector: true });
+      if (!arg) return quickEmbed(message, `Volume is currently ${player.volume}`);
 
       if (!hasPerms(message.member, this.name)) {
          return message.author.send(`You do not have permission to use ${wrap(command.name)}`);

@@ -97,7 +97,7 @@ export class Player {
       }
 
       if (message) {
-         quickEmbed(message, `volume set to ${this.volume}`, { addDeleteCollector: true });
+         quickEmbed(message, `volume set to ${this.volume}`);
       }
    }
 

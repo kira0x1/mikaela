@@ -1,8 +1,6 @@
 import { MessageEmbed } from 'discord.js';
-
-import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
 import { Command } from '../../classes/Command';
-import { embedColor, quickEmbed } from '../../util/styleUtil';
+import { embedColor, quickEmbed, getPlayer } from '../../util';
 import { updateLastQueue } from './queue';
 
 export const command: Command = {
@@ -27,8 +25,7 @@ export const command: Command = {
          .setDescription(currentSong.url);
 
       player.skipSong();
-      const msg = message.channel.send({ embeds: [embed] });
-      createDeleteCollector(msg, message);
+      message.channel.send({ embeds: [embed] });
       updateLastQueue(message);
    }
 };

@@ -1,11 +1,8 @@
+import { randomUUID } from 'crypto';
+import { MessageActionRow, MessageButton } from 'discord.js';
 import { Command } from '../../classes/Command';
 import { quickEmbed } from '../../util';
-import {
-   createCurrentlyPlayingEmbed,
-   createDeleteCollector,
-   createFavoriteCollector,
-   getPlayer
-} from '../../util/musicUtil';
+import { createCurrentlyPlayingEmbed, createFavoriteCollector, getPlayer } from '../../util/musicUtil';
 
 export const command: Command = {
    name: 'Now Playing',
@@ -20,14 +17,18 @@ export const command: Command = {
       const currentSong = player.currentlyPlaying;
 
       if (!player.currentlyPlaying) {
-         return quickEmbed(message, 'No song currently playing', { addDeleteCollector: true });
+         return quickEmbed(message, 'No song currently playing');
       }
 
       // Create embed
       const embed = await createCurrentlyPlayingEmbed(player, message);
 
-      const msg = await message.channel.send({ embeds: [embed] });
-      await createFavoriteCollector(currentSong, msg);
-      await createDeleteCollector(msg, message);
+      const btnId = randomUUID();
+      const row = new MessageActionRow().addComponents(
+         new MessageButton().setCustomId(btnId).setLabel('Add To Favorites').setStyle('PRIMARY')
+      );
+
+      const msg = await message.channel.send({ embeds: [embed], components: [row] });
+      await createFavoriteCollector(currentSong, msg, btnId);
    }
 };

@@ -1,6 +1,5 @@
 import { Command } from '../../classes/Command';
 import { blockedUsers } from '../../database/models/Blocked';
-import { createDeleteCollector } from '../../util/musicUtil';
 import { createFooter } from '../../util/styleUtil';
 
 export const command: Command = {
@@ -22,7 +21,6 @@ export const command: Command = {
          count++;
       });
 
-      const msg = await message.channel.send({ embeds: [embed] });
-      createDeleteCollector(msg, message);
+      message.channel.send({ embeds: [embed] });
    }
 };

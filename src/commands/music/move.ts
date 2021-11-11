@@ -1,7 +1,6 @@
 import { Command } from '../../classes/Command';
 import { Song } from '../../classes/Song';
-import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
-import { createFooter, embedColor, quickEmbed, wrap } from '../../util/styleUtil';
+import { createFooter, embedColor, quickEmbed, wrap, getPlayer } from '../../util';
 import { sendArgsError } from '../../util/commandUtil';
 
 export const command: Command = {
@@ -46,8 +45,7 @@ export const command: Command = {
             `${moveString(songSelected, toPos)}\n\n${moveString(otherSong, songPos)}\n\u200b`
          );
 
-      const msg = await message.channel.send({ embeds: [embed] });
-      createDeleteCollector(msg, message);
+      message.channel.send({ embeds: [embed] });
    }
 };
 

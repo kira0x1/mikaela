@@ -1,7 +1,6 @@
 import { Command } from '../../classes/Command';
 import { Player } from '../../classes/Player';
-import { createDeleteCollector, getPlayer } from '../../util/musicUtil';
-import { addCodeField, createFooter, quickEmbed } from '../../util/styleUtil';
+import { getPlayer, addCodeField, createFooter, quickEmbed } from '../../util';
 import { updateLastQueue } from './queue';
 
 export const command: Command = {
@@ -56,20 +55,20 @@ export const command: Command = {
 
          addCodeField(embed, songs.map((s, i) => `${pos + i}: ${s.title}`).join('\n'));
 
-         message.channel.send({ embeds: [embed] }).then(msg => createDeleteCollector(msg, message));
+         message.channel.send({ embeds: [embed] });
          updateLastQueue(message);
          return;
       }
 
       const song = player.queue.removeAt(startIndex).shift();
-      if (!song) return quickEmbed(message, 'Couldnt find song', { addDeleteCollector: true });
+      if (!song) return quickEmbed(message, 'Couldnt find song');
 
       const embed = createFooter(message)
          .setTitle(`Removed song\n${song.title}`)
          .setURL(song.url)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
-      message.channel.send({ embeds: [embed] }).then(msg => createDeleteCollector(msg, message));
+      message.channel.send({ embeds: [embed] });
       updateLastQueue(message);
    }
 };
