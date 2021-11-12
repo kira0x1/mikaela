@@ -21,10 +21,15 @@ export const command: Command = {
          playing.push(player);
          const queueLength = player.queue.songs.length;
 
-         let field = `server: ${player.guild.name}\nchannel: \n`;
+         const vc = player.guild.me.voice.channel;
+
+         let field = `server: ${player.guild.name}\n`;
+         field += `channel: ${vc.name}\n`;
+         field += `members: ${vc.members.size}\n`;
          field += `queue: ${queueLength}\n`;
-         field += `current: ${player.currentlyPlaying?.title}\n duration: ${player.getDurationPretty()}\n`;
-         field += `-----------------------------\n\n`;
+         field += `current: ${player.currentlyPlaying?.title}\n`;
+         field += `duration: ${player.getDurationPretty()}\n`;
+         field += `-----------------------------`;
          pages.set(i, field);
          i++;
       }
