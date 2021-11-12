@@ -41,8 +41,8 @@
       "voiceReport": "node scripts/dependancyReport.js"
    },
    "dependencies": {
-      "@discordjs/opus": "^0.6.0",
-      "@discordjs/voice": "^0.7.2",
+      "@discordjs/opus": "^0.7.0",
+      "@discordjs/voice": "^0.7.5",
       "axios": "^0.24.0",
       "bufferutil": "^4.0.5",
       "discord.js": "^13.3.1",
