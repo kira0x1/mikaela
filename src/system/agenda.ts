@@ -23,7 +23,13 @@ export function createReminderJob(userId: string, message: string, remindIn: num
    agenda.schedule(ms(remindIn, { long: true }), 'remind', { userId, message });
 }
 
-export async function createRepeatingReminderJob(userId: string, message: string, remindEvery: number) {
-   const remindJob = agenda.create('remind', { userId, message });
+export async function createRepeatingReminderJob(userId: string, content: string, remindEvery: number) {
+   const remindJob = agenda.create('remind', { userId, content });
    await remindJob.repeatEvery(ms(remindEvery, { long: true })).save();
+}
+
+export async function getJobsById(userId: string) {
+   const remindJobs = await agenda.jobs({ name: 'remind' });
+   const jobsFound = remindJobs.filter(j => j.attrs.data.userId === userId);
+   return jobsFound;
 }
