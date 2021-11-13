@@ -69,7 +69,7 @@ export async function saveAllServersQueue() {
 
 export async function getServerPrefix(message: Message) {
    const server = await findOrCreateServer(message.guild);
-   return await server.prefixes.find(serverPrefix => serverPrefix.botId === message.client.user.id);
+   return server.prefixes.find(serverPrefix => serverPrefix.botId === message.client.user.id);
 }
 
 export async function setServerPrefix(message: Message, prefix: string) {
@@ -81,15 +81,16 @@ export async function setServerPrefix(message: Message, prefix: string) {
    if (!currentServerPrefix) {
       server.prefixes.push({ botId: botId, prefix: prefix });
    } else {
-      server.prefixes.find(b => {
-         if (b.botId === botId) {
-            b.prefix = prefix;
+      for (const serverPrefix of server.prefixes) {
+         if (serverPrefix.botId === botId) {
+            serverPrefix.prefix = prefix;
          }
-      });
+      }
    }
 
    prefixes.set(message.guild.id, prefix);
-   await server.save();
+   server.markModified('prefixes');
+   return await server.save();
 }
 
 export async function setBannedChannel(message: Message, channel: GuildChannel) {
@@ -111,6 +112,7 @@ export async function setBannedChannel(message: Message, channel: GuildChannel) 
    channelsBanned.push(newBannedChannel);
    bannedChannels.set(server.serverId, channelsBanned);
 
+   server.markModified('bannedChannels');
    await server.save();
    return true;
 }
@@ -128,6 +130,7 @@ export async function unbanChannel(message: Message, channel: GuildChannel) {
    }
 
    bannedChannels.set(server.serverId, server.bannedChannels);
+   server.markModified('bannedChannels');
    await server.save();
 }
 
