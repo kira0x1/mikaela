@@ -31,7 +31,7 @@ export const command: Command = {
          field += `queue: ${queueLength}\n`;
          field += `current: ${player.currentlyPlaying?.title}\n`;
          field += `duration: ${player.getDurationPretty()}\n`;
-         field += `total queue duration: ${ms(totalDuration, { long: true })}\n`;
+         field += `total queue duration: ${ms(totalDuration * 1000, { long: true })}\n`;
          field += `-----------------------------`;
          pages.set(i, field);
          i++;
