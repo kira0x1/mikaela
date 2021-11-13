@@ -62,6 +62,8 @@ client.on('ready', async () => {
    // Read command files and create a collection for the commands
    sys.initCommands();
 
+   await sys.initAgenda();
+
    logger.info(`${client.user.username} online in ${client.guilds.cache.size} servers!`);
 });
 
