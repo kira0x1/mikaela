@@ -67,6 +67,15 @@ client.on('ready', async () => {
    logger.info(`${client.user.username} online in ${client.guilds.cache.size} servers!`);
 });
 
+client.on('guildCreate', guild => {
+   logger.info(`Joined new guild: ${guild.name}`, {
+      interactionType: 'Message',
+      clientID: client.user.id,
+      guildID: guild.id,
+      guildName: guild.name
+   });
+});
+
 // eslint-disable-next-line complexity
 client.on('messageCreate', message => {
    // check if the server has a custom prefix if not then use the default prefix
