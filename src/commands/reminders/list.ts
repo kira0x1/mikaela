@@ -5,6 +5,8 @@ import { createFooter } from '../../util';
 export const command: Command = {
    name: 'list',
    description: 'list reminders',
+   isSubCommand: true,
+
    async execute(message, args) {
       const jobs = await getJobsById(message.author.id);
       const embed = createFooter(message);

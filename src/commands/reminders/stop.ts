@@ -6,6 +6,7 @@ export const command: Command = {
    name: 'stop',
    description: 'stops a reminder',
    usage: '[index]',
+   isSubCommand: true,
 
    async execute(message, args) {
       const reminderIndex = Number(args.shift());
