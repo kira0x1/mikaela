@@ -4,7 +4,7 @@ import { Command, Song } from '../../classes';
 import * as db from '../../database';
 import * as util from '../../util';
 
-const maxShuffleAmount = 20;
+const maxShuffleAmount = 100;
 
 export const command: Command = {
    name: 'shuffle',
