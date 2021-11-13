@@ -24,6 +24,9 @@ export const command: Command = {
 
          let totalDuration = 0;
          player.getSongs().map(s => (totalDuration += s.duration.totalSeconds));
+         totalDuration *= 1000;
+
+         if (!totalDuration || isNaN(totalDuration)) totalDuration = 0;
 
          let field = `server: ${player.guild?.name}\n`;
          field += `channel: ${vc?.name}\n`;
@@ -31,7 +34,7 @@ export const command: Command = {
          field += `queue: ${queueLength}\n`;
          field += `current: ${player.currentlyPlaying?.title}\n`;
          field += `duration: ${player.getDurationPretty()}\n`;
-         field += `total queue duration: ${ms(totalDuration * 1000, { long: true })}\n`;
+         field += `total queue duration: ${ms(totalDuration, { long: true })}\n`;
          field += `-----------------------------`;
          pages.set(i, field);
          i++;
