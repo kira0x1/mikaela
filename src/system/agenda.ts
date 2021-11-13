@@ -15,6 +15,10 @@ export async function initAgenda() {
    await agenda.start();
 }
 
+export async function stopAgenda() {
+   await agenda.stop();
+}
+
 export function createReminderJob(userId: string, message: string, remindIn: number) {
    agenda.schedule(ms(remindIn, { long: true }), 'remind', { userId, message });
 }

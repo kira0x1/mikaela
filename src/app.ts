@@ -2,7 +2,7 @@ import { Client } from 'discord.js';
 import * as config from './config';
 import * as db from './database';
 import * as sys from './system';
-import { getContextLogger, logger } from './system';
+import { getContextLogger, logger, stopAgenda } from './system';
 import * as util from './util';
 
 // print environment - production / development
@@ -225,6 +225,7 @@ process.on('message', async (msg: string) => {
    // util.players.map(p => p.saveQueueState());
    // await db.saveAllServersQueue();
 
+   await stopAgenda();
    await db.dbConnection.close();
    process.exit(0);
 });
