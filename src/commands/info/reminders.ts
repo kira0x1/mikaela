@@ -5,5 +5,6 @@ export const info: CommandInfo = {
    description: 'set and view reminders',
    aliases: [],
    commands: [],
+   override: 'list',
    paginate: true
 };
