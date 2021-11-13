@@ -2,7 +2,7 @@ import { Client } from 'discord.js';
 import * as config from './config';
 import * as db from './database';
 import * as sys from './system';
-import { getContextLogger, logger } from './system';
+import { getContextLogger, logger, stopAgenda } from './system';
 import * as util from './util';
 
 // print environment - production / development
@@ -16,8 +16,15 @@ logger.info(
 );
 
 // Instantiate discord.js client
-const client = new Client({
-   intents: ['GUILD_MEMBERS', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGES', 'GUILDS', 'GUILD_VOICE_STATES'],
+export const client = new Client({
+   intents: [
+      'GUILD_MEMBERS',
+      'GUILD_MESSAGE_REACTIONS',
+      'GUILD_MESSAGES',
+      'GUILDS',
+      'GUILD_VOICE_STATES',
+      'DIRECT_MESSAGES'
+   ],
    presence: {
       activities: [
          {
@@ -54,6 +61,8 @@ client.on('ready', async () => {
 
    // Read command files and create a collection for the commands
    sys.initCommands();
+
+   await sys.initAgenda();
 
    logger.info(`${client.user.username} online in ${client.guilds.cache.size} servers!`);
 });
@@ -216,6 +225,7 @@ process.on('message', async (msg: string) => {
    // util.players.map(p => p.saveQueueState());
    // await db.saveAllServersQueue();
 
+   await stopAgenda();
    await db.dbConnection.close();
    process.exit(0);
 });

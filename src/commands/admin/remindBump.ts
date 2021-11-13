@@ -1,5 +1,5 @@
 import { Command } from '../../classes/Command';
-import { setReminder } from '../ungrouped/reminder';
+import { setReminder } from '../reminders/reminder';
 
 export const command: Command = {
    name: 'RemindBump',
