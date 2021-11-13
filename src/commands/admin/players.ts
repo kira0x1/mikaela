@@ -25,9 +25,9 @@ export const command: Command = {
          let totalDuration = 0;
          player.getSongs().map(s => (totalDuration += s.duration.totalSeconds));
 
-         let field = `server: ${player.guild.name}\n`;
-         field += `channel: ${vc.name}\n`;
-         field += `members: ${vc.members.size}\n`;
+         let field = `server: ${player.guild?.name}\n`;
+         field += `channel: ${vc?.name}\n`;
+         field += `members: ${vc.members?.size}\n`;
          field += `queue: ${queueLength}\n`;
          field += `current: ${player.currentlyPlaying?.title}\n`;
          field += `duration: ${player.getDurationPretty()}\n`;
