@@ -69,7 +69,7 @@ client.on('ready', async () => {
 
 client.on('guildCreate', guild => {
    logger.info(`Joined new guild: ${guild.name}`, {
-      interactionType: 'Message',
+      interactionType: 'JoinedGuild',
       clientID: client.user.id,
       guildID: guild.id,
       guildName: guild.name
