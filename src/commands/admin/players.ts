@@ -22,6 +22,13 @@ export const command: Command = {
          const queueLength = player.queue.songs.length;
          const vc = player.guild.me.voice.channel;
 
+         const members = vc?.members;
+         let membersCount = 0;
+
+         if (members) {
+            membersCount = members.size;
+         }
+
          let totalDuration = 0;
          player.getSongs().map(s => (totalDuration += s.duration.totalSeconds));
          totalDuration *= 1000;
@@ -30,7 +37,7 @@ export const command: Command = {
 
          let field = `server: ${player.guild?.name}\n`;
          field += `channel: ${vc?.name}\n`;
-         field += `members: ${vc.members?.size}\n`;
+         field += `members: ${membersCount}\n`;
          field += `queue: ${queueLength}\n`;
          field += `current: ${player.currentlyPlaying?.title}\n`;
          field += `duration: ${player.getDurationPretty()}\n`;
