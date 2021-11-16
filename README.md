@@ -8,27 +8,33 @@
 > To invite a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot)
 
 ---
+
 ## Setup
 
 Make sure you have node v16+ installed, and windows-build-tools.
 
 ### 1. Installing windows-build-tools
+
 ```bash
 $ npm install --global --production windows-build-tools
 ```
 
 #### 2. cd into the folder, and install all the modules.
+
 ```bash
-$ npm install
+$ yarn install
 ```
 
 #### 3. Enter the required fields needed in .env.example.
- When you're done, make sure to rename `.env.example` to `.env`.
+
+When you're done, make sure to rename `.env.example` to `.env`.
 
 #### 4. make sure you have typescript installed globaly, if you dont then just run
+
 ```bash
 $ npm install -g typescript
 ```
+
 otherwise, just run to compile the typescript.
 
 ```bash
@@ -36,24 +42,39 @@ $ tsc
 ```
 
 #### 5. The last step is just to run the bot
+
 ```bash
-$ npm start
+$ yarn start
+```
+
+## Running on production
+
+```bash
+$ docker-compose build
+```
+
+```bash
+$ docker-compose up -d
 ```
 
 ## Otional Flags
+
 #### Production / Development
+
 To run the bot using development db / development bot token, just add the development flag, and vice versa.
 
 ```bash
 $ node . --development
 ```
+
 ```bash
 $ node . --production
 ```
 
 #### Test VC
-If you want the bot to join a test vc automatically instead of joining the vc you're in ( so you could test the bot without actually joining a vc ) 
+
+If you want the bot to join a test vc automatically instead of joining the vc you're in ( so you could test the bot without actually joining a vc )
 
 ```bash
-npm run testvc
+yarn testvc
 ```
