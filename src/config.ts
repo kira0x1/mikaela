@@ -12,6 +12,7 @@ export const args = require('minimist')(process.argv.slice(2));
 export const isProduction = process.env.NODE_ENV === 'production';
 
 const cmdPrefix = args['prefix'];
+export const joinTestVc = args['testvc'];
 
 /**
  * Default prefix when the server have not set a custom prefix
@@ -51,3 +52,5 @@ export const perms = {
 export const elasticServer = process.env.ELASTIC_SERVER;
 export const elasticUser = process.env.ELASTIC_USERNAME;
 export const elasticPass = process.env.ELASTIC_PASSWORD;
+
+export const testVc = process.env.TEST_VC;
