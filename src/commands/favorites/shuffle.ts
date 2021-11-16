@@ -3,6 +3,7 @@ import { logger } from '../../system';
 import { Command, Song } from '../../classes';
 import * as db from '../../database';
 import * as util from '../../util';
+import * as config from '../../config';
 
 const maxShuffleAmount = 100;
 
@@ -14,7 +15,7 @@ export const command: Command = {
    cooldown: 1,
 
    async execute(message, args) {
-      if (!message.member.voice?.channel) {
+      if (!config.joinTestVc && !message.member.voice?.channel) {
          return util.quickEmbed(message, 'You must be in a voice channel to use this command');
       }
 

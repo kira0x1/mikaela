@@ -9,11 +9,11 @@ import {
    joinVoiceChannel,
    VoiceConnectionStatus
 } from '@discordjs/voice';
-import { Client, Guild, Message } from 'discord.js';
+import { Client, Guild, Message, VoiceChannel } from 'discord.js';
 import ms from 'ms';
 import progressbar from 'string-progressbar';
 import ytdl, { getInfo } from 'ytdl-core';
-import { isProduction } from '../config';
+import * as config from '../config';
 import { bannedChannels } from '../database/api/serverApi';
 import { logger } from '../system';
 import { quickEmbed } from '../util';
@@ -38,6 +38,7 @@ export class Player {
    public ytdlHighWaterMark: number = 1 << 30;
    public vcHighWaterMark = 1;
    public seekTime = 0;
+   public voiceChannel: VoiceChannel;
 
    // eslint-disable-next-line no-undef
    public vcTimeout: NodeJS.Timeout;
@@ -51,9 +52,17 @@ export class Player {
    }
 
    join(message: Message) {
-      const vc = message.member.voice.channel;
+      let vc = message.member.voice.channel;
+      if (config.joinTestVc) {
+         joinVoiceChannel({
+            channelId: config.testVc,
+            guildId: message.guildId,
+            adapterCreator: message.guild.voiceAdapterCreator
+         });
+         return;
+      }
 
-      if (!vc) {
+      if (!vc || vc.type !== 'GUILD_VOICE') {
          quickEmbed(message, `You must be in a voice channel to play music`);
          return;
       }
@@ -72,8 +81,11 @@ export class Player {
          joinVoiceChannel({
             channelId: message.member.voice.channelId,
             guildId: message.guildId,
-            adapterCreator: vc.guild.voiceAdapterCreator
+            adapterCreator: vc.guild.voiceAdapterCreator,
+            selfDeaf: true
          });
+
+         this.voiceChannel = vc;
       } catch (err: any) {
          logger.error(`Error on joining\n${err.stack}`);
       }
@@ -168,7 +180,7 @@ export class Player {
    }
 
    async startVcTimeout() {
-      if (!isProduction) logger.info(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`);
+      if (!config.isProduction) logger.info(`Starting vc timeout: ${ms(vcWaitTime, { long: true })}`);
 
       this.clearVoiceTimeout();
 
@@ -190,7 +202,7 @@ export class Player {
          return;
       }
 
-      if (!isProduction) logger.info(`leaving vc after timeout`);
+      if (!config.isProduction) logger.info(`leaving vc after timeout`);
       this.leave();
    }
 
