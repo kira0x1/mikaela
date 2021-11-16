@@ -30,7 +30,17 @@ export const command: Command = {
          }
 
          let totalDuration = 0;
-         player.getSongs().map(s => (totalDuration += s.duration.totalSeconds));
+         for (const song of player.getSongs()) {
+            console.dir(song.duration);
+            let adding = song.duration.totalSeconds;
+            if (!adding) {
+               adding = Number(song.duration.hours) * 3600;
+               adding += Number(song.duration.minutes) * 60;
+               adding += Number(song.duration.seconds);
+            }
+            totalDuration += adding;
+         }
+
          totalDuration *= 1000;
 
          if (!totalDuration || isNaN(totalDuration)) totalDuration = 0;
