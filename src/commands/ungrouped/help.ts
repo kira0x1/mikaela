@@ -1,16 +1,23 @@
+import { randomUUID } from 'crypto';
+import {
+   ButtonInteraction,
+   CacheType,
+   Collection,
+   Message,
+   MessageActionRow,
+   MessageButton,
+   MessageEmbed
+} from 'discord.js';
 import ms from 'ms';
-import { Collection, Constants, Message, MessageEmbed, MessageReaction, User } from 'discord.js';
-import { logger } from '../../system';
-import { Command } from '../../classes/Command';
-import { CommandInfo } from '../../classes/CommandInfo';
+import { Command, CommandInfo } from '../../classes';
 import { prefix } from '../../config';
 import {
    commandGroups,
    commandInfos,
+   createFooter,
    findCommand,
    findCommandInfo,
    hasPerms,
-   createFooter,
    wrap
 } from '../../util';
 
@@ -142,48 +149,53 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
 
    page.map(command => addCommandToEmbed(command, embed));
 
-   const msg = await message.channel.send({ embeds: [embed] });
-
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
+      message.channel.send({ embeds: [embed] });
       return;
    }
 
-   msg.react('⬅').then(() => msg.react('➡'));
+   const nextId = randomUUID();
+   const backId = randomUUID();
 
-   const filter = (reaction: MessageReaction, userReacted: User) => {
-      return (reaction.emoji.name === '➡' || reaction.emoji.name === '⬅') && !userReacted.bot;
+   const row = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
+      new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
+   );
+
+   const msg = await message.channel.send({ embeds: [embed], components: [row] });
+
+   const filter = (i: ButtonInteraction<CacheType>) => {
+      return i.customId === nextId || i.customId === backId;
    };
 
-   const collector = msg.createReactionCollector({ filter, time: ms('5h') });
+   const collector = msg.channel.createMessageComponentCollector({
+      filter,
+      componentType: 'BUTTON',
+      time: ms('3h')
+   });
 
    let currentPage = 0;
 
-   collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
-      if (reaction.emoji.name === '➡') {
+   collector.on('collect', async i => {
+      if (!i.isButton()) return;
+
+      if (i.customId === nextId) {
          currentPage++;
          if (currentPage >= pages.size) currentPage = 0;
-      } else if (reaction.emoji.name === '⬅') {
+      } else if (i.customId === backId) {
          currentPage--;
          if (currentPage < 0) currentPage = pages.size - 1;
       }
 
-      reaction.users.remove(userReacted);
       const newEmbed = createFooter(message);
-
       newEmbed.setTitle(createPageEmbedTitle(info, pages, currentPage + 1));
       newEmbed.setDescription(`***${commands.length} commands***`);
 
       const page = pages.get(currentPage);
       page.map(command => addCommandToEmbed(command, newEmbed));
 
-      msg.edit({ embeds: [newEmbed] });
-   });
-
-   collector.on('end', collected => {
-      msg.reactions.removeAll().catch(error => {
-         if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
-      });
+      await i.update({ embeds: [newEmbed] });
    });
 }
 
