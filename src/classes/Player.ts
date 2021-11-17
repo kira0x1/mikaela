@@ -277,7 +277,21 @@ export class Player {
    }
 
    async startStream(song: Song) {
+      // Create connection
       const connection = getVoiceConnection(this.guild.id);
+
+      connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+         try {
+            await Promise.race([
+               entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+               entersState(connection, VoiceConnectionStatus.Connecting, 5_000)
+            ]);
+            // Seems to be reconnecting to a new channel - ignore disconnect
+         } catch (error) {
+            // Seems to be a real disconnect which SHOULDN'T be recovered from
+            connection.destroy();
+         }
+      });
 
       try {
          const opusStream = ytdl(song.url, {
@@ -287,14 +301,19 @@ export class Player {
             quality: 'highestaudio'
          });
 
+         // Create Player
          if (!this.player) this.player = createAudioPlayer();
+
          if (!this.isPlaying) {
+            // Create resource
             this.resource = createAudioResource(opusStream, {
                inlineVolume: true,
                metadata: { title: song.title }
             });
 
+            // Set volume
             this.setVolume(this.volume);
+
             await entersState(connection, VoiceConnectionStatus.Ready, 5000);
 
             this.player.play(this.resource);
