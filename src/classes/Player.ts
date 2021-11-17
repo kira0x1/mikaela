@@ -296,6 +296,7 @@ export class Player {
 
             this.setVolume(this.volume);
             await entersState(connection, VoiceConnectionStatus.Ready, 5000);
+
             this.player.play(this.resource);
             connection.subscribe(this.player);
             this.isPlaying = true;
@@ -310,7 +311,6 @@ export class Player {
 
          this.player.on('error', error => {
             const metadata: any = error.resource.metadata;
-
             logger.error(`Player Error: ${error.message} with resource ${metadata.title}`);
          });
       } catch (error: any) {
@@ -336,22 +336,22 @@ export class Player {
    }
 
    pause() {
-      // if (!(this.currentlyPlaying && this.stream)) return;
-      // if (!this.stream.paused) this.stream.pause(true);
+      if (!this.currentlyPlaying) return;
+      this.player?.pause();
    }
 
    unpause() {
-      // if (!(this.currentlyPlaying && this.stream)) return;
-      // if (this.stream.paused) this.stream.resume();
+      if (!this.currentlyPlaying) return;
+      this.player?.unpause();
    }
 
    // seek(amount: number) {
-   //    if (!(this.currentlyPlaying && this.stream)) return;
-   //    const currentTime = this.getStreamTime();
-   //    let seekAmount = currentTime + amount / 1000;
-   //    if (seekAmount < 0) seekAmount = 0;
+   // if (!this.currentlyPlaying) return;
+   // const currentTime = this.getStreamTime();
+   // let seekAmount = currentTime + amount / 1000;
+   // if (seekAmount < 0) seekAmount = 0;
 
-   //    this.startStream(this.currentlyPlaying, seekAmount);
+   // this.startStream(this.currentlyPlaying, seekAmount);
    // }
 
    getSongAt(position: number): Song {

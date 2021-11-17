@@ -8,7 +8,6 @@ export const command: Command = {
    name: 'Resume',
    description: 'Resume the currently paused song',
    aliases: ['unpause', 'continue'],
-   isDisabled: true,
 
    async execute(message, args) {
       // Get the guilds player
