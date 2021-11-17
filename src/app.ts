@@ -17,7 +17,7 @@ logger.info(
 
 // Instantiate discord.js client
 export const client = new Client({
-   intents: ['GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES'],
+   intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES'],
    presence: {
       activities: [
          {
