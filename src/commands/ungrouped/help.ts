@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import { Command, CommandInfo } from '../../classes';
-import { prefix } from '../../config';
+import { prefixes } from '../../database';
 import {
    commandGroups,
    commandInfos,
@@ -20,6 +20,7 @@ import {
    hasPerms,
    wrap
 } from '../../util';
+import * as config from '../../config';
 
 export const command: Command = {
    name: 'Help',
@@ -46,6 +47,8 @@ async function displayAll(message: Message) {
          if (hasPerms(message.member, cmd.name) && !cmd.hidden && !cmd.isDisabled) grouped.push(cmd);
       });
    });
+
+   const prefix = prefixes.get(message.guild?.id) || config.prefix;
 
    // Create embed
    const embed = createFooter(message)
@@ -88,13 +91,16 @@ async function displayOne(message: Message, query: string) {
    if (!hasPerms(message.member, query))
       return message.author.send(`You do not have permission to use ${wrap(command?.name || info?.name)}`);
 
+   // Get prefix
+   const prefix = prefixes.get(message.guild?.id) || config.prefix;
+
    // Create embed
    const embed = createFooter(message);
 
    // If we have the command
    if (command) {
       if (command.isDisabled) embed.setTitle('This command is disabled at the moment');
-      else InsertCommandEmbed(embed, command);
+      else InsertCommandEmbed(embed, command, prefix);
 
       message.channel.send({ embeds: [embed] });
       return;
@@ -111,16 +117,21 @@ async function displayOne(message: Message, query: string) {
 
    // Loop through all the commands in the CommandInfo class
    const commands = info.commands.filter(cmd => !cmd.isDisabled);
-   commands.map(cmd => addCommandToEmbed(cmd, embed));
+   commands.map(cmd => addCommandToEmbed(cmd, embed, prefix));
 
    // Send embed
    message.channel.send({ embeds: [embed] });
 }
 
 async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, message: Message) {
+   // Get prefix
+   const prefix = prefixes.get(message.guild?.id) || config.prefix;
+
+   // Get commands that are not disabled
    const commands = info.commands.filter(cmd => !cmd.isDisabled);
+
    if (!info.paginate) {
-      commands.map(cmd => addCommandToEmbed(cmd, embed));
+      commands.map(cmd => addCommandToEmbed(cmd, embed, prefix));
       return;
    }
 
@@ -147,7 +158,7 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
    embed.setTitle(createPageEmbedTitle(info, pages, 1));
    embed.setDescription(`***${commands.length} commands***`);
 
-   page.map(command => addCommandToEmbed(command, embed));
+   page.map(command => addCommandToEmbed(command, embed, prefix));
 
    // If there are only 1 or none pages then dont add the next, previous page emojis / collector
    if (pages.size <= 1) {
@@ -193,13 +204,13 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
       newEmbed.setDescription(`***${commands.length} commands***`);
 
       const page = pages.get(currentPage);
-      page.map(command => addCommandToEmbed(command, newEmbed));
+      page.map(command => addCommandToEmbed(command, newEmbed, prefix));
 
       await i.update({ embeds: [newEmbed] });
    });
 }
 
-function addCommandToEmbed(command: Command, embed: MessageEmbed) {
+function addCommandToEmbed(command: Command, embed: MessageEmbed, prefix: string) {
    let description = command.description;
 
    // Add aliases to the description
@@ -208,13 +219,13 @@ function addCommandToEmbed(command: Command, embed: MessageEmbed) {
    }
 
    // Add Command's usage to the description
-   description += `\n${getUsage(command)}`;
+   description += `\n${getUsage(command, prefix)}`;
 
    // Add command to the embed
    embed.addField(command.name.toLowerCase(), description);
 }
 
-function getUsage(command: Command): string {
+function getUsage(command: Command, prefix: string): string {
    let usage = ``;
 
    if (command.isSubCommand) {
@@ -235,12 +246,12 @@ function getUsage(command: Command): string {
    return usage;
 }
 
-function InsertCommandEmbed(embed: MessageEmbed, command: Command) {
+function InsertCommandEmbed(embed: MessageEmbed, command: Command, prefix: string) {
    embed.setTitle(command.name);
    embed.setDescription(command.description);
 
    if (command.usage) {
-      embed.addField('Usage', wrap(command.usage, '`'));
+      embed.addField('Usage', getUsage(command, prefix));
    }
 
    if (command.aliases) {
