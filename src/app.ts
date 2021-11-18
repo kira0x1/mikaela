@@ -86,7 +86,7 @@ client.on('messageCreate', message => {
    }
 
    // Make sure this command wasnt given in a dm unless by an admin
-   if (message.channel.type === 'DM' && !config.perms.admin.users.includes(message.author.id)) {
+   if (message.channel.type === 'DM') {
       return;
    }
 
@@ -232,7 +232,11 @@ process.on('message', async (msg: string) => {
    process.exit(0);
 });
 
-process.on('uncaughtException', error => logger.error(error));
-process.on('unhandledRejection', error => logger.error(error));
+process.on('uncaughtException', error => {
+   logger.error(error);
+});
+process.on('unhandledRejection', error => {
+   logger.error(error);
+});
 
 init();
