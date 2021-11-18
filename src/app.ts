@@ -21,8 +21,8 @@ export const client = new Client({
    presence: {
       activities: [
          {
-            name: 'Catgirls',
-            type: 'WATCHING',
+            name: 'Catgirl Simulator',
+            type: 'PLAYING',
             url: 'https://github.com/kira0x1/mikaela'
          }
       ]
