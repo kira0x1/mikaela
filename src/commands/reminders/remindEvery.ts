@@ -17,7 +17,7 @@ export const command: Command = {
       const msTime = ms(time);
       const prettyTime = ms(msTime, { long: true });
 
-      if (msTime < ms('1s')) return quickEmbed(message, `Time must be greater then 1 hour`);
+      if (msTime < ms('30m')) return quickEmbed(message, `Time must be greater then 30 minutes`);
 
       let description = `remind ${message.author.username} `;
       if (content) description += `to ${content} `;
