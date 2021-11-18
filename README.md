@@ -5,8 +5,6 @@
 
 **[Click this to invite mikaela to your server.](https://discordapp.com/api/oauth2/authorize?client_id=585874337618460672&permissions=37038144&scope=bot)**
 
-> To invite a second instance of mikaela, click [here](https://discord.com/api/oauth2/authorize?client_id=836799311458992138&permissions=37038144&scope=bot)
-
 ---
 
 ## Setup
