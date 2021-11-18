@@ -4,7 +4,7 @@ import { createRepeatingReminderJob } from '../../system';
 import { createFooter, quickEmbed, sendArgsError } from '../../util';
 
 export const command: Command = {
-   name: 'RemindEvery',
+   name: 'remindevery',
    description: 'Reminds you about something at a set interval\nI.E: remind me to take my meds every day',
    usage: '[time: 1d] [message: take my medication]',
    async execute(message, args) {
@@ -15,6 +15,8 @@ export const command: Command = {
       if (!time) return sendArgsError(command, message);
 
       const msTime = ms(time);
+      if (!msTime) return sendArgsError(command, message);
+
       const prettyTime = ms(msTime, { long: true });
 
       if (msTime < ms('30m')) return quickEmbed(message, `Time must be greater then 30 minutes`);
