@@ -9,14 +9,14 @@ import {
    joinVoiceChannel,
    VoiceConnectionStatus
 } from '@discordjs/voice';
-import { Client, Guild, Message, VoiceChannel } from 'discord.js';
+import { Client, CommandInteraction, Guild, GuildMember, Message, VoiceChannel } from 'discord.js';
 import ms from 'ms';
 import progressbar from 'string-progressbar';
 import ytdl, { getInfo } from 'ytdl-core';
 import * as config from '../config';
 import { bannedChannels } from '../database/api/serverApi';
 import { logger } from '../system';
-import { quickEmbed } from '../util';
+import { quickEmbed, quickInteractionEmbed } from '../util';
 import { Queue } from './Queue';
 import { Song } from './Song';
 
@@ -86,6 +86,44 @@ export class Player {
          });
 
          this.voiceChannel = vc;
+      } catch (err: any) {
+         logger.error(`Error on joining\n${err.stack}`);
+      }
+   }
+
+   joinByInteraction(interaction: CommandInteraction) {
+      const member = interaction.member;
+      if (!(member instanceof GuildMember)) return;
+
+      const vc = member.voice;
+
+      if (!vc) {
+         quickInteractionEmbed(interaction, `You must be in a voice channel to play music`);
+         return;
+      }
+
+      if (!vc.channel.joinable) {
+         quickInteractionEmbed(interaction, 'I dont have permission to join that voice-channel');
+         return;
+      }
+
+      if (bannedChannels.get(interaction.guildId)?.find(c => c.id === vc.id)) {
+         quickInteractionEmbed(
+            interaction,
+            `The voice channel ${vc.channel.name} has been blocked for use by a moderator`
+         );
+         return;
+      }
+
+      try {
+         joinVoiceChannel({
+            channelId: vc.channelId,
+            guildId: interaction.guildId,
+            adapterCreator: vc.guild.voiceAdapterCreator,
+            selfDeaf: true
+         });
+
+         if (vc.channel instanceof VoiceChannel) this.voiceChannel = vc.channel;
       } catch (err: any) {
          logger.error(`Error on joining\n${err.stack}`);
       }
@@ -221,6 +259,13 @@ export class Player {
       if (!this.isPlaying) this.startStream(song);
    }
 
+   async playFromInteraction(song: Song, interaction: CommandInteraction) {
+      if (this.currentlyPlaying) return;
+      this.joinByInteraction(interaction);
+      this.currentlyPlaying = this.queue.getNext();
+      if (!this.isPlaying) this.startStream(song);
+   }
+
    getLastPlayed() {
       return this.lastPlayed;
    }
@@ -339,6 +384,12 @@ export class Player {
       this.clearVoiceTimeout();
       this.queue.addSong(song);
       if (!onlyAddToQueue) this.play(song, message);
+   }
+
+   async addSongFromInteraction(song: Song, interaction: CommandInteraction, onlyAddToQueue = false) {
+      this.clearVoiceTimeout();
+      this.queue.addSong(song);
+      if (!onlyAddToQueue) this.playFromInteraction(song, interaction);
    }
 
    pause() {
