@@ -10,7 +10,7 @@ export const command: Command = {
 
    async execute(message, args) {
       // Get the guilds player
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return;
 
       // Get the current playing song

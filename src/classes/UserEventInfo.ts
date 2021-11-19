@@ -31,7 +31,7 @@ export function typeToString(eventType: UserEventType): string {
 export function toEmbed(message: Message, eventInfo: UserEventInfo) {
    const msg = typeToString(eventInfo.type);
 
-   let embed = createFooter(message)
+   let embed = createFooter(message.author)
       .setTitle(msg)
       .setDescription(`${message.author} ${msg.toLowerCase()} ${eventInfo.receiver}`)
       .addField(`${msg} user ID`, `\`${eventInfo.receiver.id}\``)

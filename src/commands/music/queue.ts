@@ -35,7 +35,7 @@ export const command: Command = {
 export async function sendQueueEmbed(message: Message) {
    const embed = await getQueue(message);
 
-   const songs = getPlayer(message).getSongs();
+   const songs = getPlayer(message.guildId).getSongs();
 
    const nextId = randomUUID();
    const backId = randomUUID();
@@ -57,7 +57,7 @@ export async function sendQueueEmbed(message: Message) {
 
 export async function getQueue(message: Message) {
    // Get the guilds player
-   const player = getPlayer(message);
+   const player = getPlayer(message.guildId);
 
    const songs = player.getSongs();
    const pages = getPages(songs);
@@ -89,7 +89,7 @@ async function createQueuePagination(message: Message, nextId: string, backId: s
    collector.on('collect', async i => {
       if (!i.isButton()) return;
 
-      const songs = getPlayer(message).getSongs();
+      const songs = getPlayer(message.guildId).getSongs();
       const pages = getPages(songs);
       pageAt = queueCalls.get(message.guild.id)?.pageAt || 0;
 
@@ -114,10 +114,10 @@ async function createQueueEmbed(
    pageAt = 0,
    author?: User
 ) {
-   const player = getPlayer(message);
+   const player = getPlayer(message.guildId);
 
    // Create embed
-   const embed = createFooter(message, author);
+   const embed = createFooter(message.author, author);
 
    // If the player is playing a song add it to the top of the embed
    if (player.currentlyPlaying) {

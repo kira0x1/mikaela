@@ -11,7 +11,7 @@ export const command: Command = {
 
    async execute(message, args) {
       const arg = args.join('').trim();
-      const embed = createFooter(message);
+      const embed = createFooter(message.author);
 
       if (!arg) {
          embed.setTitle(`Prefix: ${getPrefix(message)}`);

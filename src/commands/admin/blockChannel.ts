@@ -33,7 +33,7 @@ export const command: Command = {
          return sendErrorEmbed(message, `Channel is already banned`);
       }
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setThumbnail(successIconUrl)
          .setTitle(`Banned Channel: ${channel.name}`);
 
@@ -44,7 +44,7 @@ export const command: Command = {
 async function listBlockedChannels(message: Message) {
    const blockedChannels = bannedChannels.get(message.guild.id);
 
-   const embed = createFooter(message)
+   const embed = createFooter(message.author)
       .setTitle('Blocked Channels')
       .setDescription(`${blockedChannels?.length || 0} channels currently blocked`);
 

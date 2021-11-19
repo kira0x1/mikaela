@@ -10,7 +10,7 @@ export const command: Command = {
    aliases: ['sq', 'shuffleq', 'shufflequeue'],
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
       if (!player.queue.songs || player.queue.songs.length === 0) {
@@ -24,7 +24,7 @@ export const command: Command = {
 
       player.queue.shuffle();
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
          .setTitle(`Shuffled The Queue!`)
          .setDescription(`Shuffled ${player.getSongs().length} songs`);

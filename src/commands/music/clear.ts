@@ -10,7 +10,7 @@ export const command: Command = {
    description: 'Clears the queue',
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return logger.log('warn', `player not found for guild ${message.guild.name}`);
 
       player.clearQueue();

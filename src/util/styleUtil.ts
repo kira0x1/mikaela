@@ -1,5 +1,5 @@
+import { CommandInteraction, GuildMember, Message, MessageEmbed, User } from 'discord.js';
 import ms from 'ms';
-import { Message, MessageEmbed, User } from 'discord.js';
 import { logger } from '../system';
 
 export const embedColor = 0xcf274e;
@@ -36,15 +36,17 @@ export async function sendErrorEmbed(message: Message, errorMessage: string, opt
    // if no options given then use default
    if (!options) options = defaultErrorEmbedOptions;
 
-   let embed = createFooter(message).setDescription(`**${errorMessage}**`).setThumbnail(errorIconUrl);
+   let embed = createFooter(message.author)
+      .setDescription(`**${errorMessage}**`)
+      .setThumbnail(errorIconUrl);
 
    if (options.errorTitle) embed.setTitle(options.errorTitle);
 
    message.channel.send({ embeds: [embed] });
 }
 
-export function createFooter(message: Message, overrideAuthor?: User): MessageEmbed {
-   const author = overrideAuthor || message.author;
+export function createFooter(user: User, overrideAuthor?: User): MessageEmbed {
+   const author = overrideAuthor || user;
 
    const embed = new MessageEmbed()
       .setColor(embedColor)
@@ -65,13 +67,20 @@ export async function quickEmbed(message: Message, content: string, options?: Qu
    const autoDelete = options?.autoDelete;
    const deleteDelay = options?.deleteDelay;
 
-   const embed = addFooter ? createFooter(message) : new MessageEmbed().setColor(embedColor);
+   const embed = addFooter ? createFooter(message.author) : new MessageEmbed().setColor(embedColor);
    embed.setTitle(content);
    message.channel.send({ embeds: [embed] });
 
    if (autoDelete) {
       autoDeleteMessage(message, deleteDelay);
    }
+}
+
+export async function quickInteractionEmbed(interaction: CommandInteraction, content: string) {
+   const member = interaction.member;
+   if (!(member instanceof GuildMember)) return;
+   const embed = createFooter(member.user).setTitle(content);
+   interaction.channel.send({ embeds: [embed] });
 }
 
 async function autoDeleteMessage(message: Message | Promise<Message>, delay = '10s') {

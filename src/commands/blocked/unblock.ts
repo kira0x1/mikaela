@@ -20,7 +20,7 @@ export const command: Command = {
          return quickEmbed(message, `Member \"${target?.tag || `<@${id}>`}\" is not blocked`);
 
       UnBlock(id);
-      const embed = createFooter(message).addField(`Unblocked`, `<@${id}>`);
+      const embed = createFooter(message.author).addField(`Unblocked`, `<@${id}>`);
       message.channel.send({ embeds: [embed] });
    }
 };

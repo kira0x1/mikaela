@@ -10,7 +10,7 @@ export const command: Command = {
    args: false,
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return;
 
       const lastPlayed = player.getLastPlayed();

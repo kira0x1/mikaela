@@ -10,7 +10,7 @@ export const command: Command = {
    aliases: ['r'],
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return;
 
       if (!player.hasSongs()) return quickEmbed(message, 'Queue is empty');
@@ -49,7 +49,7 @@ export const command: Command = {
          const deleteAmount = Math.min(pos2, player.queue.songs.length) - startIndex;
          const songs = player.queue.songs.splice(startIndex, deleteAmount);
 
-         const embed = createFooter(message)
+         const embed = createFooter(message.author)
             .setTitle(`Removed ${songs.length} ${songs.length === 1 ? 'song' : 'songs'} from the queue`)
             .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
 
@@ -63,7 +63,7 @@ export const command: Command = {
       const song = player.queue.removeAt(startIndex).shift();
       if (!song) return quickEmbed(message, 'Couldnt find song');
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setTitle(`Removed song\n${song.title}`)
          .setURL(song.url)
          .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));

@@ -26,7 +26,7 @@ export const command: Command = {
       description += `every ${prettyTime}`;
 
       // Create embed
-      const embed = createFooter(message).setTitle('Reminder set').setDescription(description);
+      const embed = createFooter(message.author).setTitle('Reminder set').setDescription(description);
 
       // Send embed telling the user that the reminder was created
       message.channel.send({ embeds: [embed] });

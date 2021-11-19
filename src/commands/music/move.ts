@@ -10,7 +10,7 @@ export const command: Command = {
    usage: '[song position] [desired position]',
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (player.getQueueCount() === 0) return quickEmbed(message, 'Queue is empty');
 
       if (args.length < 2) return sendArgsError(this, message);
@@ -37,7 +37,7 @@ export const command: Command = {
       songPos++;
       toPos++;
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setColor(embedColor)
          .setTitle(`Moved songs in queue`)
          .addField(

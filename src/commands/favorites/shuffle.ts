@@ -43,7 +43,7 @@ export const command: Command = {
          );
       }
 
-      const player = util.getPlayer(message);
+      const player = util.getPlayer(message.guildId);
       if (!player) return logger.log('error', `Could not find player for guild ${message.guild.name}`);
 
       if (amount > maxShuffleAmount) {

@@ -10,7 +10,7 @@ export const command: Command = {
    isSubCommand: true,
 
    async execute(message, args) {
-      const embed = createFooter(message);
+      const embed = createFooter(message.author);
 
       if (blockedUsers.size === 0) embed.setTitle('Blocked List Empty');
       else embed.setTitle(`Blocked: ${blockedUsers.size}`);

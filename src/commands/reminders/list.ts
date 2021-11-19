@@ -10,7 +10,7 @@ export const command: Command = {
 
    async execute(message, args) {
       const jobs = await getJobsById(message.author.id);
-      const embed = createFooter(message);
+      const embed = createFooter(message.author);
 
       if (jobs.length === 0) {
          embed.setTitle(`You have no reminders running`);

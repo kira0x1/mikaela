@@ -23,7 +23,7 @@ export const command: Command = {
       const banner = target.bannerURL({ dynamic: true, size: 4096 });
 
       // Create the embed
-      const embed: MessageEmbed = createFooter(message).setTitle('Banner');
+      const embed: MessageEmbed = createFooter(message.author).setTitle('Banner');
 
       if (!banner) {
          embed.setDescription(`${target} does not have a banner`);

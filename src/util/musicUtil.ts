@@ -4,6 +4,7 @@ import {
    CacheType,
    Client,
    Collection,
+   CommandInteraction,
    Message,
    MessageActionRow,
    MessageButton,
@@ -20,10 +21,11 @@ import {
    quickEmbed,
    sendArgsError
 } from '.';
+import { client } from '../app';
 import { Command, IDuration, Player, Song } from '../classes';
 import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
-import { addFavoriteToUser } from '../database';
+import { addFavoriteToUser, addFavoriteToUserInteraction } from '../database';
 import { logger } from '../system';
 
 export const players: Collection<string, Player> = new Collection();
@@ -73,15 +75,14 @@ export async function initPlayers(client: Client) {
    // }
 }
 
-export function getPlayer(message: Message): Player {
-   const guildId = message.guild.id;
+export function getPlayer(guildId: string): Player {
    const playerFound = findPlayer(guildId);
 
    if (playerFound) {
       return playerFound;
    }
 
-   return setNewPlayer(message.client, guildId);
+   return setNewPlayer(client, guildId);
 }
 
 export function setNewPlayer(client: Client, guildId: string): Player {
@@ -101,7 +102,7 @@ export async function createCurrentlyPlayingEmbed(player: Player, message: Messa
    const url = song.spotifyUrl ? song.spotifyUrl : song.url;
 
    // Create embed
-   return createFooter(message)
+   return createFooter(message.author)
       .setColor(embedColor)
       .setTitle(`Playing: ${player.currentlyPlaying.title}`)
       .setURL(url)
@@ -133,6 +134,38 @@ export async function createFavoriteCollector(song: Song, message: Message, btnI
       if (!inCooldown) {
          userCooldowns.set(user.id, Date.now());
          addFavoriteToUser(user, song, message);
+      }
+
+      i.update({});
+   });
+}
+
+export async function createFavoriteCollectorInteraction(
+   song: Song,
+   interaction: CommandInteraction,
+   btnId: string
+) {
+   const filter = (i: ButtonInteraction<CacheType>) => {
+      return i.customId === btnId;
+   };
+
+   const collector = interaction.channel.createMessageComponentCollector({
+      filter,
+      componentType: 'BUTTON',
+      time: ms('6h')
+   });
+
+   const userCooldowns: Collection<string, number> = new Collection();
+
+   collector.on('collect', async i => {
+      if (!i.isButton()) return;
+
+      const user = i.user;
+      const inCooldown = getFavReactionCooldown(user, userCooldowns);
+
+      if (!inCooldown) {
+         userCooldowns.set(user.id, Date.now());
+         addFavoriteToUserInteraction(user, song, interaction);
       }
 
       i.update({});
@@ -171,7 +204,7 @@ export async function onSongRequest(
    command: Command,
    onlyAddToQueue = false
 ) {
-   const player = getPlayer(message);
+   const player = getPlayer(message.guildId);
 
    // Make sure the user is in voice
    if (!message.member.voice.channel) {
@@ -208,7 +241,7 @@ export async function onSongRequest(
          player.queue.addSong(song[i]);
       }
 
-      const embed = createFooter(message).setTitle(`Added ${songCount} songs to queue`);
+      const embed = createFooter(message.author).setTitle(`Added ${songCount} songs to queue`);
       message.channel.send({ embeds: [embed] });
       return;
    }
@@ -219,7 +252,7 @@ export async function onSongRequest(
       const firstSong = playlistSongs[0];
       player.addSong(firstSong, message, onlyAddToQueue);
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setTitle(`Playlist: ${song.title}\n${song.items.length} Songs`)
          .setDescription(
             `Playing ${firstSong.title}\n${
@@ -243,7 +276,7 @@ export async function onSongRequest(
 
 export async function playSong(message: Message, song: Song, onlyAddToQueue = false) {
    // Get the guilds player
-   const player = getPlayer(message);
+   const player = getPlayer(message.guildId);
 
    song.playedBy = message.author.id;
 
@@ -251,7 +284,7 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue = fa
    player.addSong(song, message, onlyAddToQueue);
 
    // Tell the user
-   let embed = createFooter(message)
+   let embed = createFooter(message.author)
       .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(song.title)
       .setDescription(`**Added to queue**\n${song.duration.duration}`)
@@ -266,6 +299,36 @@ export async function playSong(message: Message, song: Song, onlyAddToQueue = fa
    createFavoriteCollector(song, msg, btnId);
 }
 
+export async function playSongFromInteraction(
+   interaction: CommandInteraction,
+   song: Song,
+   onlyAddToQueue = false
+) {
+   // Get the guilds player
+   const player = getPlayer(interaction.guildId);
+
+   song.playedBy = interaction.user.id;
+
+   // Add the song to the player
+   player.addSongFromInteraction(song, interaction, onlyAddToQueue);
+
+   // Tell the user
+   let embed = createFooter(interaction.user)
+      .setAuthor(interaction.user.username, interaction.user.displayAvatarURL({ dynamic: true }))
+      .setTitle(song.title)
+      .setDescription(`**Added to queue**\n${song.duration.duration}`)
+      .setURL(song.spotifyUrl ? song.spotifyUrl : song.url);
+
+   const btnId = randomUUID();
+   const row = new MessageActionRow().addComponents(
+      new MessageButton().setCustomId(btnId).setLabel('Add To Favorites').setStyle('PRIMARY')
+   );
+
+   await interaction.reply({ embeds: [embed], components: [row] });
+
+   createFavoriteCollectorInteraction(song, interaction, btnId);
+}
+
 async function resumeQueue(message: Message, player: Player) {
    if (!player.hasSongs()) {
       const embed = new MessageEmbed().setColor(embedColor).setTitle('Queue Empty, please add a song');
@@ -274,7 +337,7 @@ async function resumeQueue(message: Message, player: Player) {
    }
 
    player.resumeQueue(message);
-   const embed = createFooter(message).setTitle('Resuming Queue!');
+   const embed = createFooter(message.author).setTitle('Resuming Queue!');
    await message.channel.send({ embeds: [embed] });
    sendQueueEmbed(message);
 }

@@ -30,7 +30,7 @@ export const command: Command = {
 
       unbanChannel(message, channel);
 
-      const embed = createFooter(message)
+      const embed = createFooter(message.author)
          .setThumbnail(successIconUrl)
          .setTitle(`UnBlocked Channel: ${channel.name}`);
 

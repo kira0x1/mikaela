@@ -14,7 +14,7 @@ export const command: Command = {
 
    execute(message, args) {
       const arg = args.shift();
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
 
       // const member = message.member;
       // if (!member.voice.channel) return quickEmbed(message, `You must be in a voice channel to play music`);

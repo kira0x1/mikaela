@@ -7,7 +7,7 @@ export const command: Command = {
 
    execute(message, args) {
       // Get the guilds player
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
 
       if (player) {
          // Join the VoiceChannel

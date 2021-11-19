@@ -12,7 +12,7 @@ export const command: Command = {
    isSubCommand: false,
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       const currentSong: Song = player.currentlyPlaying;
 
       if (!currentSong) {

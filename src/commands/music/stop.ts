@@ -7,7 +7,7 @@ export const command: Command = {
    aliases: ['end', 's', 'dc', 'disconnect', 'leave', 'quit'],
 
    execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (player) {
          player.leave();
       }

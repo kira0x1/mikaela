@@ -1,7 +1,7 @@
-import { Message, User as DiscordUser } from 'discord.js';
-import { logger } from '../../system';
+import { CommandInteraction, Message, User as DiscordUser } from 'discord.js';
 import { Song } from '../../classes/Song';
-import { quickEmbed } from '../../util/styleUtil';
+import { logger } from '../../system';
+import { quickEmbed, quickInteractionEmbed } from '../../util/styleUtil';
 import { IUser, User } from '../models/User';
 
 export async function findUser(id: string): Promise<IUser> {
@@ -47,6 +47,30 @@ export async function addFavoriteToUser(member: DiscordUser, song: Song, message
    }
 
    quickEmbed(message, `**${user.username}** added song **${song.title}** to their favorites!`);
+
+   user.favorites.push(song);
+   return await user.save();
+}
+
+export async function addFavoriteToUserInteraction(
+   member: DiscordUser,
+   song: Song,
+   interaction: CommandInteraction
+) {
+   const user = await findOrCreate(member);
+
+   if (user.favorites?.find(fav => fav.id === song.id)) {
+      quickInteractionEmbed(
+         interaction,
+         `Sorry **${user.username}** You already have this song as a favorite`
+      );
+      return;
+   }
+
+   quickInteractionEmbed(
+      interaction,
+      `**${user.username}** added song **${song.title}** to their favorites!`
+   );
 
    user.favorites.push(song);
    return await user.save();

@@ -9,7 +9,7 @@ export const command: Command = {
 
    execute(message, args) {
       const guild = message.guild;
-      let embed: MessageEmbed = createFooter(message)
+      let embed: MessageEmbed = createFooter(message.author)
          .setTitle('Server icon')
          .setDescription(`Server icon for ${guild}`)
          .setImage(guild.iconURL({ dynamic: true }));

@@ -106,7 +106,7 @@ function createPlayerEmbed(
    pages: Collection<number, string>,
    currentPage: number
 ) {
-   const embed = createFooter(message)
+   const embed = createFooter(message.author)
       .setTitle(
          `Players: ${players.size}\n**Page ${currentPage + 1} / ${pages.size === 0 ? 1 : pages.size}**`
       )

@@ -12,7 +12,7 @@ export const command: Command = {
       const song = await getSong(query);
       if (song instanceof Array) return;
 
-      const embed = createFooter(message);
+      const embed = createFooter(message.author);
 
       if (!song) {
          embed.setTitle(`Song "${query}" not found`);

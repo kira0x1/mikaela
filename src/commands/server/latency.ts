@@ -8,7 +8,7 @@ export const command: Command = {
    aliases: ['ping'],
 
    async execute(message, _) {
-      let embed: MessageEmbed = createFooter(message);
+      let embed: MessageEmbed = createFooter(message.author);
 
       embed.setTitle('Pong!');
       embed.addField('Websocket', `${message.client.ws.ping} ms`, true);

@@ -11,7 +11,7 @@ export const command: Command = {
       let channel: Channel = fetchChannel(message.client, args[0]);
       if (channel === undefined) return sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
 
-      let embed: MessageEmbed = createFooter(message);
+      let embed: MessageEmbed = createFooter(message.author);
 
       embed.setTitle('Channel info');
       embed.setDescription(`Channel info for ${channel}`);

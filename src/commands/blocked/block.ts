@@ -26,7 +26,7 @@ export const command: Command = {
          return message.author.send(`Error while blocking user: ${query}`);
       }
 
-      const embed = createFooter(message).setTitle(`Blocked: \"${target.tag}\"`).setDescription(target.id);
+      const embed = createFooter(message.author).setTitle(`Blocked: \"${target.tag}\"`).setDescription(target.id);
       message.channel.send({ embeds: [embed] });
    }
 };

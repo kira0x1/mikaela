@@ -17,7 +17,7 @@ export const command: Command = {
    isSubCommand: true,
 
    async execute(message, args) {
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
       if (!player) return;
 
       if (!player.inVoice && !message.member.voice.channel)
@@ -34,7 +34,7 @@ export const command: Command = {
             return;
          }
 
-         const embed = createFooter(message);
+         const embed = createFooter(message.author);
 
          let amount = res.song.length;
          if (amount > 15) {

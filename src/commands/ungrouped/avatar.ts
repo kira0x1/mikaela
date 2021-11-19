@@ -19,7 +19,7 @@ export const command: Command = {
       if (!target) return quickEmbed(message, `Could not find user \`${args.join(' ')}\``);
 
       // Create the embed
-      const embed: MessageEmbed = createFooter(message)
+      const embed: MessageEmbed = createFooter(message.author)
          .setTitle('Avatar')
          .setDescription(`Avatar of ${target}`)
          .setImage(target.displayAvatarURL({ size: 4096, dynamic: true }));

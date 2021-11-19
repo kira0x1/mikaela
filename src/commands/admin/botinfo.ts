@@ -92,7 +92,7 @@ function createInfoEmbed(
    pages: Collection<number, Guild[]>,
    pageAt = 0
 ) {
-   const embed = createFooter(message).setTitle(
+   const embed = createFooter(message.author).setTitle(
       `Info\nServers: ${guilds.size}\n**Page ${pageAt + 1} / ${pages.size}**\n\u200b`
    );
 

@@ -51,7 +51,7 @@ async function displayAll(message: Message) {
    const prefix = prefixes.get(message.guild?.id) || config.prefix;
 
    // Create embed
-   const embed = createFooter(message)
+   const embed = createFooter(message.author)
       .setTitle(`Commands`)
       .setDescription(`For information about a command or category\n**${prefix}help [command]**`);
 
@@ -95,7 +95,7 @@ async function displayOne(message: Message, query: string) {
    const prefix = prefixes.get(message.guild?.id) || config.prefix;
 
    // Create embed
-   const embed = createFooter(message);
+   const embed = createFooter(message.author);
 
    // If we have the command
    if (command) {
@@ -199,7 +199,7 @@ async function createHelpPagination(info: CommandInfo, embed: MessageEmbed, mess
          if (currentPage < 0) currentPage = pages.size - 1;
       }
 
-      const newEmbed = createFooter(message);
+      const newEmbed = createFooter(message.author);
       newEmbed.setTitle(createPageEmbedTitle(info, pages, currentPage + 1));
       newEmbed.setDescription(`***${commands.length} commands***`);
 

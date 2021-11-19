@@ -32,7 +32,7 @@ export const command: Command = {
          const messagesDeleted = await message.channel.bulkDelete(amount);
          if (!messagesDeleted) return;
 
-         const embed = createFooter(message)
+         const embed = createFooter(message.author)
             .setTitle(`${author.username} deleted ${messagesDeleted.size} messages`)
             .addField(`Guild`, message.guild.name, true)
             .addField(`Channel`, message.channel.name, true)
@@ -51,7 +51,7 @@ export const command: Command = {
          if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) return;
          logger.error(error);
 
-         const embed = createFooter(message)
+         const embed = createFooter(message.author)
             .setTitle(`Error`)
             .setDescription(error.message)
             .addField(`Command`, 'delete')

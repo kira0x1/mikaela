@@ -24,7 +24,7 @@ export const command: Command = {
 };
 
 async function sendEmbed(message: Message, role: Role) {
-   let embed: MessageEmbed = createFooter(message);
+   let embed: MessageEmbed = createFooter(message.author);
 
    embed.setTitle('Role info');
    embed.setDescription(`Role info for ${role}`);

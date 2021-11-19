@@ -11,7 +11,7 @@ export const command: Command = {
 
    async execute(message, args) {
       // Get the guilds player
-      const player = getPlayer(message);
+      const player = getPlayer(message.guildId);
 
       // Make sure a player exists
       if (!player) return;

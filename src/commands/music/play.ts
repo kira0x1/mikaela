@@ -12,7 +12,7 @@ export const command: Command = {
    async execute(message: Message, args: string[]) {
       // if no arguments given then attempt to play whats in the queue
       if (args.join('').trim() === '') {
-         getPlayer(message).resumeQueue(message);
+         getPlayer(message.guildId).resumeQueue(message);
          return;
       }
 

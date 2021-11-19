@@ -38,7 +38,7 @@ export const command: Command = {
       const user = await findOrCreate(target);
 
       if (!user || !user.favorites || user.favorites.length === 0) {
-         const embed: MessageEmbed = createFooter(message)
+         const embed: MessageEmbed = createFooter(message.author)
             .setTitle(target.username + '\n\u200b')
             .setThumbnail(target.displayAvatarURL({ dynamic: true }))
             .setDescription('Favorites: none')
