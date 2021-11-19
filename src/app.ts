@@ -55,6 +55,7 @@ client.on('ready', async () => {
 
    // Read command files and create a collection for the commands
    sys.initCommands();
+   sys.loadInteractionCommands(commands.filter(c => c.hasInteraction).map(c => c));
 
    await sys.initAgenda();
 
