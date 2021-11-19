@@ -4,6 +4,7 @@ import * as db from './database';
 import * as sys from './system';
 import { getContextLogger, logger, stopAgenda } from './system';
 import * as util from './util';
+import { commands, findCommand } from './util';
 
 // print environment - production / development
 logger.info(config.isProduction ? '-------production-------' : '-------development-------');
@@ -69,6 +70,19 @@ client.on('guildCreate', guild => {
    });
 });
 
+client.on('interactionCreate', async interaction => {
+   if (!interaction.isCommand()) return;
+
+   const { commandName } = interaction;
+   const command = findCommand(commandName);
+
+   try {
+      command?.executeInteraction(interaction);
+   } catch (e) {
+      console.error(e);
+   }
+});
+
 // eslint-disable-next-line complexity
 client.on('messageCreate', message => {
    // check if the server has a custom prefix if not then use the default prefix
@@ -113,7 +127,7 @@ client.on('messageCreate', message => {
 
    if (bannedChannel) {
       const embed = util
-         .createFooter(message)
+         .createFooter(message.author)
          .setTitle(`Channel "${bannedChannel.name}" is banned from use`)
          .setDescription(`Banned by <@${bannedChannel.bannedBy}>`);
       message.author.send({ embeds: [embed] });
