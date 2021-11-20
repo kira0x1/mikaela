@@ -348,7 +348,11 @@ export class Player {
 
    unpause() {
       if (!this.currentlyPlaying) return;
-      this.player?.unpause();
+      return this.player?.unpause();
+   }
+
+   isPaused() {
+      return this.player?.state.status === AudioPlayerStatus.Paused;
    }
 
    // seek(amount: number) {

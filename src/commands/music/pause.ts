@@ -1,8 +1,5 @@
-import { MessageEmbed } from 'discord.js';
-
 import { Command } from '../../classes/Command';
-import { getPlayer } from '../../util/musicUtil';
-import { embedColor } from '../../util/styleUtil';
+import { createFooter, getPlayer, quickEmbed } from '../../util';
 
 export const command: Command = {
    name: 'Pause',
@@ -16,13 +13,16 @@ export const command: Command = {
       // Make sure a player exists
       if (!player) return;
 
+      if (player.isPaused()) {
+         return quickEmbed(message, 'Player is already paused.');
+      }
+
       // Pause the player
       player.pause();
 
-      const embed = new MessageEmbed();
-      embed.setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }));
-      embed.setTitle(`Paused ${player.currentlyPlaying.title}`);
-      embed.setColor(embedColor);
+      const embed = createFooter(message)
+         .setAuthor(message.author.username, message.author.displayAvatarURL({ dynamic: true }))
+         .setTitle(`Paused ${player.currentlyPlaying.title}`);
 
       message.channel.send({ embeds: [embed] });
    }
