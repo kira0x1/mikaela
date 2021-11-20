@@ -24,9 +24,13 @@ if (config.isProduction) {
 
 loggerTransports.push(new winston.transports.Console());
 
+const loggerFormatter = config.isProduction
+   ? winston.format.combine(winston.format.timestamp(), winston.format.json())
+   : winston.format.printf(log => `[${log.level.toUpperCase()}] - ${log.message}`);
+
 // Create logger
 export const logger = winston.createLogger({
-   format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+   format: loggerFormatter,
    defaultMeta: { service: 'mikaela' },
    transports: loggerTransports
 });
