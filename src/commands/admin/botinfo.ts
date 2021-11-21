@@ -1,7 +1,15 @@
-import { Collection, Constants, Guild, Message, MessageReaction, User } from 'discord.js';
+import { randomUUID } from 'crypto';
+import {
+   ButtonInteraction,
+   CacheType,
+   Collection,
+   Guild,
+   Message,
+   MessageActionRow,
+   MessageButton
+} from 'discord.js';
 import moment from 'moment';
 import ms from 'ms';
-import { logger } from '../../system';
 import { Command } from '../../classes/Command';
 import { createFooter } from '../../util/styleUtil';
 
@@ -32,56 +40,55 @@ export const command: Command = {
          count++;
       }
 
+      const resetId = randomUUID();
+      const nextId = randomUUID();
+      const backId = randomUUID();
+
+      const components = [];
+
+      if (pages.size > 1) {
+         const row = new MessageActionRow().addComponents(
+            new MessageButton().setCustomId(resetId).setLabel('Reset').setStyle('PRIMARY'),
+            new MessageButton().setCustomId(backId).setLabel('Back').setStyle('PRIMARY'),
+            new MessageButton().setCustomId(nextId).setLabel('Next').setStyle('PRIMARY')
+         );
+
+         components.push(row);
+      }
+
       const embed = createInfoEmbed(message, guilds, pages, 0);
-      const msg = await message.channel.send({ embeds: [embed] });
+      const msg = await message.channel.send({ embeds: [embed], components });
 
       // If there are only 1 or none pages then dont add the next, previous page emojis / collector
       if (pages.size <= 1) {
          return;
       }
 
-      msg.react('⏮️')
-         .then(() => msg.react('⬅'))
-         .then(() => msg.react('➡'))
-         .then(() => msg.react('⏭️'));
-
-      const filterReactions = ['⏮️', '⏭️', '⬅', '➡'];
-      const filter = (reaction: MessageReaction, userReacted: User) => {
-         return filterReactions.includes(reaction.emoji.name) && !userReacted.bot;
+      const filter = (i: ButtonInteraction<CacheType>) => {
+         return i.customId === nextId || i.customId === backId || i.customId === resetId;
       };
 
-      const collector = msg.createReactionCollector({ filter, time: ms('1h') });
+      const collector = msg.channel.createMessageComponentCollector({
+         filter,
+         componentType: 'BUTTON',
+         time: ms('3h')
+      });
 
       let currentPage = 0;
 
-      collector.on('collect', async (reaction: MessageReaction, userReacted: User) => {
-         switch (reaction.emoji.name) {
-            case '➡':
-               currentPage++;
-               if (currentPage >= pages.size) currentPage = 0;
-               break;
-            case '⬅':
-               currentPage--;
-               if (currentPage < 0) currentPage = pages.size - 1;
-               break;
-            case '⏮️':
-               currentPage = 0;
-               break;
-            case '⏭️':
-               currentPage = pages.size - 1;
-               break;
-         }
+      collector.on('collect', async i => {
+         if (!i.isButton()) return;
 
-         reaction.users.remove(userReacted);
+         if (i.customId === nextId) {
+            currentPage++;
+            if (currentPage >= pages.size) currentPage = 0;
+         } else if (i.customId === backId) {
+            currentPage--;
+            if (currentPage < 0) currentPage = pages.size - 1;
+         } else if (i.customId === resetId) currentPage = 0;
 
          const newEmbed = createInfoEmbed(message, guilds, pages, currentPage);
-         msg.edit({ embeds: [newEmbed] });
-      });
-
-      collector.on('end', collected => {
-         msg.reactions.removeAll().catch(error => {
-            if (error.code !== Constants.APIErrors.UNKNOWN_MESSAGE) logger.error(error);
-         });
+         await i.update({ embeds: [newEmbed] });
       });
    }
 };
