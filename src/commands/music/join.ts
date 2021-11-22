@@ -24,5 +24,7 @@ export const command: Command = {
          // Join the VoiceChannel
          player.joinByInteraction(interaction);
       }
+
+      interaction.reply({ content: 'Joining VC!', ephemeral: true });
    }
 };
