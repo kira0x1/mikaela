@@ -3,6 +3,7 @@ import {
    ButtonInteraction,
    CacheType,
    Collection,
+   CommandInteraction,
    Message,
    MessageActionRow,
    MessageButton,
@@ -55,7 +56,7 @@ export async function sendQueueEmbed(message: Message) {
    if (songs.length > 5) await createQueuePagination(msg, nextId, backId, message.author);
 }
 
-export async function getQueue(message: Message) {
+export async function getQueue(message: Message | CommandInteraction) {
    // Get the guilds player
    const player = getPlayer(message.guildId);
 
@@ -66,8 +67,8 @@ export async function getQueue(message: Message) {
    return queueEmbed;
 }
 
-export async function updateLastQueue(message: Message) {
-   const lastQueue = queueCalls.get(message.guild.id);
+export async function updateLastQueue(message: Message | CommandInteraction) {
+   const lastQueue = queueCalls.get(message.guildId);
    if (!lastQueue) return;
    const queueEmbed = await getQueue(message);
    lastQueue.message.edit({ embeds: [queueEmbed] });
@@ -103,21 +104,21 @@ async function createQueuePagination(message: Message, nextId: string, backId: s
 
       queueCalls.set(message.guild.id, { message, pageAt });
 
-      const newEmbed = await createQueueEmbed(message, pages, pageAt, author);
+      const newEmbed = await createQueueEmbed(message, pages, pageAt);
       await i.update({ embeds: [newEmbed] });
    });
 }
 
 async function createQueueEmbed(
-   message: Message,
+   message: Message | CommandInteraction,
    pages: Collection<number, Song[]>,
-   pageAt = 0,
-   author?: User
+   pageAt = 0
 ) {
    const player = getPlayer(message.guildId);
+   const author = message instanceof Message ? message.author : message.user;
 
    // Create embed
-   const embed = createFooter(message.author, author);
+   const embed = createFooter(author, author);
 
    // If the player is playing a song add it to the top of the embed
    if (player.currentlyPlaying) {
