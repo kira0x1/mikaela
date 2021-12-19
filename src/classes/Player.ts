@@ -312,7 +312,7 @@ export class Player {
             setTimeout(() => {
                if (this.player.state.status !== AudioPlayerStatus.Idle) return;
                this.playNext();
-            }, ms('1s'));
+            }, ms('3s'));
          });
 
          this.player.on('error', error => {
