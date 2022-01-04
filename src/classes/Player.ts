@@ -7,6 +7,7 @@ import {
    entersState,
    getVoiceConnection,
    joinVoiceChannel,
+   NoSubscriberBehavior,
    VoiceConnectionStatus
 } from '@discordjs/voice';
 import { Client, Guild, Message, VoiceChannel } from 'discord.js';
@@ -289,7 +290,12 @@ export class Player {
          });
 
          // Create Player
-         if (!this.player) this.player = createAudioPlayer();
+         if (!this.player)
+            this.player = createAudioPlayer({
+               behaviors: {
+                  noSubscriber: NoSubscriberBehavior.Stop
+               }
+            });
 
          if (!this.isPlaying) {
             // Create resource
