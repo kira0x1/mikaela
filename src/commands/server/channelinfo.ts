@@ -1,4 +1,4 @@
-import { Channel, Client, GuildChannel, MessageEmbed } from 'discord.js';
+import { Client, GuildChannel, MessageEmbed } from 'discord.js';
 import { Command } from '../../classes/Command';
 import { createFooter, sendErrorEmbed } from '../../util/styleUtil';
 
@@ -8,7 +8,7 @@ export const command: Command = {
    aliases: ['channel'],
 
    async execute(message, args) {
-      let channel: Channel = fetchChannel(message.client, args[0]);
+      let channel = fetchChannel(message.client, args[0]);
       if (channel === undefined) return sendErrorEmbed(message, `Could not find channel \`${args[0]}\``);
 
       let embed: MessageEmbed = createFooter(message);
@@ -29,7 +29,7 @@ export const command: Command = {
    }
 };
 
-function fetchChannel(client: Client, arg: string): Channel {
+function fetchChannel(client: Client, arg: string) {
    // Remove mention
    arg = arg.replace(/<#|>/g, '');
    return client.channels.cache.get(arg);

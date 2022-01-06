@@ -227,7 +227,7 @@ export async function onSongRequest(
             }\n\u200b`
          );
 
-      for (let i = 1; i < playlistSongs.length && i < 20; i++) {
+      for (let i = 1; i < playlistSongs.length && playlistSongs.length < 250; i++) {
          const psong = playlistSongs[i];
          embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
          player.queue.addSong(psong);

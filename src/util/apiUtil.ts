@@ -27,14 +27,20 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
          return convertDetailsToSong(details);
       }
 
+      const ytPlaylist = await ytpl(query);
+      if (ytPlaylist && ytPlaylist.items.length > 0) {
+         return ytPlaylist;
+      }
+
       // Search for a youtube for the video
       const songSearch = await youtubeSearch(query);
       const songFound = songSearch?.videos?.shift();
-      if (!songFound) return;
 
       // If a video is found then get details and convert it to ISong
       const details = await getSongDetails(songFound.videoId);
-      if (!details) return;
+      if (!details) {
+         return;
+      }
 
       return convertDetailsToSong(details);
    } catch (error: any) {
@@ -70,12 +76,13 @@ function convertDetailsToSong(details: MoreVideoDetails): Song {
 export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Song[]> {
    const res: Song[] = [];
 
-   for (let i = 0; i < playlist.items.length && i < 20; i++) {
+   for (let i = 0; i < playlist.items.length && i < 2; i++) {
       const item = playlist.items[i];
       const info = await getInfo(item.shortUrl);
       res.push(convertDetailsToSong(info.videoDetails));
    }
 
+   console.dir(res);
    return res;
 }
 
