@@ -216,6 +216,11 @@ export async function onSongRequest(
    if (isPlaylist(song)) {
       const playlistSongs = await convertPlaylistToSongs(song);
 
+      for (let i = 1; i < playlistSongs.length; i++) {
+         if (!playlistSongs[i]) continue;
+         playlistSongs[i].playedBy = message.author.id;
+      }
+
       const firstSong = playlistSongs[0];
       player.addSong(firstSong, message, onlyAddToQueue);
 

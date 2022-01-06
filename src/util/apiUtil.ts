@@ -76,7 +76,7 @@ function convertDetailsToSong(details: MoreVideoDetails): Song {
 export async function convertPlaylistToSongs(playlist: ytpl.Result): Promise<Song[]> {
    const res: Song[] = [];
 
-   for (let i = 0; i < playlist.items.length && i < 2; i++) {
+   for (let i = 0; i < playlist.items.length && i < 250; i++) {
       const item = playlist.items[i];
       const info = await getInfo(item.shortUrl);
       res.push(convertDetailsToSong(info.videoDetails));
