@@ -192,6 +192,7 @@ export async function onSongRequest(
    // If song not found, tell the user.
    if (!song) return quickEmbed(message, 'Song not found');
 
+   // Is the song a playlist ?
    if (song instanceof Array) {
       const firstSong = song[0];
       if (song.length === 0 || !firstSong) return quickEmbed(message, 'Song not found');
@@ -232,10 +233,15 @@ export async function onSongRequest(
             }\n\u200b`
          );
 
-      for (let i = 1; i < playlistSongs.length && playlistSongs.length < 250; i++) {
+      for (let i = 1; i < playlistSongs.length && i < 250; i++) {
          const psong = playlistSongs[i];
-         embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
+         if (i <= 5)
+            embed.addField(`${i + 1} ${psong.title}`, psong.spotifyUrl ? psong.spotifyUrl : psong.url);
          player.queue.addSong(psong);
+      }
+
+      if (playlistSongs.length >= 5) {
+         embed.addField(`\u200b and ${playlistSongs.length - 5} more`, ``);
       }
 
       message.channel.send({ embeds: [embed] });
