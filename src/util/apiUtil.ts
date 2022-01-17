@@ -27,9 +27,13 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
          return convertDetailsToSong(details);
       }
 
-      const ytPlaylist = await ytpl(query);
-      if (ytPlaylist && ytPlaylist.items.length > 0) {
-         return ytPlaylist;
+      const isPlaylist = ytpl.validateID(query);
+
+      if (isPlaylist) {
+         const ytPlaylist = await ytpl(query);
+         if (ytPlaylist && ytPlaylist.items.length > 0) {
+            return ytPlaylist;
+         }
       }
 
       // Search for a youtube for the video

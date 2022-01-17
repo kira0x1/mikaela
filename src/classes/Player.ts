@@ -4,6 +4,7 @@ import {
    AudioResource,
    createAudioPlayer,
    createAudioResource,
+   DiscordGatewayAdapterCreator,
    entersState,
    getVoiceConnection,
    joinVoiceChannel,
@@ -57,7 +58,7 @@ export class Player {
          joinVoiceChannel({
             channelId: config.testVc,
             guildId: message.guildId,
-            adapterCreator: message.guild.voiceAdapterCreator
+            adapterCreator: message.guild.voiceAdapterCreator as unknown as DiscordGatewayAdapterCreator
          });
          return;
       }
@@ -81,7 +82,7 @@ export class Player {
          joinVoiceChannel({
             channelId: message.member.voice.channelId,
             guildId: message.guildId,
-            adapterCreator: vc.guild.voiceAdapterCreator,
+            adapterCreator: vc.guild.voiceAdapterCreator as unknown as DiscordGatewayAdapterCreator,
             selfDeaf: true
          });
 

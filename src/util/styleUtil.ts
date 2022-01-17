@@ -46,10 +46,8 @@ export async function sendErrorEmbed(message: Message, errorMessage: string, opt
 export function createFooter(message: Message, overrideAuthor?: User): MessageEmbed {
    const author = overrideAuthor || message.author;
 
-   const embed = new MessageEmbed()
-      .setColor(embedColor)
-      .setFooter(author.username, author.displayAvatarURL({ dynamic: true }))
-      .setTimestamp(Date.now());
+   const embed = new MessageEmbed().setColor(embedColor).setTimestamp(Date.now());
+   embed.footer = { text: author.username, iconURL: author.displayAvatarURL({ dynamic: true }) };
 
    return embed;
 }
