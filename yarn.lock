@@ -107,10 +107,10 @@
   dependencies:
     "@elastic/ecs-helpers" "^1.1.0"
 
-"@elastic/elasticsearch@^7.15.0":
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-7.16.0.tgz#c1c64b6f0343c0f5ca6893fb77ceecd763455024"
-  integrity sha512-lMY2MFZZFG3om7QNHninxZZOXYx3NdIUwEISZxqaI9dXPoL3DNhU31keqjvx1gN6T74lGXAzrRNP4ag8CJ/VXw==
+"@elastic/elasticsearch@^7.16.0":
+  version "7.17.0"
+  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-7.17.0.tgz#589fb219234cf1b0da23744e82b1d25e2fe9a797"
+  integrity sha512-5QLPCjd0uLmLj1lSuKSThjNpq39f6NmlTy9ROLFwG5gjyTgpwSqufDeYG/Fm43Xs05uF7WcscoO7eguI3HuuYA==
   dependencies:
     debug "^4.3.1"
     hpagent "^0.1.1"
@@ -1025,10 +1025,10 @@ domutils@^2.5.2, domutils@^2.7.0, domutils@^2.8.0:
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
 
-dotenv@^14.1.0:
-  version "14.1.1"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-14.1.1.tgz#54d2cc35c938743659a5f8bb7da5568bbe094c3c"
-  integrity sha512-g7ptu0p9gCDIWTLY62fTYT+PasFLNj9FRGg8Wmjr0v/dOL2LEe8guNjpkY59OX91fwIFU7qth4RO89pDSTTG2g==
+dotenv@^15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-15.0.0.tgz#2a585639429bf2c2c62f387f0fffde9c75aafde0"
+  integrity sha512-/l1sXXm79ry34KwwS0y4oVZjB468iw/6u9g1W26dtexKcIJAnVL2pMF+hxQwzZ7LutxOwEgtym9eIxvX33CMKg==
 
 elastic-apm-http-client@^10.3.0:
   version "10.3.0"
@@ -2108,7 +2108,7 @@ luxon@^1.26.0:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
   integrity sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==
 
-m3u8stream@^0.8.4:
+m3u8stream@^0.8.6:
   version "0.8.6"
   resolved "https://registry.yarnpkg.com/m3u8stream/-/m3u8stream-0.8.6.tgz#0d6de4ce8ee69731734e6b616e7b05dd9d9a55b1"
   integrity sha512-LZj8kIVf9KCphiHmH7sbFQTVe4tOemb202fWwvJwR9W5ENW/1hxJN6ksAWGhQgSBSa3jyWhnjKU1Fw1GaOdbyA==
@@ -2835,6 +2835,11 @@ safe-stable-stringify@^1.1.0:
   resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-1.1.1.tgz#c8a220ab525cd94e60ebf47ddc404d610dc5d84a"
   integrity sha512-ERq4hUjKDbJfE4+XtZLFPCDi8Vb1JqaxAPTxWFLBx8XcAlf9Bda/ZJdVezs/NAfsMQScyIlUMx+Yeu7P7rx5jw==
 
+safe-stable-stringify@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.3.1.tgz#ab67cbe1fe7d40603ca641c5e765cb942d04fc73"
+  integrity sha512-kYBSfT+troD9cDA85VDnHZ1rpHC50O0g1e6WlGHVCz/g+JS+9WKLj+XwFYyR8UbrZN8ll9HUpDAAddY58MGisg==
+
 saslprep@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/saslprep/-/saslprep-1.0.3.tgz#4c02f946b56cf54297e347ba1093e7acac4cf226"
@@ -3003,10 +3008,10 @@ spotify-uri@^2.2.0, spotify-uri@~2.2.0:
   resolved "https://registry.yarnpkg.com/spotify-uri/-/spotify-uri-2.2.0.tgz#8db641615cf6e122284874287fe39e89595922df"
   integrity sha512-uUybj02bfyfCoZ0MJ80MkqbKxtIVRJfbRGk05KJFq1li3zb7yNfN1f+TAw4wcXgp7jLWExeiw2wyPQXZ8PHtfg==
 
-spotify-url-info@^2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/spotify-url-info/-/spotify-url-info-2.2.3.tgz#2f08400479f00472fb488eff4bd3c485db99361a"
-  integrity sha512-cZTE5nOnaAjIiaHG9psVYqKXWOlNUIgSU2e+bNInRaYZNgmVgOcKH0D7V1nSER3gv3h5BXvOo0EJTtrMQQo1bA==
+spotify-url-info@^2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/spotify-url-info/-/spotify-url-info-2.2.5.tgz#d3a63af3c095e86c036e19d9d5b39b69107b7198"
+  integrity sha512-KEGZoSbaHivmyLAPjucVa7MVeX2azTh3oNHG7r0h/Jp8gjHmh9N8eHjgFx1wxXWKuHV3loOXAZ6EKyxZzcDPSg==
   dependencies:
     cross-fetch "~3.1.4"
     himalaya "~1.1.0"
@@ -3397,24 +3402,24 @@ wide-align@^1.1.2:
   dependencies:
     string-width "^1.0.2 || 2 || 3 || 4"
 
-winston-elasticsearch@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/winston-elasticsearch/-/winston-elasticsearch-0.16.0.tgz#d9f43e02b9e935d3551c353e65c74daad4a586cf"
-  integrity sha512-OYpw/dCnt7s50HTJIDa7Nyz+7rchHaS77Jz3uMixahF++G5Xejrq4ZLJ4N/vMAY6tAdnwWmAqnOCJ+/GDnWktA==
+winston-elasticsearch@^0.16.1:
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/winston-elasticsearch/-/winston-elasticsearch-0.16.1.tgz#20becd7e44878ad4376479cd8f44506e780d48ff"
+  integrity sha512-IZ7NWs+tBYSRf9CKYs0xmS42IIfyKnd+miWrGl58WLfDLBphIhqwol6im5dUcW2xjMCP4hSovaqipAgzC5MCYQ==
   dependencies:
-    "@elastic/elasticsearch" "^7.15.0"
+    "@elastic/elasticsearch" "^7.16.0"
     dayjs "^1.10.7"
     debug "^4.3.3"
     lodash.defaults "^4.2.0"
     lodash.omit "^4.5.0"
     promise "^8.1.0"
     retry "^0.13.1"
-    winston "^3.3.3"
-    winston-transport "^4.4.0"
+    winston "^3.4.0"
+    winston-transport "^4.4.2"
   optionalDependencies:
     elastic-apm-node "^3.20.0"
 
-winston-transport@^4.4.0, winston-transport@^4.4.2:
+winston-transport@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/winston-transport/-/winston-transport-4.4.2.tgz#554efe3fce229d046df006e0e3c411d240652e51"
   integrity sha512-9jmhltAr5ygt5usgUTQbEiw/7RYXpyUbEAFRCSicIacpUzPkrnQsQZSPGEI12aLK9Jth4zNcYJx3Cvznwrl8pw==
@@ -3423,7 +3428,7 @@ winston-transport@^4.4.0, winston-transport@^4.4.2:
     readable-stream "^3.4.0"
     triple-beam "^1.2.0"
 
-winston@^3.3.3, winston@^3.4.0:
+winston@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/winston/-/winston-3.4.0.tgz#7080f24b02a0684f8a37f9d5c6afb1ac23e95b84"
   integrity sha512-FqilVj+5HKwCfIHQzMxrrd5tBIH10JTS3koFGbLVWBODjiIYq7zir08rFyBT4rrTYG/eaTqDcfSIbcjSM78YSw==
@@ -3434,6 +3439,22 @@ winston@^3.3.3, winston@^3.4.0:
     logform "^2.3.2"
     one-time "^1.0.0"
     readable-stream "^3.4.0"
+    stack-trace "0.0.x"
+    triple-beam "^1.3.0"
+    winston-transport "^4.4.2"
+
+winston@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/winston/-/winston-3.5.1.tgz#b25cc899d015836dbf8c583dec8c4c4483a0da2e"
+  integrity sha512-tbRtVy+vsSSCLcZq/8nXZaOie/S2tPXPFt4be/Q3vI/WtYwm7rrwidxVw2GRa38FIXcJ1kUM6MOZ9Jmnk3F3UA==
+  dependencies:
+    "@dabh/diagnostics" "^2.0.2"
+    async "^3.2.3"
+    is-stream "^2.0.0"
+    logform "^2.3.2"
+    one-time "^1.0.0"
+    readable-stream "^3.4.0"
+    safe-stable-stringify "^2.3.1"
     stack-trace "0.0.x"
     triple-beam "^1.3.0"
     winston-transport "^4.4.2"
@@ -3477,12 +3498,12 @@ yt-search@^2.10.3:
     minimist "~1.2.5"
     node-fzf "~0.5.1"
 
-ytdl-core@^4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/ytdl-core/-/ytdl-core-4.10.0.tgz#0835cb411677684539fac2bcc10553f6f58db3e1"
-  integrity sha512-RCCoSVTmMeBPH5NFR1fh3nkDU9okvWM0ZdN6plw6I5+vBBZVUEpOt8vjbSgprLRMmGUsmrQZJhvG1CHOat4mLA==
+ytdl-core@^4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/ytdl-core/-/ytdl-core-4.10.1.tgz#6648d65faca787919181b2cee1be470b2ef9fdcb"
+  integrity sha512-idBhW+e7HCzs5fR5cqp7Ci+mJhEch41YAaWabYlneQFCL6IGf6Hycv99yVx01Zl1Ci0t/70faOelMSrXaQTE/A==
   dependencies:
-    m3u8stream "^0.8.4"
+    m3u8stream "^0.8.6"
     miniget "^4.0.0"
     sax "^1.1.3"
 
