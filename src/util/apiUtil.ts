@@ -1,6 +1,7 @@
 import { Message, Util } from 'discord.js';
-import spotifyURI from 'spotify-uri';
-import spotify from 'spotify-url-info';
+const fetch = require('isomorphic-unfetch');
+import { parse as spotifyParse } from 'spotify-uri';
+const { getData } = require('spotify-url-info')(fetch);
 const youtubeSearch = require('yt-search');
 import { getInfo, MoreVideoDetails, validateURL } from 'ytdl-core';
 import ytpl from 'ytpl';
@@ -54,7 +55,7 @@ export async function getSong(query: string, allowPlaylists = false): Promise<So
 
 function isSpotify(query: string) {
    if (!query.includes('spotify')) return false;
-   const parsed = spotifyURI.parse(query);
+   const parsed = spotifyParse(query);
    if (!parsed.type) return false;
    return true;
 }
@@ -108,7 +109,8 @@ export function sendSongNotFoundEmbed(message: Message, query: string) {
 }
 
 async function handleSpotify(query: string, allowPlaylists = false) {
-   const data = await spotify.getData(query);
+   const data = await getData(query);
+
    if (data.type === 'track') {
       return await getSpotifySong(data);
    } else if (allowPlaylists) {
