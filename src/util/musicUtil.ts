@@ -25,6 +25,7 @@ import { sendQueueEmbed } from '../commands/music/queue';
 import { args } from '../config';
 import { addFavoriteToUser } from '../database';
 import { logger } from '../system';
+import * as config from '../config';
 
 export const players: Collection<string, Player> = new Collection();
 
@@ -174,7 +175,7 @@ export async function onSongRequest(
    const player = getPlayer(message);
 
    // Make sure the user is in voice
-   if (!message.member.voice.channel) {
+   if (!config.joinTestVc && !message.member.voice.channel) {
       return quickEmbed(message, `You must be in a voice channel to play music`);
    }
 

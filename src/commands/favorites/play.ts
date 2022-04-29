@@ -6,6 +6,7 @@ import { findOrCreate } from '../../database/api/userApi';
 import { getTarget } from '../../util/discordUtil';
 import { getPlayer, playSong } from '../../util/musicUtil';
 import { createFooter, quickEmbed, sendErrorEmbed } from '../../util/styleUtil';
+import * as config from '../../config';
 
 export const command: Command = {
    name: 'play',
@@ -20,7 +21,7 @@ export const command: Command = {
       const player = getPlayer(message);
       if (!player) return;
 
-      if (!player.inVoice && !message.member.voice.channel)
+      if (!config.joinTestVc && !player.inVoice && !message.member.voice.channel)
          return quickEmbed(message, `You must be in a voice channel to play music`);
 
       try {
