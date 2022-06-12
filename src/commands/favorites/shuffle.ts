@@ -90,9 +90,10 @@ export const command: Command = {
 function sendShuffleEmbed(message: Message, songs: Song[], target: User, user: db.IUser) {
    const title = `Shuffling ${songs.length} ${songs.length > 1 ? 'songs' : 'song'} from ${user.username}`;
 
-   const embed = new MessageEmbed()
+   const embed = new MessageEmbed({
+      author: { name: target.username, icon_url: target.displayAvatarURL({ dynamic: true }) }
+   })
       .setTitle(title)
-      .setAuthor(target.username, target.displayAvatarURL({ dynamic: true }))
       .setThumbnail(target.displayAvatarURL({ dynamic: true }))
       .setColor(util.embedColor);
 
