@@ -1,26 +1,8 @@
 import { Message } from 'discord.js';
 import winston from 'winston';
-import { ElasticsearchTransport } from 'winston-elasticsearch';
 import * as config from '../config';
 
 const loggerTransports = [];
-
-if (config.isProduction) {
-   const esTransport = new ElasticsearchTransport({
-      level: 'info',
-      indexPrefix: 'mikaela',
-      clientOpts: {
-         node: config.elasticServer,
-         auth: { username: config.elasticUser, password: config.elasticPass }
-      }
-   });
-
-   loggerTransports.push(esTransport);
-
-   esTransport.on('error', error => {
-      console.error('Error in logger caught', error);
-   });
-}
 
 loggerTransports.push(new winston.transports.Console());
 
