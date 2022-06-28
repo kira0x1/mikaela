@@ -3,7 +3,7 @@ import { logger } from '../../system';
 import { Queue } from '../../classes/Queue';
 import { prefix as defaultPrefix } from '../../config';
 import { findPlayer, players } from '../../util/musicUtil';
-import { Server, BannedChannel } from '../models/Server';
+import { Server, BannedChannel, IServer } from '../models/Server';
 
 export async function getAllServers(guilds: Guild[]) {
    const servers = guilds.map(g => findOrCreateServer(g));
@@ -39,7 +39,7 @@ function convertGuildToIServer(guild: Guild) {
 
 export async function findOrCreateServer(guild: Guild) {
    try {
-      let server = await findServer(guild.id);
+      let server: IServer = await findServer(guild.id);
       if (!server) server = await createServer(guild);
       return server;
    } catch (error) {
