@@ -25,16 +25,13 @@ export const command: Command = {
       let i = 0;
       for (const { '1': player } of players) {
          if (!player.isPlaying) continue;
-         playing.push(player);
          const queueLength = player.queue.songs.length;
          const vc = player.guild.me.voice.channel;
-
          const members = vc?.members;
-         let membersCount = 0;
+         const membersCount = members ? members.size : 0;
 
-         if (members) {
-            membersCount = members.size;
-         }
+         if (membersCount === 0) continue;
+         playing.push(player);
 
          let totalDuration = 0;
          for (const song of player.getSongs()) {
