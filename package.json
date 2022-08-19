@@ -62,7 +62,7 @@
       "winston": "^3.8.1",
       "ws": "^8.8.1",
       "yt-search": "^2.10.3",
-      "ytdl-core": "^4.10.10",
+      "ytdl-core": "4.10.0",
       "ytpl": "^2.3.0"
    },
    "devDependencies": {
