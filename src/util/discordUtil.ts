@@ -4,7 +4,13 @@ import { prefixes } from '../database/api/serverApi';
 export async function getTargetMember(message: Message, query: string) {
    query = query.toLowerCase();
 
-   const mention = message.mentions.members.first();
+   const mentions = message.mentions.members;
+   let mention = message.mentions.members.first();
+
+   if (mention.user.bot) {
+      mention = mentions[1];
+   }
+
    if (mention !== undefined) return mention;
 
    const guild = message.guild;
